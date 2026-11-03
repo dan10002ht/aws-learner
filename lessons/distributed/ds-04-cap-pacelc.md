@@ -43,29 +43,20 @@ Vậy "bỏ P" nghĩa là gì? Nghĩa là **giả định mạng không bao gi�
 
 > **Khi (không phải "nếu") partition xảy ra, tôi giữ C hay giữ A?** → đó là lựa chọn **CP hay AP**.
 
-<svg viewBox="0 0 700 300" role="img" aria-labelledby="cap-t cap-d" style="width:100%;max-width:660px;height:auto;display:block;margin:1.25rem auto">
-<title id="cap-t">CAP: khi partition xảy ra buộc chọn CP hoặc AP</title>
-<desc id="cap-d">Hai node bị đường mạng đứt, mỗi bên phải chọn từ chối để giữ consistency (CP) hoặc trả lời để giữ availability (AP)</desc>
-<rect x="40" y="110" width="120" height="70" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="100" y="140" text-anchor="middle" font-size="14" fill="currentColor">Node A</text>
-<text x="100" y="162" text-anchor="middle" font-size="11" fill="currentColor">x = 5</text>
-<rect x="540" y="110" width="120" height="70" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="600" y="140" text-anchor="middle" font-size="14" fill="currentColor">Node B</text>
-<text x="600" y="162" text-anchor="middle" font-size="11" fill="currentColor">x = 5</text>
-<line x1="160" y1="145" x2="310" y2="145" stroke="currentColor" stroke-width="1.5" stroke-dasharray="6 5"/>
-<line x1="390" y1="145" x2="540" y2="145" stroke="currentColor" stroke-width="1.5" stroke-dasharray="6 5"/>
-<text x="350" y="120" text-anchor="middle" font-size="30" fill="#f43f5e">✗</text>
-<text x="350" y="168" text-anchor="middle" font-size="12" fill="#f43f5e">PARTITION</text>
-<rect x="20" y="215" width="300" height="70" rx="10" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="170" y="240" text-anchor="middle" font-size="12" fill="currentColor">Chọn CP: A từ chối write mới</text>
-<text x="170" y="262" text-anchor="middle" font-size="11" fill="currentColor">→ đúng tuyệt đối, nhưng KHÔNG available</text>
-<rect x="380" y="215" width="300" height="70" rx="10" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="530" y="240" text-anchor="middle" font-size="12" fill="currentColor">Chọn AP: A nhận write (x=9)</text>
-<text x="530" y="262" text-anchor="middle" font-size="11" fill="currentColor">→ available, nhưng A và B lệch nhau</text>
-<text x="350" y="40" text-anchor="middle" font-size="14" fill="currentColor">Client ghi x = 9 vào A, B không nhận được</text>
-<line x1="100" y1="60" x2="100" y2="110" stroke="currentColor" stroke-width="1.5" marker-end="url(#c1)"/>
-<defs><marker id="c1" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<ab-toggle data-labels="CP|AP">
+<svg viewBox="0 0 500 285" role="img" aria-labelledby="ds04med-0-t ds04med-0-d" style="width:100%;max-width:500px;height:auto;display:block;margin:1.25rem auto">
+<title id="ds04med-0-t">Partition: Từ chối ghi</title>
+<desc id="ds04med-0-d">Partition: Từ chối ghi</desc>
+<text x="250" y="27" text-anchor="middle" font-size="13" fill="currentColor">Client: ghi x = 9 vào A</text><path d="M110 43 V90" stroke="currentColor" marker-end="url(#ds04med-0-a)"/><defs><marker id="ds04med-0-a" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6" fill="currentColor"/></marker></defs><rect x="50" y="100" width="120" height="85" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="110" y="130" text-anchor="middle" font-size="13" fill="currentColor">Node A</text><text x="110" y="160" text-anchor="middle" font-size="13" fill="currentColor">x = 5</text><rect x="330" y="100" width="120" height="85" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="390" y="130" text-anchor="middle" font-size="13" fill="currentColor">Node B</text><text x="390" y="160" text-anchor="middle" font-size="13" fill="currentColor">x = 5</text><path d="M170 140 H330" stroke="currentColor" stroke-dasharray="5 5"/><path d="M240 110 L260 170 M260 110 L240 170" stroke="#f43f5e" stroke-width="3"/><text x="250" y="207" text-anchor="middle" font-size="13" fill="currentColor">PARTITION</text><rect x="35" y="235" width="150" height="35" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="110" y="258" text-anchor="middle" font-size="13" fill="currentColor">Từ chối ghi</text><text x="365" y="258" text-anchor="middle" font-size="13" fill="currentColor">A = B</text>
 </svg>
+<svg viewBox="0 0 500 285" role="img" aria-labelledby="ds04med-1-t ds04med-1-d" style="width:100%;max-width:500px;height:auto;display:block;margin:1.25rem auto">
+<title id="ds04med-1-t">Partition: Ghi thành công</title>
+<desc id="ds04med-1-d">Partition: Ghi thành công</desc>
+<text x="250" y="27" text-anchor="middle" font-size="13" fill="currentColor">Client: ghi x = 9 vào A</text><path d="M110 43 V90" stroke="currentColor" marker-end="url(#ds04med-1-a)"/><defs><marker id="ds04med-1-a" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6" fill="currentColor"/></marker></defs><rect x="50" y="100" width="120" height="85" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="110" y="130" text-anchor="middle" font-size="13" fill="currentColor">Node A</text><text x="110" y="160" text-anchor="middle" font-size="13" fill="currentColor">x = 9</text><rect x="330" y="100" width="120" height="85" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="390" y="130" text-anchor="middle" font-size="13" fill="currentColor">Node B</text><text x="390" y="160" text-anchor="middle" font-size="13" fill="currentColor">x = 5</text><path d="M170 140 H330" stroke="currentColor" stroke-dasharray="5 5"/><path d="M240 110 L260 170 M260 110 L240 170" stroke="#f43f5e" stroke-width="3"/><text x="250" y="207" text-anchor="middle" font-size="13" fill="currentColor">PARTITION</text><rect x="35" y="235" width="150" height="35" rx="6" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="110" y="258" text-anchor="middle" font-size="13" fill="currentColor">Ghi thành công</text><text x="365" y="258" text-anchor="middle" font-size="13" fill="currentColor">A ≠ B</text>
+</svg>
+<ab-note>A từ chối write mới để giữ consistency; thao tác ghi này không available.</ab-note>
+<ab-note>A nhận write nhưng B vẫn giữ 5. Availability được giữ, consistency bị mất.</ab-note>
+</ab-toggle>
 
 ### 2.4 CP và AP trong thực tế nghĩa là gì
 

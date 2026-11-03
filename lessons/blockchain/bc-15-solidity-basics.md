@@ -145,6 +145,22 @@ contract PointerDemo {
 
 Sau khi gọi `setViaStorage`, `p.x = 42`. Nhưng gọi `setViaMemory` thì `p.x` vẫn nguyên — vì `tmp` chỉ là copy trong memory và bị vứt khi hàm kết thúc. Nhầm hai cái này là nguồn bug rất phổ biến của người mới.
 
+<ab-toggle data-labels="Storage pointer|Memory copy">
+<svg viewBox="0 0 520 300" role="img" aria-labelledby="bc15-med-0-t bc15-med-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="bc15-med-0-t">Alias storage và bản sao memory</title>
+<desc id="bc15-med-0-d">Alias storage và bản sao memory</desc>
+<text x="130" y="30" font-size="14" fill="currentColor" text-anchor="middle">STORAGE</text><text x="390" y="30" font-size="14" fill="currentColor" text-anchor="middle">LOCAL REF</text><path d="M260,82 L260,210" fill="none" stroke="#3b82f6" stroke-width="2"/><rect x="40" y="90" width="180" height="90" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="130" y="122" font-size="14" fill="currentColor" text-anchor="middle">p.x</text><text x="130" y="157" font-size="24" fill="currentColor" text-anchor="middle">42</text><rect x="310" y="90" width="170" height="90" rx="5" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/><text x="395" y="122" font-size="14" fill="currentColor" text-anchor="middle">ref</text><text x="395" y="157" font-size="24" fill="currentColor" text-anchor="middle">p</text><path d="M310,145 L225,145" stroke="#3b82f6" stroke-width="3" marker-end="url(#bc15-med-arrow)"/><text x="260" y="68" font-size="14" fill="currentColor" text-anchor="middle">ref trỏ tới cùng state p</text><text x="260" y="240" font-size="14" fill="currentColor" text-anchor="middle">ref.x = 42 ghi trực tiếp vào p.x</text><defs><marker id="bc15-med-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6" fill="none" stroke="currentColor"/></marker></defs>
+</svg>
+<svg viewBox="0 0 520 300" role="img" aria-labelledby="bc15-med-1-t bc15-med-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="bc15-med-1-t">Alias storage và bản sao memory</title>
+<desc id="bc15-med-1-d">Alias storage và bản sao memory</desc>
+<text x="130" y="30" font-size="14" fill="currentColor" text-anchor="middle">STORAGE</text><text x="390" y="30" font-size="14" fill="currentColor" text-anchor="middle">MEMORY</text><path d="M260,82 L260,210" fill="none" stroke="#3b82f6" stroke-width="2"/><rect x="40" y="90" width="180" height="90" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="130" y="122" font-size="14" fill="currentColor" text-anchor="middle">p.x</text><text x="130" y="157" font-size="24" fill="currentColor" text-anchor="middle">42</text><rect x="310" y="90" width="170" height="90" rx="5" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/><text x="395" y="122" font-size="14" fill="currentColor" text-anchor="middle">tmp.x</text><text x="395" y="157" font-size="24" fill="currentColor" text-anchor="middle">99</text><text x="260" y="68" font-size="14" fill="currentColor" text-anchor="middle">copy rồi sửa bản sao</text><text x="260" y="240" font-size="14" fill="currentColor" text-anchor="middle">p.x vẫn = 42; tmp bị bỏ khi hàm kết thúc</text>
+</svg>
+<ab-note>Sau setViaStorage, ref và p cùng trỏ tới một vùng state; p.x thành 42.</ab-note>
+<ab-note>Gọi setViaMemory sau đó tạo tmp riêng; tmp.x thành 99 còn p.x vẫn 42.</ab-note>
+</ab-toggle>
+
+
 ### 2.5 Visibility: ai gọi được hàm/biến
 
 | Visibility | Gọi từ bên ngoài | Gọi nội bộ | Contract con kế thừa | Ghi chú |

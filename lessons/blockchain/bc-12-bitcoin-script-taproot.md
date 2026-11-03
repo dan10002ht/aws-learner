@@ -195,25 +195,20 @@ Trước SegWit, **chữ ký (witness) nằm ngay trong scriptSig**, và **txid 
 
 SegWit **di dời phần witness (chữ ký + script mở khoá) ra một cấu trúc riêng**, không còn nằm trong phần dữ liệu dùng để tính txid.
 
-<svg viewBox="0 0 720 260" role="img" aria-labelledby="sw-t sw-d" style="width:100%;max-width:700px;height:auto;display:block;margin:1.25rem auto">
-<title id="sw-t">Trước và sau SegWit</title>
-<desc id="sw-d">Trước SegWit chữ ký nằm trong giao dịch nên txid đổi khi chữ ký bị nắn; sau SegWit chữ ký tách riêng nên txid ổn định</desc>
-<text x="180" y="24" text-anchor="middle" font-size="13" fill="currentColor">Trước SegWit</text>
-<rect x="60" y="45" width="240" height="150" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<rect x="80" y="65" width="200" height="34" rx="5" fill="none" stroke="currentColor"/>
-<text x="180" y="87" text-anchor="middle" font-size="12" fill="currentColor">inputs + outputs</text>
-<rect x="80" y="110" width="200" height="34" rx="5" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="180" y="132" text-anchor="middle" font-size="12" fill="currentColor">signature (nắn được)</text>
-<text x="180" y="172" text-anchor="middle" font-size="11" fill="currentColor">txid = hash(cả khối) → đổi theo chữ ký</text>
-<text x="540" y="24" text-anchor="middle" font-size="13" fill="currentColor">Sau SegWit</text>
-<rect x="420" y="45" width="240" height="95" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<rect x="440" y="65" width="200" height="34" rx="5" fill="none" stroke="currentColor"/>
-<text x="540" y="87" text-anchor="middle" font-size="12" fill="currentColor">inputs + outputs</text>
-<text x="540" y="122" text-anchor="middle" font-size="11" fill="currentColor">txid = hash(khối này)</text>
-<rect x="420" y="155" width="240" height="45" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="540" y="182" text-anchor="middle" font-size="12" fill="currentColor">witness (tách riêng)</text>
-<text x="360" y="240" text-anchor="middle" font-size="11" fill="currentColor">Chữ ký ra khỏi phần tính txid ⇒ malleability biến mất ⇒ Lightning khả thi</text>
+<ab-toggle data-labels="Trước SegWit|Sau SegWit">
+<svg viewBox="0 0 520 300" role="img" aria-labelledby="bc12-med-0-t bc12-med-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="bc12-med-0-t">Chữ ký trong và ngoài phạm vi hash txid</title>
+<desc id="bc12-med-0-d">Chữ ký trong và ngoài phạm vi hash txid</desc>
+<text x="260" y="26" font-size="14" fill="currentColor" text-anchor="middle">Phạm vi dữ liệu tính txid</text><rect x="50" y="45" width="420" height="145" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><rect x="75" y="58" width="370" height="36" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="260" y="81" font-size="14" fill="currentColor" text-anchor="middle">inputs + outputs</text><rect x="75" y="110" width="370" height="38" rx="5" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/><text x="260" y="134" font-size="14" fill="currentColor" text-anchor="middle">scriptSig: chữ ký + script mở khóa</text><path d="M260,215 L260,242" fill="none" stroke="#3b82f6" stroke-width="2"/><text x="260" y="264" font-size="14" fill="currentColor" text-anchor="middle">txid đổi theo chữ ký</text>
 </svg>
+<svg viewBox="0 0 520 300" role="img" aria-labelledby="bc12-med-1-t bc12-med-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="bc12-med-1-t">Chữ ký trong và ngoài phạm vi hash txid</title>
+<desc id="bc12-med-1-d">Chữ ký trong và ngoài phạm vi hash txid</desc>
+<text x="260" y="26" font-size="14" fill="currentColor" text-anchor="middle">Phạm vi dữ liệu tính txid</text><rect x="50" y="45" width="420" height="65" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><rect x="75" y="58" width="370" height="36" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="260" y="81" font-size="14" fill="currentColor" text-anchor="middle">inputs + outputs</text><rect x="75" y="175" width="370" height="38" rx="5" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/><text x="260" y="199" font-size="14" fill="currentColor" text-anchor="middle">witness: chữ ký + script mở khóa</text><path d="M260,215 L260,242" fill="none" stroke="#3b82f6" stroke-width="2"/><text x="260" y="264" font-size="14" fill="currentColor" text-anchor="middle">txid không phụ thuộc witness</text>
+</svg>
+<ab-note>Chữ ký nằm trong phần băm: thay đổi chữ ký có thể đổi txid.</ab-note>
+<ab-note>Witness vẫn được truyền và kiểm tra, nhưng nằm ngoài phần tính txid; tách witness giúp giải quyết signature malleability và hỗ trợ Lightning.</ab-note>
+</ab-toggle>
 
 ### 4.3 Hai lợi ích lớn
 

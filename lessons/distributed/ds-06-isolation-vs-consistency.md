@@ -100,28 +100,42 @@ SI mạnh hơn Read Committed rất nhiều — nó **loại được** dirty re
 
 > Nhiều engineer nghĩ "tôi để Repeatable Read/Snapshot là an toàn tuyệt đối". Sai. SI vẫn cho **write skew** và một biến thể **phantom liên quan predicate**. Nếu logic của bạn dựa trên *"đọc để kiểm tra một điều kiện rồi ghi dựa vào điều kiện đó"* trên hàng khác, bạn **cần serializable** hoặc phải **khóa tường minh** (`SELECT ... FOR UPDATE`).
 
-<svg viewBox="0 0 700 300" role="img" aria-labelledby="ws-t ws-d" style="width:100%;max-width:640px;height:auto;display:block;margin:1.25rem auto">
-<title id="ws-t">Write skew dưới snapshot isolation</title>
-<desc id="ws-d">Hai transaction đọc cùng snapshot đủ hai bác sĩ trực, mỗi transaction ghi một hàng khác nhau, cùng commit và phá vỡ invariant</desc>
+<step-flow>
+<svg viewBox="0 0 700 300" role="img" aria-labelledby="ds06med-ws-t ds06med-ws-d" style="width:100%;max-width:640px;height:auto;display:block;margin:1.25rem auto">
+<title id="ds06med-ws-t">Write skew dưới snapshot isolation</title>
+<desc id="ds06med-ws-d">Hai transaction đọc cùng snapshot đủ hai bác sĩ trực, mỗi transaction ghi một hàng khác nhau, cùng commit và phá vỡ invariant</desc>
 <text x="150" y="30" text-anchor="middle" font-size="13" fill="currentColor">T1 (Alice)</text>
 <text x="540" y="30" text-anchor="middle" font-size="13" fill="currentColor">T2 (Bob)</text>
 <line x1="150" y1="45" x2="150" y2="270" stroke="currentColor" stroke-width="1.5"/>
 <line x1="540" y1="45" x2="540" y2="270" stroke="currentColor" stroke-width="1.5"/>
-<rect x="270" y="55" width="150" height="34" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="345" y="76" text-anchor="middle" font-size="11" fill="currentColor">snapshot: Alice+Bob on-call</text>
-<line x1="150" y1="72" x2="270" y2="72" stroke="currentColor" stroke-width="1.2" marker-end="url(#w1)"/>
-<line x1="540" y1="72" x2="420" y2="72" stroke="currentColor" stroke-width="1.2" marker-end="url(#w1)"/>
-<rect x="60" y="120" width="180" height="34" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="150" y="141" text-anchor="middle" font-size="11" fill="currentColor">thấy Bob còn → set Alice=off</text>
-<rect x="450" y="160" width="180" height="34" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="540" y="181" text-anchor="middle" font-size="11" fill="currentColor">thấy Alice còn → set Bob=off</text>
-<rect x="60" y="215" width="120" height="30" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="120" y="235" text-anchor="middle" font-size="11" fill="currentColor">COMMIT ok</text>
-<rect x="480" y="215" width="120" height="30" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="540" y="235" text-anchor="middle" font-size="11" fill="currentColor">COMMIT ok</text>
-<text x="345" y="282" text-anchor="middle" font-size="12" font-weight="bold" fill="currentColor">Kết quả: 0 bác sĩ on-call — invariant vỡ</text>
-<defs><marker id="w1" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<g data-step="1">
+<rect x="270" y="55" width="150" height="34" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="345" y="76" text-anchor="middle" font-size="13" fill="currentColor">Alice + Bob : ON</text>
+<line x1="150" y1="72" x2="270" y2="72" stroke="currentColor" stroke-width="1.2" marker-end="url(#ds06med-w1)"/>
+<line x1="540" y1="72" x2="420" y2="72" stroke="currentColor" stroke-width="1.2" marker-end="url(#ds06med-w1)"/>
+</g>
+<g data-step="2">
+<rect x="60" y="120" width="180" height="34" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="150" y="141" text-anchor="middle" font-size="13" fill="currentColor">Bob ON → Alice OFF</text>
+</g>
+<g data-step="3">
+<rect x="450" y="160" width="180" height="34" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="540" y="181" text-anchor="middle" font-size="13" fill="currentColor">Alice ON → Bob OFF</text>
+</g>
+<g data-step="4">
+<rect x="60" y="215" width="120" height="30" rx="8" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="120" y="235" text-anchor="middle" font-size="13" fill="currentColor">COMMIT ok</text>
+<rect x="480" y="215" width="120" height="30" rx="8" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="540" y="235" text-anchor="middle" font-size="13" fill="currentColor">COMMIT ok</text>
+<text x="345" y="282" text-anchor="middle" font-size="13" font-weight="bold" fill="currentColor">Kết quả: 0 bác sĩ on-call — invariant vỡ</text>
+</g>
+<defs><marker id="ds06med-w1" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
 </svg>
+<step-note data-step="1">Hai transaction cùng đọc phiên bản có Alice và Bob đang trực, trước khi thấy commit của nhau.</step-note>
+<step-note data-step="2">T1 dựa vào Bob trong snapshot nên cho Alice nghỉ; nó chỉ ghi hàng Alice.</step-note>
+<step-note data-step="3">T2 vẫn thấy Alice đang trực trong snapshot nên cho Bob nghỉ; nó ghi hàng khác T1.</step-note>
+<step-note data-step="4">Không có ghi chồng lên cùng hàng để SI chặn. Cả hai commit khiến số bác sĩ trực về 0.</step-note>
+</step-flow>
 
 ### 2.6 Serializable — và hai cách hiện thực
 

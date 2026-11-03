@@ -110,38 +110,55 @@ Vì sao là 1/3 chứ không phải 1/2? Trực giác qua ba yêu cầu chồng 
 
 Năm 1999, **Castro & Liskov** công bố **PBFT (Practical Byzantine Fault Tolerance)**, chứng minh BFT chạy đủ nhanh cho hệ thật. PBFT chọn một node làm **leader (primary)** và chạy 3 pha bỏ phiếu cho mỗi quyết định:
 
-<svg viewBox="0 0 700 260" role="img" aria-labelledby="pb-t pb-d" style="width:100%;max-width:660px;height:auto;display:block;margin:1.25rem auto">
-<title id="pb-t">Ba pha của PBFT</title>
-<desc id="pb-d">Luồng thông điệp giữa client, node primary và các node backup qua pha pre-prepare, prepare và commit</desc>
-<text x="70" y="28" text-anchor="middle" font-size="12" fill="currentColor">Client</text>
-<text x="70" y="70" text-anchor="middle" font-size="12" fill="#3b82f6">Primary</text>
-<text x="70" y="120" text-anchor="middle" font-size="12" fill="currentColor">Node 1</text>
-<text x="70" y="170" text-anchor="middle" font-size="12" fill="currentColor">Node 2</text>
-<text x="70" y="220" text-anchor="middle" font-size="12" fill="#f43f5e">Node 3 (lỗi)</text>
+<step-flow>
+<svg viewBox="0 0 700 260" role="img" aria-labelledby="bc06-med-t bc06-med-d" style="width:100%;max-width:660px;height:auto;display:block;margin:1.25rem auto">
+<title id="bc06-med-t">Ba pha của PBFT</title>
+<desc id="bc06-med-d">Luồng thông điệp giữa client, node primary và các node backup qua pha pre-prepare, prepare và commit</desc>
+<text x="70" y="28" text-anchor="middle" font-size="13" fill="currentColor">Client</text>
+<text x="70" y="70" text-anchor="middle" font-size="13" fill="currentColor">Primary</text>
+<text x="70" y="120" text-anchor="middle" font-size="13" fill="currentColor">Node 1</text>
+<text x="70" y="170" text-anchor="middle" font-size="13" fill="currentColor">Node 2</text>
+<text x="70" y="220" text-anchor="middle" font-size="13" fill="currentColor">Node 3 (lỗi)</text>
 <line x1="130" y1="24" x2="670" y2="24" stroke="currentColor" stroke-width="0.5"/>
 <line x1="130" y1="66" x2="670" y2="66" stroke="currentColor" stroke-width="0.5"/>
 <line x1="130" y1="116" x2="670" y2="116" stroke="currentColor" stroke-width="0.5"/>
 <line x1="130" y1="166" x2="670" y2="166" stroke="currentColor" stroke-width="0.5"/>
 <line x1="130" y1="216" x2="670" y2="216" stroke="currentColor" stroke-width="0.5"/>
-<text x="200" y="46" text-anchor="middle" font-size="10" fill="currentColor">request</text>
-<line x1="150" y1="24" x2="230" y2="66" stroke="currentColor" stroke-width="1" marker-end="url(#pba)"/>
-<text x="280" y="58" text-anchor="middle" font-size="10" fill="#3b82f6">pre-prepare</text>
-<line x1="240" y1="66" x2="330" y2="116" stroke="#3b82f6" stroke-width="1" marker-end="url(#pba)"/>
-<line x1="240" y1="66" x2="330" y2="166" stroke="#3b82f6" stroke-width="1" marker-end="url(#pba)"/>
-<text x="410" y="108" text-anchor="middle" font-size="10" fill="currentColor">prepare (all↔all)</text>
-<line x1="345" y1="116" x2="435" y2="166" stroke="currentColor" stroke-width="1" marker-end="url(#pba)"/>
-<line x1="345" y1="166" x2="435" y2="116" stroke="currentColor" stroke-width="1" marker-end="url(#pba)"/>
-<line x1="345" y1="116" x2="435" y2="66" stroke="currentColor" stroke-width="1" marker-end="url(#pba)"/>
-<text x="540" y="150" text-anchor="middle" font-size="10" fill="#10b981">commit (all↔all)</text>
-<line x1="470" y1="66" x2="560" y2="116" stroke="#10b981" stroke-width="1" marker-end="url(#pba)"/>
-<line x1="470" y1="116" x2="560" y2="166" stroke="#10b981" stroke-width="1" marker-end="url(#pba)"/>
-<line x1="470" y1="166" x2="560" y2="116" stroke="#10b981" stroke-width="1" marker-end="url(#pba)"/>
-<text x="630" y="46" text-anchor="middle" font-size="10" fill="currentColor">reply</text>
-<line x1="590" y1="66" x2="650" y2="24" stroke="currentColor" stroke-width="1" marker-end="url(#pba)"/>
-<line x1="590" y1="116" x2="650" y2="24" stroke="currentColor" stroke-width="1" marker-end="url(#pba)"/>
-<text x="350" y="250" text-anchor="middle" font-size="11" fill="currentColor">Node lỗi (đỏ) im lặng — vẫn commit được vì 3 node trung thực ≥ 2f+1</text>
-<defs><marker id="pba" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<g data-step="1">
+<text x="200" y="46" text-anchor="middle" font-size="13" fill="currentColor">request</text>
+<line x1="150" y1="24" x2="230" y2="66" stroke="currentColor" stroke-width="1" marker-end="url(#bc06-med-a)"/>
+</g>
+<g data-step="2">
+<text x="280" y="58" text-anchor="middle" font-size="13" fill="currentColor">pre-prepare</text>
+<line x1="240" y1="66" x2="330" y2="116" stroke="#3b82f6" stroke-width="1" marker-end="url(#bc06-med-a)"/>
+<line x1="240" y1="66" x2="330" y2="166" stroke="#3b82f6" stroke-width="1" marker-end="url(#bc06-med-a)"/>
+</g>
+<g data-step="3">
+<text x="410" y="90" text-anchor="middle" font-size="13" fill="currentColor">prepare (all↔all)</text>
+<line x1="345" y1="116" x2="435" y2="166" stroke="currentColor" stroke-width="1" marker-end="url(#bc06-med-a)"/>
+<line x1="345" y1="166" x2="435" y2="116" stroke="currentColor" stroke-width="1" marker-end="url(#bc06-med-a)"/>
+<line x1="345" y1="116" x2="435" y2="66" stroke="currentColor" stroke-width="1" marker-end="url(#bc06-med-a)"/>
+</g>
+<g data-step="4">
+<text x="540" y="190" text-anchor="middle" font-size="13" fill="currentColor">commit (all↔all)</text>
+<line x1="470" y1="66" x2="560" y2="116" stroke="#10b981" stroke-width="1" marker-end="url(#bc06-med-a)"/>
+<line x1="470" y1="116" x2="560" y2="166" stroke="#10b981" stroke-width="1" marker-end="url(#bc06-med-a)"/>
+<line x1="470" y1="166" x2="560" y2="116" stroke="#10b981" stroke-width="1" marker-end="url(#bc06-med-a)"/>
+</g>
+<g data-step="5">
+<text x="630" y="46" text-anchor="middle" font-size="13" fill="currentColor">reply</text>
+<line x1="590" y1="66" x2="650" y2="24" stroke="currentColor" stroke-width="1" marker-end="url(#bc06-med-a)"/>
+<line x1="590" y1="116" x2="650" y2="24" stroke="currentColor" stroke-width="1" marker-end="url(#bc06-med-a)"/>
+</g>
+<text x="350" y="250" text-anchor="middle" font-size="13" fill="currentColor">Node lỗi (đỏ) im lặng — vẫn commit được vì 3 node trung thực ≥ 2f+1</text>
+<defs><marker id="bc06-med-a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="currentColor"/></marker></defs>
 </svg>
+<step-note data-step="1">Client gửi request tới primary để được đề xuất thứ tự; đây chưa phải pha bỏ phiếu.</step-note>
+<step-note data-step="2">Primary phát pre-prepare cho backup trong cùng view và sequence number.</step-note>
+<step-note data-step="3">Với f = 1, backup cần pre-prepare và 2 phiếu prepare khớp từ các replica khác để prepared.</step-note>
+<step-note data-step="4">Replica chờ 2f + 1 = 3 commit khớp, tính cả chính nó; một node im lặng vẫn không cản quorum.</step-note>
+<step-note data-step="5">Client đợi f + 1 = 2 reply khớp để có ít nhất một trả lời từ replica trung thực.</step-note>
+</step-flow>
 
 - **Pre-prepare**: primary đề xuất thứ tự cho request, phát cho các backup.
 - **Prepare**: mỗi node phát "tôi thấy đề xuất này", chờ nhận `2f` phiếu prepare khớp → chắc chắn *đa số trung thực* đồng ý *cùng một thứ tự*.

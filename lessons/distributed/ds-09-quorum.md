@@ -74,33 +74,28 @@ Với **N=3, W=2, R=2**: một ghi thành công nằm trên ≥ 2 bản; một �
 
 ### 2.4 Luồng ghi và đọc thực tế
 
-<svg viewBox="0 0 700 300" role="img" aria-labelledby="fl-t fl-d" style="width:100%;max-width:660px;height:auto;display:block;margin:1.25rem auto">
-<title id="fl-t">Luồng ghi quorum W=2 và đọc quorum R=2 với read repair</title>
-<desc id="fl-d">Coordinator gửi ghi tới ba replica, đợi hai ack; khi đọc gộp hai bản và sửa bản cũ</desc>
-<rect x="20" y="20" width="120" height="44" rx="8" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="80" y="47" text-anchor="middle" font-size="12" fill="currentColor">Coordinator</text>
-<rect x="300" y="20" width="70" height="36" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="335" y="43" text-anchor="middle" font-size="12" fill="currentColor">R1</text>
-<rect x="400" y="20" width="70" height="36" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="435" y="43" text-anchor="middle" font-size="12" fill="currentColor">R2</text>
-<rect x="500" y="20" width="70" height="36" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="535" y="43" text-anchor="middle" font-size="12" fill="currentColor">R3</text>
-<text x="80" y="95" text-anchor="middle" font-size="12" fill="currentColor">WRITE v2</text>
-<line x1="140" y1="100" x2="335" y2="100" stroke="#10b981" stroke-width="1.5" marker-end="url(#ar)"/>
-<line x1="140" y1="112" x2="435" y2="112" stroke="#10b981" stroke-width="1.5" marker-end="url(#ar)"/>
-<line x1="140" y1="124" x2="535" y2="124" stroke="#f43f5e" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#ar)"/>
-<text x="600" y="128" font-size="11" fill="#f43f5e">R3 chậm/mất</text>
-<text x="230" y="150" text-anchor="middle" font-size="11" fill="currentColor">R1,R2 ack ⇒ W=2 đạt ⇒ báo OK</text>
-<line x1="20" y1="170" x2="680" y2="170" stroke="currentColor" stroke-width="0.5" stroke-dasharray="2 3"/>
-<text x="80" y="200" text-anchor="middle" font-size="12" fill="currentColor">READ (R=2)</text>
-<line x1="140" y1="205" x2="435" y2="205" stroke="#8b5cf6" stroke-width="1.5" marker-end="url(#ar)"/>
-<line x1="140" y1="217" x2="535" y2="217" stroke="#8b5cf6" stroke-width="1.5" marker-end="url(#ar)"/>
-<text x="335" y="245" text-anchor="middle" font-size="11" fill="currentColor">R2→v2, R3→v1</text>
-<text x="335" y="262" text-anchor="middle" font-size="11" fill="currentColor">chọn v2 (mới) trả client</text>
-<line x1="500" y1="280" x2="360" y2="280" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#ar)"/>
-<text x="510" y="284" font-size="11" fill="#f59e0b">read repair: ghi v2 vá R3</text>
-<defs><marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<step-flow>
+<svg viewBox="0 0 700 430" role="img" aria-labelledby="ds09med-t ds09med-d" style="width:100%;max-width:700px;height:auto;display:block;margin:1.25rem auto">
+<title id="ds09med-t">Quorum N=3: ghi W=2, đọc R=2 và sửa replica cũ</title>
+<desc id="ds09med-d">Quorum N=3: ghi W=2, đọc R=2 và sửa replica cũ</desc>
+<defs><marker id="ds09med-a" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6" fill="currentColor"/></marker></defs><rect x="17.5" y="20" width="125" height="36" rx="6" fill="#14b8a6" fill-opacity="0.14" stroke="#14b8a6"/><text x="80" y="43" text-anchor="middle" font-size="13" fill="currentColor">Coordinator</text><path d="M80 56 V410" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/><rect x="300.0" y="20" width="70" height="36" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="335" y="43" text-anchor="middle" font-size="13" fill="currentColor">R1</text><path d="M335 56 V410" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/><rect x="400.0" y="20" width="70" height="36" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="435" y="43" text-anchor="middle" font-size="13" fill="currentColor">R2</text><path d="M435 56 V410" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/><rect x="500.0" y="20" width="70" height="36" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="535" y="43" text-anchor="middle" font-size="13" fill="currentColor">R3</text><path d="M535 56 V410" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/><g data-step="1">
+<text x="200" y="80" text-anchor="middle" font-size="13" fill="currentColor">WRITE v2 → N = 3</text><path d="M80 95 L335 95" fill="none" stroke="#10b981" stroke-width="1.5" marker-end="url(#ds09med-a)"/><path d="M80 115 L435 115" fill="none" stroke="#10b981" stroke-width="1.5" marker-end="url(#ds09med-a)"/><path d="M80 135 L535 135" fill="none" stroke="#f43f5e" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#ds09med-a)"/><text x="615" y="140" text-anchor="middle" font-size="13" fill="currentColor">chậm / mất</text>
+</g><g data-step="2">
+<path d="M335 160 L80 160" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#ds09med-a)"/><path d="M435 180 L80 180" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#ds09med-a)"/><text x="250" y="205" text-anchor="middle" font-size="13" fill="currentColor">2 ACK → W = 2 → client OK</text>
+</g><g data-step="3">
+<text x="230" y="235" text-anchor="middle" font-size="13" fill="currentColor">READ → R = 2</text><path d="M80 250 L435 250" fill="none" stroke="#8b5cf6" stroke-width="1.5" marker-end="url(#ds09med-a)"/><path d="M80 270 L535 270" fill="none" stroke="#8b5cf6" stroke-width="1.5" marker-end="url(#ds09med-a)"/>
+</g><g data-step="4">
+<path d="M435 300 L80 300" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#ds09med-a)"/><text x="300" y="294" text-anchor="middle" font-size="13" fill="currentColor">R2: v2</text><path d="M535 330 L80 330" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#ds09med-a)"/><text x="330" y="324" text-anchor="middle" font-size="13" fill="currentColor">R3: v1</text><text x="245" y="356" text-anchor="middle" font-size="13" fill="currentColor">Chọn v2 → trả client</text>
+</g><g data-step="5">
+<path d="M80 390 L535 390" fill="none" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#ds09med-a)"/><text x="320" y="383" text-anchor="middle" font-size="13" fill="currentColor">Read repair: v2 → R3</text>
+</g>
 </svg>
+<step-note data-step="1">Gửi ghi tới cả ba replica; R3 chậm hoặc mất request nên chưa có v2.</step-note>
+<step-note data-step="2">Chỉ cần R1 và R2 xác nhận để đạt W=2; thành công không có nghĩa mọi replica đều đã nhận.</step-note>
+<step-note data-step="3">Đọc R2 và R3: tập đọc giao tập ghi thành công ở R2.</step-note>
+<step-note data-step="4">So phiên bản từ hai câu trả lời để nhận ra v2 mới hơn v1, thay vì tin câu trả lời đầu tiên.</step-note>
+<step-note data-step="5">Coordinator ghi v2 về R3 để sửa bản cũ; đây là luồng sửa sau đọc, không phải ACK của lần ghi ban đầu.</step-note>
+</step-flow>
 
 Khi đọc, coordinator không chỉ lấy 1 bản: nó **gộp R câu trả lời**, so version, trả cái mới nhất cho client — rồi tiện thể **vá** những bản đang cũ (mục 2.6).
 

@@ -198,6 +198,22 @@ Hai lớp phòng thủ độc lập:
 
 > Có **cross-function** và **read-only reentrancy**: attacker re-enter vào một hàm *khác* (hoặc đọc getter) khi state đang dở dang. Vì thế CEI phải áp dụng nhất quán toàn contract, không chỉ trong đúng hàm bị gọi.
 
+
+<ab-toggle data-labels="Chưa vá|CEI + guard">
+<svg viewBox="0 0 520 315" role="img" aria-labelledby="bc21-med-0-t bc21-med-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="bc21-med-0-t">Vòng gọi lại và vị trí chặn reentrancy</title>
+<desc id="bc21-med-0-d">Vòng gọi lại và vị trí chặn reentrancy</desc>
+<rect x="35" y="70" width="180" height="100" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="125" y="98" font-size="14" fill="currentColor" text-anchor="middle">Vault.withdraw</text><text x="125" y="125" font-size="14" fill="currentColor" text-anchor="middle">balance &gt; 0</text><text x="125" y="150" font-size="14" fill="currentColor" text-anchor="middle">chưa cập nhật</text><rect x="330" y="70" width="155" height="100" rx="5" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/><text x="407" y="110" font-size="14" fill="currentColor" text-anchor="middle">Attacker</text><text x="407" y="140" font-size="14" fill="currentColor" text-anchor="middle">receive()</text><path d="M215,90 L330,90 M330,135 L280,135 L280,220 L125,220 L125,170" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#bc21-med-0-a)"/><text x="270" y="65" font-size="13" fill="currentColor" text-anchor="middle">call gửi ETH</text><text x="310" y="248" font-size="13" fill="currentColor" text-anchor="middle">gọi lại withdraw()</text><text x="260" y="287" font-size="14" fill="currentColor" text-anchor="middle">Lần gọi lồng đọc lại balance chưa giảm</text><defs><marker id="bc21-med-0-a" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+</svg>
+<svg viewBox="0 0 520 315" role="img" aria-labelledby="bc21-med-1-t bc21-med-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="bc21-med-1-t">Vòng gọi lại và vị trí chặn reentrancy</title>
+<desc id="bc21-med-1-d">Vòng gọi lại và vị trí chặn reentrancy</desc>
+<rect x="35" y="70" width="180" height="100" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="125" y="98" font-size="14" fill="currentColor" text-anchor="middle">Vault.withdraw</text><text x="125" y="125" font-size="14" fill="currentColor" text-anchor="middle">balance = 0</text><text x="125" y="150" font-size="14" fill="currentColor" text-anchor="middle">guard: locked</text><rect x="330" y="70" width="155" height="100" rx="5" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/><text x="407" y="110" font-size="14" fill="currentColor" text-anchor="middle">Attacker</text><text x="407" y="140" font-size="14" fill="currentColor" text-anchor="middle">receive()</text><path d="M215,90 L330,90 M330,135 L280,135 L280,220 L125,220 L125,170" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#bc21-med-1-a)"/><text x="270" y="65" font-size="13" fill="currentColor" text-anchor="middle">call gửi ETH</text><text x="310" y="248" font-size="13" fill="currentColor" text-anchor="middle">gọi lại withdraw()</text><path d="M110,190 L140,210 M140,190 L110,210" stroke="#f43f5e" stroke-width="5"/><text x="260" y="287" font-size="14" fill="currentColor" text-anchor="middle">Guard chặn; CEI cũng khiến balance = 0</text><defs><marker id="bc21-med-1-a" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+</svg>
+<ab-note>Gọi ngoài khi balance chưa giảm cho phép vòng gọi lồng tái sử dụng cùng số dư.</ab-note>
+<ab-note>Guard chặn lời gọi lồng trước thân hàm. Nếu chỉ dùng CEI, kiểm tra số dư bằng 0 cũng chặn rút lại; call thất bại có thể làm cả giao dịch revert.</ab-note>
+</ab-toggle>
+
 ---
 
 ## 4. Integer overflow / underflow (pre-0.8)

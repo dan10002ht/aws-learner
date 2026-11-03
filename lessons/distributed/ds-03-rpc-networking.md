@@ -209,34 +209,54 @@ Bảng chốt để chọn:
 
 Kịch bản kinh điển: server xử lý xong nhưng **reply mất**, client timeout rồi retry.
 
-<svg viewBox="0 0 700 340" role="img" aria-labelledby="sq-t sq-d" style="width:100%;max-width:660px;height:auto;display:block;margin:1.25rem auto">
-<title id="sq-t">Sequence: reply mất khiến retry trừ tiền hai lần và cách idempotency-key chặn lại</title>
-<desc id="sq-d">Client gửi charge, server trừ tiền và gửi reply nhưng reply bị mất, client timeout retry, không có idempotency thì trừ lần hai, có idempotency-key thì server nhận ra trùng và trả kết quả cũ</desc>
+<step-flow>
+<svg viewBox="0 0 700 340" role="img" aria-labelledby="ds03med-sq-t ds03med-sq-d" style="width:100%;max-width:660px;height:auto;display:block;margin:1.25rem auto">
+<title id="ds03med-sq-t">Sequence: reply mất khiến retry trừ tiền hai lần và cách idempotency-key chặn lại</title>
+<desc id="ds03med-sq-d">Client gửi charge, server trừ tiền và gửi reply nhưng reply bị mất, client timeout retry, không có idempotency thì trừ lần hai, có idempotency-key thì server nhận ra trùng và trả kết quả cũ</desc>
 <line x1="130" y1="40" x2="130" y2="310" stroke="currentColor" stroke-width="1"/>
 <line x1="560" y1="40" x2="560" y2="310" stroke="currentColor" stroke-width="1"/>
-<rect x="70" y="22" width="120" height="30" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="130" y="42" text-anchor="middle" font-size="12" fill="currentColor">Client</text>
-<rect x="500" y="22" width="120" height="30" rx="6" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="560" y="42" text-anchor="middle" font-size="12" fill="currentColor">Payment</text>
-<line x1="130" y1="75" x2="558" y2="75" stroke="currentColor" stroke-width="1.5" marker-end="url(#sa)"/>
-<text x="330" y="68" text-anchor="middle" font-size="11" fill="currentColor">charge(key=K, $50)</text>
-<rect x="470" y="82" width="180" height="26" rx="5" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="560" y="100" text-anchor="middle" font-size="10" fill="currentColor">TRỪ $50 (lần 1)</text>
-<line x1="558" y1="122" x2="300" y2="122" stroke="#f43f5e" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#sa)"/>
-<text x="400" y="115" text-anchor="middle" font-size="10" fill="#f43f5e">reply MẤT ✗</text>
+<rect x="70" y="22" width="120" height="30" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="130" y="42" text-anchor="middle" font-size="13" fill="currentColor">Client</text>
+<rect x="500" y="22" width="120" height="30" rx="6" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="560" y="42" text-anchor="middle" font-size="13" fill="currentColor">Payment</text>
+<g data-step="1">
+<line x1="130" y1="75" x2="558" y2="75" stroke="currentColor" stroke-width="1.5" marker-end="url(#ds03med-sa)"/>
+<text x="330" y="68" text-anchor="middle" font-size="13" fill="currentColor">charge(key=K, $50)</text>
+</g>
+<g data-step="2">
+<rect x="470" y="82" width="180" height="26" rx="5" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/>
+<text x="560" y="100" text-anchor="middle" font-size="13" fill="currentColor">TRỪ $50 (lần 1)</text>
+</g>
+<g data-step="3">
+<line x1="558" y1="122" x2="300" y2="122" stroke="#f43f5e" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#ds03med-sa)"/>
+<text x="400" y="115" text-anchor="middle" font-size="13" fill="currentColor">reply MẤT ✗</text>
+</g>
+<g data-step="4">
 <line x1="130" y1="150" x2="180" y2="150" stroke="currentColor" stroke-width="1"/>
-<text x="255" y="147" text-anchor="middle" font-size="10" fill="#f59e0b">timeout — retry</text>
-<line x1="130" y1="172" x2="558" y2="172" stroke="currentColor" stroke-width="1.5" marker-end="url(#sa)"/>
-<text x="330" y="165" text-anchor="middle" font-size="11" fill="currentColor">charge(key=K, $50) — lần 2</text>
-<rect x="410" y="182" width="240" height="42" rx="5" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="530" y="199" text-anchor="middle" font-size="10" fill="currentColor">thấy key=K đã xử lý</text>
-<text x="530" y="215" text-anchor="middle" font-size="10" fill="#10b981">KHÔNG trừ lại; trả kết quả cũ</text>
-<line x1="558" y1="240" x2="132" y2="240" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#sa)"/>
-<text x="345" y="233" text-anchor="middle" font-size="10" fill="currentColor">reply: charged $50 (idempotent)</text>
-<text x="345" y="285" text-anchor="middle" font-size="11" fill="currentColor">Không có key => lần 2 sẽ TRỪ $50 nữa => tổng $100 (SAI)</text>
-<text x="345" y="303" text-anchor="middle" font-size="11" fill="#10b981">Có idempotency-key => đúng $50 dù client retry bao nhiêu lần</text>
-<defs><marker id="sa" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<text x="255" y="147" text-anchor="middle" font-size="13" fill="currentColor">timeout — retry</text>
+<line x1="130" y1="172" x2="558" y2="172" stroke="currentColor" stroke-width="1.5" marker-end="url(#ds03med-sa)"/>
+<text x="330" y="165" text-anchor="middle" font-size="13" fill="currentColor">charge(key=K, $50) — lần 2</text>
+</g>
+<g data-step="5">
+<rect x="410" y="182" width="240" height="42" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="530" y="199" text-anchor="middle" font-size="13" fill="currentColor">thấy key=K đã xử lý</text>
+<text x="530" y="215" text-anchor="middle" font-size="13" fill="currentColor">KHÔNG trừ lại; trả kết quả cũ</text>
+</g>
+<g data-step="6">
+<line x1="558" y1="240" x2="132" y2="240" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#ds03med-sa)"/>
+<text x="345" y="233" text-anchor="middle" font-size="13" fill="currentColor">reply: charged $50 (idempotent)</text>
+<text x="345" y="285" text-anchor="middle" font-size="13" fill="currentColor">Không có key => lần 2 sẽ TRỪ $50 nữa => tổng $100 (SAI)</text>
+<text x="345" y="303" text-anchor="middle" font-size="13" fill="currentColor">Có idempotency-key => đúng $50 dù client retry bao nhiêu lần</text>
+</g>
+<defs><marker id="ds03med-sa" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
 </svg>
+<step-note data-step="1">Cùng một thao tác dùng key K để server có thể nhận diện lần gửi lại.</step-note>
+<step-note data-step="2">Khoản trừ $50 đã xảy ra trước khi client biết kết quả; key và kết quả phải được lưu nguyên tử với hiệu ứng.</step-note>
+<step-note data-step="3">Reply mất không đảo ngược khoản trừ. Client chỉ quan sát được sự im lặng.</step-note>
+<step-note data-step="4">Timeout không chứng minh thao tác thất bại nên retry phải giữ nguyên key K.</step-note>
+<step-note data-step="5">Server tìm thấy K nên dùng kết quả đã lưu, tránh tạo hiệu ứng lần hai.</step-note>
+<step-note data-step="6">Client nhận kết quả cũ: tổng vẫn $50. Không có dedup, hai lần xử lý sẽ trừ tổng $100.</step-note>
+</step-flow>
 
 Bài học từ sơ đồ: **client đúng khi retry** (nó buộc phải, vì không biết reply có bị mất hay không). Chỗ sửa nằm ở **phía server**: nhận diện request trùng qua **idempotency-key** và trả lại kết quả cũ thay vì thực hiện lần hai. Retry an toàn = client retry + server idempotent.
 

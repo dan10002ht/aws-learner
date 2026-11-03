@@ -51,27 +51,73 @@ Trong hệ có **N** node, mỗi node `i` giữ một vector `V` gồm N phần 
 
 Ba dòng đó là toàn bộ thuật toán. Mọi thứ còn lại là hệ quả.
 
-<svg viewBox="0 0 720 300" role="img" aria-labelledby="vc-t vc-d" style="width:100%;max-width:700px;height:auto;display:block;margin:1.25rem auto">
-<title id="vc-t">Ba quy tắc cập nhật vector clock</title>
-<desc id="vc-d">Sơ đồ minh hoạ quy tắc internal, send và receive của vector clock giữa hai node</desc>
-<rect x="20" y="20" width="320" height="260" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<rect x="380" y="20" width="320" height="260" rx="10" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="180" y="45" text-anchor="middle" font-size="14" fill="currentColor">Node A (ô index 0)</text>
-<text x="540" y="45" text-anchor="middle" font-size="14" fill="currentColor">Node B (ô index 1)</text>
-<text x="180" y="80" text-anchor="middle" font-size="12" fill="currentColor">internal: A[0] += 1</text>
-<rect x="120" y="92" width="120" height="30" rx="6" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="180" y="112" text-anchor="middle" font-size="12" fill="currentColor">V_A = [1, 0]</text>
-<text x="180" y="150" text-anchor="middle" font-size="12" fill="currentColor">send: A[0] += 1</text>
-<rect x="120" y="162" width="120" height="30" rx="6" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="180" y="182" text-anchor="middle" font-size="12" fill="currentColor">V_A = [2, 0]</text>
-<line x1="240" y1="177" x2="470" y2="230" stroke="currentColor" stroke-width="1.5" marker-end="url(#va)"/>
-<text x="360" y="196" text-anchor="middle" font-size="11" fill="currentColor">msg kèm [2, 0]</text>
-<text x="540" y="150" text-anchor="middle" font-size="12" fill="currentColor">receive [2,0]:</text>
-<text x="540" y="172" text-anchor="middle" font-size="11" fill="currentColor">max theo ô rồi B[1]+=1</text>
-<rect x="470" y="215" width="140" height="30" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="540" y="235" text-anchor="middle" font-size="12" fill="currentColor">V_B = [2, 1]</text>
-<defs><marker id="va" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<step-flow>
+<svg viewBox="0 0 760 380" role="img" aria-labelledby="ds17v-t ds17v-d" font-family="ui-sans-serif, system-ui, sans-serif" style="width:100%;height:auto;display:block;margin:1.25rem auto">
+<title id="ds17v-t">Ba quy tắc cập nhật vector clock</title>
+<desc id="ds17v-d">Node A (ô index 0) và Node B (ô index 1), vector bắt đầu [0, 0]. Internal: A[0] += 1 cho V_A = [1, 0]; send: A[0] += 1 cho V_A = [2, 0], message kèm [2, 0]; receive [2,0] ở B: max theo ô ra [2, 0], rồi B[1] += 1 cho V_B = [2, 1].</desc>
+<defs><marker id="ds17v-m" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker><marker id="ds17v-mg" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#10b981"/></marker><marker id="ds17v-mr" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#f43f5e"/></marker><marker id="ds17v-ma" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#f59e0b"/></marker><marker id="ds17v-mb" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#3b82f6"/></marker><marker id="ds17v-mv" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8b5cf6"/></marker><marker id="ds17v-mt" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#14b8a6"/></marker></defs>
+<rect x="16" y="88" width="120" height="44" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="76" y="108" text-anchor="middle" font-size="14" fill="currentColor" font-weight="600">Node A</text>
+<text x="76" y="125" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">ô index 0</text>
+<rect x="16" y="248" width="120" height="44" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="76" y="268" text-anchor="middle" font-size="14" fill="currentColor" font-weight="600">Node B</text>
+<text x="76" y="285" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">ô index 1</text>
+<path d="M140 110 H740" fill="none" stroke="currentColor" stroke-width="1.6" stroke-opacity="0.5" marker-end="url(#ds17v-m)"/>
+<path d="M140 270 H740" fill="none" stroke="currentColor" stroke-width="1.6" stroke-opacity="0.5" marker-end="url(#ds17v-m)"/>
+<text x="194" y="71" text-anchor="end" font-size="14" fill="currentColor">V_A</text>
+<rect x="200" y="50" width="34" height="30" rx="3" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.5" stroke-width="1"/>
+<text x="217" y="71" text-anchor="middle" font-size="15" fill="currentColor">0</text>
+<rect x="234" y="50" width="34" height="30" rx="3" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.5" stroke-width="1"/>
+<text x="251" y="71" text-anchor="middle" font-size="15" fill="currentColor">0</text>
+<text x="194" y="315" text-anchor="end" font-size="14" fill="currentColor">V_B</text>
+<rect x="200" y="294" width="34" height="30" rx="3" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.5" stroke-width="1"/>
+<text x="217" y="315" text-anchor="middle" font-size="15" fill="currentColor">0</text>
+<rect x="234" y="294" width="34" height="30" rx="3" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.5" stroke-width="1"/>
+<text x="251" y="315" text-anchor="middle" font-size="15" fill="currentColor">0</text>
+<g data-step="1">
+<circle cx="330" cy="110" r="7" fill="#3b82f6" stroke="currentColor" stroke-width="1"/>
+<text x="330" y="140" text-anchor="middle" font-size="14" fill="currentColor">internal: A[0] += 1</text>
+<rect x="296" y="50" width="34" height="30" rx="3" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="1" stroke-width="2.4"/>
+<text x="313" y="71" text-anchor="middle" font-size="15" fill="#f59e0b" font-weight="700">1</text>
+<rect x="330" y="50" width="34" height="30" rx="3" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.5" stroke-width="1"/>
+<text x="347" y="71" text-anchor="middle" font-size="15" fill="currentColor">0</text>
+</g>
+<g data-step="2">
+<circle cx="490" cy="110" r="7" fill="#3b82f6" stroke="currentColor" stroke-width="1"/>
+<text x="490" y="140" text-anchor="middle" font-size="14" fill="currentColor">send: A[0] += 1</text>
+<rect x="456" y="50" width="34" height="30" rx="3" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="1" stroke-width="2.4"/>
+<text x="473" y="71" text-anchor="middle" font-size="15" fill="#f59e0b" font-weight="700">2</text>
+<rect x="490" y="50" width="34" height="30" rx="3" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.5" stroke-width="1"/>
+<text x="507" y="71" text-anchor="middle" font-size="15" fill="currentColor">0</text>
+<path d="M494 150 L596 260" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ds17v-m)"/>
+<rect x="552" y="172" width="128" height="28" rx="5" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="562" y="191" text-anchor="start" font-size="14" fill="currentColor">msg kèm</text>
+<text x="626" y="191" text-anchor="start" font-size="14" fill="currentColor" font-weight="700">[2, 0]</text>
+</g>
+<g data-step="3">
+<circle cx="600" cy="270" r="7" fill="#10b981" stroke="currentColor" stroke-width="1"/>
+<text x="614" y="256" text-anchor="start" font-size="14" fill="currentColor">receive [2,0]</text>
+<text x="470" y="315" text-anchor="end" font-size="14" fill="currentColor">max theo ô</text>
+<rect x="480" y="294" width="34" height="30" rx="3" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="1" stroke-width="2.4"/>
+<text x="497" y="315" text-anchor="middle" font-size="15" fill="#f59e0b" font-weight="700">2</text>
+<rect x="514" y="294" width="34" height="30" rx="3" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.5" stroke-width="1"/>
+<text x="531" y="315" text-anchor="middle" font-size="15" fill="currentColor">0</text>
+</g>
+<g data-step="4">
+<text x="640" y="350" text-anchor="middle" font-size="14" fill="currentColor">rồi B[1] += 1</text>
+<rect x="610" y="294" width="34" height="30" rx="3" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.5" stroke-width="1"/>
+<text x="627" y="315" text-anchor="middle" font-size="15" fill="currentColor">2</text>
+<rect x="644" y="294" width="34" height="30" rx="3" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="1" stroke-width="2.4"/>
+<text x="661" y="315" text-anchor="middle" font-size="15" fill="#f59e0b" font-weight="700">1</text>
+<path d="M552 309 L604 309" fill="none" stroke="currentColor" stroke-width="1.6" stroke-opacity="0.7" marker-end="url(#ds17v-m)"/>
+</g>
+<text x="150" y="372" text-anchor="start" font-size="13" fill="currentColor" opacity="0.7">ô viền đậm, số màu cam = ô vừa đổi</text>
 </svg>
+<step-note data-step="1">Internal event chỉ là việc A tự làm, nên chỉ tăng ô của chính A. Ô của B vẫn 0: A chưa biết gì về B.</step-note>
+<step-note data-step="2">Gửi cũng là một event: tăng ô mình trước, rồi đính bản sao cả vector vào message. Message mang theo mọi thứ A biết lúc gửi.</step-note>
+<step-note data-step="3">Lấy max theo từng ô: B học được A đã có 2 event, mà không làm mất những gì B tự biết.</step-note>
+<step-note data-step="4">Nhận cũng là một event của B, nên cuối cùng tăng ô của B. <code>[2, 1]</code> đọc là: biết 2 event của A, B đã làm 1 event.</step-note>
+</step-flow>
 
 ### 2.4 So sánh hai vector — trái tim của vector clock
 

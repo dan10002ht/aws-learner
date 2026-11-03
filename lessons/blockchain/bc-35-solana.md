@@ -38,32 +38,42 @@ Trên Solana **không có** khái niệm "contract có storage riêng". Thay và
 
 Điểm mấu chốt: **program là stateless**. Code nằm ở một account `executable`, còn **toàn bộ state** sống trong các data account **tách rời** mà program đó `owner`. Cùng một program (ví dụ SPL Token) phục vụ hàng triệu account token khác nhau — giống một hàm thuần nhận state qua tham số, thay vì một object mang state trong người như contract EVM.
 
-<svg viewBox="0 0 720 300" role="img" aria-labelledby="am-t am-d" style="width:100%;max-width:680px;height:auto;display:block;margin:1.25rem auto">
-<title id="am-t">Account model: EVM vs Solana</title>
-<desc id="am-d">Bên trái EVM gộp code và storage trong một contract; bên phải Solana tách program executable read-only khỏi nhiều data account có owner</desc>
-<text x="175" y="24" text-anchor="middle" font-size="14" fill="currentColor">EVM — code + state chung một chỗ</text>
-<rect x="90" y="70" width="170" height="150" rx="10" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="175" y="98" text-anchor="middle" font-size="13" fill="currentColor">Contract</text>
-<rect x="110" y="115" width="130" height="40" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="175" y="140" text-anchor="middle" font-size="12" fill="currentColor">code (bytecode)</text>
-<rect x="110" y="165" width="130" height="40" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="175" y="190" text-anchor="middle" font-size="12" fill="currentColor">storage (state)</text>
-<line x1="360" y1="40" x2="360" y2="270" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4"/>
-<text x="545" y="24" text-anchor="middle" font-size="14" fill="currentColor">Solana — program tách khỏi data</text>
-<rect x="440" y="60" width="200" height="46" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="540" y="80" text-anchor="middle" font-size="12" fill="currentColor">Program (executable)</text>
-<text x="540" y="97" text-anchor="middle" font-size="11" fill="currentColor">read-only, stateless</text>
-<rect x="430" y="130" width="95" height="55" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="477" y="152" text-anchor="middle" font-size="11" fill="currentColor">Data acct A</text>
-<text x="477" y="170" text-anchor="middle" font-size="10" fill="currentColor">owner=Prog</text>
-<rect x="555" y="130" width="95" height="55" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="602" y="152" text-anchor="middle" font-size="11" fill="currentColor">Data acct B</text>
-<text x="602" y="170" text-anchor="middle" font-size="10" fill="currentColor">owner=Prog</text>
-<line x1="500" y1="106" x2="477" y2="130" stroke="currentColor" stroke-width="1" marker-end="url(#a2)"/>
-<line x1="580" y1="106" x2="602" y2="130" stroke="currentColor" stroke-width="1" marker-end="url(#a2)"/>
-<text x="540" y="215" text-anchor="middle" font-size="11" fill="currentColor">1 program phục vụ N data account</text>
-<defs><marker id="a2" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<ab-toggle data-labels="EVM|Solana">
+<svg viewBox="0 0 520 320" role="img" aria-labelledby="bc35-med-0-t bc35-med-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="bc35-med-0-t">EVM và Solana: ranh giới code/state</title>
+<desc id="bc35-med-0-d">Cùng vị trí code và dữ liệu. EVM gom code và storage vào một contract; Solana tách program và các data account có owner.</desc>
+<defs><marker id="bc35-med-0-a" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L7 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<text x="260" y="26" text-anchor="middle" font-size="14" fill="currentColor">Code và state nằm ở đâu?</text>
+<rect x="65" y="48" width="390" height="246" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/>
+<text x="260" y="72" text-anchor="middle" font-size="14" fill="currentColor">Một contract EVM</text>
+<rect x="155" y="90" width="210" height="52" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="260" y="122" text-anchor="middle" font-size="14" fill="currentColor">code (bytecode)</text>
+<rect x="90" y="188" width="340" height="80" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="260" y="214" text-anchor="middle" font-size="14" fill="currentColor">storage (state)</text>
+<text x="175" y="244" text-anchor="middle" font-size="13" fill="currentColor">dữ liệu A</text>
+<text x="345" y="244" text-anchor="middle" font-size="13" fill="currentColor">dữ liệu B</text>
 </svg>
+<svg viewBox="0 0 520 320" role="img" aria-labelledby="bc35-med-1-t bc35-med-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="bc35-med-1-t">EVM và Solana: ranh giới code/state</title>
+<desc id="bc35-med-1-d">Cùng vị trí code và dữ liệu. EVM gom code và storage vào một contract; Solana tách program và các data account có owner.</desc>
+<defs><marker id="bc35-med-1-a" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L7 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<text x="260" y="26" text-anchor="middle" font-size="14" fill="currentColor">Code và state nằm ở đâu?</text>
+<rect x="155" y="90" width="210" height="52" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="260" y="111" text-anchor="middle" font-size="13" fill="currentColor">Program executable</text>
+<text x="260" y="132" text-anchor="middle" font-size="13" fill="currentColor">read-only · stateless</text>
+<rect x="65" y="188" width="170" height="80" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<rect x="285" y="188" width="170" height="80" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="150" y="215" text-anchor="middle" font-size="14" fill="currentColor">Data account A</text>
+<text x="370" y="215" text-anchor="middle" font-size="14" fill="currentColor">Data account B</text>
+<text x="150" y="244" text-anchor="middle" font-size="13" fill="currentColor">owner = Program</text>
+<text x="370" y="244" text-anchor="middle" font-size="13" fill="currentColor">owner = Program</text>
+<line x1="205" y1="145" x2="150" y2="183" stroke="currentColor" stroke-width="2"  marker-end="url(#bc35-med-1-a)"/>
+<line x1="315" y1="145" x2="370" y2="183" stroke="currentColor" stroke-width="2"  marker-end="url(#bc35-med-1-a)"/>
+<text x="260" y="294" text-anchor="middle" font-size="13" fill="currentColor">1 program → N data accounts</text>
+</svg>
+<ab-note>Code và storage cùng thuộc một contract; khung bao thể hiện ranh giới contract.</ab-note>
+<ab-note>Program tách rời state. Các cạnh nối đến nhiều data account biểu diễn quan hệ owner, không phải mỗi account giữ một bản code.</ab-note>
+</ab-toggle>
 
 ### 2.3 Vì sao tách code khỏi state?
 

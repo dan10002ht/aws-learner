@@ -149,15 +149,68 @@ Tính chất cốt lõi (clock condition): **`a → b ⟹ L(a) < L(b)`**. Nghĩa
 
 Ba process P1, P2, P3. Mũi tên = message. Ta chạy quy tắc R1/R2:
 
-```
-P1: a(1) ──────► b(2) ─────────────► f(6)
-                  │(gửi m1)              ▲
-                  ▼                      │(gửi m3)
-P2:          c(3) ── d(4) ─────────────►│
-                       │(gửi m2)     e(?)
-                       ▼
-P3:               g(?) ── ...
-```
+<step-flow>
+<svg viewBox="0 0 760 400" role="img" aria-labelledby="ds16l-t ds16l-d" font-family="ui-sans-serif, system-ui, sans-serif" style="width:100%;height:auto;display:block;margin:1.25rem auto">
+<title id="ds16l-t">Tính Lamport clock từng sự kiện giữa P1, P2, P3</title>
+<desc id="ds16l-d">Ba đường thời gian P1, P2, P3, bộ đếm bắt đầu 0. a(1), b gửi m1 t=2, c nhận m1 max(0,2)+1=3, d gửi m2 t=4, g nhận m2 max(0,4)+1=5, e gửi m3 t=5, f nhận m3 max(2,5)+1=6.</desc>
+<defs><marker id="ds16l-m" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker><marker id="ds16l-mg" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#10b981"/></marker><marker id="ds16l-mr" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#f43f5e"/></marker><marker id="ds16l-ma" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#f59e0b"/></marker><marker id="ds16l-mb" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#3b82f6"/></marker><marker id="ds16l-mv" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8b5cf6"/></marker><marker id="ds16l-mt" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#14b8a6"/></marker></defs>
+<rect x="16" y="72" width="56" height="36" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="44" y="95" text-anchor="middle" font-size="14" fill="currentColor" font-weight="600">P1</text>
+<path d="M80 90 H740" fill="none" stroke="currentColor" stroke-width="1.6" stroke-opacity="0.5" marker-end="url(#ds16l-m)"/>
+<text x="92" y="112" text-anchor="start" font-size="13" fill="currentColor" opacity="0.6">C=0</text>
+<rect x="16" y="192" width="56" height="36" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="44" y="215" text-anchor="middle" font-size="14" fill="currentColor" font-weight="600">P2</text>
+<path d="M80 210 H740" fill="none" stroke="currentColor" stroke-width="1.6" stroke-opacity="0.5" marker-end="url(#ds16l-m)"/>
+<text x="92" y="232" text-anchor="start" font-size="13" fill="currentColor" opacity="0.6">C=0</text>
+<rect x="16" y="312" width="56" height="36" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="44" y="335" text-anchor="middle" font-size="14" fill="currentColor" font-weight="600">P3</text>
+<path d="M80 330 H740" fill="none" stroke="currentColor" stroke-width="1.6" stroke-opacity="0.5" marker-end="url(#ds16l-m)"/>
+<text x="92" y="352" text-anchor="start" font-size="13" fill="currentColor" opacity="0.6">C=0</text>
+<text x="735" y="366" text-anchor="end" font-size="13" fill="currentColor" opacity="0.6">thời gian</text>
+<g data-step="1">
+<circle cx="140" cy="90" r="7" fill="#3b82f6" stroke="currentColor" stroke-width="1"/>
+<text x="140" y="74" text-anchor="middle" font-size="14" fill="currentColor" font-weight="600">a: 0+1 = 1</text>
+</g>
+<g data-step="2">
+<circle cx="250" cy="90" r="7" fill="#3b82f6" stroke="currentColor" stroke-width="1"/>
+<text x="250" y="74" text-anchor="middle" font-size="14" fill="currentColor" font-weight="600">b: 1+1 = 2</text>
+<path d="M254 98 L335 200" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ds16l-m)"/>
+<text x="268" y="156" text-anchor="end" font-size="13" fill="currentColor" opacity="0.85">m1 t=2</text>
+</g>
+<g data-step="3">
+<circle cx="340" cy="210" r="7" fill="#10b981" stroke="currentColor" stroke-width="1"/>
+<text x="340" y="240" text-anchor="middle" font-size="14" fill="currentColor" font-weight="600">c: max(0,2)+1 = 3</text>
+</g>
+<g data-step="4">
+<circle cx="440" cy="210" r="7" fill="#10b981" stroke="currentColor" stroke-width="1"/>
+<text x="440" y="194" text-anchor="middle" font-size="14" fill="currentColor" font-weight="600">d: 3+1 = 4</text>
+<path d="M444 218 L535 320" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ds16l-m)"/>
+<text x="478" y="290" text-anchor="end" font-size="13" fill="currentColor" opacity="0.85">m2 t=4</text>
+</g>
+<g data-step="5">
+<circle cx="540" cy="330" r="7" fill="#8b5cf6" stroke="currentColor" stroke-width="1"/>
+<text x="540" y="360" text-anchor="middle" font-size="14" fill="currentColor" font-weight="600">g: max(0,4)+1 = 5</text>
+<text x="700" y="335" text-anchor="middle" font-size="14" fill="currentColor" opacity="0.6">...</text>
+</g>
+<g data-step="6">
+<circle cx="580" cy="210" r="7" fill="#10b981" stroke="currentColor" stroke-width="1"/>
+<text x="580" y="240" text-anchor="middle" font-size="14" fill="currentColor" font-weight="600">e: 4+1 = 5</text>
+<path d="M584 202 L685 100" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ds16l-m)"/>
+<text x="650" y="160" text-anchor="start" font-size="13" fill="currentColor" opacity="0.85">m3 t=5</text>
+</g>
+<g data-step="7">
+<circle cx="690" cy="90" r="7" fill="#3b82f6" stroke="currentColor" stroke-width="1"/>
+<text x="740" y="74" text-anchor="end" font-size="14" fill="currentColor" font-weight="600">f: max(2,5)+1 = 6</text>
+</g>
+</svg>
+<step-note data-step="1">R1: sự kiện nội bộ, bộ đếm của P1 tăng từ 0.</step-note>
+<step-note data-step="2">Gửi cũng là một sự kiện nên tăng trước (R1), rồi message mang luôn giá trị vừa tăng làm timestamp.</step-note>
+<step-note data-step="3">R2: P2 chưa làm gì (C=0) nhưng phải nhảy qua 2, vì c xảy ra sau b theo nhân quả. Lấy max rồi cộng 1 để L(c) lớn hơn hẳn L(b).</step-note>
+<step-note data-step="4">Lại là R1 trên P2: tăng tiếp từ 3. Message <code>m2</code> mang t=4.</step-note>
+<step-note data-step="5">P3 nhận <code>m2</code>: max(0,4)+1. Một message đủ kéo bộ đếm của P3 vượt mọi thứ đã xảy ra trước nó.</step-note>
+<step-note data-step="6">e cũng ra 5 như g dù hai sự kiện không nối nhau bằng message nào: cùng số không có nghĩa là cùng lúc hay có quan hệ (xem 2.8).</step-note>
+<step-note data-step="7">Bộ đếm của P1 đang là 2, message mang 5: lấy max là 5 rồi cộng 1. Số của P1 bị kéo lên theo cái nó vừa biết.</step-note>
+</step-flow>
 
 Đi từng bước (bộ đếm mỗi process bắt đầu 0):
 

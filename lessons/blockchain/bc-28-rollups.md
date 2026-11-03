@@ -77,6 +77,56 @@ Hệ quả: **withdrawal về L1 phải chờ hết challenge period (~7 ngày)*
 
 **Giả định bảo mật**: cần **ít nhất 1 verifier trung thực** (1-of-N) sẵn sàng nộp fraud proof. Nếu tất cả verifier bị mua chuộc/offline suốt 7 ngày, gian lận lọt.
 
+<step-flow>
+<svg viewBox="0 0 720 390" role="img" aria-labelledby="bc28-med-t bc28-med-d" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto">
+<title id="bc28-med-t">Optimistic rollup: root có thể bị bác trước khi final</title>
+<desc id="bc28-med-d">Root ứng viên ở giữa; đường trên đi tới final nếu không bị bác trong thời hạn. Verifier gửi fraud proof theo nhánh dưới để L1 bác root sai.</desc>
+<defs><marker id="bc28-med-a" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L7 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<text x="360" y="25" text-anchor="middle" font-size="14" fill="currentColor">L1: state root ứng viên trong cửa sổ thách thức</text>
+<rect x="20" y="85" width="120" height="65" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="80" y="111" text-anchor="middle" font-size="13" fill="currentColor">Sequencer</text>
+<text x="80" y="132" text-anchor="middle" font-size="13" fill="currentColor">batch + root</text>
+<rect x="250" y="85" width="150" height="65" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="325" y="111" text-anchor="middle" font-size="14" fill="currentColor">Root ứng viên</text>
+<text x="325" y="132" text-anchor="middle" font-size="13" fill="currentColor">chưa final</text>
+<rect x="565" y="85" width="130" height="65" rx="8" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="630" y="124" text-anchor="middle" font-size="14" fill="currentColor">Final trên L1</text>
+<rect x="250" y="255" width="150" height="60" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="325" y="281" text-anchor="middle" font-size="14" fill="currentColor">Verifier</text>
+<text x="325" y="302" text-anchor="middle" font-size="13" fill="currentColor">≥ 1 trung thực</text>
+<rect x="565" y="255" width="130" height="60" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/>
+<text x="630" y="280" text-anchor="middle" font-size="14" fill="currentColor">Bác root sai</text>
+<text x="630" y="301" text-anchor="middle" font-size="13" fill="currentColor">slash bond</text>
+<line x1="245" y1="195" x2="695" y2="195" stroke="currentColor" stroke-width="2"  marker-end="url(#bc28-med-a)"/>
+<text x="245" y="219" text-anchor="start" font-size="13" fill="currentColor">Đăng root</text>
+<text x="695" y="219" text-anchor="end" font-size="13" fill="currentColor">~7 ngày</text>
+<g data-step="1">
+<line x1="143" y1="112" x2="246" y2="112" stroke="currentColor" stroke-width="2"  marker-end="url(#bc28-med-a)"/>
+<text x="195" y="76" text-anchor="middle" font-size="13" fill="currentColor">đăng lên L1</text>
+</g>
+<g data-step="2">
+<rect x="405" y="95" width="152" height="45" fill="#f59e0b" fill-opacity="0.14"/>
+<text x="480" y="78" text-anchor="middle" font-size="13" fill="currentColor">Challenge period</text>
+<text x="480" y="166" text-anchor="middle" font-size="13" fill="currentColor">withdrawal chờ</text>
+</g>
+<g data-step="3">
+<line x1="403" y1="285" x2="561" y2="285" stroke="currentColor" stroke-width="2"  marker-end="url(#bc28-med-a)"/>
+<text x="482" y="248" text-anchor="middle" font-size="13" fill="currentColor">fraud proof hợp lệ</text>
+<path d="M325 153 V250" fill="none" stroke="#8b5cf6" stroke-width="2" marker-end="url(#bc28-med-a)"/>
+<text x="458" y="328" text-anchor="middle" font-size="13" fill="currentColor">L1 phân xử đoạn tính toán bị tranh chấp</text>
+</g>
+<g data-step="4">
+<line x1="403" y1="112" x2="561" y2="112" stroke="currentColor" stroke-width="2"  marker-end="url(#bc28-med-a)"/>
+<text x="630" y="61" text-anchor="middle" font-size="13" fill="currentColor">Hết hạn, không bị bác</text>
+<text x="360" y="369" text-anchor="middle" font-size="13" fill="currentColor">Root sai bị rollback; người chứng minh được thưởng.</text>
+</g>
+</svg>
+<step-note data-step="1">Sequencer đăng dữ liệu batch và state root, chưa cần validity proof.</step-note>
+<step-note data-step="2">Trong cửa sổ thách thức, root có thể bị lật nên withdrawal chuẩn phải chờ.</step-note>
+<step-note data-step="3">Đây là nhánh có gian lận: verifier đưa tranh chấp lên L1; proof hợp lệ làm root sai bị bác và bond bị phạt.</step-note>
+<step-note data-step="4">Đây là nhánh thay thế khi hết thời hạn mà root không bị bác. Cần ít nhất một verifier trung thực sẵn sàng phản đối gian lận.</step-note>
+</step-flow>
+
 ### 2.4 ZK rollup — "chứng minh ngay" (validity proof)
 
 Triết lý ngược lại: **không tin gì cả, bắt chứng minh bằng toán**. Mỗi batch đi kèm một **validity proof** — zk-SNARK hoặc zk-STARK — chứng minh bằng mật mã rằng "áp dụng đúng các tx này lên old state root cho ra new state root này". L1 chạy một **verifier contract** kiểm proof: proof đúng → state root được chấp nhận **ngay**, sai → bị từ chối, không có đường lách.

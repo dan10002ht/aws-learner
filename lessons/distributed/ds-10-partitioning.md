@@ -118,27 +118,20 @@ partition = hash(key) mod N   // N = số partition
 - **Dynamic splitting**: hệ tự **chia đôi** một partition khi nó vượt ngưỡng dung lượng/tải (HBase region split, DynamoDB adaptive capacity), rồi chuyển nửa mới sang node khác.
 - **Cache trước hot key**: đặt hot key vào cache/CDN để chặn phần lớn đọc trước khi chạm storage.
 
-<svg viewBox="0 0 700 240" role="img" aria-labelledby="hs-t hs-d" style="width:100%;max-width:660px;height:auto;display:block;margin:1.25rem auto">
-<title id="hs-t">Hot spot trước và sau khi salting</title>
-<desc id="hs-d">Trước khi salting một partition nhận toàn bộ tải, sau khi salting tải chia đều ra nhiều partition</desc>
-<text x="170" y="24" text-anchor="middle" font-size="14" fill="currentColor">Trước: hot key dồn 1 partition</text>
-<rect x="40" y="120" width="70" height="90" rx="6" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="75" y="228" text-anchor="middle" font-size="11" fill="currentColor">P0 (nóng)</text>
-<rect x="125" y="185" width="70" height="25" rx="6" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="160" y="228" text-anchor="middle" font-size="11" fill="currentColor">P1</text>
-<rect x="210" y="185" width="70" height="25" rx="6" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="245" y="228" text-anchor="middle" font-size="11" fill="currentColor">P2</text>
-<text x="75" y="108" text-anchor="middle" font-size="11" fill="currentColor">100% ghi</text>
-<line x1="355" y1="30" x2="355" y2="215" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4"/>
-<text x="530" y="24" text-anchor="middle" font-size="14" fill="currentColor">Sau: salt key#0..#2</text>
-<rect x="415" y="150" width="70" height="60" rx="6" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="450" y="228" text-anchor="middle" font-size="11" fill="currentColor">P0</text>
-<rect x="500" y="150" width="70" height="60" rx="6" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="535" y="228" text-anchor="middle" font-size="11" fill="currentColor">P1</text>
-<rect x="585" y="150" width="70" height="60" rx="6" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="620" y="228" text-anchor="middle" font-size="11" fill="currentColor">P2</text>
-<text x="535" y="138" text-anchor="middle" font-size="11" fill="currentColor">~33% mỗi partition</text>
+<ab-toggle data-labels="Hot key|Salt 3 nhánh">
+<svg viewBox="0 0 500 295" role="img" aria-labelledby="ds10med-0-t ds10med-0-d" style="width:100%;max-width:500px;height:auto;display:block;margin:1.25rem auto">
+<title id="ds10med-0-t">Salting phân tải ghi qua ba partition</title>
+<desc id="ds10med-0-d">Salting phân tải ghi qua ba partition</desc>
+<text x="250" y="25" text-anchor="middle" font-size="13" fill="currentColor">Tải ghi của hot key (cùng tổng tải)</text><path d="M30 65 V230 H120" fill="none" stroke="currentColor" stroke-opacity="0.3"/><rect x="40" y="80.0" width="70" height="150.0" rx="6" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/><text x="75" y="250" text-anchor="middle" font-size="13" fill="currentColor">P0</text><text x="75" y="275" text-anchor="middle" font-size="13" fill="currentColor">key</text><text x="75" y="70.0" text-anchor="middle" font-size="13" fill="currentColor">100%</text><path d="M200 65 V230 H290" fill="none" stroke="currentColor" stroke-opacity="0.3"/><text x="245" y="250" text-anchor="middle" font-size="13" fill="currentColor">P1</text><text x="245" y="275" text-anchor="middle" font-size="13" fill="currentColor">—</text><text x="245" y="220.0" text-anchor="middle" font-size="13" fill="currentColor">0%</text><path d="M370 65 V230 H460" fill="none" stroke="currentColor" stroke-opacity="0.3"/><text x="415" y="250" text-anchor="middle" font-size="13" fill="currentColor">P2</text><text x="415" y="275" text-anchor="middle" font-size="13" fill="currentColor">—</text><text x="415" y="220.0" text-anchor="middle" font-size="13" fill="currentColor">0%</text>
 </svg>
+<svg viewBox="0 0 500 295" role="img" aria-labelledby="ds10med-1-t ds10med-1-d" style="width:100%;max-width:500px;height:auto;display:block;margin:1.25rem auto">
+<title id="ds10med-1-t">Salting phân tải ghi qua ba partition</title>
+<desc id="ds10med-1-d">Salting phân tải ghi qua ba partition</desc>
+<text x="250" y="25" text-anchor="middle" font-size="13" fill="currentColor">Tải ghi của hot key (cùng tổng tải)</text><path d="M30 65 V230 H120" fill="none" stroke="currentColor" stroke-opacity="0.3"/><rect x="40" y="180.0" width="70" height="50.0" rx="6" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="75" y="250" text-anchor="middle" font-size="13" fill="currentColor">P0</text><text x="75" y="275" text-anchor="middle" font-size="13" fill="currentColor">key#0</text><text x="75" y="170.0" text-anchor="middle" font-size="13" fill="currentColor">~33%</text><path d="M200 65 V230 H290" fill="none" stroke="currentColor" stroke-opacity="0.3"/><rect x="210" y="180.0" width="70" height="50.0" rx="6" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="245" y="250" text-anchor="middle" font-size="13" fill="currentColor">P1</text><text x="245" y="275" text-anchor="middle" font-size="13" fill="currentColor">key#1</text><text x="245" y="170.0" text-anchor="middle" font-size="13" fill="currentColor">~33%</text><path d="M370 65 V230 H460" fill="none" stroke="currentColor" stroke-opacity="0.3"/><rect x="380" y="180.0" width="70" height="50.0" rx="6" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="415" y="250" text-anchor="middle" font-size="13" fill="currentColor">P2</text><text x="415" y="275" text-anchor="middle" font-size="13" fill="currentColor">key#2</text><text x="415" y="170.0" text-anchor="middle" font-size="13" fill="currentColor">~33%</text>
+</svg>
+<ab-note>Một key nhận 100% tải ghi trên P0; các cột chỉ tính tải của key này.</ab-note>
+<ab-note>Ví dụ hình dùng 3 salt: key#0..#2 chia tải xấp xỉ 33% mỗi partition. Đọc phải gộp cả ba; ví dụ văn phía trên dùng 10 salt.</ab-note>
+</ab-toggle>
 
 ---
 

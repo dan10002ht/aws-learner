@@ -17,28 +17,60 @@ Analogy: một nút giao thông kẹt cứng. Xe không đi được, dồn ngư
 
 Bản chất: khi B chậm, mỗi request tới A **giữ tài nguyên của A lâu hơn**. Với tải không đổi, số request đồng thời (concurrency) = throughput × latency (**định luật Little**). Latency tăng 10× thì số request "đang bay" tăng 10× → pool cạn → A từ chối cả những request lẽ ra phục vụ được. Toàn bộ các pattern dưới đây tồn tại để **chặn vòng khuếch đại này**.
 
-<svg viewBox="0 0 700 210" role="img" aria-labelledby="cf-t cf-d" style="width:100%;max-width:660px;height:auto;display:block;margin:1.25rem auto">
-<title id="cf-t">Cascading failure lan ngược từ downstream lên upstream</title>
-<desc id="cf-d">Service D chậm làm C giữ tài nguyên, C cạn pool kéo theo B rồi A cùng sập theo</desc>
-<rect x="20" y="80" width="120" height="50" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="80" y="102" text-anchor="middle" font-size="13" fill="currentColor">A (edge)</text>
-<text x="80" y="120" text-anchor="middle" font-size="10" fill="currentColor">pool cạn</text>
-<rect x="180" y="80" width="120" height="50" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="240" y="102" text-anchor="middle" font-size="13" fill="currentColor">B</text>
-<text x="240" y="120" text-anchor="middle" font-size="10" fill="currentColor">chờ C, cạn pool</text>
-<rect x="340" y="80" width="120" height="50" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="400" y="102" text-anchor="middle" font-size="13" fill="currentColor">C</text>
-<text x="400" y="120" text-anchor="middle" font-size="10" fill="currentColor">chờ D</text>
-<rect x="500" y="80" width="120" height="50" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="560" y="102" text-anchor="middle" font-size="13" fill="currentColor">D (chậm/chết)</text>
-<text x="560" y="120" text-anchor="middle" font-size="10" fill="currentColor">gốc sự cố</text>
-<line x1="140" y1="105" x2="178" y2="105" stroke="currentColor" stroke-width="1.5" marker-end="url(#cfa)"/>
-<line x1="300" y1="105" x2="338" y2="105" stroke="currentColor" stroke-width="1.5" marker-end="url(#cfa)"/>
-<line x1="460" y1="105" x2="498" y2="105" stroke="currentColor" stroke-width="1.5" marker-end="url(#cfa)"/>
-<text x="350" y="30" text-anchor="middle" font-size="12" fill="#f43f5e">áp lực lan NGƯỢC lên upstream</text>
-<line x1="560" y1="60" x2="80" y2="60" stroke="#f43f5e" stroke-width="1.2" stroke-dasharray="5 4" marker-end="url(#cfa)"/>
-<defs><marker id="cfa" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<auto-anim data-dur="12">
+<svg viewBox="0 0 520 300" role="img" aria-labelledby="ds22c-t ds22c-d" font-family="ui-sans-serif, system-ui, sans-serif" style="width:100%;height:auto;display:block;margin:1.25rem auto">
+<title id="ds22c-t">Cascading failure lan ngược từ downstream lên upstream</title>
+<desc id="ds22c-d">A gọi B, B gọi C, C gọi D. D chậm/chết là gốc sự cố; C giữ request chờ D nên pool cạn, rồi B chờ C cạn pool, rồi A (edge) cạn pool. Dải thời gian bên dưới cho thấy thứ tự: D chậm, C cạn, B cạn, A cạn. Định luật Little: số request đang bay = throughput × latency; latency tăng 10× thì đang bay tăng 10×.</desc>
+<defs><marker id="ds22c-m" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker><marker id="ds22c-mg" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#10b981"/></marker><marker id="ds22c-mr" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#f43f5e"/></marker><marker id="ds22c-ma" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#f59e0b"/></marker><marker id="ds22c-mb" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#3b82f6"/></marker><marker id="ds22c-mv" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8b5cf6"/></marker><marker id="ds22c-mt" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#14b8a6"/></marker></defs>
+<text x="260" y="20" text-anchor="middle" font-size="14" fill="#f43f5e" font-weight="600">áp lực lan NGƯỢC lên upstream</text>
+<path d="M455 34 L65 34" fill="none" stroke="#f43f5e" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#ds22c-mr)"/>
+<rect x="10" y="48" width="110" height="52" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="65.0" y="79" text-anchor="middle" font-size="14" fill="currentColor" font-weight="600">A (edge)</text>
+<path d="M122 74 L136 74" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ds22c-m)"/>
+<rect x="10" y="116" width="110" height="22" rx="4" fill="none" stroke="currentColor" stroke-opacity="0.5" stroke-width="1"/>
+<rect x="10" y="116" width="22" height="22" rx="4" fill="#f59e0b" fill-opacity="0.45"><animate attributeName="width" dur="12s" repeatCount="indefinite" keyTimes="0;0.5;0.7;0.92;1" values="22;22;110;110;22"/><animate attributeName="fill" dur="12s" repeatCount="indefinite" keyTimes="0;0.5;0.7;0.92;1" values="#f59e0b;#f59e0b;#f43f5e;#f43f5e;#f59e0b"/></rect>
+<text x="16" y="132" text-anchor="start" font-size="13" fill="currentColor">pool</text>
+<text x="65.0" y="160" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">ổn<animate attributeName="opacity" dur="12s" repeatCount="indefinite" keyTimes="0;0.5;0.52;0.92;1" values="0.7;0.7;0;0;0.7"/></text>
+<text x="65.0" y="160" text-anchor="middle" font-size="13" fill="#f43f5e" font-weight="600" opacity="0">pool cạn<animate attributeName="opacity" dur="12s" repeatCount="indefinite" keyTimes="0;0.6799999999999999;0.7;0.92;1" values="0;0;1;1;0"/></text>
+<rect x="140" y="48" width="110" height="52" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="195.0" y="79" text-anchor="middle" font-size="14" fill="currentColor" font-weight="600">B</text>
+<path d="M252 74 L266 74" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ds22c-m)"/>
+<rect x="140" y="116" width="110" height="22" rx="4" fill="none" stroke="currentColor" stroke-opacity="0.5" stroke-width="1"/>
+<rect x="140" y="116" width="22" height="22" rx="4" fill="#f59e0b" fill-opacity="0.45"><animate attributeName="width" dur="12s" repeatCount="indefinite" keyTimes="0;0.3;0.5;0.92;1" values="22;22;110;110;22"/><animate attributeName="fill" dur="12s" repeatCount="indefinite" keyTimes="0;0.3;0.5;0.92;1" values="#f59e0b;#f59e0b;#f43f5e;#f43f5e;#f59e0b"/></rect>
+<text x="146" y="132" text-anchor="start" font-size="13" fill="currentColor">pool</text>
+<text x="195.0" y="160" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">ổn<animate attributeName="opacity" dur="12s" repeatCount="indefinite" keyTimes="0;0.3;0.32;0.92;1" values="0.7;0.7;0;0;0.7"/></text>
+<text x="195.0" y="160" text-anchor="middle" font-size="13" fill="#f43f5e" font-weight="600" opacity="0">chờ C, cạn pool<animate attributeName="opacity" dur="12s" repeatCount="indefinite" keyTimes="0;0.48;0.5;0.92;1" values="0;0;1;1;0"/></text>
+<rect x="270" y="48" width="110" height="52" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="325.0" y="79" text-anchor="middle" font-size="14" fill="currentColor" font-weight="600">C</text>
+<path d="M382 74 L396 74" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ds22c-m)"/>
+<rect x="270" y="116" width="110" height="22" rx="4" fill="none" stroke="currentColor" stroke-opacity="0.5" stroke-width="1"/>
+<rect x="270" y="116" width="22" height="22" rx="4" fill="#f59e0b" fill-opacity="0.45"><animate attributeName="width" dur="12s" repeatCount="indefinite" keyTimes="0;0.12;0.3;0.92;1" values="22;22;110;110;22"/><animate attributeName="fill" dur="12s" repeatCount="indefinite" keyTimes="0;0.12;0.3;0.92;1" values="#f59e0b;#f59e0b;#f43f5e;#f43f5e;#f59e0b"/></rect>
+<text x="276" y="132" text-anchor="start" font-size="13" fill="currentColor">pool</text>
+<text x="325.0" y="160" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">ổn<animate attributeName="opacity" dur="12s" repeatCount="indefinite" keyTimes="0;0.12;0.13999999999999999;0.92;1" values="0.7;0.7;0;0;0.7"/></text>
+<text x="325.0" y="160" text-anchor="middle" font-size="13" fill="#f43f5e" font-weight="600" opacity="0">chờ D<animate attributeName="opacity" dur="12s" repeatCount="indefinite" keyTimes="0;0.27999999999999997;0.3;0.92;1" values="0;0;1;1;0"/></text>
+<rect x="400" y="48" width="110" height="52" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<rect x="400" y="48" width="110" height="52" rx="8" fill="#f43f5e" fill-opacity="0"><animate attributeName="fill-opacity" dur="12s" repeatCount="indefinite" keyTimes="0;0.04;0.1;0.92;1" values="0;0;0.35;0.35;0"/></rect>
+<text x="455.0" y="79" text-anchor="middle" font-size="14" fill="currentColor" font-weight="600">D (chậm/chết)</text>
+<rect x="400" y="116" width="110" height="22" rx="4" fill="none" stroke="currentColor" stroke-opacity="0.5" stroke-width="1"/>
+<rect x="400" y="116" width="11" height="22" rx="4" fill="#f43f5e" fill-opacity="0.45"><animate attributeName="width" dur="12s" repeatCount="indefinite" keyTimes="0;0.04;0.1;0.92;1" values="11;11;110;110;11"/></rect>
+<text x="406" y="132" text-anchor="start" font-size="13" fill="currentColor">latency</text>
+<text x="455.0" y="160" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">ổn<animate attributeName="opacity" dur="12s" repeatCount="indefinite" keyTimes="0;0.04;0.06;0.92;1" values="0.7;0.7;0;0;0.7"/></text>
+<text x="455.0" y="160" text-anchor="middle" font-size="13" fill="#f43f5e" font-weight="600" opacity="0">gốc sự cố<animate attributeName="opacity" dur="12s" repeatCount="indefinite" keyTimes="0;0.08;0.1;0.92;1" values="0;0;1;1;0"/></text>
+<text x="260" y="196" text-anchor="middle" font-size="14" fill="currentColor">Little: đang bay = throughput × latency</text>
+<text x="260" y="216" text-anchor="middle" font-size="14" fill="currentColor" opacity="0.85">latency ×10 → đang bay ×10 → pool cạn</text>
+<path d="M30 250 H490" fill="none" stroke="currentColor" stroke-width="2" stroke-opacity="0.5"/>
+<path d="M76.0 244 V256" fill="none" stroke="currentColor" stroke-width="1.6" stroke-opacity="0.6"/>
+<text x="76.0" y="276" text-anchor="middle" font-size="13" fill="currentColor">D chậm</text>
+<path d="M168.0 244 V256" fill="none" stroke="currentColor" stroke-width="1.6" stroke-opacity="0.6"/>
+<text x="168.0" y="276" text-anchor="middle" font-size="13" fill="currentColor">C cạn</text>
+<path d="M260.0 244 V256" fill="none" stroke="currentColor" stroke-width="1.6" stroke-opacity="0.6"/>
+<text x="260.0" y="276" text-anchor="middle" font-size="13" fill="currentColor">B cạn</text>
+<path d="M352.0 244 V256" fill="none" stroke="currentColor" stroke-width="1.6" stroke-opacity="0.6"/>
+<text x="352.0" y="276" text-anchor="middle" font-size="13" fill="currentColor">A cạn</text>
+<text x="490" y="276" text-anchor="end" font-size="13" fill="currentColor" opacity="0.6">thời gian</text>
+<circle cx="30" cy="250" r="6" fill="#f43f5e"><animate attributeName="cx" dur="12s" repeatCount="indefinite" keyTimes="0;0.92;1" values="30;453.20000000000005;453.20000000000005"/></circle>
 </svg>
+</auto-anim>
 
 ---
 

@@ -113,6 +113,100 @@ Hai chỉ số cần phân biệt rạch ròi:
 | **commitIndex** | Index cao nhất được biết là đã **committed** (đã replicate lên đa số, an toàn, không bao giờ mất). |
 | **lastApplied** | Index cao nhất đã được **apply** vào state machine cục bộ. Luôn `lastApplied ≤ commitIndex`. |
 
+<step-flow>
+<svg viewBox="0 0 760 400" role="img" aria-labelledby="ds14r-t ds14r-d" font-family="ui-sans-serif, system-ui, sans-serif" style="width:100%;height:auto;display:block;margin:1.25rem auto">
+<title id="ds14r-t">Một lần ghi đi qua log replication của Raft</title>
+<desc id="ds14r-d">Cụm 3 node: client gửi SET z=9 tới leader; leader append idx 4 chưa committed, gửi AppendEntries song song; F1 append và ack nên leader cộng F1 là 2/3, đa số; leader commit, commitIndex lên 4, apply rồi trả OK; F2 chậm, nhận entry sau; heartbeat kế tiếp mang commitIndex=4 để follower apply, lastApplied đuổi theo commitIndex.</desc>
+<defs><marker id="ds14r-m" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker><marker id="ds14r-mg" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#10b981"/></marker><marker id="ds14r-mr" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#f43f5e"/></marker><marker id="ds14r-ma" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#f59e0b"/></marker><marker id="ds14r-mb" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#3b82f6"/></marker><marker id="ds14r-mv" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8b5cf6"/></marker><marker id="ds14r-mt" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#14b8a6"/></marker></defs>
+<rect x="20" y="16" width="100" height="36" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="70" y="39" text-anchor="middle" font-size="14" fill="currentColor">Client</text>
+<text x="174.0" y="86" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">idx 1</text>
+<text x="249.0" y="86" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">idx 2</text>
+<text x="324.0" y="86" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">idx 3</text>
+<text x="399.0" y="86" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">idx 4</text>
+<rect x="20" y="96" width="100" height="48" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="70" y="125" text-anchor="middle" font-size="14" fill="currentColor" font-weight="600">Leader</text>
+<rect x="140" y="96" width="68" height="48" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="174.0" y="125" text-anchor="middle" font-size="14" fill="currentColor">t1 x=1</text>
+<rect x="215" y="96" width="68" height="48" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="249.0" y="125" text-anchor="middle" font-size="14" fill="currentColor">t1 y=2</text>
+<rect x="290" y="96" width="68" height="48" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="324.0" y="125" text-anchor="middle" font-size="14" fill="currentColor">t2 x=3</text>
+<text x="500" y="116" text-anchor="start" font-size="14" fill="currentColor">commitIndex 3</text>
+<text x="500" y="137" text-anchor="start" font-size="14" fill="currentColor">lastApplied 3</text>
+<rect x="20" y="206" width="100" height="48" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="70" y="235" text-anchor="middle" font-size="14" fill="currentColor">Follower 1</text>
+<rect x="140" y="206" width="68" height="48" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="174.0" y="235" text-anchor="middle" font-size="14" fill="currentColor">t1 x=1</text>
+<rect x="215" y="206" width="68" height="48" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="249.0" y="235" text-anchor="middle" font-size="14" fill="currentColor">t1 y=2</text>
+<rect x="290" y="206" width="68" height="48" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="324.0" y="235" text-anchor="middle" font-size="14" fill="currentColor">t2 x=3</text>
+<text x="500" y="226" text-anchor="start" font-size="14" fill="currentColor">commitIndex 3</text>
+<text x="500" y="247" text-anchor="start" font-size="14" fill="currentColor">lastApplied 3</text>
+<rect x="20" y="316" width="100" height="48" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="70" y="345" text-anchor="middle" font-size="14" fill="currentColor">Follower 2</text>
+<rect x="140" y="316" width="68" height="48" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="174.0" y="345" text-anchor="middle" font-size="14" fill="currentColor">t1 x=1</text>
+<rect x="215" y="316" width="68" height="48" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="249.0" y="345" text-anchor="middle" font-size="14" fill="currentColor">t1 y=2</text>
+<rect x="290" y="316" width="68" height="48" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="324.0" y="345" text-anchor="middle" font-size="14" fill="currentColor">t2 x=3</text>
+<text x="500" y="336" text-anchor="start" font-size="14" fill="currentColor">commitIndex 3</text>
+<text x="500" y="357" text-anchor="start" font-size="14" fill="currentColor">lastApplied 3</text>
+<rect x="365" y="316" width="68" height="48" rx="6" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-width="1" stroke-dasharray="4 3"/>
+<rect x="150" y="380" width="16" height="12" rx="2" fill="#10b981" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="172" y="391" text-anchor="start" font-size="13" fill="currentColor">committed</text>
+<rect x="270" y="380" width="16" height="12" rx="2" fill="#f59e0b" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.55" stroke-width="1" stroke-dasharray="3 2"/>
+<text x="292" y="391" text-anchor="start" font-size="13" fill="currentColor">có trong log, chưa committed</text>
+<g data-step="1">
+<path d="M36 54 L36 94" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ds14r-m)"/>
+<text x="42" y="72" text-anchor="start" font-size="13" fill="currentColor">SET z=9</text>
+</g>
+<g data-step="2">
+<rect x="365" y="96" width="68" height="48" rx="6" fill="#f59e0b" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.8" stroke-width="1.6" stroke-dasharray="4 3"/>
+<text x="399.0" y="125" text-anchor="middle" font-size="14" fill="currentColor">t3 z=9</text>
+</g>
+<g data-step="3">
+<path d="M380 146 L380 204" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ds14r-m)"/>
+<path d="M435 112 H455 V340 H437" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ds14r-m)"/>
+<text x="470" y="168" text-anchor="start" font-size="14" fill="currentColor">AppendEntries idx 4</text>
+</g>
+<g data-step="4">
+<rect x="365" y="206" width="68" height="48" rx="6" fill="#f59e0b" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.8" stroke-width="1.6"/>
+<text x="399.0" y="235" text-anchor="middle" font-size="14" fill="currentColor">t3 z=9</text>
+<path d="M422 204 L422 148" fill="none" stroke="#10b981" stroke-width="1.6" marker-end="url(#ds14r-mg)"/>
+<text x="470" y="192" text-anchor="start" font-size="14" fill="#10b981">ack: leader + F1 = 2/3, đa số</text>
+<text x="470" y="290" text-anchor="start" font-size="14" fill="#f59e0b">F2 chậm, chưa có idx 4</text>
+</g>
+<g data-step="5">
+<rect x="365" y="96" width="68" height="48" rx="6" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.8" stroke-width="1.6"/>
+<path d="M104 94 L104 56" fill="none" stroke="#10b981" stroke-width="1.6" marker-end="url(#ds14r-mg)"/>
+<text x="112" y="84" text-anchor="start" font-size="14" fill="#10b981" font-weight="600">OK</text>
+<text x="612" y="116" text-anchor="start" font-size="14" fill="#10b981" font-weight="700">→ 4</text>
+<text x="612" y="137" text-anchor="start" font-size="14" fill="#10b981" font-weight="700">→ 4</text>
+</g>
+<g data-step="6">
+<rect x="365" y="206" width="68" height="48" rx="6" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.8" stroke-width="1.6"/>
+<rect x="365" y="316" width="68" height="48" rx="6" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.8" stroke-width="1.6"/>
+<text x="399.0" y="345" text-anchor="middle" font-size="14" fill="currentColor">t3 z=9</text>
+<path d="M60 146 L60 204" fill="none" stroke="#14b8a6" stroke-width="1.6" marker-end="url(#ds14r-mt)"/>
+<path d="M20 132 H8 V340 H18" fill="none" stroke="#14b8a6" stroke-width="1.6" marker-end="url(#ds14r-mt)"/>
+<text x="68" y="180" text-anchor="start" font-size="13" fill="#14b8a6">heartbeat: commitIndex=4</text>
+<text x="612" y="226" text-anchor="start" font-size="14" fill="#10b981" font-weight="700">→ 4</text>
+<text x="612" y="247" text-anchor="start" font-size="14" fill="#10b981" font-weight="700">→ 4</text>
+<text x="612" y="336" text-anchor="start" font-size="14" fill="#10b981" font-weight="700">→ 4</text>
+<text x="612" y="357" text-anchor="start" font-size="14" fill="#10b981" font-weight="700">→ 4</text>
+</g>
+</svg>
+<step-note data-step="1">Chỉ leader nhận ghi, nên mọi entry có đúng một nơi quyết định vị trí <code>index</code> của nó.</step-note>
+<step-note data-step="2">Entry nằm trong log leader nhưng chưa committed: leader chết lúc này thì entry có thể mất, nên chưa được trả lời client.</step-note>
+<step-note data-step="3">Gửi song song tới mọi follower. Leader không chờ đủ cả cụm, chỉ cần đủ đa số.</step-note>
+<step-note data-step="4">F1 ghi entry vào log rồi mới ack. Leader + F1 là 2 trên 3 node: đủ đa số, dù F2 chưa trả lời.</step-note>
+<step-note data-step="5">Đủ đa số thì entry an toàn: leader tăng <code>commitIndex</code>, apply <code>z=9</code> vào state machine rồi mới trả OK cho client.</step-note>
+<step-note data-step="6">Follower chỉ biết entry đã committed qua heartbeat/AppendEntries kế tiếp, lúc đó mới apply: <code>lastApplied</code> đuổi theo <code>commitIndex</code>. F2 nhận idx 4 khi leader gửi lại.</step-note>
+</step-flow>
+
 <svg viewBox="0 0 700 260" role="img" aria-labelledby="lg-t lg-d" style="width:100%;max-width:660px;height:auto;display:block;margin:1.25rem auto">
 <title id="lg-t">Replicated log của leader và các follower</title>
 <desc id="lg-d">Log của leader và hai follower với các entry gồm index và term, phần đã committed tô đậm còn phần chưa committed nhạt hơn</desc>

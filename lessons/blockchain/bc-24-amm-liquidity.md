@@ -27,28 +27,44 @@ x · y = k   (k là hằng số, chỉ đổi khi có người thêm/rút thanh 
 
 ### 2.2 Đường cong x·y=k và giá spot
 
-<svg viewBox="0 0 640 380" role="img" aria-labelledby="xy-t xy-d" style="width:100%;max-width:560px;height:auto;display:block;margin:1.25rem auto">
-<title id="xy-t">Đường cong constant product x·y=k</title>
-<desc id="xy-d">Hyperbol x nhân y bằng k; giá spot là độ dốc tiếp tuyến; một swap trượt dọc đường cong</desc>
-<line x1="70" y1="330" x2="600" y2="330" stroke="currentColor" stroke-width="1.5" marker-end="url(#a2)"/>
-<line x1="70" y1="330" x2="70" y2="30" stroke="currentColor" stroke-width="1.5" marker-end="url(#a2)"/>
-<text x="600" y="355" text-anchor="end" font-size="13" fill="currentColor">reserve X →</text>
-<text x="52" y="40" text-anchor="end" font-size="13" fill="currentColor">Y</text>
-<path d="M100,300 Q160,120 250,110 Q400,95 560,80" fill="none" stroke="#3b82f6" stroke-width="2.5"/>
-<text x="470" y="70" font-size="12" fill="#3b82f6">x·y = k</text>
-<circle cx="180" cy="150" r="5" fill="#10b981"/>
-<line x1="120" y1="185" x2="260" y2="115" stroke="#10b981" stroke-width="1.5" stroke-dasharray="4 4"/>
-<text x="120" y="140" font-size="11" fill="#10b981">độ dốc = giá spot</text>
-<line x1="180" y1="150" x2="180" y2="330" stroke="currentColor" stroke-width="0.8" stroke-dasharray="3 3"/>
-<line x1="70" y1="150" x2="180" y2="150" stroke="currentColor" stroke-width="0.8" stroke-dasharray="3 3"/>
-<text x="180" y="348" text-anchor="middle" font-size="11" fill="currentColor">x</text>
-<text x="60" y="154" text-anchor="end" font-size="11" fill="currentColor">y</text>
-<circle cx="320" cy="105" r="5" fill="#f59e0b"/>
-<path d="M188,152 Q260,120 315,108" fill="none" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#a2)"/>
-<text x="240" y="205" text-anchor="middle" font-size="11" fill="#f59e0b">swap X→Y: trượt dọc đường cong</text>
-<text x="335" y="365" text-anchor="middle" font-size="11" fill="currentColor">Reserve không bao giờ chạm 0 — thanh khoản luôn còn, chỉ càng lúc càng đắt</text>
-<defs><marker id="a2" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<auto-anim data-dur="9">
+<svg viewBox="0 0 520 470" role="img" aria-labelledby="bc24-med-t bc24-med-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="bc24-med-t">Swap di chuyển trên đường cong AMM</title>
+<desc id="bc24-med-d">Bán ETH làm reserve X tăng, reserve Y giảm và tiếp tuyến phẳng dần. Ba trạng thái minh họa cùng một swap không phí.</desc>
+<defs><marker id="bc24-med-a" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L7 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<text x="260" y="24" text-anchor="middle" font-size="14" fill="currentColor">Swap 10 ETH → USDC (không phí)</text>
+<line x1="55" y1="340" x2="490" y2="340" stroke="currentColor" stroke-width="2"  marker-end="url(#bc24-med-a)"/>
+<line x1="55" y1="340" x2="55" y2="45" stroke="currentColor" stroke-width="2"  marker-end="url(#bc24-med-a)"/>
+<text x="490" y="363" text-anchor="end" font-size="13" fill="currentColor">Reserve X (ETH)</text>
+<text x="61" y="48" text-anchor="start" font-size="13" fill="currentColor">Y (USDC)</text>
+<path d="M70.00,72.14 L75.00,75.45 L80.00,78.68 L85.00,81.82 L90.00,84.90 L95.00,87.90 L100.00,90.83 L105.00,93.69 L110.00,96.49 L115.00,99.23 L120.00,101.90 L125.00,104.52 L130.00,107.08 L135.00,109.59 L140.00,112.04 L145.00,114.44 L150.00,116.79 L155.00,119.09 L160.00,121.34 L165.00,123.55 L170.00,125.71 L175.00,127.84 L180.00,129.92 L185.00,131.96 L190.00,133.96 L195.00,135.92 L200.00,137.84 L205.00,139.73 L210.00,141.59 L215.00,143.41 L220.00,145.19 L225.00,146.95 L230.00,148.67 L235.00,150.37 L240.00,152.03 L245.00,153.66 L250.00,155.27 L255.00,156.85 L260.00,158.40 L265.00,159.93 L270.00,161.43 L275.00,162.90 L280.00,164.36 L285.00,165.78 L290.00,167.19 L295.00,168.57 L300.00,169.93 L305.00,171.27 L310.00,172.59 L315.00,173.89 L320.00,175.16 L325.00,176.42 L330.00,177.66 L335.00,178.88 L340.00,180.09 L345.00,181.27 L350.00,182.44 L355.00,183.59 L360.00,184.72 L365.00,185.84 L370.00,186.94 L375.00,188.02 L380.00,189.09 L385.00,190.15 L390.00,191.19 L395.00,192.22 L400.00,193.23 L405.00,194.23 L410.00,195.21 L415.00,196.18 L420.00,197.14 L425.00,198.09 L430.00,199.02 L435.00,199.94 L440.00,200.85 L445.00,201.75 L450.00,202.64 L455.00,203.51 L460.00,204.38 L465.00,205.23 L470.00,206.07" fill="none" stroke="#3b82f6" stroke-width="3"/>
+<text x="385" y="179" text-anchor="middle" font-size="13" fill="currentColor">x·y = 30,000,000</text>
+<circle cx="170" cy="125.71428571428572" r="7" fill="#10b981"><animate attributeName="cx" dur="9s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;0.33;0.66;1" values="170;195;220;170"/><animate attributeName="cy" dur="9s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;0.33;0.66;1" values="125.71;135.92;145.19;125.71"/></circle>
+<g opacity="1"><animate attributeName="opacity" dur="9s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;0.33;0.66;1" values="1;0;0;1"/>
+<line x1="115" y1="102.14285714285715" x2="225" y2="149.28571428571428" stroke="#10b981" stroke-width="2" stroke-dasharray="4 3"/>
+<text x="280" y="65" text-anchor="middle" font-size="13" fill="currentColor">x = 100 ETH; y = 300,000.0 USDC</text>
+<text x="280" y="87" text-anchor="middle" font-size="13" fill="currentColor">Giá spot |dy/dx| = 3,000 USDC/ETH</text>
+</g>
+<g opacity="0"><animate attributeName="opacity" dur="9s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;0.33;0.66;1" values="0;1;0;0"/>
+<line x1="140" y1="114.53838678328474" x2="250" y2="157.2983479105928" stroke="#10b981" stroke-width="2" stroke-dasharray="4 3"/>
+<text x="280" y="65" text-anchor="middle" font-size="13" fill="currentColor">x = 105 ETH; y = 285,714.3 USDC</text>
+<text x="280" y="87" text-anchor="middle" font-size="13" fill="currentColor">Giá spot |dy/dx| = 2,721 USDC/ETH</text>
+</g>
+<g opacity="0"><animate attributeName="opacity" dur="9s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;0.33;0.66;1" values="0;0;1;0"/>
+<line x1="165" y1="125.71428571428574" x2="275" y2="164.6753246753247" stroke="#10b981" stroke-width="2" stroke-dasharray="4 3"/>
+<text x="280" y="65" text-anchor="middle" font-size="13" fill="currentColor">x = 110 ETH; y = 272,727.3 USDC</text>
+<text x="280" y="87" text-anchor="middle" font-size="13" fill="currentColor">Giá spot |dy/dx| = 2,479 USDC/ETH</text>
+</g>
+<text x="285" y="253" text-anchor="middle" font-size="13" fill="currentColor">Tiếp tuyến phẳng dần → giá spot giảm</text>
+<text x="260" y="284" text-anchor="middle" font-size="13" fill="currentColor">Cuối swap: 27,272.7 USDC; TB 2,727/ETH</text>
+<text x="260" y="306" text-anchor="middle" font-size="13" fill="currentColor">Price impact ≈ 9.1% so với spot đầu 3,000</text>
+<text x="260" y="395" text-anchor="middle" font-size="13" fill="currentColor">Reserve không chạm 0; mua cạn dần càng đắt.</text>
+<line x1="80" y1="427" x2="470" y2="427" stroke="currentColor" stroke-width="2"  marker-end="url(#bc24-med-a)"/>
+<text x="80" y="451" text-anchor="start" font-size="13" fill="currentColor">0 ETH vào</text>
+<text x="470" y="451" text-anchor="end" font-size="13" fill="currentColor">10 ETH vào · 9s / vòng</text>
+<circle cx="80" cy="427" r="5" fill="currentColor"><animate attributeName="cx" dur="9s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;0.33;0.66;1" values="80;275;470;80"/></circle>
 </svg>
+</auto-anim>
 
 **Giá spot** (giá tức thời của X tính theo Y) không phải `y/x` chung chung — nó là **độ dốc tiếp tuyến** của đường cong tại điểm hiện tại. Với `x·y=k`, đạo hàm cho:
 

@@ -22,34 +22,70 @@ Blockchain là một **thư viện khổng lồ append-only**: mọi giao dịch
 
 Node Ethereum (Geth/Erigon) chỉ cho bạn các RPC **cấp thấp**: đọc state hiện tại của một slot, hoặc lọc log theo topic. Nó **không** có "SELECT … WHERE … ORDER BY".
 
-<svg viewBox="0 0 720 250" role="img" aria-labelledby="rpc-t rpc-d" style="width:100%;max-width:680px;height:auto;display:block;margin:1.25rem auto">
-<title id="rpc-t">Query trực tiếp node vs qua indexer</title>
-<desc id="rpc-d">Bên trái frontend gọi thẳng RPC node và phải tự quét từng block; bên phải frontend query GraphQL tới indexer đã dựng sẵn mục lục</desc>
-<text x="180" y="22" text-anchor="middle" font-size="14" fill="currentColor">Trực tiếp: eth_getLogs từng block</text>
-<rect x="60" y="45" width="100" height="46" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="110" y="73" text-anchor="middle" font-size="12" fill="currentColor">Frontend</text>
-<rect x="60" y="150" width="240" height="60" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="180" y="176" text-anchor="middle" font-size="12" fill="currentColor">Node RPC</text>
-<text x="180" y="196" text-anchor="middle" font-size="11" fill="currentColor">quét block 0 → N, tự gộp</text>
-<line x1="110" y1="91" x2="140" y2="148" stroke="currentColor" stroke-width="1.5" marker-end="url(#a1)"/>
-<line x1="250" y1="148" x2="150" y2="93" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#a1)"/>
-<text x="330" y="120" text-anchor="middle" font-size="11" fill="#f43f5e">chậm, giới hạn</text>
-<text x="330" y="136" text-anchor="middle" font-size="11" fill="#f43f5e">range, không join</text>
-<line x1="400" y1="20" x2="400" y2="230" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4"/>
-<text x="560" y="22" text-anchor="middle" font-size="14" fill="currentColor">Qua indexer: GraphQL</text>
-<rect x="460" y="45" width="100" height="46" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="510" y="73" text-anchor="middle" font-size="12" fill="currentColor">Frontend</text>
-<rect x="600" y="45" width="100" height="46" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="650" y="67" text-anchor="middle" font-size="12" fill="currentColor">Subgraph</text>
-<text x="650" y="83" text-anchor="middle" font-size="10" fill="currentColor">DB đã index</text>
-<rect x="600" y="150" width="100" height="46" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="650" y="178" text-anchor="middle" font-size="12" fill="currentColor">Node</text>
-<line x1="560" y1="68" x2="598" y2="68" stroke="currentColor" stroke-width="1.5" marker-end="url(#a1)"/>
-<line x1="650" y1="91" x2="650" y2="148" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#a1)"/>
-<text x="650" y="120" text-anchor="middle" font-size="10" fill="currentColor">nghe event</text>
-<text x="510" y="120" text-anchor="middle" font-size="11" fill="#10b981">1 request, ms</text>
-<defs><marker id="a1" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<ab-toggle data-labels="Node RPC|Subgraph">
+<svg viewBox="0 0 520 405" role="img" aria-labelledby="bc46-med-0-t bc46-med-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="bc46-med-0-t">Node trực tiếp và subgraph: công việc quét nằm ở đâu?</title>
+<desc id="bc46-med-0-d">Cùng bố cục frontend, dịch vụ và lịch sử block. Query trực tiếp lặp request và tự gộp; subgraph đã index lịch sử, frontend chỉ query kết quả.</desc>
+<defs><marker id="bc46-med-0-a" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L7 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<rect x="175" y="20" width="170" height="48" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="260" y="50" text-anchor="middle" font-size="14" fill="currentColor">Frontend</text>
+<rect x="155" y="160" width="210" height="64" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="260" y="185" text-anchor="middle" font-size="14" fill="currentColor">Node RPC</text>
+<text x="260" y="208" text-anchor="middle" font-size="13" fill="currentColor">log thô</text>
+<rect x="45" y="310" width="76" height="45" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="83" y="339" text-anchor="middle" font-size="13" fill="currentColor">0</text>
+<rect x="133" y="310" width="76" height="45" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="171" y="339" text-anchor="middle" font-size="13" fill="currentColor">1</text>
+<rect x="221" y="310" width="76" height="45" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="259" y="339" text-anchor="middle" font-size="13" fill="currentColor">2</text>
+<rect x="309" y="310" width="76" height="45" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="347" y="339" text-anchor="middle" font-size="13" fill="currentColor">3</text>
+<rect x="397" y="310" width="76" height="45" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="435" y="339" text-anchor="middle" font-size="13" fill="currentColor">N</text>
+<text x="260" y="382" text-anchor="middle" font-size="13" fill="currentColor">Lịch sử block 0 → N</text>
+<line x1="220" y1="72" x2="220" y2="154" stroke="currentColor" stroke-width="2"  marker-end="url(#bc46-med-0-a)"/>
+<line x1="260" y1="72" x2="260" y2="154" stroke="currentColor" stroke-width="2"  marker-end="url(#bc46-med-0-a)"/>
+<line x1="300" y1="72" x2="300" y2="154" stroke="currentColor" stroke-width="2"  marker-end="url(#bc46-med-0-a)"/>
+<line x1="260" y1="230" x2="83" y2="304" stroke="currentColor" stroke-width="2"  marker-end="url(#bc46-med-0-a)"/>
+<line x1="260" y1="230" x2="171" y2="304" stroke="currentColor" stroke-width="2"  marker-end="url(#bc46-med-0-a)"/>
+<line x1="260" y1="230" x2="259" y2="304" stroke="currentColor" stroke-width="2"  marker-end="url(#bc46-med-0-a)"/>
+<line x1="260" y1="230" x2="347" y2="304" stroke="currentColor" stroke-width="2"  marker-end="url(#bc46-med-0-a)"/>
+<line x1="260" y1="230" x2="435" y2="304" stroke="currentColor" stroke-width="2"  marker-end="url(#bc46-med-0-a)"/>
+<text x="115" y="109" text-anchor="middle" font-size="13" fill="currentColor">eth_getLogs</text>
+<text x="394" y="123" text-anchor="middle" font-size="13" fill="currentColor">phân trang</text>
+<text x="20" y="249" text-anchor="start" font-size="13" fill="currentColor">Client tự gộp</text>
 </svg>
+<svg viewBox="0 0 520 405" role="img" aria-labelledby="bc46-med-1-t bc46-med-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="bc46-med-1-t">Node trực tiếp và subgraph: công việc quét nằm ở đâu?</title>
+<desc id="bc46-med-1-d">Cùng bố cục frontend, dịch vụ và lịch sử block. Query trực tiếp lặp request và tự gộp; subgraph đã index lịch sử, frontend chỉ query kết quả.</desc>
+<defs><marker id="bc46-med-1-a" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L7 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<rect x="175" y="20" width="170" height="48" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="260" y="50" text-anchor="middle" font-size="14" fill="currentColor">Frontend</text>
+<rect x="155" y="160" width="210" height="64" rx="8" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="260" y="185" text-anchor="middle" font-size="14" fill="currentColor">Subgraph</text>
+<text x="260" y="208" text-anchor="middle" font-size="13" fill="currentColor">DB đã index</text>
+<rect x="45" y="310" width="76" height="45" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="83" y="339" text-anchor="middle" font-size="13" fill="currentColor">0</text>
+<rect x="133" y="310" width="76" height="45" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="171" y="339" text-anchor="middle" font-size="13" fill="currentColor">1</text>
+<rect x="221" y="310" width="76" height="45" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="259" y="339" text-anchor="middle" font-size="13" fill="currentColor">2</text>
+<rect x="309" y="310" width="76" height="45" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="347" y="339" text-anchor="middle" font-size="13" fill="currentColor">3</text>
+<rect x="397" y="310" width="76" height="45" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="435" y="339" text-anchor="middle" font-size="13" fill="currentColor">N</text>
+<text x="260" y="382" text-anchor="middle" font-size="13" fill="currentColor">Lịch sử block 0 → N</text>
+<line x1="245" y1="72" x2="245" y2="154" stroke="currentColor" stroke-width="2"  marker-end="url(#bc46-med-1-a)"/>
+<line x1="280" y1="157" x2="280" y2="74" stroke="currentColor" stroke-width="2"  marker-end="url(#bc46-med-1-a)"/>
+<text x="134" y="106" text-anchor="middle" font-size="13" fill="currentColor">GraphQL</text>
+<text x="385" y="124" text-anchor="middle" font-size="13" fill="currentColor">1 request, ms*</text>
+<line x1="260" y1="306" x2="260" y2="230" stroke="currentColor" stroke-width="2"  marker-end="url(#bc46-med-1-a)"/>
+<text x="388" y="269" text-anchor="middle" font-size="13" fill="currentColor">nghe event</text>
+<text x="115" y="269" text-anchor="middle" font-size="13" fill="currentColor">index một lần</text>
+</svg>
+<ab-note>Frontend quét từ block 0 đến N và tự gộp; chậm, bị giới hạn range và không có join trong RPC. eth_getLogs có thể lấy một khoảng block mỗi request.</ab-note>
+<ab-note>Indexer nghe event và dựng DB sẵn; frontend query GraphQL. *“ms” là minh hoạ trong hình cũ, không bảo đảm độ trễ; hiệu năng phụ thuộc truy vấn và indexer.</ab-note>
+</ab-toggle>
 
 Cụ thể những điểm đau:
 

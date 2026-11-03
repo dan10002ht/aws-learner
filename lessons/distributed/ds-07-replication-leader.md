@@ -138,6 +138,26 @@ Không thể chỉ copy file dữ liệu của leader vì nó **liên tục thay
 3. Follower kết nối leader, **yêu cầu tất cả thay đổi kể từ vị trí log** đã ghi ở bước 1.
 4. Follower **replay** phần log đó cho tới khi **bắt kịp (caught up)**, rồi tiếp tục stream các thay đổi mới như một follower bình thường.
 
+<step-flow>
+<svg viewBox="0 0 700 365" role="img" aria-labelledby="ds07med-t ds07med-d" style="width:100%;max-width:700px;height:auto;display:block;margin:1.25rem auto">
+<title id="ds07med-t">Follower bootstrap: snapshot tới log 4 và replay log 5 tới 8</title>
+<desc id="ds07med-d">Follower bootstrap: snapshot tới log 4 và replay log 5 tới 8</desc>
+<defs><marker id="ds07med-a" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6" fill="currentColor"/></marker></defs><text x="350" y="25" text-anchor="middle" font-size="13" fill="currentColor">Snapshot gắn với vị trí log; phần đuôi phải replay</text><text x="95" y="120" text-anchor="middle" font-size="13" fill="currentColor">Leader log</text><text x="95" y="285" text-anchor="middle" font-size="13" fill="currentColor">Follower mới</text><rect x="195" y="100" width="50" height="35" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="220" y="123" text-anchor="middle" font-size="13" fill="currentColor">1</text><rect x="250" y="100" width="50" height="35" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="275" y="123" text-anchor="middle" font-size="13" fill="currentColor">2</text><rect x="305" y="100" width="50" height="35" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="330" y="123" text-anchor="middle" font-size="13" fill="currentColor">3</text><rect x="360" y="100" width="50" height="35" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="385" y="123" text-anchor="middle" font-size="13" fill="currentColor">4</text><rect x="415" y="100" width="50" height="35" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="440" y="123" text-anchor="middle" font-size="13" fill="currentColor">5</text><rect x="470" y="100" width="50" height="35" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="495" y="123" text-anchor="middle" font-size="13" fill="currentColor">6</text><rect x="525" y="100" width="50" height="35" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="550" y="123" text-anchor="middle" font-size="13" fill="currentColor">7</text><rect x="580" y="100" width="50" height="35" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="605" y="123" text-anchor="middle" font-size="13" fill="currentColor">8</text><g data-step="1">
+<rect x="195" y="170" width="215" height="40" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="302" y="195" text-anchor="middle" font-size="13" fill="currentColor">Snapshot tại log 4</text><path d="M410 85 V220" stroke="#8b5cf6" stroke-dasharray="4 4"/><text x="430" y="75" text-anchor="middle" font-size="13" fill="currentColor">mốc 4</text>
+</g><g data-step="2">
+<path d="M302 210 L302 263" fill="none" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#ds07med-a)"/><rect x="195" y="265" width="215" height="40" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="302" y="290" text-anchor="middle" font-size="13" fill="currentColor">State tới log 4</text>
+</g><g data-step="3">
+<path d="M620 150 L620 255" fill="none" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#ds07med-a)"/><text x="535" y="182" text-anchor="middle" font-size="13" fill="currentColor">Yêu cầu log sau mốc 4</text><text x="535" y="203" text-anchor="middle" font-size="13" fill="currentColor">Leader vẫn nhận ghi</text>
+</g><g data-step="4">
+<rect x="415" y="265" width="50" height="40" rx="6" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="440" y="290" text-anchor="middle" font-size="13" fill="currentColor">5</text><rect x="470" y="265" width="50" height="40" rx="6" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="495" y="290" text-anchor="middle" font-size="13" fill="currentColor">6</text><rect x="525" y="265" width="50" height="40" rx="6" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="550" y="290" text-anchor="middle" font-size="13" fill="currentColor">7</text><rect x="580" y="265" width="50" height="40" rx="6" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="605" y="290" text-anchor="middle" font-size="13" fill="currentColor">8</text><text x="460" y="340" text-anchor="middle" font-size="13" fill="currentColor">Replay 5 → 8; bắt kịp rồi stream tiếp</text>
+</g>
+</svg>
+<step-note data-step="1">Snapshot nhất quán phải đi kèm mốc log chính xác; số 4 là ví dụ minh họa, không phải timestamp.</step-note>
+<step-note data-step="2">Copy snapshot chỉ mang state tới mốc 4. Log phát sinh trong lúc copy chưa nằm trong state follower.</step-note>
+<step-note data-step="3">Follower xin phần đuôi sau mốc 4; leader cần còn giữ log để không có khoảng trống dữ liệu.</step-note>
+<step-note data-step="4">Replay phần đuôi theo thứ tự rồi tiếp tục stream, tránh copy lại toàn bộ DB mỗi khi leader có ghi mới.</step-note>
+</step-flow>
+
 Ví dụ dựng PostgreSQL standby:
 ```bash
 # 1+2: chụp snapshot base + ghi lại điểm start LSN, stream sẵn WAL

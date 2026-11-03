@@ -69,35 +69,52 @@ Trong Bitcoin/Ethereum, chuỗi suy dẫn chỉ đi **một hướng**, không �
 
 Khi Alice gửi coin, ví của cô **không** gửi private key đi đâu cả. Nó làm hai việc: **băm** nội dung giao dịch thành một message hash `z`, rồi **ký** `z` bằng private key để tạo ra **chữ ký số**. Mạng dùng **public key** của Alice để **verify** chữ ký đó khớp với `z`.
 
-<svg viewBox="0 0 720 340" role="img" aria-labelledby="sig-t sig-d" style="width:100%;max-width:700px;height:auto;display:block;margin:1.25rem auto">
-<title id="sig-t">Luồng ký và verify giao dịch</title>
-<desc id="sig-d">Bên ký dùng private key tạo chữ ký từ hash giao dịch, gửi kèm transaction, bên verify dùng public key kiểm chữ ký mà không cần private key</desc>
+<step-flow>
+<svg viewBox="0 0 720 340" role="img" aria-labelledby="bc03-med-t bc03-med-d" style="width:100%;max-width:700px;height:auto;display:block;margin:1.25rem auto">
+<title id="bc03-med-t">Luồng ký và verify giao dịch</title>
+<desc id="bc03-med-d">Bên ký dùng private key tạo chữ ký từ hash giao dịch, gửi kèm transaction, bên verify dùng public key kiểm chữ ký mà không cần private key</desc>
 <text x="180" y="24" text-anchor="middle" font-size="14" fill="currentColor">Alice (ký — có private key)</text>
 <text x="545" y="24" text-anchor="middle" font-size="14" fill="currentColor">Mạng (verify — chỉ có public key)</text>
 <line x1="360" y1="35" x2="360" y2="320" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4"/>
-<rect x="60" y="50" width="240" height="46" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="180" y="78" text-anchor="middle" font-size="12" fill="currentColor">1. Tx: "gửi 1 coin cho Bob"</text>
-<rect x="60" y="112" width="240" height="46" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="180" y="132" text-anchor="middle" font-size="12" fill="currentColor">2. z = hash(Tx)</text>
-<text x="180" y="150" text-anchor="middle" font-size="11" fill="currentColor">rút gọn Tx thành 256-bit</text>
-<rect x="60" y="174" width="240" height="56" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="180" y="197" text-anchor="middle" font-size="12" fill="currentColor">3. sig = Sign(z, privKey)</text>
-<text x="180" y="216" text-anchor="middle" font-size="11" fill="currentColor">tạo cặp (r, s)</text>
-<line x1="180" y1="96" x2="180" y2="110" stroke="currentColor" stroke-width="1.2" marker-end="url(#sa)"/>
-<line x1="180" y1="158" x2="180" y2="172" stroke="currentColor" stroke-width="1.2" marker-end="url(#sa)"/>
-<rect x="60" y="250" width="240" height="56" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="180" y="273" text-anchor="middle" font-size="12" fill="currentColor">4. Broadcast: Tx + sig + pubKey</text>
-<text x="180" y="292" text-anchor="middle" font-size="11" fill="#f43f5e">private key KHÔNG bao giờ rời máy</text>
-<line x1="180" y1="230" x2="180" y2="248" stroke="currentColor" stroke-width="1.2" marker-end="url(#sa)"/>
-<line x1="300" y1="278" x2="430" y2="200" stroke="currentColor" stroke-width="1.5" marker-end="url(#sa)"/>
-<rect x="420" y="150" width="250" height="56" rx="8" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="545" y="173" text-anchor="middle" font-size="12" fill="currentColor">5. Verify(z, sig, pubKey)</text>
-<text x="545" y="192" text-anchor="middle" font-size="11" fill="currentColor">tính lại z từ Tx, so khớp</text>
-<rect x="420" y="230" width="250" height="50" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="545" y="260" text-anchor="middle" font-size="12" fill="currentColor">6. Hợp lệ ⇒ nhận vào mempool</text>
-<line x1="545" y1="206" x2="545" y2="228" stroke="currentColor" stroke-width="1.2" marker-end="url(#sa)"/>
-<defs><marker id="sa" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<g data-step="1">
+<rect x="60" y="50" width="240" height="46" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="180" y="78" text-anchor="middle" font-size="13" fill="currentColor">1. Tx: "gửi 1 coin cho Bob"</text>
+</g>
+<g data-step="2">
+<line x1="180" y1="96" x2="180" y2="110" stroke="currentColor" stroke-width="1.2" marker-end="url(#bc03-med-a)"/>
+<rect x="60" y="112" width="240" height="46" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="180" y="132" text-anchor="middle" font-size="13" fill="currentColor">2. z = hash(Tx)</text>
+<text x="180" y="150" text-anchor="middle" font-size="13" fill="currentColor">rút gọn Tx thành 256-bit</text>
+</g>
+<g data-step="3">
+<rect x="60" y="174" width="240" height="56" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/>
+<text x="180" y="197" text-anchor="middle" font-size="13" fill="currentColor">3. sig = Sign(z, privKey)</text>
+<text x="180" y="216" text-anchor="middle" font-size="13" fill="currentColor">tạo cặp (r, s)</text>
+<line x1="180" y1="158" x2="180" y2="172" stroke="currentColor" stroke-width="1.2" marker-end="url(#bc03-med-a)"/>
+</g>
+<g data-step="4">
+<rect x="60" y="250" width="240" height="56" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="180" y="273" text-anchor="middle" font-size="13" fill="currentColor">4. Broadcast: Tx + sig + pubKey</text>
+<text x="180" y="292" text-anchor="middle" font-size="13" fill="currentColor">private key KHÔNG bao giờ rời máy</text>
+<line x1="180" y1="230" x2="180" y2="248" stroke="currentColor" stroke-width="1.2" marker-end="url(#bc03-med-a)"/>
+<line x1="300" y1="278" x2="430" y2="200" stroke="currentColor" stroke-width="1.5" marker-end="url(#bc03-med-a)"/>
+</g>
+<g data-step="5">
+<rect x="420" y="150" width="250" height="56" rx="8" fill="#14b8a6" fill-opacity="0.14" stroke="#14b8a6"/>
+<text x="545" y="173" text-anchor="middle" font-size="13" fill="currentColor">5. Verify(z, sig, pubKey)</text>
+<text x="545" y="192" text-anchor="middle" font-size="13" fill="currentColor">tính lại z từ Tx, so khớp</text>
+<rect x="420" y="230" width="250" height="50" rx="8" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="545" y="260" text-anchor="middle" font-size="13" fill="currentColor">6. Hợp lệ ⇒ nhận vào mempool</text>
+<line x1="545" y1="206" x2="545" y2="228" stroke="currentColor" stroke-width="1.2" marker-end="url(#bc03-med-a)"/>
+</g>
+<defs><marker id="bc03-med-a" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
 </svg>
+<step-note data-step="1">Nội dung giao dịch xác định điều chủ ví cho phép, gồm người nhận và số tiền.</step-note>
+<step-note data-step="2">Băm tạo thông điệp 256-bit để thuật toán ký xử lý; sửa giao dịch sẽ đổi hash.</step-note>
+<step-note data-step="3">Chỉ máy giữ private key tạo được chữ ký hợp lệ; cặp (r, s) không phải private key.</step-note>
+<step-note data-step="4">Chỉ Tx, chữ ký và public key đi qua ranh giới mạng; private key vẫn ở máy Alice.</step-note>
+<step-note data-step="5">Node tự băm lại Tx và kiểm chữ ký bằng public key. Hợp lệ là điều kiện cần để xét nhận vào mempool.</step-note>
+</step-flow>
 
 Chữ ký chứng minh **đồng thời hai điều** chỉ trong một cặp số nhỏ:
 - **Authentication** — người ký thực sự nắm private key ứng với public key này (⇒ đúng chủ sở hữu).

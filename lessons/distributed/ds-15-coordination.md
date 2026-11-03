@@ -304,29 +304,64 @@ Có một hiểu lầm nguy hiểm: "tôi giữ lock nên chắc chắn chỉ m�
 
 → **Hai client cùng ghi = split-brain.** Lock đã bị thu hồi nhưng Client 1 không hề biết. Bản thân lock **không thể** ngăn được, vì cái ghi cuối cùng xảy ra ở **storage**, nơi không tham gia vào lock.
 
-<svg viewBox="0 0 700 250" role="img" aria-labelledby="fb-t fb-d" style="width:100%;max-width:660px;height:auto;display:block;margin:1.25rem auto">
-<title id="fb-t">Split-brain do GC pause và cách fencing token chặn nó</title>
-<desc id="fb-d">Client 1 pause quá TTL, lock chuyển sang Client 2; storage từ chối ghi có token cũ nhỏ hơn</desc>
-<text x="70" y="22" text-anchor="middle" font-size="12" fill="currentColor">Client 1</text>
-<text x="70" y="130" text-anchor="middle" font-size="12" fill="currentColor">Client 2</text>
-<text x="620" y="76" text-anchor="middle" font-size="12" fill="currentColor">Storage</text>
-<line x1="70" y1="30" x2="70" y2="120" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"/>
-<rect x="30" y="40" width="80" height="24" rx="6" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="70" y="56" text-anchor="middle" font-size="10" fill="currentColor">lock, tok=33</text>
-<rect x="130" y="40" width="120" height="24" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="190" y="56" text-anchor="middle" font-size="10" fill="currentColor">GC pause 13s...</text>
-<line x1="70" y1="150" x2="70" y2="235" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"/>
-<rect x="30" y="150" width="130" height="24" rx="6" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="95" y="166" text-anchor="middle" font-size="10" fill="currentColor">nhận lock, tok=34</text>
-<line x1="160" y1="162" x2="560" y2="120" stroke="currentColor" stroke-width="1.3" marker-end="url(#f1)"/>
-<text x="360" y="132" text-anchor="middle" font-size="10" fill="#10b981">write(tok=34) OK</text>
-<line x1="250" y1="52" x2="560" y2="100" stroke="currentColor" stroke-width="1.3" stroke-dasharray="4 3" marker-end="url(#f1)"/>
-<text x="380" y="70" text-anchor="middle" font-size="10" fill="#f43f5e">write(tok=33) tỉnh dậy, ghi muộn</text>
-<rect x="560" y="40" width="120" height="90" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="620" y="92" text-anchor="middle" font-size="10" fill="currentColor">max_seen=34</text>
-<text x="620" y="108" text-anchor="middle" font-size="10" fill="#f43f5e">33 &lt; 34: TỪ CHỐI</text>
-<defs><marker id="f1" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<step-flow>
+<svg viewBox="0 0 760 500" role="img" aria-labelledby="ds15f-t ds15f-d" font-family="ui-sans-serif, system-ui, sans-serif" style="width:100%;height:auto;display:block;margin:1.25rem auto">
+<title id="ds15f-t">Split-brain do GC pause và cách fencing token chặn nó</title>
+<desc id="ds15f-d">Bốn lane theo thời gian: Client 1 nhận lock tok=33 rồi GC pause 13s, lâu hơn TTL của lease; lease hết hạn, coordination service cấp lock tok=34 cho Client 2; Client 2 write(tok=34) OK, storage nhớ max_seen=34; Client 1 tỉnh dậy ghi muộn write(tok=33); storage so 33 &lt; 34 và từ chối.</desc>
+<defs><marker id="ds15f-m" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker><marker id="ds15f-mg" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#10b981"/></marker><marker id="ds15f-mr" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#f43f5e"/></marker><marker id="ds15f-ma" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#f59e0b"/></marker><marker id="ds15f-mb" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#3b82f6"/></marker><marker id="ds15f-mv" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8b5cf6"/></marker><marker id="ds15f-mt" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#14b8a6"/></marker></defs>
+<rect x="30" y="16" width="140" height="40" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="100" y="42" text-anchor="middle" font-size="14" fill="currentColor" font-weight="600">Client 1</text>
+<path d="M100 58 V470" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="3 4" stroke-opacity="0.35"/>
+<rect x="230" y="16" width="140" height="40" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="300" y="42" text-anchor="middle" font-size="14" fill="currentColor" font-weight="600">Coordination</text>
+<path d="M300 58 V470" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="3 4" stroke-opacity="0.35"/>
+<rect x="410" y="16" width="140" height="40" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="480" y="42" text-anchor="middle" font-size="14" fill="currentColor" font-weight="600">Client 2</text>
+<path d="M480 58 V470" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="3 4" stroke-opacity="0.35"/>
+<rect x="580" y="16" width="140" height="40" rx="8" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="650" y="42" text-anchor="middle" font-size="14" fill="currentColor" font-weight="600">Storage</text>
+<path d="M650 58 V470" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="3 4" stroke-opacity="0.35"/>
+<path d="M20 70 V470" fill="none" stroke="currentColor" stroke-width="1.6" stroke-opacity="0.5" marker-end="url(#ds15f-m)"/>
+<text x="26" y="486" text-anchor="start" font-size="13" fill="currentColor" opacity="0.7">thời gian</text>
+<g data-step="1">
+<path d="M292 96 L108 96" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ds15f-m)"/>
+<text x="200" y="88" text-anchor="middle" font-size="14" fill="currentColor">cấp lock, tok=33</text>
+<rect x="291" y="96" width="18" height="140" rx="3" fill="#f59e0b" fill-opacity="0.35" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="316" y="140" text-anchor="start" font-size="13" fill="#f59e0b">lease (TTL)</text>
+</g>
+<g data-step="2">
+<rect x="91" y="116" width="18" height="270" rx="3" fill="#f43f5e" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.55" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="118" y="200" text-anchor="start" font-size="14" fill="#f43f5e" font-weight="600">GC pause 13s</text>
+</g>
+<g data-step="3">
+<text x="300" y="256" text-anchor="middle" font-size="18" fill="#f43f5e" font-weight="700">✗</text>
+<text x="316" y="256" text-anchor="start" font-size="13" fill="#f43f5e">lease hết hạn</text>
+<path d="M308 286 L472 286" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ds15f-m)"/>
+<text x="390" y="278" text-anchor="middle" font-size="14" fill="currentColor">nhận lock, tok=34</text>
+</g>
+<g data-step="4">
+<path d="M488 326 L642 326" fill="none" stroke="#10b981" stroke-width="1.6" marker-end="url(#ds15f-mg)"/>
+<text x="565" y="318" text-anchor="middle" font-size="14" fill="#10b981">write(tok=34) OK</text>
+<rect x="590" y="336" width="120" height="30" rx="6" fill="#14b8a6" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="650" y="356" text-anchor="middle" font-size="14" fill="currentColor">max_seen=34</text>
+</g>
+<g data-step="5">
+<text x="118" y="404" text-anchor="start" font-size="13" fill="#f43f5e">tỉnh dậy, tưởng còn lock</text>
+<path d="M108 420 L642 420" fill="none" stroke="#f43f5e" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#ds15f-mr)"/>
+<text x="380" y="442" text-anchor="middle" font-size="14" fill="#f43f5e">write(tok=33): ghi muộn</text>
+</g>
+<g data-step="6">
+<rect x="570" y="434" width="160" height="30" rx="6" fill="#f43f5e" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="650" y="454" text-anchor="middle" font-size="14" fill="#f43f5e" font-weight="700">33 &lt; 34: TỪ CHỐI</text>
+</g>
 </svg>
+<step-note data-step="1">Lock đi kèm lease có TTL: coordination service chỉ hứa giữ lock cho Client 1 tới khi lease hết hạn. Token 33 được cấp cùng lock.</step-note>
+<step-note data-step="2">Stop-the-world GC (hoặc mất mạng) dừng cả tiến trình, nên Client 1 không gia hạn lease được và cũng không biết thời gian đã trôi.</step-note>
+<step-note data-step="3">Service chỉ thấy lease quá TTL, coi Client 1 đã chết và trao lock cho người kế tiếp với token lớn hơn.</step-note>
+<step-note data-step="4">Ghi hợp lệ: Client 2 đang giữ lock. Storage ghi nhớ token lớn nhất từng thấy.</step-note>
+<step-note data-step="5">Client 1 không hề biết lock đã bị thu hồi. Nếu storage không kiểm token, lần ghi này đè lên dữ liệu của Client 2: hai client cùng ghi, split-brain.</step-note>
+<step-note data-step="6">Storage tự kiểm: token nhỏ hơn <code>max_seen</code> là của người giữ lock cũ, nên bị chặn ngay tại nơi ghi thật sự xảy ra.</step-note>
+</step-flow>
 
 ### 5.2 Fencing token: lời giải đúng
 

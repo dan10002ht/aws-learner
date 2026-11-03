@@ -176,24 +176,54 @@ Ví dụ thực tế:
 
 Mempool công khai truyền thống để lộ giao dịch **trước khi** lên block → searcher/builder **sandwich, frontrun** → MEV bị lấy khỏi user. **Order flow auction** đảo mô hình: **đấu giá quyền được thực thi luồng lệnh của user**.
 
-<svg viewBox="0 0 700 210" role="img" aria-labelledby="ofa-t ofa-d" style="width:100%;max-width:660px;height:auto;display:block;margin:1.25rem auto">
-<title id="ofa-t">Mempool công khai vs Order Flow Auction</title>
-<desc id="ofa-d">So sánh: mempool để lộ lệnh cho MEV bòn rút, còn OFA đấu giá luồng lệnh trả lại giá trị cho user</desc>
-<text x="175" y="24" text-anchor="middle" font-size="13" fill="currentColor">Mempool công khai</text>
-<rect x="60" y="45" width="230" height="45" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="175" y="66" text-anchor="middle" font-size="11" fill="currentColor">Lệnh lộ ra → searcher</text>
-<text x="175" y="82" text-anchor="middle" font-size="11" fill="currentColor">sandwich / frontrun</text>
-<text x="175" y="120" text-anchor="middle" font-size="11" fill="#f43f5e">MEV rời khỏi user →</text>
-<text x="175" y="136" text-anchor="middle" font-size="11" fill="#f43f5e">về builder/searcher</text>
-<line x1="350" y1="30" x2="350" y2="185" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4"/>
-<text x="525" y="24" text-anchor="middle" font-size="13" fill="currentColor">Order Flow Auction</text>
-<rect x="410" y="45" width="230" height="45" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="525" y="66" text-anchor="middle" font-size="11" fill="currentColor">Luồng lệnh được đấu giá</text>
-<text x="525" y="82" text-anchor="middle" font-size="11" fill="currentColor">giữa các bên thực thi</text>
-<text x="525" y="120" text-anchor="middle" font-size="11" fill="#10b981">Phần MEV được hoàn</text>
-<text x="525" y="136" text-anchor="middle" font-size="11" fill="#10b981">(rebate) về cho user/ví</text>
-<text x="350" y="175" text-anchor="middle" font-size="11" fill="currentColor">OFA nội hoá MEV: biến giá trị bị lấy lén thành khoản đấu giá minh bạch trả lại người dùng</text>
+<ab-toggle data-labels="Công khai|OFA">
+<svg viewBox="0 0 520 375" role="img" aria-labelledby="bc43-med-0-t bc43-med-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="bc43-med-0-t">Ai nhận giá trị MEV?</title>
+<desc id="bc43-med-0-d">Cùng vị trí user, nơi tiếp nhận lệnh và bên thực thi. Mũi tên giá trị đi khỏi user ở mempool công khai và quay về user hoặc ví ở OFA.</desc>
+<defs><marker id="bc43-med-0-a" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L7 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<rect x="175" y="20" width="170" height="48" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="260" y="50" text-anchor="middle" font-size="14" fill="currentColor">User / ví</text>
+<rect x="155" y="130" width="210" height="55" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="260" y="163" text-anchor="middle" font-size="14" fill="currentColor">Mempool công khai</text>
+<rect x="40" y="265" width="190" height="54" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="135" y="297" text-anchor="middle" font-size="13" fill="currentColor">Solver / searcher</text>
+<rect x="290" y="265" width="190" height="54" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="385" y="297" text-anchor="middle" font-size="13" fill="currentColor">Builder</text>
+<line x1="260" y1="71" x2="260" y2="126" stroke="currentColor" stroke-width="2"  marker-end="url(#bc43-med-0-a)"/>
+<text x="330" y="103" text-anchor="middle" font-size="13" fill="currentColor">order flow</text>
+<line x1="205" y1="189" x2="135" y2="260" stroke="currentColor" stroke-width="2"  marker-end="url(#bc43-med-0-a)"/>
+<line x1="315" y1="189" x2="385" y2="260" stroke="currentColor" stroke-width="2"  marker-end="url(#bc43-med-0-a)"/>
+<path d="M350 44 H500 V294 H484" fill="none" stroke="#f43f5e" stroke-width="4" marker-end="url(#bc43-med-0-a)"/>
+<text x="425" y="104" text-anchor="middle" font-size="13" fill="currentColor">MEV</text>
+<text x="425" y="125" text-anchor="middle" font-size="13" fill="currentColor">rời user</text>
+<text x="260" y="228" text-anchor="middle" font-size="13" fill="currentColor">sandwich / frontrun</text>
+<text x="260" y="350" text-anchor="middle" font-size="13" fill="currentColor">Lệnh lộ trước khi lên block</text>
 </svg>
+<svg viewBox="0 0 520 375" role="img" aria-labelledby="bc43-med-1-t bc43-med-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="bc43-med-1-t">Ai nhận giá trị MEV?</title>
+<desc id="bc43-med-1-d">Cùng vị trí user, nơi tiếp nhận lệnh và bên thực thi. Mũi tên giá trị đi khỏi user ở mempool công khai và quay về user hoặc ví ở OFA.</desc>
+<defs><marker id="bc43-med-1-a" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L7 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<rect x="175" y="20" width="170" height="48" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="260" y="50" text-anchor="middle" font-size="14" fill="currentColor">User / ví</text>
+<rect x="155" y="130" width="210" height="55" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="260" y="163" text-anchor="middle" font-size="14" fill="currentColor">Auction</text>
+<rect x="40" y="265" width="190" height="54" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="135" y="297" text-anchor="middle" font-size="13" fill="currentColor">Solver / searcher</text>
+<rect x="290" y="265" width="190" height="54" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="385" y="297" text-anchor="middle" font-size="13" fill="currentColor">Builder</text>
+<line x1="260" y1="71" x2="260" y2="126" stroke="currentColor" stroke-width="2"  marker-end="url(#bc43-med-1-a)"/>
+<text x="330" y="103" text-anchor="middle" font-size="13" fill="currentColor">order flow</text>
+<line x1="205" y1="189" x2="135" y2="260" stroke="currentColor" stroke-width="2"  marker-end="url(#bc43-med-1-a)"/>
+<line x1="315" y1="189" x2="385" y2="260" stroke="currentColor" stroke-width="2"  marker-end="url(#bc43-med-1-a)"/>
+<path d="M45 260 V44 H170" fill="none" stroke="#10b981" stroke-width="4" marker-end="url(#bc43-med-1-a)"/>
+<text x="75" y="104" text-anchor="middle" font-size="13" fill="currentColor">rebate</text>
+<text x="75" y="125" text-anchor="middle" font-size="13" fill="currentColor">về user/ví</text>
+<text x="260" y="228" text-anchor="middle" font-size="13" fill="currentColor">cạnh tranh trả giá</text>
+<text x="260" y="350" text-anchor="middle" font-size="13" fill="currentColor">Đấu giá quyền thực thi luồng lệnh</text>
+</svg>
+<ab-note>Lệnh công khai cho phép searcher/builder khai thác MEV; mũi tên ngoài chỉ hướng giá trị rời user.</ab-note>
+<ab-note>Các bên trả giá quyền thực thi. Một phần MEV có thể được hoàn về user/ví; OFA nội hoá giá trị qua đấu giá thay vì bị lấy lén.</ab-note>
+</ab-toggle>
 
 Trong OFA, ví/ứng dụng gửi order flow tới một **auction** thay vì mempool công khai. Các bên (solver/builder) **trả giá** cho quyền được thực thi — và phần thắng thầu (chính là phần MEV) được **hoàn (rebate)** về cho user hoặc ví. Đây là bước tiến của tư duy **PBS** (Proposer-Builder Separation, MEV-Boost) từ Bài 45: thay vì để MEV bị bòn rút, ta **đấu giá nó một cách minh bạch** rồi trả lại giá trị cho nguồn tạo ra nó (user).
 

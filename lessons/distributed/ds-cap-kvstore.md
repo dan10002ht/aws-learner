@@ -123,31 +123,63 @@ Nhưng ghi cả 3 rồi mới trả lời thì một node chậm/chết làm tre
 
 ### Luồng một `put(key,val)` với W=2
 
-<svg viewBox="0 0 680 260" role="img" aria-labelledby="wr-t wr-d" style="width:100%;max-width:660px;height:auto;display:block;margin:1.25rem auto">
-<title id="wr-t">Luồng ghi quorum W=2 với coordinator gửi tới 3 replica</title>
-<desc id="wr-d">Coordinator gửi ghi tới ba replica, chỉ cần hai ack là trả về thành công cho client, replica thứ ba theo sau</desc>
-<rect x="20" y="110" width="90" height="44" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="65" y="137" text-anchor="middle" font-size="12" fill="currentColor">Client</text>
-<rect x="150" y="110" width="120" height="44" rx="8" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="210" y="132" text-anchor="middle" font-size="11" fill="currentColor">Coordinator</text>
-<text x="210" y="147" text-anchor="middle" font-size="10" fill="currentColor">(1 node bất kỳ)</text>
-<line x1="110" y1="132" x2="148" y2="132" stroke="currentColor" stroke-width="1.5" marker-end="url(#aw)"/>
-<text x="129" y="124" text-anchor="middle" font-size="9" fill="currentColor">put</text>
-<rect x="330" y="30" width="110" height="40" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="385" y="55" text-anchor="middle" font-size="11" fill="currentColor">Replica 1 ✓</text>
-<rect x="330" y="112" width="110" height="40" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="385" y="137" text-anchor="middle" font-size="11" fill="currentColor">Replica 2 ✓</text>
-<rect x="330" y="194" width="110" height="40" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="385" y="214" text-anchor="middle" font-size="11" fill="currentColor">Replica 3</text>
-<text x="385" y="228" text-anchor="middle" font-size="9" fill="currentColor">(chậm/theo sau)</text>
-<line x1="270" y1="128" x2="328" y2="55" stroke="currentColor" stroke-width="1.5" marker-end="url(#aw)"/>
-<line x1="270" y1="132" x2="328" y2="132" stroke="currentColor" stroke-width="1.5" marker-end="url(#aw)"/>
-<line x1="270" y1="136" x2="328" y2="205" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#aw)"/>
-<text x="470" y="90" font-size="10" fill="#10b981">2 ack đủ W=2</text>
-<text x="470" y="108" font-size="10" fill="currentColor">→ trả OK ngay,</text>
-<text x="470" y="124" font-size="10" fill="currentColor">không đợi replica 3</text>
-<defs><marker id="aw" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<step-flow>
+<svg viewBox="0 0 760 310" role="img" aria-labelledby="dscw-t dscw-d" font-family="ui-sans-serif, system-ui, sans-serif" style="width:100%;height:auto;display:block;margin:1.25rem auto">
+<title id="dscw-t">Luồng ghi quorum W=2 với coordinator gửi tới 3 replica</title>
+<desc id="dscw-d">Client gửi put tới coordinator (1 node bất kỳ); coordinator gửi ghi tới ba replica; Replica 1 rồi Replica 2 ack, 2 ack đủ W=2 nên trả OK ngay cho client, không đợi replica 3; Replica 3 chậm, ghi xong theo sau.</desc>
+<defs><marker id="dscw-m" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker><marker id="dscw-mg" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#10b981"/></marker><marker id="dscw-mr" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#f43f5e"/></marker><marker id="dscw-ma" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#f59e0b"/></marker><marker id="dscw-mb" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#3b82f6"/></marker><marker id="dscw-mv" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8b5cf6"/></marker><marker id="dscw-mt" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#14b8a6"/></marker></defs>
+<rect x="20" y="116" width="110" height="50" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="75" y="146" text-anchor="middle" font-size="15" fill="currentColor" font-weight="600">Client</text>
+<rect x="200" y="108" width="150" height="66" rx="8" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="275" y="136" text-anchor="middle" font-size="15" fill="currentColor" font-weight="600">Coordinator</text>
+<text x="275" y="156" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">(1 node bất kỳ)</text>
+<rect x="500" y="24" width="140" height="50" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="570.0" y="54" text-anchor="middle" font-size="15" fill="currentColor" font-weight="600">Replica 1</text>
+<rect x="500" y="118" width="140" height="50" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="570.0" y="148" text-anchor="middle" font-size="15" fill="currentColor" font-weight="600">Replica 2</text>
+<rect x="500" y="212" width="140" height="50" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="570.0" y="234" text-anchor="middle" font-size="15" fill="currentColor" font-weight="600">Replica 3</text>
+<text x="570.0" y="253" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">(chậm/theo sau)</text>
+<text x="200" y="204" text-anchor="start" font-size="13" fill="currentColor" opacity="0.8">W=2: cần 2 ack</text>
+<rect x="200" y="212" width="70" height="30" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-width="1" stroke-dasharray="4 3"/>
+<rect x="278" y="212" width="70" height="30" rx="5" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-width="1" stroke-dasharray="4 3"/>
+<g data-step="1">
+<path d="M132 132 L198 132" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#dscw-m)"/>
+<text x="165" y="124" text-anchor="middle" font-size="14" fill="currentColor">put</text>
+</g>
+<g data-step="2">
+<path d="M352 118 L498 42" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#dscw-m)"/>
+<path d="M352 136 L498 136" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#dscw-m)"/>
+<path d="M352 154 L498 230" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#dscw-m)"/>
+<text x="392" y="64" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">gửi cả N=3</text>
+</g>
+<g data-step="3">
+<path d="M498 60 L354 128" fill="none" stroke="#10b981" stroke-width="1.6" marker-end="url(#dscw-mg)"/>
+<text x="650" y="54" text-anchor="start" font-size="16" fill="#10b981" font-weight="700">✓</text>
+<rect x="200" y="212" width="70" height="30" rx="5" fill="#10b981" fill-opacity="0.25" stroke="currentColor" stroke-opacity="0.8" stroke-width="1.6"/>
+<text x="235" y="232" text-anchor="middle" font-size="14" fill="currentColor" font-weight="600">ack 1</text>
+</g>
+<g data-step="4">
+<path d="M498 154 L354 148" fill="none" stroke="#10b981" stroke-width="1.6" marker-end="url(#dscw-mg)"/>
+<text x="650" y="148" text-anchor="start" font-size="16" fill="#10b981" font-weight="700">✓</text>
+<rect x="278" y="212" width="70" height="30" rx="5" fill="#10b981" fill-opacity="0.25" stroke="currentColor" stroke-opacity="0.8" stroke-width="1.6"/>
+<text x="313" y="232" text-anchor="middle" font-size="14" fill="currentColor" font-weight="600">ack 2</text>
+<path d="M198 152 L132 152" fill="none" stroke="#10b981" stroke-width="1.6" marker-end="url(#dscw-mg)"/>
+<text x="165" y="186" text-anchor="middle" font-size="14" fill="#10b981" font-weight="700">OK</text>
+<text x="200" y="266" text-anchor="start" font-size="14" fill="#10b981">2 ack đủ W=2 → trả OK ngay,</text>
+<text x="200" y="286" text-anchor="start" font-size="14" fill="#10b981">không đợi replica 3</text>
+</g>
+<g data-step="5">
+<path d="M498 248 L354 166" fill="none" stroke="#f59e0b" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#dscw-ma)"/>
+<text x="650" y="242" text-anchor="start" font-size="14" fill="#f59e0b" font-weight="600">✓ muộn</text>
+</g>
 </svg>
+<step-note data-step="1">Client gửi tới bất kỳ node nào. Node đó làm coordinator: tra partition map, tìm preference list của key.</step-note>
+<step-note data-step="2">Fan-out song song tới đủ N replica, không phải chỉ W. Ghi tới cả 3 để bản sao đầy đủ; W chỉ quyết định phải chờ bao nhiêu.</step-note>
+<step-note data-step="3">Một ack mới là một bản sao bền. Chưa đủ W thì chưa được trả lời client.</step-note>
+<step-note data-step="4">Ack thứ hai lấp đủ W=2: coordinator trả OK luôn. Một replica chậm vì thế không kéo latency của cả lần ghi.</step-note>
+<step-note data-step="5">Replica 3 vẫn ghi, chỉ là xong sau khi client đã nhận OK. Với R=2, mọi lần đọc vẫn chạm ít nhất một trong hai replica đã ack, vì W+R=4 > 3.</step-note>
+</step-flow>
 
 Bất kỳ node nào cũng có thể làm **coordinator**: nó tra partition map, tìm preference list của key, fan-out tới N replica, đợi W ack rồi trả về. Client không cần biết topology.
 
@@ -248,28 +280,70 @@ Quy tắc: **mọi mutation qua mạng phải trả lời được câu "nếu c
 
 Khi mạng **phân mảnh** (partition — hai nửa cụm không thấy nhau), theo **CAP** ta **buộc phải chọn**:
 
-<svg viewBox="0 0 680 250" role="img" aria-labelledby="cap-t cap-d" style="width:100%;max-width:660px;height:auto;display:block;margin:1.25rem auto">
-<title id="cap-t">Lựa chọn CP và AP khi xảy ra network partition</title>
-<desc id="cap-d">Khi mạng phân mảnh, cấu hình CP từ chối phục vụ để giữ nhất quán, cấu hình AP vẫn phục vụ nhưng chấp nhận đọc cũ</desc>
-<line x1="340" y1="20" x2="340" y2="230" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 4"/>
-<text x="340" y="14" text-anchor="middle" font-size="11" fill="#f43f5e">network partition</text>
-<rect x="30" y="40" width="270" height="180" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="165" y="66" text-anchor="middle" font-size="13" fill="currentColor">CP — chọn Consistency</text>
-<text x="165" y="94" text-anchor="middle" font-size="11" fill="currentColor">W=3 hoặc quorum chặt</text>
-<text x="165" y="116" text-anchor="middle" font-size="11" fill="currentColor">nửa thiểu số KHÔNG đủ</text>
-<text x="165" y="138" text-anchor="middle" font-size="11" fill="currentColor">quorum → từ chối ghi</text>
-<text x="165" y="162" text-anchor="middle" font-size="11" fill="currentColor">không bao giờ đọc cũ,</text>
-<text x="165" y="184" text-anchor="middle" font-size="11" fill="currentColor">nhưng mất sẵn sàng</text>
-<text x="165" y="206" text-anchor="middle" font-size="10" fill="currentColor">dùng cho: số dư, tồn kho</text>
-<rect x="380" y="40" width="270" height="180" rx="10" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="515" y="66" text-anchor="middle" font-size="13" fill="currentColor">AP — chọn Availability</text>
-<text x="515" y="94" text-anchor="middle" font-size="11" fill="currentColor">W=1,R=1 + hinted handoff</text>
-<text x="515" y="116" text-anchor="middle" font-size="11" fill="currentColor">cả hai nửa vẫn nhận ghi</text>
-<text x="515" y="138" text-anchor="middle" font-size="11" fill="currentColor">có thể đọc cũ / sinh</text>
-<text x="515" y="160" text-anchor="middle" font-size="11" fill="currentColor">sibling, hội tụ sau</text>
-<text x="515" y="184" text-anchor="middle" font-size="11" fill="currentColor">luôn phục vụ</text>
-<text x="515" y="206" text-anchor="middle" font-size="10" fill="currentColor">dùng cho: cart, session</text>
+<ab-toggle data-labels="CP|AP">
+<svg viewBox="0 0 500 380" role="img" aria-labelledby="dsccp-t dsccp-d" font-family="ui-sans-serif, system-ui, sans-serif" style="width:100%;height:auto;display:block;margin:1.25rem auto">
+<title id="dsccp-t">CP khi network partition: phía thiểu số từ chối ghi</title>
+<desc id="dsccp-d">Partition chia cụm N=3: phía đa số có Replica 1, 2 và client X, phía thiểu số có Replica 3 và client Y. CP (W=3 hoặc quorum chặt): phía đa số đủ quorum nên ghi được, phía thiểu số không đủ quorum nên từ chối ghi. Không bao giờ đọc cũ nhưng mất sẵn sàng; dùng cho số dư, tồn kho.</desc>
+<defs><marker id="dsccp-m" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker><marker id="dsccp-mg" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#10b981"/></marker><marker id="dsccp-mr" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#f43f5e"/></marker><marker id="dsccp-ma" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#f59e0b"/></marker><marker id="dsccp-mb" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#3b82f6"/></marker><marker id="dsccp-mv" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8b5cf6"/></marker><marker id="dsccp-mt" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#14b8a6"/></marker></defs>
+<text x="250" y="18" text-anchor="middle" font-size="14" fill="#f43f5e" font-weight="600">network partition</text>
+<path d="M330 28 V300" fill="none" stroke="#f43f5e" stroke-width="2" stroke-dasharray="6 5"/>
+<text x="160" y="44" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">phía đa số (2 node)</text>
+<text x="415" y="44" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">phía thiểu số (1 node)</text>
+<text x="16" y="72" text-anchor="start" font-size="14" fill="currentColor" font-weight="600">W=3 hoặc quorum chặt</text>
+<rect x="110" y="86" width="100" height="34" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="160" y="108" text-anchor="middle" font-size="14" fill="currentColor">client X</text>
+<rect x="365" y="86" width="100" height="34" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="415" y="108" text-anchor="middle" font-size="14" fill="currentColor">client Y</text>
+<rect x="20" y="170" width="120" height="44" rx="8" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="80" y="197" text-anchor="middle" font-size="14" fill="currentColor" font-weight="600">Replica 1</text>
+<rect x="180" y="170" width="120" height="44" rx="8" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="240" y="197" text-anchor="middle" font-size="14" fill="currentColor" font-weight="600">Replica 2</text>
+<rect x="355" y="170" width="120" height="44" rx="8" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="415" y="197" text-anchor="middle" font-size="14" fill="currentColor" font-weight="600">Replica 3</text>
+<path d="M140 122 L84 168" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#dsccp-m)"/>
+<path d="M180 122 L236 168" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#dsccp-m)"/>
+<path d="M415 122 L415 168" fill="none" stroke="#f43f5e" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#dsccp-mr)"/>
+<text x="160" y="238" text-anchor="middle" font-size="14" fill="#10b981" font-weight="600">quorum 2/3: ghi OK</text>
+<rect x="345" y="226" width="140" height="52" rx="6" fill="#f43f5e" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="415" y="247" text-anchor="middle" font-size="14" fill="#f43f5e" font-weight="700">✗ từ chối ghi</text>
+<text x="415" y="267" text-anchor="middle" font-size="13" fill="#f43f5e">không đủ quorum</text>
+<path d="M10 300 H490" fill="none" stroke="currentColor" stroke-width="1.6" stroke-opacity="0.3"/>
+<text x="250" y="326" text-anchor="middle" font-size="14" fill="currentColor">không bao giờ đọc cũ, nhưng mất sẵn sàng</text>
+<text x="250" y="352" text-anchor="middle" font-size="14" fill="#3b82f6" font-weight="600">dùng cho: số dư, tồn kho</text>
 </svg>
+<svg viewBox="0 0 500 380" role="img" aria-labelledby="dscap-t dscap-d" font-family="ui-sans-serif, system-ui, sans-serif" style="width:100%;height:auto;display:block;margin:1.25rem auto">
+<title id="dscap-t">AP khi network partition: cả hai phía vẫn nhận ghi</title>
+<desc id="dscap-d">Cùng partition. AP (W=1, R=1 + hinted handoff): client X ghi v1 ở phía đa số, client Y ghi v2 ở phía thiểu số, cả hai đều OK. Luôn phục vụ nhưng có thể đọc cũ hoặc sinh sibling, hội tụ sau; dùng cho cart, session.</desc>
+<defs><marker id="dscap-m" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker><marker id="dscap-mg" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#10b981"/></marker><marker id="dscap-mr" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#f43f5e"/></marker><marker id="dscap-ma" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#f59e0b"/></marker><marker id="dscap-mb" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#3b82f6"/></marker><marker id="dscap-mv" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8b5cf6"/></marker><marker id="dscap-mt" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#14b8a6"/></marker></defs>
+<text x="250" y="18" text-anchor="middle" font-size="14" fill="#f43f5e" font-weight="600">network partition</text>
+<path d="M330 28 V300" fill="none" stroke="#f43f5e" stroke-width="2" stroke-dasharray="6 5"/>
+<text x="160" y="44" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">phía đa số (2 node)</text>
+<text x="415" y="44" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">phía thiểu số (1 node)</text>
+<text x="16" y="72" text-anchor="start" font-size="14" fill="currentColor" font-weight="600">W=1, R=1 + hinted handoff</text>
+<rect x="110" y="86" width="100" height="34" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="160" y="108" text-anchor="middle" font-size="14" fill="currentColor">client X</text>
+<rect x="365" y="86" width="100" height="34" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="415" y="108" text-anchor="middle" font-size="14" fill="currentColor">client Y</text>
+<rect x="20" y="170" width="120" height="44" rx="8" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="80" y="197" text-anchor="middle" font-size="14" fill="currentColor" font-weight="600">Replica 1</text>
+<rect x="180" y="170" width="120" height="44" rx="8" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="240" y="197" text-anchor="middle" font-size="14" fill="currentColor" font-weight="600">Replica 2</text>
+<rect x="355" y="170" width="120" height="44" rx="8" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="415" y="197" text-anchor="middle" font-size="14" fill="currentColor" font-weight="600">Replica 3</text>
+<path d="M140 122 L84 168" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#dscap-m)"/>
+<path d="M180 122 L236 168" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#dscap-m)"/>
+<path d="M415 122 L415 168" fill="none" stroke="#10b981" stroke-width="1.6" marker-end="url(#dscap-mg)"/>
+<text x="80" y="238" text-anchor="middle" font-size="14" fill="#10b981" font-weight="600">v1 ✓</text>
+<text x="240" y="238" text-anchor="middle" font-size="14" fill="#10b981" font-weight="600">v1 ✓</text>
+<text x="415" y="238" text-anchor="middle" font-size="14" fill="#10b981" font-weight="600">v2 ✓</text>
+<text x="415" y="262" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">cả hai nửa vẫn nhận ghi</text>
+<path d="M10 300 H490" fill="none" stroke="currentColor" stroke-width="1.6" stroke-opacity="0.3"/>
+<text x="250" y="326" text-anchor="middle" font-size="14" fill="currentColor">luôn phục vụ; có thể đọc cũ / sinh sibling, hội tụ sau</text>
+<text x="250" y="352" text-anchor="middle" font-size="14" fill="#10b981" font-weight="600">dùng cho: cart, session</text>
+</svg>
+<ab-note>Phía thiểu số không gom đủ quorum nên trả lỗi thay vì nhận ghi: đổi sẵn sàng lấy nhất quán. Ép W=3 thì cả phía đa số cũng từ chối, vì không với tới Replica 3.</ab-note>
+<ab-note>Mỗi phía nhận ghi với chỉ 1 ack nên không ai bị từ chối. Cái giá: v1 và v2 phân nhánh, khi mạng lành phải merge thành sibling hoặc hội tụ.</ab-note>
+</ab-toggle>
 
 Nhưng partition **hiếm**. Phần lớn thời gian mạng **ổn**, và **PACELC** nhắc câu hỏi thực tế hơn: *Else (khi không có partition), chọn Latency hay Consistency?*
 - **PC/EC** (ví dụ ép W=3, R=3): nhất quán cả khi partition lẫn bình thường, nhưng **latency cao** (đợi tất cả) và kém sẵn sàng.

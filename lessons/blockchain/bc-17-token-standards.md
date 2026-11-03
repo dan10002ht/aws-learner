@@ -145,6 +145,18 @@ Cơ chế sinh lời: **tỷ giá share/asset tăng dần**. Bạn gửi 100 USD
 
 > Cảnh báo bảo mật kinh điển của 4626: **inflation / donation attack** — kẻ tấn công là người deposit đầu tiên với 1 wei rồi "donate" token trực tiếp để bóp méo tỷ giá, làm nạn nhân deposit sau nhận 0 share (bị làm tròn xuống). Vault chuẩn phải chống bằng "virtual shares/assets offset" (OpenZeppelin 4626 đã tích hợp).
 
+
+<auto-anim data-dur="8">
+<svg viewBox="0 0 520 300" role="img" aria-labelledby="bc17-med-t bc17-med-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="bc17-med-t">Vault tăng assets từ 100 lên 110 với 100 shares cố định</title>
+<desc id="bc17-med-d">Vault tăng assets từ 100 lên 110 với 100 shares cố định</desc>
+<text x="260" y="25" font-size="14" fill="currentColor" text-anchor="middle">Cùng 100 shares, quyền rút asset tăng</text><text x="90" y="65" font-size="14" fill="currentColor" text-anchor="middle">Shares</text><rect x="150" y="45" width="300" height="35" rx="5" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/><text x="300" y="69" font-size="14" fill="currentColor" text-anchor="middle">100 shares (không đổi)</text><text x="90" y="130" font-size="14" fill="currentColor" text-anchor="middle">Assets</text><rect x="150" y="105" width="300" height="35" fill="#10b981" fill-opacity="0.14" stroke="#10b981"><animate attributeName="width" dur="8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;0.5;1" values="300;330;300"/></rect><text x="260" y="178" font-size="14" fill="currentColor" text-anchor="middle">100 USDC · 1 share = 1 USDC<animate attributeName="visibility" dur="8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;0.5;1" values="visible;hidden;visible"/></text>
+<text x="260" y="178" font-size="14" fill="currentColor" text-anchor="middle" visibility="hidden">110 USDC · 1 share = 1,1 USDC<animate attributeName="visibility" dur="8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;0.5;1" values="hidden;visible;hidden"/></text><text x="260" y="206" font-size="14" fill="currentColor" text-anchor="middle">1 share: 1 → 1,1 USDC</text><path d="M70,250 L450,250" fill="none" stroke="#3b82f6" stroke-width="2"/><text x="100" y="277" font-size="14" fill="currentColor" text-anchor="middle">Gửi vốn</text><text x="420" y="277" font-size="14" fill="currentColor" text-anchor="middle">Sau sinh lời</text><circle cx="70" cy="250" r="7" fill="#10b981"><animate attributeName="cx" dur="8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;0.5;1" values="70;450;70"/></circle>
+</svg>
+</auto-anim>
+
+Minh họa hai mốc của ví dụ: không có nạp/rút thêm, shares không đổi; chiều dài thanh assets tăng từ 100 lên 110 USDC.
+
 ---
 
 ## 3. Code ví dụ — ERC-20 tối giản (chạy được)

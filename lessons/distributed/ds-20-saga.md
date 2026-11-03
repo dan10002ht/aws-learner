@@ -37,33 +37,54 @@ Một Saga chạy được đúng **một trong hai kết cục**:
 
 Điểm mấu chốt phải khắc cốt ghi tâm: **compensation KHÔNG phải rollback**. Rollback của database xoá sạch dấu vết như chưa từng xảy ra. Compensation là một giao dịch **mới**, chạy **sau** khi `Ti` đã commit và **đã hiện ra bên ngoài**. Bạn không thể "chưa từng trừ tiền" — bạn chỉ có thể **hoàn tiền**, và bản ghi hoàn tiền đó là một sự kiện có thật trong lịch sử.
 
-<svg viewBox="0 0 720 250" role="img" aria-labelledby="sg-t sg-d" style="width:100%;max-width:700px;height:auto;display:block;margin:1.25rem auto">
-<title id="sg-t">Saga: chuỗi local transaction xuôi và chuỗi compensation ngược</title>
-<desc id="sg-d">T1 T2 T3 chạy xuôi, khi T3 lỗi thì chạy C2 rồi C1 theo thứ tự ngược lại</desc>
-<rect x="30" y="30" width="120" height="46" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="90" y="52" text-anchor="middle" font-size="13" fill="currentColor">T1 Payment</text>
-<text x="90" y="68" text-anchor="middle" font-size="11" fill="currentColor">trừ tiền</text>
-<rect x="200" y="30" width="120" height="46" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="260" y="52" text-anchor="middle" font-size="13" fill="currentColor">T2 Inventory</text>
-<text x="260" y="68" text-anchor="middle" font-size="11" fill="currentColor">giữ hàng</text>
-<rect x="370" y="30" width="120" height="46" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="430" y="52" text-anchor="middle" font-size="13" fill="currentColor">T3 Shipping</text>
-<text x="430" y="68" text-anchor="middle" font-size="11" fill="#f43f5e">LỖI ✗</text>
-<line x1="150" y1="53" x2="198" y2="53" stroke="currentColor" stroke-width="1.5" marker-end="url(#sga)"/>
-<line x1="320" y1="53" x2="368" y2="53" stroke="currentColor" stroke-width="1.5" marker-end="url(#sga)"/>
-<rect x="200" y="150" width="120" height="46" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="260" y="172" text-anchor="middle" font-size="13" fill="currentColor">C2 Inventory</text>
-<text x="260" y="188" text-anchor="middle" font-size="11" fill="currentColor">nhả hàng</text>
-<rect x="30" y="150" width="120" height="46" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="90" y="172" text-anchor="middle" font-size="13" fill="currentColor">C1 Payment</text>
-<text x="90" y="188" text-anchor="middle" font-size="11" fill="currentColor">hoàn tiền</text>
-<line x1="430" y1="78" x2="430" y2="120" stroke="#f43f5e" stroke-width="1.5"/>
-<line x1="430" y1="120" x2="322" y2="120" stroke="#f43f5e" stroke-width="1.5"/>
-<line x1="322" y1="120" x2="270" y2="148" stroke="#f43f5e" stroke-width="1.5" marker-end="url(#sgr)"/>
-<line x1="200" y1="173" x2="152" y2="173" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#sgr)"/>
-<text x="360" y="138" text-anchor="middle" font-size="11" fill="#f43f5e">compensate ngược</text>
-<defs><marker id="sga" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker><marker id="sgr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#f59e0b"/></marker></defs>
+<step-flow>
+<svg viewBox="0 0 760 300" role="img" aria-labelledby="ds20s-t ds20s-d" font-family="ui-sans-serif, system-ui, sans-serif" style="width:100%;height:auto;display:block;margin:1.25rem auto">
+<title id="ds20s-t">Saga: chuỗi local transaction xuôi và chuỗi compensation ngược</title>
+<desc id="ds20s-d">T1 Payment trừ tiền rồi T2 Inventory giữ hàng, mỗi bước commit ngay; T3 Shipping lỗi; compensate ngược: C2 Inventory nhả hàng rồi C1 Payment hoàn tiền. T3 lỗi nên không cần C3.</desc>
+<defs><marker id="ds20s-m" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker><marker id="ds20s-mg" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#10b981"/></marker><marker id="ds20s-mr" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#f43f5e"/></marker><marker id="ds20s-ma" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#f59e0b"/></marker><marker id="ds20s-mb" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#3b82f6"/></marker><marker id="ds20s-mv" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8b5cf6"/></marker><marker id="ds20s-mt" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#14b8a6"/></marker></defs>
+<text x="20" y="34" text-anchor="start" font-size="14" fill="currentColor" opacity="0.75">Chạy xuôi: mỗi Ti commit ngay trong DB của service</text>
+<text x="20" y="196" text-anchor="start" font-size="14" fill="currentColor" opacity="0.75">Bù ngược khi Tk lỗi: C(k-1), ..., C1</text>
+<path d="M10 136 H750" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="2 5" stroke-opacity="0.35"/>
+<g data-step="1">
+<rect x="20" y="56" width="190" height="58" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="115.0" y="81" text-anchor="middle" font-size="15" fill="currentColor" font-weight="600">T1 Payment</text>
+<text x="115.0" y="101" text-anchor="middle" font-size="14" fill="currentColor">trừ tiền ✓ commit</text>
+</g>
+<g data-step="2">
+<path d="M212 85.0 L281 85.0" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ds20s-m)"/>
+<rect x="285" y="56" width="190" height="58" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="380.0" y="81" text-anchor="middle" font-size="15" fill="currentColor" font-weight="600">T2 Inventory</text>
+<text x="380.0" y="101" text-anchor="middle" font-size="14" fill="currentColor">giữ hàng ✓ commit</text>
+</g>
+<g data-step="3">
+<path d="M477 85.0 L546 85.0" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ds20s-m)"/>
+<rect x="550" y="56" width="190" height="58" rx="8" fill="#f43f5e" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="645.0" y="81" text-anchor="middle" font-size="15" fill="currentColor" font-weight="600">T3 Shipping</text>
+<text x="645.0" y="101" text-anchor="middle" font-size="14" fill="#f43f5e">LỖI ✗</text>
+</g>
+<g data-step="4">
+<path d="M575 116 V245.0 H479" fill="none" stroke="#f43f5e" stroke-width="1.6" marker-end="url(#ds20s-mr)"/>
+<text x="565" y="168" text-anchor="end" font-size="14" fill="#f43f5e">compensate ngược</text>
+<rect x="600" y="216" width="140" height="58" rx="8" fill="none" stroke="currentColor" stroke-opacity="0.4" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="670.0" y="241" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">không cần C3</text>
+<text x="670.0" y="260" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">T3 chưa commit</text>
+<rect x="285" y="216" width="190" height="58" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="380.0" y="241" text-anchor="middle" font-size="15" fill="currentColor" font-weight="600">C2 Inventory</text>
+<text x="380.0" y="261" text-anchor="middle" font-size="14" fill="currentColor">nhả hàng</text>
+</g>
+<g data-step="5">
+<path d="M283 245.0 L214 245.0" fill="none" stroke="#f59e0b" stroke-width="1.6" marker-end="url(#ds20s-ma)"/>
+<rect x="20" y="216" width="190" height="58" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="115.0" y="241" text-anchor="middle" font-size="15" fill="currentColor" font-weight="600">C1 Payment</text>
+<text x="115.0" y="261" text-anchor="middle" font-size="14" fill="currentColor">hoàn tiền</text>
+</g>
 </svg>
+<step-note data-step="1">T1 commit ngay trong database của Payment, không giữ lock chờ các bước sau. Tiền đã trừ là sự kiện đã hiện ra bên ngoài.</step-note>
+<step-note data-step="2">T2 cũng commit độc lập. Lúc này hệ thống tạm thời chưa nhất quán: đã trừ tiền, đã giữ hàng, nhưng đơn chưa xong.</step-note>
+<step-note data-step="3">Bước k lỗi. Không có rollback chung để xoá T1, T2 vì chúng đã commit; chỉ còn cách chạy giao dịch bù.</step-note>
+<step-note data-step="4">Bù theo thứ tự ngược, bắt đầu từ bước gần nhất đã commit. C2 là một giao dịch mới, không phải rollback của T2.</step-note>
+<step-note data-step="5">C1 hoàn tiền: bản ghi hoàn tiền là một sự kiện có thật trong lịch sử, chứ không phải "chưa từng trừ tiền".</step-note>
+</step-flow>
 
 ### 2.3 Analogy đời thường
 
@@ -79,38 +100,66 @@ Saga cần một "bộ não" quyết định bước nào chạy tiếp và khi 
 
 **Orchestration** — có một **orchestrator** (điều phối viên) trung tâm giữ **state machine** của Saga. Nó **ra lệnh** cho từng service ("Payment, hãy trừ tiền"), nhận reply, rồi quyết định lệnh kế tiếp hoặc lệnh compensation. Logic Saga **tập trung một chỗ**.
 
-<svg viewBox="0 0 720 300" role="img" aria-labelledby="co-t co-d" style="width:100%;max-width:700px;height:auto;display:block;margin:1.25rem auto">
-<title id="co-t">Choreography event-driven so với Orchestration tập trung</title>
-<desc id="co-d">Bên trái các service nối nhau qua event broker, bên phải một orchestrator điều khiển ba service</desc>
-<text x="180" y="24" text-anchor="middle" font-size="14" fill="currentColor">Choreography (event-driven)</text>
-<rect x="40" y="45" width="90" height="40" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="85" y="70" text-anchor="middle" font-size="12" fill="currentColor">Payment</text>
-<rect x="130" y="120" width="110" height="34" rx="6" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="185" y="142" text-anchor="middle" font-size="11" fill="currentColor">Event broker</text>
-<rect x="40" y="190" width="90" height="40" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="85" y="215" text-anchor="middle" font-size="12" fill="currentColor">Inventory</text>
-<rect x="230" y="190" width="90" height="40" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="275" y="215" text-anchor="middle" font-size="12" fill="currentColor">Shipping</text>
-<line x1="130" y1="72" x2="150" y2="118" stroke="currentColor" stroke-width="1.3" marker-end="url(#coa)"/>
-<line x1="160" y1="154" x2="115" y2="188" stroke="currentColor" stroke-width="1.3" marker-end="url(#coa)"/>
-<line x1="215" y1="154" x2="260" y2="188" stroke="currentColor" stroke-width="1.3" marker-end="url(#coa)"/>
-<text x="175" y="255" text-anchor="middle" font-size="10" fill="currentColor">mỗi service tự phản ứng theo event</text>
-<line x1="360" y1="30" x2="360" y2="270" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4" opacity="0.4"/>
-<text x="545" y="24" text-anchor="middle" font-size="14" fill="currentColor">Orchestration (tập trung)</text>
-<rect x="490" y="55" width="110" height="42" rx="8" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="545" y="80" text-anchor="middle" font-size="12" fill="currentColor">Orchestrator</text>
-<rect x="410" y="190" width="86" height="40" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="453" y="215" text-anchor="middle" font-size="11" fill="currentColor">Payment</text>
-<rect x="502" y="190" width="86" height="40" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="545" y="215" text-anchor="middle" font-size="11" fill="currentColor">Inventory</text>
-<rect x="594" y="190" width="86" height="40" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="637" y="215" text-anchor="middle" font-size="11" fill="currentColor">Shipping</text>
-<line x1="520" y1="97" x2="460" y2="188" stroke="currentColor" stroke-width="1.3" marker-end="url(#coa)"/>
-<line x1="545" y1="97" x2="545" y2="188" stroke="currentColor" stroke-width="1.3" marker-end="url(#coa)"/>
-<line x1="570" y1="97" x2="630" y2="188" stroke="currentColor" stroke-width="1.3" marker-end="url(#coa)"/>
-<text x="545" y="255" text-anchor="middle" font-size="10" fill="currentColor">orchestrator ra lệnh + nhận reply</text>
-<defs><marker id="coa" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<ab-toggle data-labels="Choreography|Orchestration">
+<svg viewBox="0 0 500 360" role="img" aria-labelledby="ds20c-t ds20c-d" font-family="ui-sans-serif, system-ui, sans-serif" style="width:100%;height:auto;display:block;margin:1.25rem auto">
+<title id="ds20c-t">Choreography: không có bộ não trung tâm</title>
+<desc id="ds20c-d">Payment, Inventory, Shipping nối nhau qua event broker. Payment phát PaymentCharged, Inventory nghe, giữ hàng rồi phát StockReserved, Shipping nghe StockReserved. Logic Saga nằm rải ở cả ba service; broker chỉ chuyển event.</desc>
+<defs><marker id="ds20c-m" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker><marker id="ds20c-mg" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#10b981"/></marker><marker id="ds20c-mr" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#f43f5e"/></marker><marker id="ds20c-ma" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#f59e0b"/></marker><marker id="ds20c-mb" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#3b82f6"/></marker><marker id="ds20c-mv" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8b5cf6"/></marker><marker id="ds20c-mt" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#14b8a6"/></marker></defs>
+<text x="250" y="24" text-anchor="middle" font-size="15" fill="currentColor" font-weight="700">Choreography (event-driven)</text>
+<rect x="150" y="46" width="200" height="62" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="250.0" y="73" text-anchor="middle" font-size="15" fill="currentColor" font-weight="600">Event broker</text>
+<text x="250.0" y="93" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">chỉ chuyển event</text>
+<rect x="10" y="226" width="150" height="60" rx="8" fill="#f59e0b" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.9" stroke-width="2.2"/>
+<text x="85.0" y="252" text-anchor="middle" font-size="15" fill="currentColor" font-weight="600">Payment</text>
+<text x="85.0" y="272" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">phát PaymentCharged</text>
+<rect x="175" y="226" width="150" height="60" rx="8" fill="#f59e0b" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.9" stroke-width="2.2"/>
+<text x="250.0" y="252" text-anchor="middle" font-size="15" fill="currentColor" font-weight="600">Inventory</text>
+<text x="250.0" y="272" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">phát StockReserved</text>
+<rect x="340" y="226" width="150" height="60" rx="8" fill="#f59e0b" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.9" stroke-width="2.2"/>
+<text x="415.0" y="252" text-anchor="middle" font-size="15" fill="currentColor" font-weight="600">Shipping</text>
+<text x="415.0" y="272" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">nghe StockReserved</text>
+<path d="M104 224 L214 110" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ds20c-m)"/>
+<path d="M240 110 L240 224" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ds20c-m)"/>
+<path d="M262 224 L262 110" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ds20c-m)"/>
+<path d="M290 110 L396 224" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ds20c-m)"/>
+<text x="130" y="150" text-anchor="end" font-size="13" fill="currentColor" opacity="0.8">phát</text>
+<text x="370" y="150" text-anchor="start" font-size="13" fill="currentColor" opacity="0.8">nghe</text>
+<text x="250" y="314" text-anchor="middle" font-size="14" fill="currentColor">mỗi service tự phản ứng theo event</text>
+<rect x="150" y="334" width="18" height="14" rx="3" fill="#f59e0b" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.9" stroke-width="2"/>
+<text x="176" y="346" text-anchor="start" font-size="13" fill="currentColor">nơi giữ logic Saga</text>
 </svg>
+<svg viewBox="0 0 500 360" role="img" aria-labelledby="ds20o-t ds20o-d" font-family="ui-sans-serif, system-ui, sans-serif" style="width:100%;height:auto;display:block;margin:1.25rem auto">
+<title id="ds20o-t">Orchestration: orchestrator giữ state machine</title>
+<desc id="ds20o-d">Cùng ba service Payment, Inventory, Shipping. Orchestrator ra lệnh PaymentCharge, InventoryReserve, ShippingCreate và nhận reply của từng lệnh. Logic Saga nằm tập trung ở orchestrator; service chỉ làm việc được giao.</desc>
+<defs><marker id="ds20o-m" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker><marker id="ds20o-mg" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#10b981"/></marker><marker id="ds20o-mr" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#f43f5e"/></marker><marker id="ds20o-ma" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#f59e0b"/></marker><marker id="ds20o-mb" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#3b82f6"/></marker><marker id="ds20o-mv" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#8b5cf6"/></marker><marker id="ds20o-mt" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#14b8a6"/></marker></defs>
+<text x="250" y="24" text-anchor="middle" font-size="15" fill="currentColor" font-weight="700">Orchestration (tập trung)</text>
+<rect x="150" y="46" width="200" height="62" rx="8" fill="#f59e0b" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.9" stroke-width="2.2"/>
+<text x="250.0" y="73" text-anchor="middle" font-size="15" fill="currentColor" font-weight="600">Orchestrator</text>
+<text x="250.0" y="93" text-anchor="middle" font-size="13" fill="currentColor">state machine</text>
+<rect x="10" y="226" width="150" height="60" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="85.0" y="252" text-anchor="middle" font-size="15" fill="currentColor" font-weight="600">Payment</text>
+<text x="85.0" y="272" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">PaymentCharge</text>
+<rect x="175" y="226" width="150" height="60" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="250.0" y="252" text-anchor="middle" font-size="15" fill="currentColor" font-weight="600">Inventory</text>
+<text x="250.0" y="272" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">InventoryReserve</text>
+<rect x="340" y="226" width="150" height="60" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.55" stroke-width="1"/>
+<text x="415.0" y="252" text-anchor="middle" font-size="15" fill="currentColor" font-weight="600">Shipping</text>
+<text x="415.0" y="272" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">ShippingCreate</text>
+<path d="M190 110 L72 224" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ds20o-m)"/>
+<path d="M104 224 L214 110" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ds20o-m)"/>
+<path d="M240 110 L240 224" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ds20o-m)"/>
+<path d="M262 224 L262 110" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ds20o-m)"/>
+<path d="M290 110 L396 224" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#ds20o-m)"/>
+<path d="M430 224 L312 110" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ds20o-m)"/>
+<text x="112" y="150" text-anchor="end" font-size="13" fill="currentColor" opacity="0.8">lệnh</text>
+<text x="370" y="150" text-anchor="start" font-size="13" fill="currentColor" opacity="0.8">reply (nét đứt)</text>
+<text x="250" y="314" text-anchor="middle" font-size="14" fill="currentColor">orchestrator ra lệnh + nhận reply</text>
+<rect x="150" y="334" width="18" height="14" rx="3" fill="#f59e0b" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.9" stroke-width="2"/>
+<text x="176" y="346" text-anchor="start" font-size="13" fill="currentColor">nơi giữ logic Saga</text>
+</svg>
+<ab-note>Không ai ra lệnh: mỗi service tự quyết bước của mình khi nghe được event. Muốn biết cả flow phải đọc logic rải ở ba nơi.</ab-note>
+<ab-note>Cùng ba service, nhưng mọi lệnh đi ra từ orchestrator và mọi reply quay về nó. Flow nằm gọn một state machine, đổi lại orchestrator là chỗ cần HA.</ab-note>
+</ab-toggle>
 
 | Tiêu chí | Choreography | Orchestration |
 |----------|--------------|---------------|

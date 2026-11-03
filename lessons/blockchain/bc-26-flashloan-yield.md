@@ -26,32 +26,53 @@ Trong blockchain, "quầy" đó là **một transaction**. EVM có tính chất 
 
 Vì mọi thứ nằm gọn trong một tx, người cho vay **không bao giờ mất tiền** — đó là lý do flash loan **không cần thế chấp** và mở ra cho **bất kỳ ai**, không cần credit score.
 
-<svg viewBox="0 0 720 300" role="img" aria-labelledby="fl-t fl-d" style="width:100%;max-width:680px;height:auto;display:block;margin:1.25rem auto">
-<title id="fl-t">Vòng đời một flash loan trong một transaction</title>
-<desc id="fl-d">Protocol cho vay, contract người dùng thực thi logic rồi hoàn trả gốc và phí; nếu không trả đủ toàn bộ transaction bị revert</desc>
-<rect x="20" y="30" width="150" height="60" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="95" y="56" text-anchor="middle" font-size="13" fill="currentColor">Lending Pool</text>
-<text x="95" y="74" text-anchor="middle" font-size="11" fill="currentColor">(Aave / dYdX)</text>
-<rect x="285" y="30" width="150" height="60" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="360" y="56" text-anchor="middle" font-size="13" fill="currentColor">Your Contract</text>
-<text x="360" y="74" text-anchor="middle" font-size="11" fill="currentColor">executeOperation()</text>
-<rect x="550" y="30" width="150" height="60" rx="8" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="625" y="56" text-anchor="middle" font-size="13" fill="currentColor">DEX / Protocol</text>
-<text x="625" y="74" text-anchor="middle" font-size="11" fill="currentColor">arbitrage, swap...</text>
-<line x1="170" y1="50" x2="283" y2="50" stroke="currentColor" stroke-width="1.5" marker-end="url(#fah)"/>
-<text x="226" y="42" text-anchor="middle" font-size="11" fill="currentColor">1. cho vay X</text>
-<line x1="435" y1="50" x2="548" y2="50" stroke="currentColor" stroke-width="1.5" marker-end="url(#fah)"/>
-<text x="491" y="42" text-anchor="middle" font-size="11" fill="currentColor">2. dùng X</text>
-<line x1="548" y1="78" x2="437" y2="78" stroke="currentColor" stroke-width="1.5" marker-end="url(#fah)"/>
-<text x="491" y="97" text-anchor="middle" font-size="11" fill="#10b981">lợi nhuận</text>
-<line x1="283" y1="105" x2="170" y2="105" stroke="currentColor" stroke-width="1.5" marker-end="url(#fah)"/>
-<text x="226" y="122" text-anchor="middle" font-size="11" fill="currentColor">3. trả X + phí</text>
-<rect x="60" y="170" width="600" height="100" rx="10" fill="#f59e0b" fill-opacity="0.10" stroke="currentColor" stroke-dasharray="5 4"/>
-<text x="360" y="198" text-anchor="middle" font-size="13" fill="currentColor">TẤT CẢ nằm trong 1 transaction (atomic)</text>
-<text x="360" y="226" text-anchor="middle" font-size="12" fill="#10b981">Trả đủ gốc + phí  →  tx COMMIT, protocol thu phí, bạn giữ lợi nhuận</text>
-<text x="360" y="250" text-anchor="middle" font-size="12" fill="#f43f5e">Không trả đủ  →  REVERT toàn bộ, như chưa từng vay (protocol an toàn)</text>
-<defs><marker id="fah" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<step-flow>
+<svg viewBox="0 0 720 345" role="img" aria-labelledby="bc26-med-t bc26-med-d" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto">
+<title id="bc26-med-t">Flash loan: một tx với hai kết quả</title>
+<desc id="bc26-med-d">Pool, borrower contract và DEX cố định; các cạnh lần lượt sáng lên. Trả đủ thì commit, thiếu thì hoàn tác mọi thay đổi state.</desc>
+<defs><marker id="bc26-med-a" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L7 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<rect x="10" y="12" width="700" height="316" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="360" y="36" text-anchor="middle" font-size="14" fill="currentColor">MỘT TRANSACTION — atomic</text>
+<rect x="20" y="60" width="150" height="75" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="95" y="86" text-anchor="middle" font-size="14" fill="currentColor">Lending Pool</text>
+<text x="95" y="110" text-anchor="middle" font-size="13" fill="currentColor">Aave / dYdX</text>
+<rect x="285" y="60" width="150" height="75" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="360" y="86" text-anchor="middle" font-size="14" fill="currentColor">Your Contract</text>
+<text x="360" y="110" text-anchor="middle" font-size="13" fill="currentColor">executeOperation()</text>
+<rect x="550" y="60" width="150" height="75" rx="8" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="625" y="86" text-anchor="middle" font-size="14" fill="currentColor">DEX / Protocol</text>
+<text x="625" y="110" text-anchor="middle" font-size="13" fill="currentColor">arbitrage, swap</text>
+<g data-step="1">
+<line x1="172" y1="75" x2="282" y2="75" stroke="currentColor" stroke-width="2"  marker-end="url(#bc26-med-a)"/>
+<text x="226" y="64" text-anchor="middle" font-size="13" fill="currentColor">1. vay X</text>
+</g>
+<g data-step="2">
+<line x1="437" y1="75" x2="547" y2="75" stroke="currentColor" stroke-width="2"  marker-end="url(#bc26-med-a)"/>
+<text x="491" y="64" text-anchor="middle" font-size="13" fill="currentColor">2. dùng X</text>
+<line x1="547" y1="130" x2="437" y2="130" stroke="currentColor" stroke-width="2"  marker-end="url(#bc26-med-a)"/>
+<text x="491" y="151" text-anchor="middle" font-size="13" fill="currentColor">lợi nhuận</text>
+</g>
+<g data-step="3">
+<path d="M360 137 V167 H95 V139" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#bc26-med-a)"/>
+<text x="226" y="190" text-anchor="middle" font-size="13" fill="currentColor">3. trả X + phí</text>
+</g>
+<g data-step="4">
+<line x1="95" y1="137" x2="95" y2="218" stroke="currentColor" stroke-width="2"  marker-end="url(#bc26-med-a)"/>
+<line x1="95" y1="218" x2="260" y2="218" stroke="currentColor" stroke-width="2"  marker-end="url(#bc26-med-a)"/>
+<rect x="260" y="202" width="210" height="44" rx="8" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="365" y="230" text-anchor="middle" font-size="13" fill="currentColor">Đủ → COMMIT, pool thu phí</text>
+<rect x="260" y="264" width="210" height="44" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/>
+<text x="365" y="291" text-anchor="middle" font-size="13" fill="currentColor">Thiếu → REVERT toàn bộ</text>
+<path d="M95 218 V286 H256" fill="none" stroke="#f43f5e" stroke-width="2" marker-end="url(#bc26-med-a)"/>
+<text x="588" y="229" text-anchor="middle" font-size="13" fill="currentColor">Giữ lợi nhuận</text>
+<text x="588" y="290" text-anchor="middle" font-size="13" fill="currentColor">State về trước tx</text>
+</g>
 </svg>
+<step-note data-step="1">Tính atomic cho phép pool cấp vốn trước khi kiểm tra việc hoàn trả trong cùng tx.</step-note>
+<step-note data-step="2">Contract dùng vốn qua DEX/protocol; kết quả vẫn chưa được commit riêng lẻ.</step-note>
+<step-note data-step="3">Phải hoàn trả cả gốc lẫn phí trước khi tx kết thúc.</step-note>
+<step-note data-step="4">Hai nhánh là hai kết quả thay thế: đủ thì pool thu phí và borrower giữ lợi nhuận; thiếu thì rollback cả vay và thao tác DEX.</step-note>
+</step-flow>
 
 ### 2.2 Ứng dụng hợp pháp
 

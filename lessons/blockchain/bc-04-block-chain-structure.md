@@ -108,26 +108,20 @@ Chú ý mũi tên **trỏ ngược**: block mới trỏ về block cũ, không p
 4. Muốn "vá", kẻ tấn công phải sửa `prev` của Block 53 thành `X`. Nhưng làm vậy → **hash Block 53 đổi** → tới lượt Block 54 đứt...
 5. Domino chạy tới **block mới nhất**. Kẻ tấn công phải **đào lại (re-mine) mọi block từ 52 tới đỉnh** — mỗi block đều phải tìm lại nonce thỏa mãn difficulty.
 
-<svg viewBox="0 0 700 200" role="img" aria-labelledby="tm-t tm-d" style="width:100%;max-width:680px;height:auto;display:block;margin:1.25rem auto">
-<title id="tm-t">Hiệu ứng domino khi sửa một block</title>
-<desc id="tm-d">Sửa Block 52 làm hash đổi khiến Block 53 và 54 mất liên kết và phải đào lại</desc>
-<rect x="20" y="70" width="160" height="90" rx="10" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="100" y="98" text-anchor="middle" font-size="13" fill="currentColor">Block 52 (bị sửa)</text>
-<text x="100" y="122" text-anchor="middle" font-size="11" fill="#f43f5e">merkle đổi → hash đổi</text>
-<text x="100" y="142" text-anchor="middle" font-size="11" fill="currentColor">hash: X ≠ 00f4b2</text>
-<rect x="270" y="70" width="160" height="90" rx="10" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="350" y="98" text-anchor="middle" font-size="13" fill="currentColor">Block 53</text>
-<text x="350" y="122" text-anchor="middle" font-size="11" fill="#f43f5e">prev=00f4b2 ✗</text>
-<text x="350" y="142" text-anchor="middle" font-size="11" fill="currentColor">liên kết đứt</text>
-<rect x="520" y="70" width="160" height="90" rx="10" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="600" y="98" text-anchor="middle" font-size="13" fill="currentColor">Block 54</text>
-<text x="600" y="122" text-anchor="middle" font-size="11" fill="#f43f5e">đứt theo</text>
-<text x="600" y="142" text-anchor="middle" font-size="11" fill="currentColor">phải đào lại</text>
-<line x1="270" y1="115" x2="185" y2="115" stroke="#f43f5e" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#da)"/>
-<line x1="520" y1="115" x2="435" y2="115" stroke="#f43f5e" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#da)"/>
-<text x="350" y="186" text-anchor="middle" font-size="11" fill="currentColor">Sửa 1 block ⇒ đào lại mọi block phía sau, nhanh hơn cả mạng còn lại — bất khả về kinh tế</text>
-<defs><marker id="da" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#f43f5e"/></marker></defs>
+<ab-toggle data-labels="Nguyên vẹn|Sửa Block 52">
+<svg viewBox="0 0 520 350" role="img" aria-labelledby="bc04-med-0-t bc04-med-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="bc04-med-0-t">Liên kết prev hash khi Block 52 thay đổi</title>
+<desc id="bc04-med-0-d">Liên kết prev hash khi Block 52 thay đổi</desc>
+<rect x="80" y="30" width="360" height="75" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="260" y="53" font-size="14" fill="currentColor" text-anchor="middle">Block 52</text><text x="260" y="80" font-size="14" fill="currentColor" text-anchor="middle">hash = 00f4b2..</text><rect x="80" y="135" width="360" height="75" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="260" y="158" font-size="14" fill="currentColor" text-anchor="middle">Block 53</text><text x="260" y="185" font-size="14" fill="currentColor" text-anchor="middle">prev = 00f4b2..</text><path d="M260,135 L260,105" stroke="#10b981" stroke-width="3" marker-end="url(#bc04-med-0-a)"/><rect x="80" y="240" width="360" height="75" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="260" y="263" font-size="14" fill="currentColor" text-anchor="middle">Block 54</text><text x="260" y="290" font-size="14" fill="currentColor" text-anchor="middle">prev = hash(Block 53)</text><path d="M260,240 L260,210" stroke="#10b981" stroke-width="3" marker-end="url(#bc04-med-0-a)"/><defs><marker id="bc04-med-0-a" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
 </svg>
+<svg viewBox="0 0 520 350" role="img" aria-labelledby="bc04-med-1-t bc04-med-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="bc04-med-1-t">Liên kết prev hash khi Block 52 thay đổi</title>
+<desc id="bc04-med-1-d">Liên kết prev hash khi Block 52 thay đổi</desc>
+<rect x="80" y="30" width="360" height="75" rx="5" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/><text x="260" y="53" font-size="14" fill="currentColor" text-anchor="middle">Block 52</text><text x="260" y="80" font-size="14" fill="currentColor" text-anchor="middle">Merkle root đổi; hash = X</text><rect x="80" y="135" width="360" height="75" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="260" y="158" font-size="14" fill="currentColor" text-anchor="middle">Block 53</text><text x="260" y="185" font-size="14" fill="currentColor" text-anchor="middle">prev = 00f4b2..</text><path d="M260,135 L260,105" stroke="#f43f5e" stroke-width="3" marker-end="url(#bc04-med-1-a)"/><rect x="80" y="240" width="360" height="75" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="260" y="263" font-size="14" fill="currentColor" text-anchor="middle">Block 54</text><text x="260" y="290" font-size="14" fill="currentColor" text-anchor="middle">prev = hash(Block 53)</text><path d="M260,240 L260,210" stroke="#10b981" stroke-width="3" marker-end="url(#bc04-med-1-a)"/><path d="M247,113 L273,130 M273,113 L247,130" stroke="#f43f5e" stroke-width="4"/><defs><marker id="bc04-med-1-a" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+</svg>
+<ab-note>Mỗi block giữ hash của block trước: mũi tên chỉ về quá khứ.</ab-note>
+<ab-note>Sửa tx làm Merkle root rồi hash Block 52 đổi từ 00f4b2.. sang X: liên kết 53 → 52 đứt. Nếu sửa prev của 53 để vá, hash 53 đổi và mới làm đứt liên kết 54 → 53. Phải re-mine từ 52 tới đỉnh để có chuỗi thay thế đủ tổng công việc.</ab-note>
+</ab-toggle>
 
 Và đây là chỗ **đồng thuận** khóa lại: trong khi kẻ tấn công è cổ đào lại một chuỗi cũ, **mạng lương thiện** vẫn đang kéo dài chuỗi thật với **toàn bộ sức mạnh băm (hashpower)** của nó. Node luôn theo **chuỗi có tổng công việc lớn nhất** (heaviest chain). Để chuỗi giả vượt chuỗi thật, kẻ tấn công cần **> 50% hashpower toàn mạng** — tấn công 51%. Càng nhiều block xác nhận chồng lên trên giao dịch của bạn, "độ sâu" càng lớn, chi phí lật ngược càng tăng theo cấp số.
 
