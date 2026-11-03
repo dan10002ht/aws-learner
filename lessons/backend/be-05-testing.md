@@ -178,46 +178,14 @@ Bài toán: service A (consumer) gọi service B (provider). E2E test cả hai c
 
 Kết quả: B muốn đổi/bỏ một field → build của B **đỏ ngay tại CI của B**, trước khi deploy, kèm thông tin "consumer nào đang phụ thuộc field này". Đây là cách phát hiện breaking change mà không cần dựng cả hệ thống lên.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 330" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Luồng consumer-driven contract testing với Pact</title>
-  <desc>Phía consumer (A) test với mock B, sinh ra pact file rồi publish lên Pact Broker. Phía provider (B) tải pact về, phát lại từng request vào B thật và verify. Nếu B đổi field gây breaking change thì verification đỏ ngay tại CI của provider.</desc>
-  <defs>
-    <marker id="ctArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
-    </marker>
-  </defs>
-  <text x="130" y="22" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Phía Consumer (A)</text>
-  <text x="590" y="22" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Phía Provider (B)</text>
-  <g stroke="currentColor" stroke-opacity="0.22">
-    <rect x="36" y="40" width="188" height="62" rx="9" fill="#3b82f6" fill-opacity="0.13"/>
-    <rect x="36" y="142" width="188" height="56" rx="9" fill="#3b82f6" fill-opacity="0.13"/>
-    <rect x="262" y="92" width="196" height="58" rx="9" fill="#8b5cf6" fill-opacity="0.15"/>
-    <rect x="496" y="40" width="188" height="62" rx="9" fill="#10b981" fill-opacity="0.15"/>
-    <rect x="496" y="142" width="188" height="56" rx="9" fill="#10b981" fill-opacity="0.15"/>
-  </g>
-  <text x="130" y="65" font-size="12" font-weight="600" text-anchor="middle" fill="currentColor">Test A với mock B</text>
-  <text x="130" y="84" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">ghi lại request/response</text>
-  <text x="130" y="167" font-size="11.5" font-weight="600" text-anchor="middle" fill="currentColor">Sinh pact file</text>
-  <text x="130" y="185" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">contract A↔B</text>
-  <text x="360" y="116" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Pact Broker</text>
-  <text x="360" y="135" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">lưu &amp; chia sẻ contract</text>
-  <text x="590" y="65" font-size="12" font-weight="600" text-anchor="middle" fill="currentColor">Phát lại request</text>
-  <text x="590" y="84" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">vào B THẬT &amp; verify</text>
-  <text x="590" y="170" font-size="11.5" font-weight="700" text-anchor="middle" fill="#f59e0b">Breaking change</text>
-  <text x="590" y="187" font-size="10" text-anchor="middle" fill="#f59e0b">→ CI của B ĐỎ ngay</text>
-  <g stroke="currentColor" fill="none" stroke-width="1.5" marker-end="url(#ctArrow)">
-    <path d="M130 102 v36"/>
-    <path d="M224 170 H262 q12 0 12 -12 v-2"/>
-    <path d="M446 121 q12 0 12 -12 v-40 H500"/>
-    <path d="M590 102 v36"/>
-  </g>
-  <text x="135" y="124" font-size="9.5" fill="currentColor" opacity="0.75">①</text>
-  <text x="238" y="160" font-size="9.5" fill="currentColor" opacity="0.75">② publish</text>
-  <text x="408" y="60" font-size="9.5" fill="currentColor" opacity="0.75">③ tải về</text>
-  <text x="595" y="124" font-size="9.5" fill="currentColor" opacity="0.75">④ verify</text>
-  <text x="360" y="232" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">Hai phía test độc lập — không cần dựng cả A và B cùng lúc</text>
-  <text x="360" y="252" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">Mock của A không thể "nói dối": provider verification bắt mọi lệch với B thật</text>
-</svg>
+<step-flow>
+<svg viewBox="0 0 760 340" role="img" aria-labelledby="be05c-t be05c-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif"><title id="be05c-t">Consumer-driven contract testing với Pact: ghi, publish, tải về, phát lại, bắt breaking change</title><desc id="be05c-d">Phía consumer A: test của A gọi mock B, mock ghi lại request GET /users/42 và response 200 có id, name thành pact file, publish lên Pact Broker. Phía provider B: CI của B tải pact về, phát lại từng request vào B thật và verify response. Khi một commit của B đổi name thành full_name, verify thiếu field name nên CI của B đỏ ngay, trước khi deploy. Hai phía test độc lập, không cần dựng A và B cùng lúc.</desc><defs><marker id="be05c-m" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs><text x="130" y="24" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">Phía Consumer (A)</text><text x="625" y="24" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">Phía Provider (B)</text><rect x="20" y="50" width="220" height="46" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/><text x="130.0" y="77.68" font-size="13" text-anchor="middle" font-weight="600" fill="currentColor">Test của A</text><rect x="20" y="170" width="220" height="46" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/><text x="130.0" y="197.68" font-size="13" text-anchor="middle" font-weight="600" fill="currentColor">mock B</text><rect x="280" y="40" width="200" height="210" rx="10" fill="#8b5cf6" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.3"/><text x="380" y="64" font-size="14" text-anchor="middle" font-weight="700" fill="currentColor">Pact Broker</text><rect x="510" y="50" width="230" height="46" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/><text x="625.0" y="77.68" font-size="13" text-anchor="middle" font-weight="600" fill="currentColor">CI của B: verify</text><rect x="510" y="170" width="230" height="46" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/><text x="625.0" y="197.68" font-size="13" text-anchor="middle" font-weight="600" fill="currentColor">B thật</text><text x="380" y="300" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.75">Hai phía test độc lập: không cần dựng A và B cùng lúc</text><text x="380" y="320" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.75">mock của A không “nói dối” được: B thật luôn bị đối chiếu với contract</text><g data-step="1"><line x1="60" y1="96" x2="60" y2="166" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#be05c-m)"/><text x="70" y="124" font-size="13" fill="currentColor" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">GET /users/42</text><line x1="200" y1="170" x2="200" y2="100" stroke="#10b981" stroke-width="1.8" marker-end="url(#be05c-m)"/><text x="192" y="152" font-size="13" text-anchor="end" fill="#10b981" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">200 {id, name}</text><text x="130" y="236" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">ghi lại tương tác</text></g><g data-step="2"><line x1="240" y1="193" x2="296" y2="170" stroke="#8b5cf6" stroke-width="2" marker-end="url(#be05c-m)"/><text x="250" y="222" font-size="13" fill="#8b5cf6">publish</text><rect x="300" y="84" width="160" height="116" rx="6" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.5"/><text x="380" y="106" font-size="13" text-anchor="middle" font-weight="700" fill="currentColor">pact A ↔ B</text><text x="314" y="134" font-size="13" fill="currentColor" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">GET /users/42</text><text x="314" y="156" font-size="13" fill="currentColor" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">→ 200</text><text x="314" y="178" font-size="13" fill="currentColor" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">{ id, name }</text></g><g data-step="3"><line x1="460" y1="110" x2="506" y2="80" stroke="#8b5cf6" stroke-width="2" marker-end="url(#be05c-m)"/><text x="468" y="154" font-size="13" fill="#8b5cf6">tải về</text></g><g data-step="4"><line x1="570" y1="96" x2="570" y2="166" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#be05c-m)"/><text x="580" y="124" font-size="13" fill="currentColor">phát lại request</text><line x1="700" y1="170" x2="700" y2="100" stroke="#10b981" stroke-width="1.8" marker-end="url(#be05c-m)"/><text x="692" y="152" font-size="13" text-anchor="end" font-weight="700" fill="#10b981">✓ khớp</text></g><g data-step="5"><rect x="506" y="46" width="238" height="54" rx="10" fill="#f43f5e" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.7"/><text x="625" y="240" font-size="13" text-anchor="middle" fill="#f43f5e">commit mới: name → full_name</text><text x="625" y="262" font-size="13" text-anchor="middle" font-weight="700" fill="#f43f5e">✗ thiếu name: CI của B đỏ</text></g></svg>
+<step-note data-step="1">Test của A chạy với mock B như unit test thường, nhưng mock ghi lại mọi request A gửi và response A cần.</step-note>
+<step-note data-step="2">Tương tác được ghi thành pact file và publish lên Pact Broker: đây là bản hợp đồng A cần B giữ.</step-note>
+<step-note data-step="3">CI của B tải mọi pact mà các consumer đã publish về. Nhờ đó B biết consumer nào đang dùng field nào.</step-note>
+<step-note data-step="4">CI phát lại từng request vào B thật và so response với pact. Không cần chạy A, không cần môi trường chung.</step-note>
+<step-note data-step="5">Một commit của B đổi <code>name</code> thành <code>full_name</code>. Verify thiếu field A cần nên build của B đỏ ngay tại CI của B, trước khi deploy, kèm tên consumer bị ảnh hưởng.</step-note>
+</step-flow>
 
 | | Mock thường | Contract test |
 |---|---|---|
