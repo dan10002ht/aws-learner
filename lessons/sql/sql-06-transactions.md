@@ -192,72 +192,63 @@ Phần khó nhất nhưng quan trọng nhất. Khi nhiều transaction chạy so
 
 Ta cần biết 3 hiện tượng lỗi (read phenomena) trước. Sơ đồ dưới đọc theo trục thời gian đi **xuống**, hai cột là hai transaction chạy song song — ai đọc/ghi/COMMIT lúc nào dẫn tới lỗi:
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 470" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Timeline ba hiện tượng đọc lỗi: dirty read, non-repeatable read, phantom read</title>
-  <desc>Ba sơ đồ thời gian, mỗi sơ đồ hai cột T1 và T2 với thời gian đi xuống. Dirty read: T1 ghi balance=0 chưa commit, T2 đọc thấy 0, T1 rollback nên số 0 là ma. Non-repeatable read: T1 đọc 500, T2 cập nhật còn 400 và commit, T1 đọc lại ra 400 khác lần đầu. Phantom read: T1 đếm 3 đơn paid, T2 chèn thêm một đơn paid và commit, T1 đếm lại ra 4 đơn.</desc>
-  <g font-size="11.5" font-weight="700" fill="currentColor">
-    <text x="120" y="22" text-anchor="middle">Dirty read</text>
-    <text x="365" y="22" text-anchor="middle">Non-repeatable read</text>
-    <text x="610" y="22" text-anchor="middle">Phantom read</text>
-  </g>
-  <g stroke="currentColor" stroke-opacity="0.2">
-    <line x1="20" y1="36" x2="230" y2="36"/>
-    <line x1="255" y1="36" x2="475" y2="36"/>
-    <line x1="500" y1="36" x2="700" y2="36"/>
-  </g>
-  <g font-size="10.5" font-weight="700" fill="currentColor" text-anchor="middle">
-    <text x="70" y="52">T1</text><text x="170" y="52">T2</text>
-    <text x="310" y="52">T1</text><text x="420" y="52">T2</text>
-    <text x="550" y="52">T1</text><text x="660" y="52">T2</text>
-  </g>
-  <g stroke="currentColor" stroke-opacity="0.28" stroke-dasharray="3 4">
-    <line x1="70" y1="58" x2="70" y2="440"/><line x1="170" y1="58" x2="170" y2="440"/>
-    <line x1="310" y1="58" x2="310" y2="440"/><line x1="420" y1="58" x2="420" y2="440"/>
-    <line x1="550" y1="58" x2="550" y2="440"/><line x1="660" y1="58" x2="660" y2="440"/>
-  </g>
-  <text x="14" y="250" font-size="9.5" fill="currentColor" opacity="0.5" transform="rotate(-90 14 250)" text-anchor="middle">thời gian →</text>
-  <defs>
-    <marker id="rpArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
-  </defs>
-  <!-- Dirty read -->
-  <g font-size="9.5" fill="currentColor">
-    <rect x="28" y="74" width="84" height="34" rx="6" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="70" y="88" text-anchor="middle">UPDATE bal=0</text>
-    <text x="70" y="101" text-anchor="middle" opacity="0.7">(chưa COMMIT)</text>
-    <rect x="128" y="128" width="86" height="34" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="171" y="142" text-anchor="middle">SELECT bal</text>
-    <text x="171" y="155" text-anchor="middle" font-weight="700">đọc 0 (bẩn!)</text>
-    <rect x="34" y="182" width="72" height="24" rx="6" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="70" y="198" text-anchor="middle" font-weight="700">ROLLBACK</text>
-    <text x="120" y="232" text-anchor="middle" opacity="0.75" font-style="italic">số 0 chưa từng có thật</text>
-    <line x1="112" y1="92" x2="166" y2="128" stroke="currentColor" stroke-opacity="0.4" marker-end="url(#rpArr)"/>
-  </g>
-  <!-- Non-repeatable read -->
-  <g font-size="9.5" fill="currentColor">
-    <rect x="270" y="74" width="80" height="30" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="310" y="93" text-anchor="middle">SELECT → 500</text>
-    <rect x="378" y="120" width="86" height="34" rx="6" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="421" y="134" text-anchor="middle">UPDATE bal=400</text>
-    <text x="421" y="147" text-anchor="middle" font-weight="700">COMMIT</text>
-    <rect x="266" y="170" width="88" height="34" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="310" y="184" text-anchor="middle">SELECT → 400</text>
-    <text x="310" y="197" text-anchor="middle" font-weight="700">khác lần đầu!</text>
-    <line x1="464" y1="150" x2="356" y2="178" stroke="currentColor" stroke-opacity="0.4" marker-end="url(#rpArr)"/>
-  </g>
-  <!-- Phantom read -->
-  <g font-size="9.5" fill="currentColor">
-    <rect x="508" y="74" width="86" height="34" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="551" y="88" text-anchor="middle">COUNT paid</text>
-    <text x="551" y="101" text-anchor="middle">→ 3 đơn</text>
-    <rect x="616" y="120" width="86" height="34" rx="6" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="659" y="134" text-anchor="middle">INSERT paid</text>
-    <text x="659" y="147" text-anchor="middle" font-weight="700">COMMIT</text>
-    <rect x="506" y="170" width="90" height="34" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="551" y="184" text-anchor="middle">COUNT → 4 đơn</text>
-    <text x="551" y="197" text-anchor="middle" font-weight="700">bóng ma!</text>
-    <line x1="702" y1="150" x2="598" y2="178" stroke="currentColor" stroke-opacity="0.4" marker-end="url(#rpArr)"/>
-  </g>
+<step-flow>
+<svg viewBox="0 0 760 372" role="img" aria-labelledby="sq06i-t sq06i-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="sq06i-t">Timeline ba hiện tượng đọc lỗi: dirty read, non-repeatable read, phantom read</title>
+<desc id="sq06i-d">Ba sơ đồ thời gian, mỗi sơ đồ hai cột T1 và T2 với thời gian đi xuống. Dirty read: T1 UPDATE bal=0 chưa COMMIT, T2 SELECT bal đọc thấy 0, T1 ROLLBACK nên số 0 chưa từng có thật; chặn từ READ COMMITTED. Non-repeatable read: T1 SELECT ra 500, T2 UPDATE bal=400 và COMMIT, T1 SELECT lại ra 400, khác lần đầu; chặn từ REPEATABLE READ. Phantom read: T1 COUNT paid ra 3 đơn, T2 INSERT một đơn paid và COMMIT, T1 COUNT lại ra 4 đơn, bóng ma; chuẩn SQL chặn ở SERIALIZABLE, PostgreSQL chặn từ REPEATABLE READ.</desc>
+<defs>
+<marker id="sq06i-m" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0 0 L10 5 L0 10 z" fill="#f43f5e"/></marker>
+</defs>
+<line x1="18" y1="62" x2="18" y2="232" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5"/>
+<path d="M13 226 L18 236 L23 226" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5"/>
+<text x="11" y="150" font-size="12" fill="currentColor" opacity="0.6" transform="rotate(-90 11 150)" text-anchor="middle">thời gian</text>
+<rect x="24" y="6" width="242" height="360" rx="10" fill="currentColor" fill-opacity="0.03" stroke="currentColor" stroke-opacity="0.15"/>
+<text x="145.0" y="27" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Dirty read</text>
+<text x="84" y="52" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">T1</text>
+<text x="206" y="52" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">T2</text>
+<line x1="84" y1="58" x2="84" y2="72" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="3 4"/>
+<line x1="84" y1="114" x2="84" y2="188" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="3 4"/>
+<line x1="84" y1="230" x2="84" y2="236" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="3 4"/>
+<line x1="206" y1="58" x2="206" y2="130" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="3 4"/>
+<line x1="206" y1="172" x2="206" y2="236" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="3 4"/>
+<rect x="270" y="6" width="242" height="360" rx="10" fill="currentColor" fill-opacity="0.03" stroke="currentColor" stroke-opacity="0.15"/>
+<text x="391.0" y="27" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Non-repeatable read</text>
+<text x="330" y="52" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">T1</text>
+<text x="452" y="52" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">T2</text>
+<line x1="330" y1="58" x2="330" y2="72" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="3 4"/>
+<line x1="330" y1="114" x2="330" y2="188" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="3 4"/>
+<line x1="330" y1="230" x2="330" y2="236" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="3 4"/>
+<line x1="452" y1="58" x2="452" y2="130" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="3 4"/>
+<line x1="452" y1="172" x2="452" y2="236" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="3 4"/>
+<rect x="516" y="6" width="242" height="360" rx="10" fill="currentColor" fill-opacity="0.03" stroke="currentColor" stroke-opacity="0.15"/>
+<text x="637.0" y="27" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Phantom read</text>
+<text x="576" y="52" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">T1</text>
+<text x="698" y="52" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">T2</text>
+<line x1="576" y1="58" x2="576" y2="72" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="3 4"/>
+<line x1="576" y1="114" x2="576" y2="188" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="3 4"/>
+<line x1="576" y1="230" x2="576" y2="236" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="3 4"/>
+<line x1="698" y1="58" x2="698" y2="130" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="3 4"/>
+<line x1="698" y1="172" x2="698" y2="236" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="3 4"/>
+<g data-step="1"><rect x="28.0" y="72" width="112" height="42" rx="6" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3" stroke-width="1"/><text x="84" y="89" font-size="13" text-anchor="middle" fill="currentColor">UPDATE bal=0</text><text x="84" y="106" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">(chưa COMMIT)</text></g>
+<g data-step="2"><rect x="150.0" y="130" width="112" height="42" rx="6" fill="#3b82f6" fill-opacity="0.16" stroke="#f43f5e" stroke-opacity="0.9" stroke-width="1.6"/><text x="206" y="147" font-size="13" text-anchor="middle" fill="currentColor">SELECT bal</text><text x="206" y="164" font-size="13" font-weight="700" text-anchor="middle" fill="#f43f5e">đọc 0 (bẩn!)</text><line x1="140" y1="102" x2="176" y2="128" stroke="#f43f5e" stroke-width="1.6" stroke-opacity="0.85" marker-end="url(#sq06i-m)"/></g>
+<g data-step="3"><rect x="28.0" y="188" width="112" height="42" rx="6" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3" stroke-width="1"/><text x="84" y="214" font-size="13" text-anchor="middle" fill="currentColor">ROLLBACK</text><text x="145.0" y="258" font-size="13" font-style="italic" text-anchor="middle" fill="#f43f5e" font-weight="700">số 0 chưa từng có thật</text><rect x="34" y="274" width="222" height="40" rx="7" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/><text x="44" y="293" font-size="12" fill="currentColor" opacity="0.8">chặn từ mức:</text><text x="44" y="312" font-size="13" font-weight="700" fill="currentColor">READ COMMITTED</text></g>
+<g data-step="4"><rect x="274.0" y="72" width="112" height="42" rx="6" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3" stroke-width="1"/><text x="330" y="98" font-size="13" text-anchor="middle" fill="currentColor">SELECT → 500</text></g>
+<g data-step="5"><rect x="393.0" y="130" width="118" height="42" rx="6" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3" stroke-width="1"/><text x="452" y="147" font-size="13" text-anchor="middle" fill="currentColor">UPDATE bal=400</text><text x="452" y="164" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">COMMIT</text></g>
+<g data-step="6"><rect x="274.0" y="188" width="112" height="42" rx="6" fill="#3b82f6" fill-opacity="0.16" stroke="#f43f5e" stroke-opacity="0.9" stroke-width="1.6"/><text x="330" y="205" font-size="13" text-anchor="middle" fill="currentColor">SELECT → 400</text><text x="330" y="222" font-size="13" font-weight="700" text-anchor="middle" fill="#f43f5e">khác lần đầu!</text><line x1="393" y1="164" x2="360" y2="186" stroke="#f43f5e" stroke-width="1.6" stroke-opacity="0.85" marker-end="url(#sq06i-m)"/><text x="391.0" y="258" font-size="13" font-style="italic" text-anchor="middle" fill="#f43f5e" font-weight="700">cùng một hàng, hai kết quả</text><rect x="280" y="274" width="222" height="40" rx="7" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/><text x="290" y="293" font-size="12" fill="currentColor" opacity="0.8">chặn từ mức:</text><text x="290" y="312" font-size="13" font-weight="700" fill="currentColor">REPEATABLE READ</text></g>
+<g data-step="7"><rect x="520.0" y="72" width="112" height="42" rx="6" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3" stroke-width="1"/><text x="576" y="89" font-size="13" text-anchor="middle" fill="currentColor">COUNT paid</text><text x="576" y="106" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">→ 3 đơn</text></g>
+<g data-step="8"><rect x="642.0" y="130" width="112" height="42" rx="6" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3" stroke-width="1"/><text x="698" y="147" font-size="13" text-anchor="middle" fill="currentColor">INSERT paid</text><text x="698" y="164" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">COMMIT</text></g>
+<g data-step="9"><rect x="518.0" y="188" width="116" height="42" rx="6" fill="#3b82f6" fill-opacity="0.16" stroke="#f43f5e" stroke-opacity="0.9" stroke-width="1.6"/><text x="576" y="205" font-size="13" text-anchor="middle" fill="currentColor">COUNT → 4 đơn</text><text x="576" y="222" font-size="13" font-weight="700" text-anchor="middle" fill="#f43f5e">bóng ma!</text><line x1="642" y1="164" x2="606" y2="186" stroke="#f43f5e" stroke-width="1.6" stroke-opacity="0.85" marker-end="url(#sq06i-m)"/><text x="637.0" y="258" font-size="13" font-style="italic" text-anchor="middle" fill="#f43f5e" font-weight="700">cùng điều kiện, thêm 1 hàng</text><rect x="526" y="274" width="222" height="58" rx="7" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/><text x="536" y="293" font-size="12" fill="currentColor" opacity="0.8">chặn từ mức:</text><text x="536" y="312" font-size="13" font-weight="700" fill="currentColor">SERIALIZABLE (chuẩn SQL)</text><text x="536" y="330" font-size="13" font-weight="700" fill="currentColor">REPEATABLE READ (PG)</text></g>
 </svg>
+<step-note data-step="1">T1 đặt balance về 0 nhưng chưa COMMIT: thay đổi này vẫn có thể bị huỷ bất cứ lúc nào.</step-note>
+<step-note data-step="2">Ở READ UNCOMMITTED, T2 được đọc thẳng bản nháp của T1 nên thấy 0, và có thể đã dùng con số đó để quyết định (từ chối giao dịch, gửi email).</step-note>
+<step-note data-step="3">T1 ROLLBACK, số 0 biến mất nhưng T2 đã đọc nó. READ COMMITTED chặn được vì mỗi câu chỉ thấy dữ liệu <em>đã</em> commit.</step-note>
+<step-note data-step="4">T1 đọc hàng <code>id = 1</code> lần đầu ra 500, transaction vẫn đang mở.</step-note>
+<step-note data-step="5">T2 sửa thành 400 và COMMIT đàng hoàng. Không có gì bẩn ở đây, nên READ COMMITTED không chặn được.</step-note>
+<step-note data-step="6">T1 đọc lại đúng hàng đó ra 400. REPEATABLE READ hứa rằng hàng đã đọc thì đọc lại trong cùng transaction vẫn ra 500.</step-note>
+<step-note data-step="7">T1 đếm các hàng thoả <code>status = 'paid'</code>: 3 đơn.</step-note>
+<step-note data-step="8">T2 không sửa hàng nào T1 đã đọc mà chèn hàng <em>mới</em> thoả cùng điều kiện, nên lời hứa giữ nguyên từng hàng đã đọc không che được nó.</step-note>
+<step-note data-step="9">T1 đếm lại ra 4. Chuẩn SQL chỉ bắt SERIALIZABLE chặn phantom; trên PostgreSQL, REPEATABLE READ đã chặn luôn.</step-note>
+</step-flow>
 
 ### Dirty read (đọc bẩn)
 

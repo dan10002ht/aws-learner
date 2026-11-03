@@ -29,37 +29,34 @@ Một LLM thuần tuý chỉ biết **đoán token tiếp theo** dựa trên d�
 
 Điểm dễ hiểu lầm nhất: **model KHÔNG tự chạy hàm**. Model chỉ **đề nghị** "hãy gọi hàm `get_weather` với `city='Hanoi'`". **Code của bạn** mới thực sự chạy hàm đó.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Sequence function calling giữa Code và LLM</title>
-  <desc>Code gửi prompt kèm tools cho LLM; LLM đề nghị gọi tool; Code mới thực sự chạy tool thật và lấy kết quả; Code gửi tool_result lại; LLM trả lời cuối. Model chỉ đề nghị, code mới chạy.</desc>
-  <defs>
-    <marker id="fc-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
-    </marker>
-  </defs>
-  <rect x="60" y="16" width="180" height="38" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-  <text x="150" y="40" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">Code của bạn</text>
-  <rect x="480" y="16" width="180" height="38" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-  <text x="570" y="40" font-size="13.5" font-weight="700" text-anchor="middle" fill="currentColor">LLM</text>
-  <line x1="150" y1="54" x2="150" y2="340" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-  <line x1="570" y1="54" x2="570" y2="340" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-  <g stroke="currentColor" marker-end="url(#fc-arrow)">
-    <line x1="150" y1="86" x2="568" y2="86"/>
-    <line x1="570" y1="138" x2="152" y2="138"/>
-    <line x1="150" y1="250" x2="568" y2="250"/>
-    <line x1="570" y1="302" x2="152" y2="302"/>
-  </g>
-  <g font-size="11.5" fill="currentColor" text-anchor="middle">
-    <text x="360" y="80">1. prompt + danh sách tools</text>
-    <text x="360" y="132">2. đề nghị: gọi get_weather(Hanoi)</text>
-    <text x="360" y="244">4. gửi tool_result: "28°C"</text>
-    <text x="360" y="296">5. trả lời: "Hà Nội hôm nay 28°C"</text>
-  </g>
-  <rect x="40" y="158" width="220" height="62" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
-  <text x="150" y="180" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">3. CODE chạy tool thật</text>
-  <text x="150" y="200" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">get_weather(Hanoi) → "28°C"</text>
-  <text x="150" y="214" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">(model KHÔNG tự chạy hàm)</text>
+<step-flow>
+<svg viewBox="0 0 760 470" role="img" aria-labelledby="ai05a-t ai05a-d" font-family="ui-sans-serif, system-ui, sans-serif" style="width:100%;height:auto">
+<title id="ai05a-t">Vòng function calling giữa LLM, code của bạn và tool</title>
+<desc id="ai05a-d">Sơ đồ sequence ba cột: LLM, code của bạn, tool get_weather. 1: code gửi prompt kèm danh sách tools cho LLM. 2: LLM trả về đề nghị gọi get_weather(Hanoi), không có đường nào từ LLM tới tool. 3: code chạy tool thật, nhận "28°C". 4: code gửi tool_result "28°C" lại cho LLM. 5: LLM trả lời "Hà Nội hôm nay 28°C". Model chỉ đề nghị, code mới chạy hàm.</desc>
+<defs><marker id="ai05a-m" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<rect x="375" y="64" width="380" height="345" rx="10" fill="#10b981" fill-opacity="0.07"/>
+<text x="747" y="84" font-size="13" text-anchor="end" fill="currentColor" opacity="0.7">vùng code của bạn kiểm soát</text>
+<rect x="55" y="14" width="150" height="38" rx="9" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="130" y="38" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">LLM</text>
+<line x1="130" y1="52" x2="130" y2="392" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<rect x="335" y="14" width="170" height="38" rx="9" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="420" y="38" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Code của bạn</text>
+<line x1="420" y1="52" x2="420" y2="392" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<rect x="570" y="14" width="170" height="38" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="655" y="38" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Tool get_weather</text>
+<line x1="655" y1="52" x2="655" y2="392" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<g data-step="1"><line x1="418" y1="100" x2="132" y2="100" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.8" marker-end="url(#ai05a-m)"/><text x="275" y="91" font-size="14" font-weight="600" text-anchor="middle" fill="currentColor">1. prompt + danh sách tools</text><text x="275" y="120" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7">user: "Hà Nội hôm nay mấy độ?"</text></g>
+<g data-step="2"><line x1="132" y1="162" x2="418" y2="162" stroke="#8b5cf6" stroke-width="2.2" marker-end="url(#ai05a-m)"/><text x="275" y="153" font-size="14" font-weight="600" text-anchor="middle" fill="currentColor">2. đề nghị: get_weather(Hanoi)</text><text x="275" y="182" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7">stop_reason = "tool_use"</text><path d="M130 392 V418 Q130 434 146 434 H376.5 M408.5 434 H639 Q655 434 655 418 V392" fill="none" stroke="#f43f5e" stroke-width="1.8" stroke-dasharray="6 5"/><circle cx="392.5" cy="434" r="12" fill="#f43f5e" fill-opacity="0.15" stroke="#f43f5e"/><text x="392.5" y="439" font-size="15" font-weight="700" text-anchor="middle" fill="#f43f5e">✗</text><text x="392.5" y="463" font-size="13" text-anchor="middle" fill="currentColor">không có đường LLM → tool: model KHÔNG tự chạy hàm</text></g>
+<g data-step="3"><line x1="422" y1="224" x2="653" y2="224" stroke="#10b981" stroke-width="2.2" marker-end="url(#ai05a-m)"/><text x="537.5" y="215" font-size="14" font-weight="600" text-anchor="middle" fill="currentColor">3. chạy get_weather(Hanoi)</text><line x1="653" y1="270" x2="422" y2="270" stroke="#10b981" stroke-width="2.2" marker-end="url(#ai05a-m)"/><text x="537.5" y="261" font-size="14" font-weight="600" text-anchor="middle" fill="currentColor">"28°C"</text><rect x="412" y="214" width="16" height="66" rx="3" fill="#10b981" fill-opacity="0.35"/><text x="402" y="252" font-size="13" text-anchor="end" fill="currentColor" opacity="0.8">validate input rồi mới chạy</text></g>
+<g data-step="4"><line x1="418" y1="318" x2="132" y2="318" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.8" marker-end="url(#ai05a-m)"/><text x="275" y="309" font-size="14" font-weight="600" text-anchor="middle" fill="currentColor">4. tool_result: "28°C"</text><text x="275" y="338" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7">kèm lịch sử + tool_use_id</text></g>
+<g data-step="5"><line x1="132" y1="372" x2="418" y2="372" stroke="#8b5cf6" stroke-width="2.2" marker-end="url(#ai05a-m)"/><text x="275" y="363" font-size="14" font-weight="600" text-anchor="middle" fill="currentColor">5. trả lời: "Hà Nội hôm nay 28°C"</text></g>
 </svg>
+<step-note data-step="1">Model chỉ thấy tool qua phần mô tả JSON Schema gửi kèm request. Nó không có quyền truy cập, mạng hay process nào để chạy hàm.</step-note>
+<step-note data-step="2">Output của model chỉ là một khối <code>tool_use</code> chứa tên hàm và tham số, rồi dừng với <code>stop_reason = "tool_use"</code>. Chưa có gì được thực thi: đây là lời đề nghị dạng JSON.</step-note>
+<step-note data-step="3">Chỉ ở bước này hàm thật mới chạy, trong process của bạn, bằng quyền của bạn. Vì thế tham số model đưa ra phải được validate như user input từ internet trước khi chạy.</step-note>
+<step-note data-step="4">API không giữ trạng thái giữa các lần gọi, nên code gửi lại toàn bộ lịch sử: khối <code>tool_use</code> của model cộng <code>tool_result</code> mang đúng <code>tool_use_id</code> để model ghép kết quả với lời gọi nào.</step-note>
+<step-note data-step="5">Có kết quả thật trong context, model mới viết câu trả lời cuối cho người dùng. Nếu cần thêm dữ liệu, nó lại trả <code>tool_use</code> và vòng lặp quay về bước 2.</step-note>
+</step-flow>
 
 ### 3.1 Khai báo tool (tool definition)
 

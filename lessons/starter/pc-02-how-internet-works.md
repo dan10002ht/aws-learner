@@ -199,58 +199,64 @@ Giờ bạn đã hiểu vì sao thỉnh thoảng thấy trang báo **"404 Not Fo
 
 **URL** (địa chỉ web, ví dụ `https://vnexpress.net`) là thứ bạn gõ vào thanh địa chỉ. Giờ hãy ghép tất cả kiến thức trên thành một câu chuyện hoàn chỉnh. Bạn gõ `vnexpress.net` và nhấn Enter:
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 420" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Sơ đồ trình tự: cuộc trao đổi hai chiều khi gõ URL</title>
-  <desc>Sơ đồ trình tự ba lifeline Trình duyệt, DNS và Server. Trình duyệt hỏi DNS lấy IP và nhận lại IP; gửi HTTP request sang Server; Server xử lý rồi trả response 200 OK ngược về; cuối cùng Trình duyệt tự vẽ trang. Mũi tên qua lại theo thời gian thể hiện đối thoại khứ hồi giữa client và server.</desc>
-  <defs>
-    <marker id="urlArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.7"/></marker>
-  </defs>
-  <text x="360" y="22" font-size="12.5" text-anchor="middle" fill="currentColor" opacity="0.75">Gõ URL → nhấn Enter (đối thoại hai chiều, đọc từ trên xuống = thời gian)</text>
-  <!-- Đầu mỗi lifeline -->
-  <g>
-    <rect x="40" y="40" width="150" height="40" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="115" y="58" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Trình duyệt</text>
-    <text x="115" y="73" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">(client — máy bạn)</text>
-  </g>
-  <g>
-    <rect x="290" y="40" width="140" height="40" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="360" y="58" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">DNS</text>
-    <text x="360" y="73" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">(danh bạ tên miền)</text>
-  </g>
-  <g>
-    <rect x="530" y="40" width="150" height="40" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="605" y="58" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Server</text>
-    <text x="605" y="73" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">(VnExpress)</text>
-  </g>
-  <!-- Lifelines dọc -->
-  <line x1="115" y1="80" x2="115" y2="396" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-  <line x1="360" y1="80" x2="360" y2="396" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-  <line x1="605" y1="80" x2="605" y2="396" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-  <!-- 1: Trình duyệt → DNS -->
-  <text x="116" y="106" font-size="11" font-weight="700" fill="currentColor">1</text>
-  <text x="237" y="106" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">"vnexpress.net ở IP nào?"</text>
-  <line x1="115" y1="114" x2="360" y2="114" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#urlArr)"/>
-  <!-- DNS → Trình duyệt (đáp) -->
-  <text x="237" y="138" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">"IP = 111.65.250.x"</text>
-  <line x1="360" y1="146" x2="115" y2="146" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="5 4" marker-end="url(#urlArr)"/>
-  <!-- 2: Trình duyệt → Server: HTTP request -->
-  <text x="116" y="178" font-size="11" font-weight="700" fill="currentColor">2</text>
-  <text x="360" y="178" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">HTTP request: "cho tôi trang chủ"</text>
-  <line x1="115" y1="186" x2="605" y2="186" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#urlArr)"/>
-  <!-- 3: ô xử lý (activation) trên lifeline Server -->
-  <rect x="595" y="196" width="20" height="56" rx="4" fill="#f59e0b" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.3"/>
-  <text x="606" y="224" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">3</text>
-  <text x="582" y="246" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.75">Server "vào bếp" gom nội dung</text>
-  <!-- 4: Server → Trình duyệt: response -->
-  <text x="360" y="282" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">HTTP response: 200 OK + dữ liệu</text>
-  <text x="116" y="282" font-size="11" font-weight="700" fill="currentColor">4</text>
-  <line x1="605" y1="290" x2="115" y2="290" stroke="currentColor" stroke-opacity="0.6" stroke-dasharray="5 4" marker-end="url(#urlArr)"/>
-  <!-- 5: tự-xử lý trên lifeline Trình duyệt -->
-  <rect x="105" y="300" width="20" height="56" rx="4" fill="#3b82f6" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.3"/>
-  <text x="116" y="328" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">5</text>
-  <text x="134" y="332" font-size="10.5" fill="currentColor" opacity="0.75">Trình duyệt "vẽ" trang — ráp dữ liệu thành trang bạn thấy</text>
-  <text x="360" y="384" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.55">Nét liền = lượt hỏi (đi ra) · nét đứt = lượt đáp (quay về)</text>
+<step-flow>
+<svg viewBox="0 0 640 520" role="img" aria-labelledby="pc02u-t pc02u-d" style="width:100%;max-width:640px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="pc02u-t">Gõ vnexpress.net rồi nhấn Enter: 5 bước giữa Trình duyệt, DNS và Server</title>
+<desc id="pc02u-d">Sơ đồ trình tự ba lifeline Trình duyệt (client, máy bạn), DNS (danh bạ tên miền) và Server (VnExpress), đọc từ trên xuống theo thời gian. Bước 1 trình duyệt hỏi DNS vnexpress.net ở IP nào và nhận lại IP 111.65.250.x. Bước 2 trình duyệt gửi HTTP request GET /trang-chu sang Server qua Wi-Fi, router, ISP và các tuyến cáp. Bước 3 Server vào bếp gom nội dung. Bước 4 Server trả HTTP response 200 OK kèm dữ liệu, chia thành hàng nghìn gói nhỏ rồi ráp lại ở máy bạn. Bước 5 trình duyệt vẽ trang, ráp dữ liệu thành trang bạn thấy. Nét liền là lượt hỏi, nét đứt là lượt đáp; cả 5 bước thường chưa đầy 1 giây.</desc>
+<defs><marker id="pc02u-m" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor"/></marker></defs>
+<rect x="20" y="10" width="160" height="48" rx="9" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="100" y="31" font-size="14" text-anchor="middle" fill="currentColor" font-weight="700">Trình duyệt</text>
+<text x="100" y="49" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7">client, máy bạn</text>
+<line x1="100" y1="58" x2="100" y2="470" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<rect x="240" y="10" width="160" height="48" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="320" y="31" font-size="14" text-anchor="middle" fill="currentColor" font-weight="700">DNS</text>
+<text x="320" y="49" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7">danh bạ tên miền</text>
+<line x1="320" y1="58" x2="320" y2="158" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<rect x="460" y="10" width="160" height="48" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="540" y="31" font-size="14" text-anchor="middle" fill="currentColor" font-weight="700">Server</text>
+<text x="540" y="49" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7">VnExpress</text>
+<line x1="540" y1="58" x2="540" y2="470" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<g data-step="1">
+<circle cx="70" cy="92" r="11" fill="#8b5cf6" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.4"/><text x="70" y="96.5" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">1</text>
+<text x="210" y="86" font-size="13" text-anchor="middle" fill="currentColor">"vnexpress.net ở IP nào?"</text>
+<line x1="103" y1="98" x2="316" y2="98" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#pc02u-m)"/>
+<text x="210" y="130" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">"IP = 111.65.250.x"</text>
+<line x1="317" y1="142" x2="104" y2="142" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#pc02u-m)"/>
+</g>
+<g data-step="2">
+<circle cx="70" cy="186" r="11" fill="#8b5cf6" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.4"/><text x="70" y="190.5" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">2</text>
+<text x="320" y="180" font-size="14" text-anchor="middle" fill="currentColor" font-weight="700">HTTP request: GET /trang-chu</text>
+<line x1="103" y1="192" x2="536" y2="192" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#pc02u-m)"/>
+<text x="320" y="212" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.75">đi qua Wi-Fi → router → ISP → cáp</text>
+</g>
+<g data-step="3">
+<rect x="530" y="228" width="20" height="60" rx="4" fill="#f59e0b" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.35"/>
+<circle cx="572" cy="258" r="11" fill="#8b5cf6" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.4"/><text x="572" y="262.5" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">3</text>
+<text x="520" y="252" font-size="13" text-anchor="end" fill="currentColor">Server "vào bếp" gom nội dung:</text>
+<text x="520" y="270" font-size="13" text-anchor="end" fill="currentColor" opacity="0.75">tin mới, ảnh, tiêu đề</text>
+</g>
+<g data-step="4">
+<circle cx="70" cy="322" r="11" fill="#8b5cf6" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.4"/><text x="70" y="326.5" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">4</text>
+<text x="320" y="316" font-size="14" text-anchor="middle" fill="currentColor" font-weight="700">HTTP response: 200 OK + dữ liệu</text>
+<line x1="537" y1="328" x2="104" y2="328" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" stroke-dasharray="6 4" marker-end="url(#pc02u-m)"/>
+<text x="320" y="348" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.75">hàng nghìn gói nhỏ, về máy thì ráp lại</text>
+</g>
+<g data-step="5">
+<rect x="90" y="364" width="20" height="60" rx="4" fill="#3b82f6" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.35"/>
+<circle cx="70" cy="394" r="11" fill="#8b5cf6" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.4"/><text x="70" y="398.5" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">5</text>
+<text x="122" y="388" font-size="13" text-anchor="start" fill="currentColor">Trình duyệt "vẽ" trang: ráp dữ liệu</text>
+<text x="122" y="406" font-size="13" text-anchor="start" fill="currentColor" opacity="0.75">thành trang bạn thấy</text>
+<text x="320" y="456" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">cả 5 bước thường chưa đầy 1 giây</text>
+</g>
+<text x="320" y="492" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.65">đọc từ trên xuống = thời gian</text>
+<text x="320" y="510" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.65">nét liền = lượt hỏi (đi ra) · nét đứt = lượt đáp (quay về)</text>
 </svg>
+<step-note data-step="1">Máy tính chỉ gửi gói tin tới một địa chỉ IP, không gửi tới cái tên <code>vnexpress.net</code>. Nên chưa tra được IP thì chưa làm gì khác được; lượt tra này thường chỉ mất vài phần nghìn giây.</step-note>
+<step-note data-step="2">Có IP rồi mới biết gửi "lá thư gọi món" đến đâu. Viết theo đúng quy tắc HTTP thì server nào cũng hiểu trình duyệt muốn lấy gì.</step-note>
+<step-note data-step="3">Tin tức đổi từng phút, nên server gom tin mới nhất, ảnh, tiêu đề ngay lúc được hỏi rồi đóng gói lại.</step-note>
+<step-note data-step="4">Mã <code>200</code> báo trình duyệt là đã thành công (<code>404</code>, <code>500</code> là thất bại). Dữ liệu lớn nên được chia nhỏ; mỗi gói có thể đi đường khác nhau, tới nơi thì ráp lại đúng thứ tự.</step-note>
+<step-note data-step="5">Thứ server gửi về mới là nguyên liệu: chữ, ảnh, mô tả bố cục. Trình duyệt phải tự đặt tiêu đề chỗ này, ảnh chỗ kia, tô màu chữ thì bạn mới nhìn thấy trang.</step-note>
+</step-flow>
 
 ### Bước 1 — Tra danh bạ (DNS)
 Trình duyệt hỏi DNS: *"vnexpress.net ở địa chỉ IP nào?"* DNS trả lời: *"Ở `111.65.250.x` nhé."* (Mất khoảng vài phần nghìn giây.)
