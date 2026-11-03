@@ -250,39 +250,50 @@ Con số "15 phút tới 12 giờ" mà đề thi hay nhắc chính là khoảng 
 3. Nếu trust policy allow A + A có `sts:AssumeRole` permission → STS trả credential tạm.
 4. A dùng credential này gọi AWS API. Trong suốt phiên, A **có quyền của R và chỉ của R**; quyền gốc của A tạm gác lại cho tới khi A quay về dùng credential của chính mình.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Luồng AssumeRole theo thời gian — Principal A nhận temporary credentials từ STS</title>
-  <desc>Sơ đồ tuần tự ba cột: Principal A, STS, và Role R. A gọi sts:AssumeRole với Role ARN; STS kiểm tra Trust Policy của Role R xem ai được assume; nếu hợp lệ STS trả temporary credentials cho A; A dùng credential này gọi AWS API với danh nghĩa Role R. Thời gian đi từ trên xuống.</desc>
-  <text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">AssumeRole flow — thời gian đi xuống</text>
-  <defs>
-    <marker id="arSeq" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
-  </defs>
-  <rect x="40" y="38" width="150" height="40" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="115" y="63" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Principal A</text>
-  <rect x="295" y="38" width="130" height="40" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="360" y="63" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">STS</text>
-  <rect x="540" y="38" width="150" height="40" rx="9" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="615" y="58" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Role R</text>
-  <text x="615" y="73" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">+ Trust Policy</text>
-  <g stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="4 4">
-    <line x1="115" y1="78" x2="115" y2="340"/>
-    <line x1="360" y1="78" x2="360" y2="340"/>
-    <line x1="615" y1="78" x2="615" y2="340"/>
-  </g>
-  <line x1="115" y1="108" x2="358" y2="108" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#arSeq)"/>
-  <text x="118" y="102" font-size="11" fill="currentColor">1. sts:AssumeRole (Role R ARN)</text>
-  <line x1="360" y1="150" x2="613" y2="150" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#arSeq)"/>
-  <text x="365" y="144" font-size="11" fill="currentColor">2. Trust Policy cho phép A?</text>
-  <line x1="615" y1="192" x2="362" y2="192" stroke="currentColor" stroke-opacity="0.6" stroke-dasharray="5 3" marker-end="url(#arSeq)"/>
-  <text x="372" y="186" font-size="11" fill="currentColor">OK — A được assume</text>
-  <line x1="358" y1="234" x2="117" y2="234" stroke="currentColor" stroke-opacity="0.6" stroke-dasharray="5 3" marker-end="url(#arSeq)"/>
-  <text x="120" y="228" font-size="11" fill="currentColor">3. temporary credentials</text>
-  <rect x="40" y="262" width="150" height="56" rx="9" fill="#3b82f6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.2"/>
-  <text x="115" y="284" font-size="10.5" text-anchor="middle" fill="currentColor">A cầm cred</text>
-  <text x="115" y="300" font-size="10.5" text-anchor="middle" fill="currentColor">tạm thời của R</text>
-  <line x1="190" y1="290" x2="613" y2="290" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#arSeq)"/>
-  <text x="210" y="284" font-size="11" fill="currentColor">4. gọi AWS API với danh nghĩa Role R</text>
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 410" role="img" aria-labelledby="saa301-assume-t saa301-assume-d" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto">
+<title id="saa301-assume-t">AssumeRole — request, kiểm trust, trả credential, gọi API</title>
+<desc id="saa301-assume-d">Principal A và STS và Role R có vị trí cố định với lifeline đi xuống theo thời gian. Credential quay về A; lời gọi cuối dùng danh nghĩa R tới AWS API, không phải tới role.</desc>
+<defs><marker id="saa301-assume-a" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<rect x="50" y="38" width="130" height="40" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="115" y="63" text-anchor="middle" font-size="13" fill="currentColor">Principal A</text>
+<line x1="115" y1="78" x2="115" y2="340" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<rect x="295" y="38" width="130" height="40" rx="10" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="360" y="63" text-anchor="middle" font-size="13" fill="currentColor">STS</text>
+<line x1="360" y1="78" x2="360" y2="340" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<rect x="550" y="38" width="130" height="40" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="615" y="63" text-anchor="middle" font-size="13" fill="currentColor">Role R</text>
+<line x1="615" y1="78" x2="615" y2="340" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<text x="615" y="97" text-anchor="middle" font-size="13" fill="currentColor">Trust Policy</text>
+<text x="360" y="22" text-anchor="middle" font-size="13" fill="currentColor">Thời gian ↓</text>
+<rect x="550" y="344" width="130" height="42" rx="10" fill="#14b8a6" fill-opacity="0.14" stroke="#14b8a6"/>
+<text x="615" y="370" text-anchor="middle" font-size="13" fill="currentColor">AWS API</text>
+<g data-step="1">
+<path d="M115 128 H357" fill="none" stroke="currentColor" stroke-width="1.8" marker-end="url(#saa301-assume-a)"/>
+<text x="236" y="117" text-anchor="middle" font-size="13" fill="currentColor">AssumeRole + Role ARN</text>
+<text x="236" y="147" text-anchor="middle" font-size="13" fill="currentColor">+ role session name</text>
+</g>
+<g data-step="2">
+<path d="M360 184 H612" fill="none" stroke="currentColor" stroke-width="1.8" marker-end="url(#saa301-assume-a)"/>
+<text x="488" y="173" text-anchor="middle" font-size="13" fill="currentColor">Trust Policy cho phép A?</text>
+<path d="M615 222 H363" fill="none" stroke="currentColor" stroke-width="1.8" marker-end="url(#saa301-assume-a)"/>
+<text x="488" y="211" text-anchor="middle" font-size="13" fill="currentColor">Allow</text>
+</g>
+<g data-step="3">
+<path d="M358 270 H118" fill="none" stroke="currentColor" stroke-width="1.8" marker-end="url(#saa301-assume-a)"/>
+<text x="236" y="259" text-anchor="middle" font-size="13" fill="currentColor">Temporary credentials</text>
+<rect x="100" y="279" width="30" height="16" rx="10" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+</g>
+<g data-step="4">
+<path d="M115 320 H515 V365 H548" fill="none" stroke="currentColor" stroke-width="1.8" marker-end="url(#saa301-assume-a)"/>
+<text x="330" y="309" text-anchor="middle" font-size="13" fill="currentColor">Gọi API bằng credential của R</text>
+</g>
 </svg>
+<step-note data-step="1">Role ARN chọn role cần mượn; tên phiên giúp phân biệt từng lần sử dụng role trong audit.</step-note>
+<step-note data-step="2">Trust policy của R kiểm soát ai được assume. Điều kiện identity policy khác nhau giữa cùng account và cross-account như phần ngay dưới hình.</step-note>
+<step-note data-step="3">Chỉ khi kiểm tra quyền thành công STS mới cấp credential có thời hạn; credential gốc của A không bị biến thành credential của R.</step-note>
+<step-note data-step="4">A ký request bằng credential mới nên API đánh giá quyền của phiên role R, thay vì cộng thêm quyền gốc của A.</step-note>
+</step-flow>
 
 Bước 3 có hai điều kiện, và nó chính là luật ở §3 áp vào trường hợp này, vì trust policy là một resource-based policy gắn trên role:
 

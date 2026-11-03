@@ -531,34 +531,35 @@ Ngoài ra có **ML Insights**: tự phát hiện điểm bất thường và d�
 
 Ghép các mảnh ở trên lại thành một đường đi hoàn chỉnh cho bài toán ở §1:
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 170" role="img" aria-labelledby="dl-t dl-d" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-<title id="dl-t">Pipeline data lake analytics</title>
-<desc id="dl-d">Nguồn qua Kinesis vào S3 raw, Glue ETL sang Parquet curated, Athena hoặc Redshift query, QuickSight hiển thị</desc>
-<rect x="10" y="60" width="110" height="48" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="65" y="80" text-anchor="middle" font-size="11" fill="currentColor">Nguồn →</text>
-<text x="65" y="96" text-anchor="middle" font-size="10" fill="currentColor">Kinesis/Firehose</text>
-<rect x="150" y="60" width="110" height="48" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="205" y="80" text-anchor="middle" font-size="11" fill="currentColor">S3 (raw)</text>
-<text x="205" y="96" text-anchor="middle" font-size="10" fill="currentColor">CSV/JSON</text>
-<rect x="290" y="60" width="120" height="48" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="350" y="80" text-anchor="middle" font-size="11" fill="currentColor">Glue ETL +</text>
-<text x="350" y="96" text-anchor="middle" font-size="10" fill="currentColor">Crawler/Catalog</text>
-<rect x="440" y="60" width="120" height="48" rx="8" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="500" y="80" text-anchor="middle" font-size="11" fill="currentColor">S3 (curated)</text>
-<text x="500" y="96" text-anchor="middle" font-size="10" fill="currentColor">Parquet</text>
-<rect x="590" y="34" width="120" height="44" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="650" y="53" text-anchor="middle" font-size="11" fill="currentColor">Athena /</text>
-<text x="650" y="69" text-anchor="middle" font-size="10" fill="currentColor">Redshift</text>
-<rect x="590" y="92" width="120" height="44" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="650" y="111" text-anchor="middle" font-size="11" fill="currentColor">QuickSight</text>
-<text x="650" y="127" text-anchor="middle" font-size="10" fill="currentColor">dashboard/BI</text>
-<line x1="120" y1="84" x2="148" y2="84" stroke="currentColor" stroke-width="1.5" marker-end="url(#da)"/>
-<line x1="260" y1="84" x2="288" y2="84" stroke="currentColor" stroke-width="1.5" marker-end="url(#da)"/>
-<line x1="410" y1="84" x2="438" y2="84" stroke="currentColor" stroke-width="1.5" marker-end="url(#da)"/>
-<line x1="560" y1="78" x2="588" y2="62" stroke="currentColor" stroke-width="1.5" marker-end="url(#da)"/>
-<line x1="560" y1="90" x2="588" y2="106" stroke="currentColor" stroke-width="1.5" marker-end="url(#da)"/>
-<text x="360" y="158" text-anchor="middle" font-size="10" fill="currentColor" opacity="0.85">Lake Formation phân quyền tập trung toàn bộ data lake trên S3 + Glue Catalog</text>
-<defs><marker id="da" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 500" role="img" aria-labelledby="saa206-lake-t saa206-lake-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="saa206-lake-t">Data lake — từ dữ liệu gốc tới BI</title>
+<desc id="saa206-lake-d">Đường dữ liệu gấp khúc qua ingestion, S3 raw, Glue ETL, S3 curated rồi query và QuickSight. Lake Formation bao quanh S3 và Catalog để thể hiện phạm vi quản trị.</desc>
+<defs><marker id="saa206-lake-a" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<rect x="170" y="35" width="335" height="345" rx="10" fill="#14b8a6" fill-opacity="0.14" stroke="#14b8a6"/>
+<text x="338" y="58" text-anchor="middle" font-size="13" fill="currentColor">Lake Formation: S3 + Catalog</text>
+<use href="#aws-firehose" x="45" y="90" width="40" height="40"/>
+<text x="65" y="149" text-anchor="middle" font-size="13" fill="currentColor">Kinesis / Firehose</text>
+<text x="65" y="169" text-anchor="middle" font-size="13" fill="currentColor">Nguồn → ingestion</text>
+<use href="#aws-s3" x="225" y="90" width="40" height="40"/>
+<text x="245" y="149" text-anchor="middle" font-size="13" fill="currentColor">S3 raw</text>
+<text x="245" y="169" text-anchor="middle" font-size="13" fill="currentColor">CSV / JSON</text>
+<use href="#aws-glue" x="415" y="90" width="40" height="40"/>
+<text x="435" y="149" text-anchor="middle" font-size="13" fill="currentColor">Glue ETL</text>
+<text x="435" y="169" text-anchor="middle" font-size="13" fill="currentColor">Crawler / Catalog</text>
+<use href="#aws-s3" x="415" y="260" width="40" height="40"/>
+<text x="435" y="319" text-anchor="middle" font-size="13" fill="currentColor">S3 curated</text>
+<text x="435" y="339" text-anchor="middle" font-size="13" fill="currentColor">Parquet</text>
+<use href="#aws-athena" x="45" y="260" width="40" height="40"/>
+<text x="65" y="319" text-anchor="middle" font-size="13" fill="currentColor">Athena / Redshift</text>
+<text x="65" y="339" text-anchor="middle" font-size="13" fill="currentColor">Query</text>
+<use href="#aws-quick" x="225" y="410" width="40" height="40"/>
+<text x="245" y="469" text-anchor="middle" font-size="13" fill="currentColor">QuickSight</text>
+<text x="245" y="489" text-anchor="middle" font-size="13" fill="currentColor">Dashboard / BI</text>
+<path d="M110 110 H220" fill="none" stroke="currentColor" stroke-width="1.8" marker-end="url(#saa206-lake-a)"/>
+<path d="M290 110 H410" fill="none" stroke="currentColor" stroke-width="1.8" marker-end="url(#saa206-lake-a)"/>
+<path d="M435 180 V250" fill="none" stroke="currentColor" stroke-width="1.8" marker-end="url(#saa206-lake-a)"/>
+<path d="M410 280 H90" fill="none" stroke="currentColor" stroke-width="1.8" marker-end="url(#saa206-lake-a)"/>
+<path d="M65 345 V430 H218" fill="none" stroke="currentColor" stroke-width="1.8" marker-end="url(#saa206-lake-a)"/>
 </svg>
 
 **Đi qua từng chặng — ai kích hoạt, và dữ liệu trễ bao lâu:**

@@ -176,34 +176,37 @@ Vì không biết trước client ngoài internet chạy hệ điều hành gì,
 
 ### 3.4 SG-to-SG reference
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 200" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Chuỗi SG-to-SG reference — ALB SG, App SG, DB SG</title>
-  <desc>Internet gửi 443 vào ALB SG. ALB SG là nguồn cho App SG inbound 8080. App SG là nguồn cho DB SG inbound 5432. Mỗi Security Group tham chiếu SG đứng trước thay vì IP, nên khi ALB scale-out IP mới tự được chấp nhận.</desc>
-  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">SG-to-SG reference — tham chiếu SG thay vì IP</text>
-  <defs>
-    <marker id="sgArr" markerWidth="11" markerHeight="11" refX="9" refY="3.2" orient="auto"><path d="M0 0 L9 3.2 L0 6.4 z" fill="currentColor" fill-opacity="0.6"/></marker>
-  </defs>
-  <rect x="16" y="60" width="120" height="56" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="76" y="84" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Internet</text>
-  <text x="76" y="102" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">0.0.0.0/0</text>
-  <line x1="136" y1="88" x2="178" y2="88" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#sgArr)"/>
-  <text x="157" y="80" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.8">443</text>
-  <rect x="182" y="60" width="152" height="56" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="258" y="84" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">ALB SG</text>
-  <text x="258" y="102" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">in 443 from internet</text>
-  <line x1="334" y1="88" x2="378" y2="88" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#sgArr)"/>
-  <text x="356" y="80" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.8">8080</text>
-  <rect x="382" y="60" width="152" height="56" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="458" y="84" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">App SG</text>
-  <text x="458" y="102" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">in 8080 from ALB SG</text>
-  <line x1="534" y1="88" x2="578" y2="88" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#sgArr)"/>
-  <text x="556" y="80" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.8">5432</text>
-  <rect x="582" y="60" width="122" height="56" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="643" y="84" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">DB SG</text>
-  <text x="643" y="102" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">in 5432 from App SG</text>
-  <text x="16" y="158" font-size="11" fill="currentColor" opacity="0.8">Mỗi SG nhận nguồn là SG đứng trước (không phải IP).</text>
-  <text x="16" y="176" font-size="11" fill="currentColor" opacity="0.8">→ ALB scale-out: IP mới tự được App SG chấp nhận, không cần update IP list.</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 425" role="img" aria-labelledby="saa302-sg-t saa302-sg-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="saa302-sg-t">SG reference — nguồn là nhóm, không phải IP</title>
+<desc id="saa302-sg-d">ALB nhận 443 từ internet, hai EC2 trong App SG nhận 8080 từ ALB SG, RDS nhận 5432 từ App SG. Hai instance nằm trong cùng đường biên nhóm để minh hoạ scale-out không cần đổi danh sách IP.</desc>
+<defs><marker id="saa302-sg-a" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<text x="70" y="52" text-anchor="middle" font-size="13" fill="currentColor">Internet</text>
+<text x="70" y="73" text-anchor="middle" font-size="13" fill="currentColor">0.0.0.0/0</text>
+<rect x="195" y="20" width="300" height="100" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<use href="#aws-alb" x="220" y="42" width="40" height="40"/>
+<text x="365" y="53" text-anchor="middle" font-size="13" fill="currentColor">ALB SG</text>
+<text x="365" y="78" text-anchor="middle" font-size="13" fill="currentColor">in 443: internet</text>
+<path d="M118 60 H208" fill="none" stroke="currentColor" stroke-width="1.8" marker-end="url(#saa302-sg-a)"/>
+<text x="158" y="48" text-anchor="middle" font-size="13" fill="currentColor">443</text>
+<rect x="195" y="175" width="300" height="110" rx="10" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<use href="#aws-ec2" x="215" y="195" width="40" height="40"/>
+<use href="#aws-ec2" x="270" y="195" width="40" height="40"/>
+<text x="400" y="207" text-anchor="middle" font-size="13" fill="currentColor">App SG</text>
+<text x="400" y="230" text-anchor="middle" font-size="13" fill="currentColor">in 8080:</text>
+<text x="400" y="251" text-anchor="middle" font-size="13" fill="currentColor">ALB SG</text>
+<path d="M245 120 V185" fill="none" stroke="currentColor" stroke-width="1.8" marker-end="url(#saa302-sg-a)"/>
+<text x="285" y="151" text-anchor="middle" font-size="13" fill="currentColor">8080</text>
+<text x="85" y="223" text-anchor="middle" font-size="13" fill="currentColor">Scale-out</text>
+<path d="M135 230 H203" fill="none" stroke="currentColor" stroke-width="1.8" marker-end="url(#saa302-sg-a)"/>
+<rect x="195" y="335" width="300" height="75" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<use href="#aws-rds" x="220" y="350" width="40" height="40"/>
+<text x="375" y="361" text-anchor="middle" font-size="13" fill="currentColor">DB SG</text>
+<text x="375" y="386" text-anchor="middle" font-size="13" fill="currentColor">in 5432: App SG</text>
+<path d="M245 285 V340" fill="none" stroke="currentColor" stroke-width="1.8" marker-end="url(#saa302-sg-a)"/>
+<text x="285" y="313" text-anchor="middle" font-size="13" fill="currentColor">5432</text>
 </svg>
+
+Mỗi đường biên màu là một SG: thêm instance vào App SG không làm thay đổi rule nguồn của DB SG; ALB đổi IP cũng không cần cập nhật App SG.
 
 → Khi ALB scale-out, IP mới tự động được app accept. Không cần update IP list.
 

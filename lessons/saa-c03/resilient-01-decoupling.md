@@ -99,34 +99,69 @@ Khi consumer nhận message, message bị "ẩn" trong khoảng **visibility tim
 - Timeout **quá dài** → message lỗi (consumer crash) mất nhiều thời gian mới được retry.
 - Consumer cần thêm thời gian → gọi `ChangeMessageVisibility` để gia hạn.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 330" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Vòng đời message SQS theo Visibility Timeout</title>
-  <desc>Message ở trạng thái Available; khi consumer ReceiveMessage nó chuyển sang In-flight (ẩn trong visibility timeout); xử lý xong gọi DeleteMessage để xoá hẳn, còn nếu timeout hết thì quay lại Available; vượt maxReceiveCount thì chuyển sang Dead-Letter Queue.</desc>
-  <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Vòng đời message — Visibility Timeout</text>
-  <defs>
-    <marker id="vtArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
-  </defs>
-  <rect x="40" y="60" width="170" height="64" rx="10" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="125" y="90" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Available</text>
-  <text x="125" y="108" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">sẵn sàng để nhận</text>
-  <rect x="40" y="210" width="170" height="64" rx="10" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="125" y="238" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">In-flight (ẩn)</text>
-  <text x="125" y="256" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">trong visibility timeout</text>
-  <rect x="510" y="60" width="170" height="64" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="595" y="90" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Đã xoá</text>
-  <text x="595" y="108" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">DeleteMessage → xong</text>
-  <rect x="510" y="210" width="170" height="64" rx="10" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="595" y="238" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Dead-Letter Queue</text>
-  <text x="595" y="256" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">vượt maxReceiveCount</text>
-  <line x1="125" y1="124" x2="125" y2="208" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.5" marker-end="url(#vtArr)"/>
-  <text x="134" y="170" font-size="10.5" fill="currentColor" opacity="0.85">ReceiveMessage</text>
-  <path d="M210 226 C 360 200, 360 90, 508 90" fill="none" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.5" marker-end="url(#vtArr)"/>
-  <text x="360" y="142" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.85">xử lý xong → DeleteMessage</text>
-  <path d="M148 208 C 240 150, 240 130, 200 100" fill="none" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#vtArr)"/>
-  <text x="270" y="186" font-size="10" fill="currentColor" opacity="0.75">timeout hết / không xoá kịp → trở lại</text>
-  <line x1="210" y1="242" x2="508" y2="242" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.5" marker-end="url(#vtArr)"/>
-  <text x="360" y="234" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.85">lỗi lặp lại quá N lần</text>
+<auto-anim data-dur="12">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 404" role="img" aria-labelledby="r01b-t r01b-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif"><title id="r01b-t">Visibility timeout: message ẩn 30 giây sau mỗi lần nhận, hiện lại nếu không bị xoá</title><desc id="r01b-d">Bốn trạng thái của message: Available (sẵn sàng để nhận), In-flight (ẩn trong visibility timeout), Đã xoá, Dead-Letter Queue. ReceiveMessage chuyển Available sang In-flight; xử lý xong gọi DeleteMessage thì message bị xoá hẳn; timeout hết mà chưa xoá thì message trở lại Available; bị nhận quá maxReceiveCount lần mà vẫn lỗi thì chuyển sang DLQ. Dòng thời gian với timeout mặc định 30 giây: consumer A nhận ở giây 2 rồi chết ở giây 18, không gọi DeleteMessage; message ẩn tới giây 32 rồi hiện lại; consumer B nhận ở giây 40 (lần nhận thứ 2), xử lý xong và gọi DeleteMessage ở giây 52, message bị xoá hẳn.</desc><defs><marker id="r01b-arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.65"/></marker><marker id="r01b-arg" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="#10b981"/></marker><marker id="r01b-ara" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="#f59e0b"/></marker></defs>
+<text x="12" y="22" font-size="14" font-weight="700" fill="currentColor">Visibility timeout = 30 s (mặc định, tối đa 12 h)</text>
+<rect x="16" y="64" width="140" height="72" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="86" y="92" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Available</text>
+<text x="86" y="114" font-size="13" text-anchor="middle" opacity="0.75" fill="currentColor">sẵn sàng nhận</text>
+<rect x="190" y="64" width="140" height="72" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="260" y="92" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">In-flight (ẩn)</text>
+<text x="260" y="112" font-size="13" text-anchor="middle" opacity="0.75" fill="currentColor">đếm ngược</text>
+<rect x="204" y="120" width="112" height="7" rx="3" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.2"/>
+<rect x="204" y="120" width="0" height="7" rx="3" fill="#f59e0b"><animate attributeName="width" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0;0.0299;0.0307;0.4907;0.6126;0.6133;0.7966;0.7973;1" values="0;0;112;0;0;112;67.2;0;0"/></rect>
+<rect x="364" y="64" width="140" height="72" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="434" y="92" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Đã xoá</text>
+<text x="434" y="114" font-size="13" text-anchor="middle" opacity="0.75" fill="currentColor">xong hẳn</text>
+<rect x="180" y="176" width="160" height="48" rx="8" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="260" y="205" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Dead-Letter Queue</text>
+<rect x="13" y="61" width="146" height="78" rx="10" fill="none" stroke="#f59e0b" stroke-width="3" opacity="0"><animate attributeName="opacity" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0;0.0267;0.0307;0.4867;0.4907;0.6093;0.6133;1" values="1;1;0;0;1;1;0;0"/></rect>
+<rect x="187" y="61" width="146" height="78" rx="10" fill="none" stroke="#f59e0b" stroke-width="3" opacity="0"><animate attributeName="opacity" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0;0.0267;0.0307;0.4867;0.4907;0.6093;0.6133;0.7933;0.7973;1" values="0;0;1;1;0;0;1;1;0;0"/></rect>
+<rect x="361" y="61" width="146" height="78" rx="10" fill="none" stroke="#f59e0b" stroke-width="3" opacity="0"><animate attributeName="opacity" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0;0.7933;0.7973;1" values="0;0;1;1"/></rect>
+<path d="M156 82 H186" fill="none" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.5" marker-end="url(#r01b-arr)"/>
+<text x="171" y="54" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">ReceiveMessage</text>
+<path d="M190 118 H160" fill="none" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#r01b-arr)"/>
+<text x="130" y="156" font-size="13" text-anchor="middle" opacity="0.85" fill="currentColor">hết timeout, chưa xoá → hiện lại</text>
+<path d="M330 82 H360" fill="none" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.5" marker-end="url(#r01b-arr)"/>
+<text x="380" y="54" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">DeleteMessage</text>
+<path d="M290 136 V172" fill="none" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.5" marker-end="url(#r01b-arr)"/>
+<text x="298" y="168" font-size="13" opacity="0.85" fill="currentColor">nhận quá maxReceiveCount</text>
+<text x="16" y="205" font-size="13" opacity="0.8" fill="currentColor">lần nhận:</text>
+<text x="80" y="205" font-size="14" font-weight="700" fill="#f59e0b" opacity="1">0<animate attributeName="opacity" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0;0.0267;0.0307;1" values="1;1;0;0"/></text>
+<text x="80" y="205" font-size="14" font-weight="700" fill="#f59e0b" opacity="0">1<animate attributeName="opacity" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0;0.0267;0.0307;0.6093;0.6133;1" values="0;0;1;1;0;0"/></text>
+<text x="80" y="205" font-size="14" font-weight="700" fill="#f59e0b" opacity="0">2<animate attributeName="opacity" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0;0.6093;0.6133;1" values="0;0;1;1"/></text>
+<text x="12" y="252" font-size="13" font-weight="700" opacity="0.85" fill="currentColor">Dòng thời gian (giây)</text>
+<text x="12" y="283" font-size="13" opacity="0.85" fill="currentColor">Consumer A</text>
+<text x="12" y="315" font-size="13" opacity="0.85" fill="currentColor">Consumer B</text>
+<text x="12" y="347" font-size="13" opacity="0.85" fill="currentColor">Message</text>
+<rect x="113.3" y="266" width="106.7" height="24" rx="4" fill="#f59e0b" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="166.65" y="283" font-size="13" text-anchor="middle" fill="currentColor">A xử lý</text>
+<text x="224.0" y="283" font-size="13" font-weight="700" fill="#f43f5e">✗ chết</text>
+<rect x="366.7" y="298" width="80.0" height="24" rx="4" fill="#10b981" fill-opacity="0.3" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="406.7" y="315" font-size="13" text-anchor="middle" fill="currentColor">B xử lý</text>
+<text x="450.7" y="315" font-size="13" font-weight="700" fill="#10b981">✓ Delete</text>
+<rect x="100.0" y="330" width="13.299999999999997" height="24" rx="0" fill="#10b981" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.25"/>
+<rect x="113.3" y="330" width="200.0" height="24" rx="0" fill="#f59e0b" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="213.3" y="347" font-size="13" text-anchor="middle" fill="currentColor">ẩn 30 s</text>
+<rect x="313.3" y="330" width="53.39999999999998" height="24" rx="0" fill="#10b981" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="340.0" y="347" font-size="13" text-anchor="middle" fill="currentColor">hiện</text>
+<rect x="366.7" y="330" width="80.0" height="24" rx="0" fill="#f59e0b" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="406.7" y="347" font-size="13" text-anchor="middle" fill="currentColor">ẩn</text>
+<rect x="446.7" y="330" width="53.30000000000001" height="24" rx="0" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="473.35" y="347" font-size="13" text-anchor="middle" fill="currentColor">đã xoá</text>
+<path d="M100 362 H500" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5"/>
+<path d="M113.3 362 V368" fill="none" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5"/>
+<text x="113.3" y="384" font-size="13" text-anchor="middle" opacity="0.8" fill="currentColor">2</text>
+<path d="M313.3 362 V368" fill="none" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5"/>
+<text x="313.3" y="384" font-size="13" text-anchor="middle" opacity="0.8" fill="currentColor">32</text>
+<path d="M366.7 362 V368" fill="none" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5"/>
+<text x="366.7" y="384" font-size="13" text-anchor="middle" opacity="0.8" fill="currentColor">40</text>
+<path d="M446.7 362 V368" fill="none" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5"/>
+<text x="446.7" y="384" font-size="13" text-anchor="middle" opacity="0.8" fill="currentColor">52</text>
+<line x1="100" y1="260" x2="100" y2="368" stroke="currentColor" stroke-opacity="0.7" stroke-width="2"><animate attributeName="x1" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0;0.92;1" values="100;500;500"/><animate attributeName="x2" dur="12s" repeatCount="indefinite" calcMode="linear" keyTimes="0.0;0.92;1" values="100;500;500"/></line>
+<text x="500" y="400" font-size="13" text-anchor="end" opacity="0.7" fill="currentColor">B nhận là lần thứ 2: A không xoá nên message quay lại</text>
 </svg>
+</auto-anim>
 
 > Bẫy kinh điển: "Message bị xử lý nhiều lần / xử lý trùng" trong khi consumer xử lý lâu → nguyên nhân là **visibility timeout quá ngắn**, tăng nó lên.
 
@@ -186,49 +221,44 @@ Các loại subscriber: **SQS**, **Lambda**, **HTTP/S endpoint**, **Email**, **S
 
 Pattern kinh điển: publish **một** message lên SNS topic, topic fan-out tới **nhiều** SQS queue, mỗi queue cho một microservice xử lý độc lập.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 290" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Fan-out SNS + SQS — một message tới nhiều queue, mỗi service xử lý độc lập</title>
-  <desc>Producer publish một message lên SNS topic; topic fan-out tới ba SQS queue (mỗi queue có buffer, retry và DLQ riêng); mỗi SQS queue đẩy cho một service xử lý độc lập.</desc>
-  <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Fan-out: SNS → nhiều SQS → nhiều Service</text>
-  <defs>
-    <marker id="foArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
-  </defs>
-  <rect x="16" y="118" width="116" height="54" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="74" y="142" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Producer</text>
-  <text x="74" y="159" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">publish 1 lần</text>
-  <line x1="132" y1="145" x2="178" y2="145" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5" marker-end="url(#foArr)"/>
-  <rect x="182" y="112" width="116" height="66" rx="10" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="240" y="140" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">SNS topic</text>
-  <text x="240" y="158" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">fan-out</text>
-  <path d="M298 130 C 340 92, 360 70, 408 64" fill="none" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5" marker-end="url(#foArr)"/>
-  <path d="M298 145 H 408" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5" marker-end="url(#foArr)"/>
-  <path d="M298 160 C 340 198, 360 220, 408 226" fill="none" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5" marker-end="url(#foArr)"/>
-  <g>
-    <rect x="412" y="40" width="150" height="48" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="487" y="60" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">SQS queue A</text>
-    <text x="487" y="77" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">buffer · retry · DLQ</text>
-  </g>
-  <g>
-    <rect x="412" y="121" width="150" height="48" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="487" y="141" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">SQS queue B</text>
-    <text x="487" y="158" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">buffer · retry · DLQ</text>
-  </g>
-  <g>
-    <rect x="412" y="202" width="150" height="48" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="487" y="222" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">SQS queue C</text>
-    <text x="487" y="239" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">buffer · retry · DLQ</text>
-  </g>
-  <line x1="562" y1="64" x2="606" y2="64" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5" marker-end="url(#foArr)"/>
-  <line x1="562" y1="145" x2="606" y2="145" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5" marker-end="url(#foArr)"/>
-  <line x1="562" y1="226" x2="606" y2="226" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5" marker-end="url(#foArr)"/>
-  <g fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22">
-    <rect x="610" y="44" width="98" height="40" rx="9"/>
-    <rect x="610" y="125" width="98" height="40" rx="9"/>
-    <rect x="610" y="206" width="98" height="40" rx="9"/>
-  </g>
-  <text x="659" y="69" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Service A</text>
-  <text x="659" y="150" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Service B</text>
-  <text x="659" y="231" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Service C</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 364" role="img" aria-labelledby="r01c-t r01c-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif"><title id="r01c-t">Fan-out SNS + SQS: một message tới nhiều queue, mỗi service xử lý độc lập</title><desc id="r01c-d">Producer publish một lần lên SNS topic; topic đẩy một bản sao tới ba SQS queue A, B, C, mỗi queue có buffer, retry và DLQ riêng. Mỗi queue cấp message cho một service riêng (ở đây là Lambda). Service B đang lỗi: các message của nó nằm chờ trong queue B, không mất, trong khi service A và C vẫn xử lý bình thường.</desc><defs><marker id="r01c-arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.65"/></marker><marker id="r01c-arg" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="#10b981"/></marker><marker id="r01c-ara" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="#f59e0b"/></marker></defs>
+<text x="12" y="22" font-size="14" font-weight="700" fill="currentColor">Fan-out: publish 1 lần, mỗi queue giữ bản riêng</text>
+<use href="#aws-res-server" x="22" y="158" width="44" height="44"/>
+<text x="44" y="222" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Producer</text>
+<text x="44" y="240" font-size="13" text-anchor="middle" opacity="0.75" fill="currentColor">publish 1 lần</text>
+<path d="M72 180 H112" fill="none" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.5" marker-end="url(#r01c-arr)"/>
+<use href="#aws-sns" x="118" y="156" width="48" height="48"/>
+<text x="142" y="224" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">SNS topic</text>
+<text x="142" y="242" font-size="13" text-anchor="middle" opacity="0.75" fill="currentColor">đẩy bản sao</text>
+<path d="M172 180 C 210 180, 220 80, 262 80" fill="none" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.5" marker-end="url(#r01c-arr)"/>
+<rect x="208" y="124.0" width="16" height="12" rx="2" fill="#8b5cf6" fill-opacity="0.85"/>
+<path d="M172 180 C 210 180, 220 180, 262 180" fill="none" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.5" marker-end="url(#r01c-arr)"/>
+<rect x="208" y="174.0" width="16" height="12" rx="2" fill="#8b5cf6" fill-opacity="0.85"/>
+<path d="M172 180 C 210 180, 220 280, 262 280" fill="none" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.5" marker-end="url(#r01c-arr)"/>
+<rect x="208" y="224.0" width="16" height="12" rx="2" fill="#8b5cf6" fill-opacity="0.85"/>
+<use href="#aws-sqs" x="268" y="58" width="44" height="44"/>
+<text x="290" y="120" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Queue A</text>
+<path d="M318 80 H372" fill="none" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.5" marker-end="url(#r01c-arr)"/>
+<use href="#aws-lambda" x="380" y="58" width="44" height="44"/>
+<text x="402" y="120" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Service A</text>
+<use href="#aws-sqs" x="268" y="158" width="44" height="44"/>
+<text x="290" y="220" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Queue B</text>
+<path d="M318 180 H372" fill="none" stroke="currentColor" stroke-opacity="0.25" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#r01c-arr)"/>
+<use href="#aws-lambda" x="380" y="158" width="44" height="44" opacity="0.35"/>
+<text x="402" y="220" font-size="14" font-weight="700" text-anchor="middle" opacity="0.5" fill="currentColor">Service B</text>
+<text x="434" y="172" font-size="22" font-weight="700" fill="#f43f5e">✗</text>
+<text x="434" y="194" font-size="13" font-weight="700" fill="#f43f5e">đang lỗi</text>
+<rect x="326" y="156" width="11" height="9" rx="2" fill="#8b5cf6" fill-opacity="0.85"/>
+<rect x="340" y="156" width="11" height="9" rx="2" fill="#8b5cf6" fill-opacity="0.85"/>
+<rect x="354" y="156" width="11" height="9" rx="2" fill="#8b5cf6" fill-opacity="0.85"/>
+<text x="346" y="150" font-size="13" text-anchor="middle" opacity="0.8" fill="currentColor">chờ</text>
+<use href="#aws-sqs" x="268" y="258" width="44" height="44"/>
+<text x="290" y="320" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Queue C</text>
+<path d="M318 280 H372" fill="none" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.5" marker-end="url(#r01c-arr)"/>
+<use href="#aws-lambda" x="380" y="258" width="44" height="44"/>
+<text x="402" y="320" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Service C</text>
+<text x="12" y="336" font-size="13" opacity="0.8" fill="currentColor">Mỗi queue: buffer · retry · DLQ riêng. B lỗi thì message của B</text>
+<text x="12" y="356" font-size="13" opacity="0.8" fill="currentColor">nằm chờ trong queue B; A và C không bị ảnh hưởng.</text>
 </svg>
 
 Ưu điểm so với cho producer publish thẳng vào nhiều queue:

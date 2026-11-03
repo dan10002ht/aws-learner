@@ -91,64 +91,11 @@ Ba hệ quả thực dụng của kiến trúc này:
 - **Failover nhanh.** Khi writer chết, Aurora nâng một reader lên làm writer. Dữ liệu vốn dùng chung nên không mất gì, dịch vụ thường trở lại trong **dưới 60 giây, hay gặp là dưới 30 giây**.
 - **Reader vẫn là eventual consistency.** Lag nhỏ nhưng khác 0: ghi xong ở writer rồi đọc ngay ở reader có thể chưa thấy. Cần đọc-ngay-sau-ghi thì đọc ở writer.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Kiến trúc Aurora — compute tách khỏi shared storage 6 bản / 3 AZ</title>
-  <desc>Tầng compute gồm 1 writer và các reader nối xuống một shared storage layer dùng chung; storage giữ 6 bản sao trải trên 3 vùng sẵn sàng. Writer ghi xuống storage; reader chỉ invalidate cache page thay vì replay binlog.</desc>
-  <defs>
-    <marker id="auArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
-  </defs>
-  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Aurora — compute tách khỏi shared storage</text>
-  <text x="16" y="50" font-size="11.5" font-weight="700" fill="currentColor" opacity="0.7">Tầng COMPUTE</text>
-  <g>
-    <rect x="40" y="58" width="150" height="56" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-    <rect x="52" y="68" width="56" height="18" rx="9" fill="#3b82f6" fill-opacity="0.9"/>
-    <text x="80" y="81" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">WRITER</text>
-    <text x="52" y="103" font-size="10.5" fill="currentColor" opacity="0.75">read + write</text>
-  </g>
-  <g>
-    <rect x="270" y="58" width="130" height="56" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-    <rect x="282" y="68" width="62" height="18" rx="9" fill="#10b981" fill-opacity="0.95"/>
-    <text x="313" y="81" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">READER 1</text>
-    <text x="282" y="103" font-size="10.5" fill="currentColor" opacity="0.75">read-only</text>
-  </g>
-  <g>
-    <rect x="420" y="58" width="130" height="56" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-    <rect x="432" y="68" width="62" height="18" rx="9" fill="#10b981" fill-opacity="0.95"/>
-    <text x="463" y="81" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">READER N</text>
-    <text x="432" y="103" font-size="10.5" fill="currentColor" opacity="0.75">tới 15 reader</text>
-  </g>
-  <line x1="115" y1="114" x2="115" y2="176" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#auArr)"/>
-  <text x="122" y="150" font-size="10" fill="currentColor" opacity="0.8">ghi</text>
-  <line x1="335" y1="114" x2="200" y2="176" stroke="currentColor" stroke-opacity="0.45" marker-end="url(#auArr)"/>
-  <line x1="485" y1="114" x2="240" y2="176" stroke="currentColor" stroke-opacity="0.45" marker-end="url(#auArr)"/>
-  <text x="360" y="150" font-size="10" fill="currentColor" opacity="0.8">đọc · invalidate cache page</text>
-  <text x="16" y="200" font-size="11.5" font-weight="700" fill="currentColor" opacity="0.7">SHARED STORAGE LAYER — 6 bản / 3 AZ</text>
-  <rect x="40" y="210" width="640" height="120" rx="12" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
-  <g>
-    <rect x="60" y="232" width="180" height="86" rx="9" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="150" y="251" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">AZ-a</text>
-    <rect x="76" y="262" width="66" height="44" rx="7" fill="#f59e0b" fill-opacity="0.5"/>
-    <text x="109" y="288" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">copy 1</text>
-    <rect x="156" y="262" width="66" height="44" rx="7" fill="#f59e0b" fill-opacity="0.5"/>
-    <text x="189" y="288" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">copy 2</text>
-  </g>
-  <g>
-    <rect x="270" y="232" width="180" height="86" rx="9" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="360" y="251" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">AZ-b</text>
-    <rect x="286" y="262" width="66" height="44" rx="7" fill="#f59e0b" fill-opacity="0.5"/>
-    <text x="319" y="288" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">copy 3</text>
-    <rect x="366" y="262" width="66" height="44" rx="7" fill="#f59e0b" fill-opacity="0.5"/>
-    <text x="399" y="288" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">copy 4</text>
-  </g>
-  <g>
-    <rect x="480" y="232" width="180" height="86" rx="9" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="570" y="251" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">AZ-c</text>
-    <rect x="496" y="262" width="66" height="44" rx="7" fill="#f59e0b" fill-opacity="0.5"/>
-    <text x="529" y="288" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">copy 5</text>
-    <rect x="576" y="262" width="66" height="44" rx="7" fill="#f59e0b" fill-opacity="0.5"/>
-    <text x="609" y="288" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">copy 6</text>
-  </g>
-  <text x="40" y="352" font-size="10.5" fill="currentColor" opacity="0.7">Storage dùng chung cho mọi node → reader không replay binlog, lag writer→reader thường dưới 100ms.</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 390" role="img" aria-labelledby="saa203a-t saa203a-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="saa203a-t">Aurora shared storage</title>
+<desc id="saa203a-d">Một writer và tới 15 reader cùng nối xuống một volume, gồm sáu bản sao chia đều ba AZ.</desc>
+<defs><marker id="saa203a-arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<text x="260" y="23" text-anchor="middle" font-size="13" fill="currentColor">Aurora: compute tách khỏi storage</text><use href="#aws-aurora" x="70" y="42" width="40" height="40"/><text x="90" y="100" text-anchor="middle" font-size="13" fill="currentColor">Writer</text><text x="90" y="118" text-anchor="middle" font-size="13" fill="currentColor">read + write</text><path d="M90 130 V180" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#saa203a-arr)"/><use href="#aws-aurora" x="240" y="42" width="40" height="40"/><text x="260" y="100" text-anchor="middle" font-size="13" fill="currentColor">Reader 1</text><text x="260" y="118" text-anchor="middle" font-size="13" fill="currentColor">read-only</text><path d="M260 130 V180" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#saa203a-arr)"/><use href="#aws-aurora" x="410" y="42" width="40" height="40"/><text x="430" y="100" text-anchor="middle" font-size="13" fill="currentColor">Reader N</text><text x="430" y="118" text-anchor="middle" font-size="13" fill="currentColor">tối đa 15 reader</text><path d="M430 130 V180" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#saa203a-arr)"/><text x="90" y="158" text-anchor="middle" font-size="13" fill="currentColor">ghi</text><text x="345" y="158" text-anchor="middle" font-size="13" fill="currentColor">đọc / invalidate page</text><rect x="15" y="185" width="490" height="162" rx="10" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="260" y="207" text-anchor="middle" font-size="13" fill="currentColor">Shared cluster volume · 6 bản / 3 AZ</text><rect x="30" y="220" width="145" height="112" rx="10" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="102" y="242" text-anchor="middle" font-size="13" fill="currentColor">AZ-a</text><ellipse cx="70" cy="275" rx="25" ry="10" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><path d="M45 275 V306 Q70 324 95 306 V275" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="70" y="302" text-anchor="middle" font-size="13" fill="currentColor">1</text><ellipse cx="135" cy="275" rx="25" ry="10" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><path d="M110 275 V306 Q135 324 160 306 V275" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="135" y="302" text-anchor="middle" font-size="13" fill="currentColor">2</text><rect x="195" y="220" width="145" height="112" rx="10" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="267" y="242" text-anchor="middle" font-size="13" fill="currentColor">AZ-b</text><ellipse cx="235" cy="275" rx="25" ry="10" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><path d="M210 275 V306 Q235 324 260 306 V275" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="235" y="302" text-anchor="middle" font-size="13" fill="currentColor">3</text><ellipse cx="300" cy="275" rx="25" ry="10" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><path d="M275 275 V306 Q300 324 325 306 V275" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="300" y="302" text-anchor="middle" font-size="13" fill="currentColor">4</text><rect x="360" y="220" width="145" height="112" rx="10" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="432" y="242" text-anchor="middle" font-size="13" fill="currentColor">AZ-c</text><ellipse cx="400" cy="275" rx="25" ry="10" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><path d="M375 275 V306 Q400 324 425 306 V275" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="400" y="302" text-anchor="middle" font-size="13" fill="currentColor">5</text><ellipse cx="465" cy="275" rx="25" ry="10" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><path d="M440 275 V306 Q465 324 490 306 V275" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="465" y="302" text-anchor="middle" font-size="13" fill="currentColor">6</text><text x="260" y="372" text-anchor="middle" font-size="13" fill="currentColor">Không replay binlog · replica lag thường &lt;100 ms</text>
 </svg>
 
 ### 3.2 Performance levers
@@ -557,47 +504,22 @@ Cache được cập nhật **ngay trong lúc ghi**, không chờ ai đọc: m�
 
 Thực tế hay **kết hợp** cả hai: write-through để dữ liệu vừa ghi có sẵn trong cache, cache-aside để tự nạp những gì còn thiếu, và TTL để dọn những thứ không ai đọc.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Cache-aside (lazy loading) so với Write-through — luồng đọc/ghi giữa App, Cache, DB</title>
-  <desc>Hai chiến lược cạnh nhau. Cache-aside khi đọc: App hỏi Cache, nếu miss thì đọc DB rồi ghi ngược vào Cache. Write-through khi ghi: App ghi cả Cache và DB cùng lúc nên cache luôn fresh.</desc>
-  <defs>
-    <marker id="caArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
-  </defs>
-  <text x="180" y="24" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Cache-aside (lazy loading) — khi ĐỌC</text>
-  <text x="540" y="24" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Write-through — khi GHI</text>
-  <line x1="360" y1="36" x2="360" y2="340" stroke="currentColor" stroke-opacity="0.18"/>
-  <g>
-    <rect x="30" y="56" width="110" height="40" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="85" y="81" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">App</text>
-    <rect x="225" y="56" width="110" height="40" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="280" y="81" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Cache</text>
-    <rect x="125" y="270" width="110" height="40" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="180" y="295" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">DB</text>
-    <line x1="140" y1="70" x2="221" y2="70" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#caArr)"/>
-    <text x="180" y="64" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.85">1. đọc</text>
-    <line x1="221" y1="84" x2="142" y2="84" stroke="currentColor" stroke-opacity="0.4" stroke-dasharray="4 3" marker-end="url(#caArr)"/>
-    <text x="182" y="110" font-size="10" text-anchor="middle" fill="#10b981" opacity="0.95" font-weight="700">HIT → trả ngay</text>
-    <line x1="100" y1="96" x2="165" y2="266" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#caArr)"/>
-    <text x="78" y="200" font-size="10" fill="currentColor" opacity="0.85">2. MISS → đọc DB</text>
-    <line x1="232" y1="270" x2="276" y2="100" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#caArr)"/>
-    <text x="262" y="200" font-size="10" fill="currentColor" opacity="0.85">3. ghi lại cache</text>
-  </g>
-  <g>
-    <rect x="385" y="56" width="110" height="40" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="440" y="81" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">App</text>
-    <rect x="585" y="56" width="110" height="40" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="640" y="81" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Cache</text>
-    <rect x="485" y="270" width="110" height="40" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="540" y="295" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">DB</text>
-    <line x1="495" y1="74" x2="581" y2="74" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#caArr)"/>
-    <text x="538" y="68" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.85">1a. ghi cache</text>
-    <line x1="460" y1="96" x2="525" y2="266" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#caArr)"/>
-    <text x="408" y="200" font-size="10" fill="currentColor" opacity="0.85">1b. ghi DB (cùng lúc)</text>
-    <text x="640" y="120" font-size="10" text-anchor="middle" fill="#10b981" opacity="0.95" font-weight="700">cache luôn fresh</text>
-  </g>
-  <text x="30" y="338" font-size="10" fill="currentColor" opacity="0.7">Chỉ data được hỏi mới vào cache; lần miss đầu tốn 3 bước.</text>
-  <text x="385" y="338" font-size="10" fill="currentColor" opacity="0.7">Mọi write đều vào cache, kể cả data ít khi đọc lại.</text>
+<ab-toggle data-labels="Cache-aside|Write-through">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 340" role="img" aria-labelledby="saa203b0-t saa203b0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="saa203b0-t">Cache-aside và write-through</title>
+<desc id="saa203b0-d">Cache-aside và write-through</desc>
+<defs><marker id="saa203b0-arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<text x="260" y="24" text-anchor="middle" font-size="13" fill="currentColor">Cache-aside: đọc</text><use href="#aws-ec2" x="70" y="55" width="40" height="40"/><text x="90" y="113" text-anchor="middle" font-size="13" fill="currentColor">App</text><use href="#aws-elasticache" x="410" y="55" width="40" height="40"/><text x="430" y="113" text-anchor="middle" font-size="13" fill="currentColor">Cache</text><use href="#aws-rds" x="240" y="255" width="40" height="40"/><text x="260" y="313" text-anchor="middle" font-size="13" fill="currentColor">DB</text><path d="M120 72 H395" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#saa203b0-arr)"/><text x="260" y="62" text-anchor="middle" font-size="13" fill="currentColor">1. đọc cache</text><path d="M395 94 H120" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#saa203b0-arr)"/><text x="260" y="118" text-anchor="middle" font-size="13" fill="currentColor">HIT: trả ngay</text><path d="M90 128 V273 H228" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#saa203b0-arr)"/><text x="110" y="206" text-anchor="start" font-size="13" fill="currentColor">2. MISS: đọc DB</text><path d="M110 128 V161 H430 V128" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#saa203b0-arr)"/><text x="290" y="184" text-anchor="middle" font-size="13" fill="currentColor">3. App nạp kết quả vào cache</text>
 </svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 340" role="img" aria-labelledby="saa203b1-t saa203b1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="saa203b1-t">Cache-aside và write-through</title>
+<desc id="saa203b1-d">Cache-aside và write-through</desc>
+<defs><marker id="saa203b1-arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<text x="260" y="24" text-anchor="middle" font-size="13" fill="currentColor">Write-through: ghi</text><use href="#aws-ec2" x="70" y="55" width="40" height="40"/><text x="90" y="113" text-anchor="middle" font-size="13" fill="currentColor">App</text><use href="#aws-elasticache" x="410" y="55" width="40" height="40"/><text x="430" y="113" text-anchor="middle" font-size="13" fill="currentColor">Cache</text><use href="#aws-rds" x="240" y="255" width="40" height="40"/><text x="260" y="313" text-anchor="middle" font-size="13" fill="currentColor">DB</text><path d="M120 72 H395" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#saa203b1-arr)"/><text x="260" y="62" text-anchor="middle" font-size="13" fill="currentColor">1a. ghi giá trị mới</text><path d="M90 128 V273 H228" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#saa203b1-arr)"/><text x="110" y="206" text-anchor="start" font-size="13" fill="currentColor">1b. ghi DB</text><rect x="355" y="140" width="150" height="46" rx="10" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="430" y="168" text-anchor="middle" font-size="13" fill="currentColor">cache có bản mới</text>
+</svg>
+<ab-note>Chỉ dữ liệu được hỏi mới vào cache. Khi miss, App đọc DB rồi nạp cache; khi ghi DB, App xoá key cũ để lần đọc sau nạp lại.</ab-note>
+<ab-note>Mỗi lần ghi, App cập nhật cả DB và cache, kể cả dữ liệu ít được đọc. Cache mới thay vào vẫn trống cho tới khi được ghi; có thể kết hợp cache-aside và TTL.</ab-note>
+</ab-toggle>
 
 ### 6.3 Write-behind / write-back
 

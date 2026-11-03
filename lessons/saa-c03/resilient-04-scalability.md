@@ -258,47 +258,44 @@ Một bảng chỉ bận 2 giờ mỗi ngày rồi gần như im → on-demand. 
 
 Mẫu tổng hợp tách read/write cho RDS/Aurora: app **ghi** qua một endpoint tới primary/writer, còn **đọc** đi qua reader endpoint được load-balance trên nhiều read replica, và một lớp cache đứng trước để chặn bớt read trúng DB.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Tách read khỏi write: writer endpoint cho ghi, reader endpoint load-balance qua nhiều read replica, cache đứng trước</title>
-  <desc>Ứng dụng gửi write tới writer endpoint nối vào primary. Đọc đi qua cache ElastiCache trước; nếu miss thì qua reader endpoint load-balance tới nhiều read replica. Primary replicate bất đồng bộ sang các replica.</desc>
-  <rect x="40" y="150" width="120" height="56" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
-  <text x="100" y="174" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Ứng dụng</text>
-  <text x="100" y="192" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">read + write</text>
-  <path d="M160 166 C 210 150, 240 96, 300 96" stroke="#f59e0b" stroke-opacity="0.85" stroke-width="2" fill="none" marker-end="url(#rwArr)"/>
-  <text x="222" y="108" font-size="11" font-weight="700" fill="currentColor">write</text>
-  <path d="M160 190 C 210 210, 240 250, 300 250" stroke="#10b981" stroke-opacity="0.85" stroke-width="2" fill="none" marker-end="url(#rwArr)"/>
-  <text x="218" y="248" font-size="11" font-weight="700" fill="currentColor">read</text>
-  <rect x="300" y="70" width="150" height="50" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.45"/>
-  <text x="375" y="90" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Writer endpoint</text>
-  <text x="375" y="107" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">→ Primary (1 node)</text>
-  <rect x="252" y="226" width="120" height="48" rx="9" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.45"/>
-  <text x="312" y="246" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Cache</text>
-  <text x="312" y="262" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">ElastiCache</text>
-  <path d="M372 250 h28" stroke="#10b981" stroke-opacity="0.7" stroke-width="2" fill="none" marker-end="url(#rwArr)"/>
-  <text x="386" y="242" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">miss</text>
-  <rect x="400" y="226" width="150" height="48" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.45"/>
-  <text x="475" y="246" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Reader endpoint</text>
-  <text x="475" y="262" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">load-balance read</text>
-  <rect x="560" y="60" width="130" height="44" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
-  <text x="625" y="86" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Primary</text>
-  <path d="M450 95 h100" stroke="currentColor" stroke-opacity="0.5" fill="none" marker-end="url(#rwArr)"/>
-  <rect x="560" y="150" width="130" height="38" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
-  <text x="625" y="174" font-size="10.5" text-anchor="middle" fill="currentColor">Read replica 1</text>
-  <rect x="560" y="196" width="130" height="38" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
-  <text x="625" y="220" font-size="10.5" text-anchor="middle" fill="currentColor">Read replica 2</text>
-  <rect x="560" y="242" width="130" height="38" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
-  <text x="625" y="266" font-size="10.5" text-anchor="middle" fill="currentColor">Read replica … (tới 15)</text>
-  <path d="M550 250 C 552 220, 554 190, 558 175" stroke="currentColor" stroke-opacity="0.45" fill="none" marker-end="url(#rwArr)"/>
-  <path d="M550 250 h6" stroke="currentColor" stroke-opacity="0.45" fill="none" marker-end="url(#rwArr)"/>
-  <path d="M550 250 C 552 256, 554 258, 558 260" stroke="currentColor" stroke-opacity="0.45" fill="none" marker-end="url(#rwArr)"/>
-  <g stroke="#f59e0b" stroke-opacity="0.55" stroke-dasharray="4 3" fill="none">
-    <path d="M625 104 V 150" marker-end="url(#rwArr)"/>
-    <path d="M690 104 C 720 150, 720 200, 692 210" marker-end="url(#rwArr)"/>
-  </g>
-  <text x="700" y="130" font-size="9.5" fill="currentColor" opacity="0.7" transform="rotate(90 700 130)">replicate async (lag)</text>
-  <defs>
-    <marker id="rwArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
-  </defs>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 364" role="img" aria-labelledby="r04b-t r04b-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif"><title id="r04b-t">Tách read khỏi write: writer endpoint cho ghi, reader endpoint load-balance qua nhiều read replica, cache đứng trước</title><desc id="r04b-d">Ứng dụng gửi write qua writer endpoint tới primary (1 node). Đọc đi qua cache ElastiCache trước: hit thì trả luôn, miss thì đi qua reader endpoint, endpoint này load-balance tới nhiều read replica (replica 1, replica 2, tới 15 replica). Primary replicate bất đồng bộ sang các replica nên replica có độ trễ (lag).</desc><defs><marker id="r04b-arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.65"/></marker><marker id="r04b-arg" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="#10b981"/></marker><marker id="r04b-ara" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="#f59e0b"/></marker></defs>
+<text x="12" y="22" font-size="14" font-weight="700" fill="currentColor">Ghi một đường, đọc một đường</text>
+<use href="#aws-ec2" x="24" y="158" width="44" height="44"/>
+<text x="46" y="222" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Ứng dụng</text>
+<path d="M46 154 V66 H164" fill="none" stroke="#f59e0b" stroke-opacity="0.95" stroke-width="2" marker-end="url(#r04b-ara)"/>
+<text x="54" y="112" font-size="13" font-weight="700" fill="#f59e0b">write</text>
+<rect x="168" y="48" width="150" height="34" rx="17" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="243" y="70" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Writer endpoint</text>
+<path d="M318 65 H408" fill="none" stroke="#f59e0b" stroke-opacity="0.95" stroke-width="2" marker-end="url(#r04b-ara)"/>
+<use href="#aws-rds" x="414" y="42" width="46" height="46"/>
+<text x="437" y="106" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Primary</text>
+<text x="437" y="124" font-size="13" text-anchor="middle" opacity="0.75" fill="currentColor">1 node</text>
+<path d="M70 174 H144" fill="none" stroke="#10b981" stroke-opacity="0.95" stroke-width="2" marker-end="url(#r04b-arg)"/>
+<text x="84" y="166" font-size="13" font-weight="700" fill="#10b981">read</text>
+<path d="M146 194 H74" fill="none" stroke="#10b981" stroke-opacity="0.8" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#r04b-arg)"/>
+<text x="84" y="212" font-size="13" font-weight="700" fill="#10b981">hit</text>
+<use href="#aws-elasticache" x="150" y="160" width="44" height="44"/>
+<text x="172" y="222" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">ElastiCache</text>
+<text x="172" y="240" font-size="13" text-anchor="middle" opacity="0.75" fill="currentColor">cache</text>
+<path d="M196 182 H232" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#r04b-arr)"/>
+<text x="214" y="172" font-size="13" text-anchor="middle" opacity="0.8" fill="currentColor">miss</text>
+<rect x="236" y="166" width="130" height="34" rx="17" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="301" y="188" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Reader endpoint</text>
+<text x="301" y="220" font-size="13" text-anchor="middle" opacity="0.75" fill="currentColor">load-balance read</text>
+<path d="M366 183 C 384 183, 390 172, 410 172" fill="none" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5" marker-end="url(#r04b-arr)"/>
+<use href="#aws-rds" x="416" y="152" width="40" height="40"/>
+<text x="436" y="208" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Replica 1</text>
+<path d="M366 183 C 384 183, 390 242, 410 242" fill="none" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5" marker-end="url(#r04b-arr)"/>
+<use href="#aws-rds" x="416" y="222" width="40" height="40"/>
+<text x="436" y="278" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Replica 2</text>
+<path d="M366 183 C 384 183, 390 312, 410 312" fill="none" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5" marker-end="url(#r04b-arr)"/>
+<use href="#aws-rds" x="416" y="292" width="40" height="40"/>
+<text x="436" y="348" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">… tới 15</text>
+<path d="M462 64 H490 V312" fill="none" stroke="#f59e0b" stroke-opacity="0.7" stroke-width="1.5" stroke-dasharray="4 3"/>
+<path d="M490 172 H462" fill="none" stroke="#f59e0b" stroke-opacity="0.7" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#r04b-ara)"/>
+<path d="M490 242 H462" fill="none" stroke="#f59e0b" stroke-opacity="0.7" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#r04b-ara)"/>
+<path d="M490 312 H462" fill="none" stroke="#f59e0b" stroke-opacity="0.7" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#r04b-ara)"/>
+<text x="498" y="150" font-size="13" fill="#f59e0b" transform="rotate(90 498 150)">replicate async (lag)</text>
 </svg>
 
 ## 4. Caching Layers — Đặt cache ở đâu
@@ -339,42 +336,42 @@ Mẫu kiến trúc nhiều tầng cache điển hình: **CloudFront → API Gate
 
 Database chỉ phải chịu 1% lượng request ban đầu — đó là lý do thêm cache thường rẻ hơn nhiều so với scale database.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Cache nhiều tầng: CloudFront ở edge, API Gateway cache, ElastiCache, rồi RDS/DynamoDB với DAX — mỗi tầng chặn bớt tải xuống backend</title>
-  <desc>Request đi từ trái sang phải qua các tầng cache. Mỗi tầng phục vụ phần lớn request (cache hit) và chỉ để lọt phần nhỏ xuống tầng sau, nên lượng tải tới database nhỏ dần. Thứ tự: CloudFront edge, API Gateway cache, ElastiCache, cuối cùng RDS/DynamoDB kèm DAX.</desc>
-  <text x="16" y="24" font-size="12.5" font-weight="700" fill="currentColor">Mỗi tầng cache chặn bớt — tải xuống backend nhỏ dần</text>
-  <rect x="20" y="60" width="120" height="120" rx="10" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
-  <text x="80" y="86" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">CloudFront</text>
-  <text x="80" y="103" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">edge, gần user</text>
-  <text x="80" y="120" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">tĩnh + API resp</text>
-  <rect x="180" y="72" width="116" height="96" rx="10" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
-  <text x="238" y="98" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">API Gateway</text>
-  <text x="238" y="114" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">cache theo</text>
-  <text x="238" y="128" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">stage</text>
-  <rect x="336" y="84" width="112" height="72" rx="10" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
-  <text x="392" y="110" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">ElastiCache</text>
-  <text x="392" y="126" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">query/session</text>
-  <rect x="488" y="96" width="100" height="48" rx="10" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
-  <text x="538" y="118" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">DAX</text>
-  <text x="538" y="133" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">cache DynamoDB</text>
-  <rect x="616" y="96" width="86" height="48" rx="10" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.4"/>
-  <text x="659" y="116" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">RDS /</text>
-  <text x="659" y="132" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">DynamoDB</text>
-  <g fill="none" stroke="currentColor">
-    <path d="M140 120 h40" stroke-opacity="0.55" stroke-width="3" marker-end="url(#cArr)"/>
-    <path d="M296 120 h40" stroke-opacity="0.5" stroke-width="2.2" marker-end="url(#cArr)"/>
-    <path d="M448 120 h40" stroke-opacity="0.45" stroke-width="1.6" marker-end="url(#cArr)"/>
-    <path d="M588 120 h28" stroke-opacity="0.4" stroke-width="1" marker-end="url(#cArr)"/>
-  </g>
-  <text x="160" y="210" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">phần lớn request</text>
-  <text x="160" y="226" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">dừng sớm ở edge</text>
-  <text x="540" y="210" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">chỉ phần nhỏ (miss)</text>
-  <text x="540" y="226" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.85">mới chạm DB</text>
-  <path d="M250 245 h220" stroke="currentColor" stroke-opacity="0.4" fill="none" marker-end="url(#cArr)"/>
-  <text x="360" y="262" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">tải còn lại giảm dần qua từng tầng</text>
-  <defs>
-    <marker id="cArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
-  </defs>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 438" role="img" aria-labelledby="r04c-t r04c-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif"><title id="r04c-t">Cache nhiều tầng: CloudFront, API Gateway, ElastiCache rồi RDS/DynamoDB với DAX; mỗi tầng chặn bớt tải xuống backend</title><desc id="r04c-d">Dòng request đi từ người dùng xuống dưới qua các tầng cache, độ rộng dòng tỉ lệ với số request mỗi giây. 1.000 request mỗi giây tới CloudFront ở edge gần user (cache nội dung tĩnh và response API); 95% hit nên chỉ còn 50 request mỗi giây về origin. API Gateway cache response theo stage; ví dụ không tính tỉ lệ hit của tầng này. 50 request mỗi giây tới ElastiCache (cache kết quả query, session); 80% hit nên chỉ 10 query mỗi giây chạm database RDS hoặc DynamoDB (DynamoDB có DAX làm cache riêng). Database chỉ chịu 1% lượng request ban đầu.</desc><defs><marker id="r04c-arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.65"/></marker><marker id="r04c-arg" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="#10b981"/></marker><marker id="r04c-ara" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="#f59e0b"/></marker></defs>
+<text x="12" y="22" font-size="14" font-weight="700" fill="currentColor">Mỗi tầng cache chặn bớt, tải xuống DB nhỏ dần</text>
+<use href="#aws-res-users" x="16" y="34" width="40" height="40"/>
+<text x="64" y="60" font-size="14" font-weight="700" fill="currentColor">Người dùng</text>
+<rect x="12" y="96" width="496" height="56" rx="10" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
+<use href="#aws-cloudfront" x="22" y="105" width="38" height="38"/>
+<text x="70" y="120" font-size="14" font-weight="700" fill="currentColor">CloudFront</text>
+<text x="70" y="140" font-size="13" opacity="0.75" fill="currentColor">edge · tĩnh + API</text>
+<rect x="12" y="180" width="496" height="56" rx="10" fill="#8b5cf6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
+<use href="#aws-api-gateway" x="22" y="189" width="38" height="38"/>
+<text x="70" y="204" font-size="14" font-weight="700" fill="currentColor">API Gateway</text>
+<text x="70" y="224" font-size="13" opacity="0.75" fill="currentColor">cache theo stage</text>
+<rect x="12" y="264" width="496" height="56" rx="10" fill="#f59e0b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
+<use href="#aws-elasticache" x="22" y="273" width="38" height="38"/>
+<text x="70" y="288" font-size="14" font-weight="700" fill="currentColor">ElastiCache</text>
+<text x="70" y="308" font-size="13" opacity="0.75" fill="currentColor">query / session</text>
+<rect x="12" y="348" width="496" height="56" rx="10" fill="#14b8a6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.25"/>
+<use href="#aws-rds" x="22" y="357" width="38" height="38"/>
+<text x="70" y="372" font-size="14" font-weight="700" fill="currentColor">RDS / DynamoDB</text>
+<text x="70" y="392" font-size="13" opacity="0.75" fill="currentColor">DAX: cache DynamoDB</text>
+<polygon points="220.0,40 380.0,40 380.0,96 220.0,96" fill="#3b82f6" fill-opacity="0.45"/>
+<polygon points="220.0,96 380.0,96 304.0,152 296.0,152" fill="#3b82f6" fill-opacity="0.45"/>
+<polygon points="296.0,152 304.0,152 304.0,264 296.0,264" fill="#3b82f6" fill-opacity="0.45"/>
+<polygon points="296.0,264 304.0,264 301.0,320 299.0,320" fill="#3b82f6" fill-opacity="0.45"/>
+<polygon points="299.0,320 301.0,320 301.0,348 299.0,348" fill="#3b82f6" fill-opacity="0.45"/>
+<text x="392" y="64" font-size="14" font-weight="700" fill="#3b82f6">1.000 req/s</text>
+<text x="392" y="122" font-size="14" font-weight="700" fill="#10b981">95% hit</text>
+<text x="392" y="140" font-size="13" opacity="0.75" fill="currentColor">trả ở edge</text>
+<text x="392" y="170" font-size="14" font-weight="700" fill="#3b82f6">50 req/s</text>
+<text x="392" y="214" font-size="13" opacity="0.75" fill="currentColor">hit: ví dụ</text>
+<text x="392" y="230" font-size="13" opacity="0.75" fill="currentColor">không tính</text>
+<text x="392" y="256" font-size="14" font-weight="700" fill="#3b82f6">50 req/s</text>
+<text x="392" y="290" font-size="14" font-weight="700" fill="#10b981">80% hit</text>
+<text x="392" y="340" font-size="14" font-weight="700" fill="#3b82f6">10 query/s</text>
+<text x="392" y="384" font-size="13" font-weight="700" fill="currentColor">= 1% ban đầu</text>
+<text x="12" y="428" font-size="13" opacity="0.7" fill="currentColor">Độ rộng dòng xanh tỉ lệ với request/giây.</text>
 </svg>
 
 Hai chiến lược cache phổ biến (đôi khi bị hỏi) — khác nhau ở chỗ **lúc nào** dữ liệu được đưa vào cache:

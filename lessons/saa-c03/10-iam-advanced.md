@@ -163,6 +163,22 @@ aws sts assume-role \
 
 → Nhận temp credential (1h default, max 12h — chi tiết ở §2.10).
 
+<step-flow>
+<svg viewBox="0 0 680 445" role="img" aria-labelledby="saa10-cross-t saa10-cross-d" style="width:100%;max-width:680px;height:auto;display:block;margin:1.25rem auto">
+<title id="saa10-cross-t">Cross-account AssumeRole</title>
+<desc id="saa10-cross-d">Hai account có biên riêng; STS trả credential cho B, sau đó B gọi bucket dưới danh tính role A.</desc>
+<defs><marker id="saa10-cross-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<rect x="15" y="15" width="190" height="415" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><rect x="225" y="15" width="440" height="415" rx="10" fill="#10b981" fill-opacity="0.13" stroke="#10b981"/><text x="110" y="40" text-anchor="middle" font-size="14" fill="currentColor">Account B · caller</text><text x="445" y="40" text-anchor="middle" font-size="14" fill="currentColor">Account A · resource</text><use href="#aws-iam" x="90" y="55" width="40" height="40"/><text x="110" y="115" text-anchor="middle" font-size="14" fill="currentColor">User / role B</text><path d="M110 125 V410" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/><use href="#aws-iam" x="300" y="55" width="40" height="40"/><text x="320" y="115" text-anchor="middle" font-size="14" fill="currentColor">STS / XAccessor</text><path d="M320 125 V410" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/><use href="#aws-s3" x="535" y="55" width="40" height="40"/><text x="555" y="115" text-anchor="middle" font-size="14" fill="currentColor">S3 bucket A</text><path d="M555 125 V410" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/><g data-step="1"><path d="M110 170 H320" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#saa10-cross-a)"/><text x="215" y="156" text-anchor="middle" font-size="14" fill="currentColor">1 · sts:AssumeRole</text></g>
+<g data-step="2"><rect x="235" y="195" width="170" height="50" rx="10" fill="#f59e0b" fill-opacity="0.13" stroke="#f59e0b"/><text x="320" y="216" text-anchor="middle" font-size="13" fill="currentColor">Trust policy allows B</text><text x="320" y="234" text-anchor="middle" font-size="13" fill="currentColor">B policy allows STS</text></g>
+<g data-step="3"><path d="M320 280 H110" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#saa10-cross-a)"/><text x="215" y="267" text-anchor="middle" font-size="14" fill="currentColor">2 · temporary credentials</text></g>
+<g data-step="4"><path d="M110 350 H555" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#saa10-cross-a)"/><text x="330" y="335" text-anchor="middle" font-size="14" fill="currentColor">3 · GetObject as role A</text><text x="445" y="385" text-anchor="middle" font-size="13" fill="currentColor">Role permissions authorize S3</text></g>
+</svg>
+<step-note data-step="1">Caller B phải được phép gọi <code>sts:AssumeRole</code> trên ARN role A.</step-note>
+<step-note data-step="2">Trust policy quyết định ai được assume; permissions policy của role quyết định quyền sau khi assume.</step-note>
+<step-note data-step="3">STS trả credential tạm thời cho phiên role; đây là danh tính của account A.</step-note>
+<step-note data-step="4">Request S3 dùng credential của role A, vì vậy quyền S3 được xét theo role đó.</step-note>
+</step-flow>
+
 #### Pattern C — ExternalId (chống "confused deputy")
 
 **Bài toán**: Bạn (account A) thuê 3rd-party SaaS (account X) monitor AWS bills của bạn. Bạn tạo Role trust X. Nhưng X cũng monitor cho 1000 customer khác. Nếu X bị compromise + attacker biết ARN role bạn → assume được, **vì trust = `Principal: X-account`**.

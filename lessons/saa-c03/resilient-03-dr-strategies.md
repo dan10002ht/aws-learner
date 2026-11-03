@@ -309,41 +309,72 @@ Route 53 là "công tắc traffic" chuyển hướng người dùng từ Region 
 - **Health check** + **Failover routing** là tổ hợp kinh điển để tự động chuyển sang DR Region.
 - Lưu ý **DNS TTL**: TTL cao làm chậm failover (client cache bản ghi cũ) → đặt TTL thấp (vd 60s) cho bản ghi DR.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Route 53 Failover sang DR region</title>
-  <desc>app.example.com trong Route 53 với failover routing: bản ghi Primary trỏ tới ALB us-east-1 có health check HTTP 200; khi primary unhealthy, Route 53 chuyển traffic sang bản ghi Secondary trỏ tới ALB eu-west-1 ở region khác.</desc>
-  <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Route 53 Failover sang DR region</text>
-  <defs>
-    <marker id="r53Arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
-  </defs>
-  <g>
-    <rect x="24" y="110" width="170" height="64" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="109" y="138" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Route 53</text>
-    <text x="109" y="157" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">app.example.com</text>
-  </g>
-  <g>
-    <rect x="430" y="44" width="266" height="66" rx="10" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
-    <rect x="446" y="56" width="64" height="20" rx="10" fill="#10b981" fill-opacity="0.9"/>
-    <text x="478" y="70" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">Primary</text>
-    <text x="520" y="71" font-size="11.5" font-weight="700" fill="currentColor">ALB · us-east-1</text>
-    <text x="446" y="95" font-size="10.5" fill="currentColor" opacity="0.78">health check: HTTP 200 / — khỏe</text>
-  </g>
-  <g>
-    <rect x="430" y="160" width="266" height="66" rx="10" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
-    <rect x="446" y="172" width="78" height="20" rx="10" fill="#f59e0b" fill-opacity="0.9"/>
-    <text x="485" y="186" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">Secondary</text>
-    <text x="534" y="187" font-size="11.5" font-weight="700" fill="currentColor">ALB · eu-west-1</text>
-    <text x="446" y="211" font-size="10.5" fill="currentColor" opacity="0.78">kích hoạt khi primary unhealthy</text>
-  </g>
-  <g fill="none">
-    <path d="M194 134 C 320 120, 340 90, 430 80" stroke="#10b981" stroke-opacity="0.7" stroke-width="2" marker-end="url(#r53Arr)"/>
-    <path d="M194 150 C 320 175, 340 200, 430 193" stroke="currentColor" stroke-opacity="0.4" stroke-dasharray="5 4" marker-end="url(#r53Arr)"/>
-  </g>
-  <text x="300" y="96" font-size="10.5" fill="#10b981" opacity="0.95" font-weight="700">khỏe → primary</text>
-  <text x="300" y="216" font-size="10.5" fill="currentColor" opacity="0.7">unhealthy → secondary</text>
-  <text x="24" y="264" font-size="11" fill="currentColor" opacity="0.7">Thiếu health check ở primary → Route 53 không biết primary chết → không failover.</text>
-  <text x="24" y="284" font-size="11" fill="currentColor" opacity="0.7">TTL thấp (vd 60s) → client cập nhật bản ghi mới nhanh, failover nhanh.</text>
+<ab-toggle data-labels="Primary khoẻ|Primary hỏng">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 318" role="img" aria-labelledby="r03b-t r03b-d" font-family="ui-sans-serif, system-ui, sans-serif"><title id="r03b-t">Route 53 failover khi primary khoẻ: trả bản ghi Primary</title><desc id="r03b-d">Client hỏi Route 53 tên app.example.com, cấu hình failover routing. Health check gắn vào bản ghi Primary thấy ALB ở us-east-1 trả HTTP 200 cho đường dẫn /, nên Route 53 trả bản ghi Primary. Bản ghi Secondary trỏ tới ALB ở eu-west-1 nằm chờ, chưa nhận traffic. Client giữ bản ghi đã nhận trong thời gian TTL, ví dụ 60 giây.</desc><defs><marker id="r03b-arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.65"/></marker><marker id="r03b-arg" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="#10b981"/></marker><marker id="r03b-ara" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="#f59e0b"/></marker></defs>
+<text x="12" y="22" font-size="14" font-weight="700" fill="currentColor">Primary khoẻ: trả bản ghi Primary</text>
+<use href="#aws-res-users" x="14" y="126" width="44" height="44"/>
+<text x="36" y="192" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Client</text>
+<path d="M62 148 H112" fill="none" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.5" marker-end="url(#r03b-arr)"/>
+<use href="#aws-route-53" x="118" y="122" width="50" height="50"/>
+<text x="143" y="192" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Route 53</text>
+<text x="143" y="211" font-size="13" text-anchor="middle" opacity="0.8" fill="currentColor">app.example.com</text>
+<text x="143" y="229" font-size="13" text-anchor="middle" opacity="0.8" fill="currentColor">failover routing</text>
+<path d="M143 120 V62 H266" fill="none" stroke="#10b981" stroke-opacity="0.9" stroke-width="1.5" stroke-dasharray="2 3"/>
+<text x="150" y="54" font-size="13" font-weight="700" fill="#10b981">health check ✓</text>
+<rect x="272" y="40" width="236" height="100" rx="10" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+<rect x="286" y="52" width="66" height="22" rx="11" fill="#10b981" fill-opacity="0.9"/>
+<text x="319.0" y="68" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">Primary</text>
+<text x="362" y="68" font-size="14" font-weight="700" fill="currentColor">us-east-1</text>
+<use href="#aws-alb" x="288" y="86" width="40" height="40"/>
+<text x="338" y="104" font-size="14" font-weight="700" fill="currentColor">ALB</text>
+<text x="338" y="124" font-size="13" font-weight="700" fill="#10b981">HTTP 200 / → khỏe</text>
+<rect x="272" y="168" width="236" height="100" rx="10" fill="#f59e0b" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="5 4"/>
+<rect x="286" y="180" width="84" height="22" rx="11" fill="#f59e0b" fill-opacity="0.9"/>
+<text x="328.0" y="196" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">Secondary</text>
+<text x="380" y="196" font-size="14" font-weight="700" fill="currentColor">eu-west-1</text>
+<use href="#aws-alb" x="288" y="214" width="40" height="40" opacity="0.4"/>
+<text x="338" y="232" font-size="14" font-weight="700" opacity="0.55" fill="currentColor">ALB</text>
+<text x="338" y="252" font-size="13" opacity="0.75" fill="currentColor">chờ, chưa nhận traffic</text>
+<path d="M172 138 C 220 120, 230 100, 268 96" fill="none" stroke="#10b981" stroke-opacity="0.95" stroke-width="2.5" marker-end="url(#r03b-arg)"/>
+<path d="M172 160 C 220 180, 230 210, 268 214" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#r03b-arr)"/>
+<rect x="12" y="276" width="496" height="34" rx="8" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2"/>
+<use href="#ic-timer" x="22" y="283" width="20" height="20"/>
+<text x="50" y="298" font-size="13" fill="currentColor">Client giữ bản ghi Primary tới hết TTL (vd 60 s)</text>
 </svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 318" role="img" aria-labelledby="r03c-t r03c-d" font-family="ui-sans-serif, system-ui, sans-serif"><title id="r03c-t">Route 53 failover khi primary hỏng: chuyển sang Secondary</title><desc id="r03c-d">Health check của bản ghi Primary báo ALB us-east-1 unhealthy, nên Route 53 trả bản ghi Secondary trỏ tới ALB ở eu-west-1, Region khác. Client đang giữ bản ghi cũ chỉ đổi sang Secondary khi TTL hết, nên TTL thấp như 60 giây giúp failover nhanh. Thiếu health check thì Route 53 không biết primary chết và không chuyển.</desc><defs><marker id="r03c-arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.65"/></marker><marker id="r03c-arg" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="#10b981"/></marker><marker id="r03c-ara" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="#f59e0b"/></marker></defs>
+<text x="12" y="22" font-size="14" font-weight="700" fill="currentColor">Primary hỏng: trả bản ghi Secondary</text>
+<use href="#aws-res-users" x="14" y="126" width="44" height="44"/>
+<text x="36" y="192" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Client</text>
+<path d="M62 148 H112" fill="none" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.5" marker-end="url(#r03c-arr)"/>
+<use href="#aws-route-53" x="118" y="122" width="50" height="50"/>
+<text x="143" y="192" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Route 53</text>
+<text x="143" y="211" font-size="13" text-anchor="middle" opacity="0.8" fill="currentColor">app.example.com</text>
+<text x="143" y="229" font-size="13" text-anchor="middle" opacity="0.8" fill="currentColor">failover routing</text>
+<path d="M143 120 V62 H266" fill="none" stroke="#f43f5e" stroke-opacity="0.9" stroke-width="1.5" stroke-dasharray="2 3"/>
+<text x="150" y="54" font-size="13" font-weight="700" fill="#f43f5e">health check ✗</text>
+<rect x="272" y="40" width="236" height="100" rx="10" fill="#f43f5e" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+<rect x="286" y="52" width="66" height="22" rx="11" fill="#10b981" fill-opacity="0.9"/>
+<text x="319.0" y="68" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">Primary</text>
+<text x="362" y="68" font-size="14" font-weight="700" fill="currentColor">us-east-1</text>
+<use href="#aws-alb" x="288" y="86" width="40" height="40" opacity="0.4"/>
+<text x="338" y="104" font-size="14" font-weight="700" opacity="0.55" fill="currentColor">ALB</text>
+<text x="338" y="124" font-size="13" font-weight="700" fill="#f43f5e">unhealthy ✗</text>
+<rect x="272" y="168" width="236" height="100" rx="10" fill="#f59e0b" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+<rect x="286" y="180" width="84" height="22" rx="11" fill="#f59e0b" fill-opacity="0.9"/>
+<text x="328.0" y="196" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">Secondary</text>
+<text x="380" y="196" font-size="14" font-weight="700" fill="currentColor">eu-west-1</text>
+<use href="#aws-alb" x="288" y="214" width="40" height="40"/>
+<text x="338" y="232" font-size="14" font-weight="700" fill="currentColor">ALB</text>
+<text x="338" y="252" font-size="13" font-weight="700" fill="#f59e0b">đang nhận traffic</text>
+<path d="M172 138 C 220 120, 230 100, 268 96" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#r03c-arr)"/>
+<path d="M172 160 C 220 180, 230 210, 268 214" fill="none" stroke="#f59e0b" stroke-opacity="0.95" stroke-width="2.5" marker-end="url(#r03c-ara)"/>
+<rect x="12" y="276" width="496" height="34" rx="8" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2"/>
+<use href="#ic-timer" x="22" y="283" width="20" height="20"/>
+<text x="50" y="298" font-size="13" fill="currentColor">Client đổi sang Secondary sau tối đa 1 TTL (vd 60 s)</text>
+</svg>
+<ab-note>Health check gắn vào bản ghi Primary thấy ALB trả HTTP 200, nên mọi truy vấn DNS nhận Primary. Secondary vẫn có bản ghi nhưng chưa ai được trỏ tới.</ab-note>
+<ab-note>Health check báo unhealthy nên Route 53 trả Secondary. Thiếu health check thì Route 53 không biết primary chết và không chuyển; TTL cao làm client bám bản ghi cũ lâu hơn, failover chậm.</ab-note>
+</ab-toggle>
 
 > **Bẫy:** Để Route 53 failover hoạt động, phải gắn **health check** vào primary record. Thiếu health check → Route 53 không biết primary chết → không chuyển. Ngoài ra **TTL cao** là thủ phạm khiến failover "chậm bất thường" trong đề.
 

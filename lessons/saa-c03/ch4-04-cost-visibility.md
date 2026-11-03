@@ -562,6 +562,57 @@ Tách mỗi team hoặc mỗi môi trường thành một account riêng là cá
 - **CUR tập trung**: xuất về một S3 bucket ở account chuyên cho audit / FinOps, để dữ liệu billing không nằm ở nơi nhiều người có quyền.
 - **IAM Identity Center**: đăng nhập một lần (SSO) và cấp cho người làm FinOps một permission set chỉ xem billing trên các account cần thiết.
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 470" role="img" aria-labelledby="c404a-t c404a-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif"><title id="c404a-t">Multi-account cost governance: management account gộp hoá đơn, mỗi account team có budget riêng, CUR về account FinOps</title><desc id="c404a-d">Management account bật Consolidated Billing: một hoá đơn cho mọi account, usage cộng dồn để đạt bậc giá khối lượng sớm hơn, RI và Savings Plan chia sẻ giữa các account, budget tổng đặt ở đây. Bên dưới là các account của team, mỗi account có budget riêng kèm Budget Action riêng. Dữ liệu billing của mọi account được xuất qua CUR về một S3 bucket ở account chuyên cho audit/FinOps. Người làm FinOps đăng nhập một lần qua IAM Identity Center, nhận permission set chỉ xem billing trên các account cần thiết.</desc><defs><marker id="c404a-arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.65"/></marker><marker id="c404a-arg" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="#10b981"/></marker><marker id="c404a-ara" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="#f59e0b"/></marker></defs>
+<text x="12" y="22" font-size="14" font-weight="700" fill="currentColor">Chia chi phí theo account</text>
+<rect x="12" y="34" width="496" height="102" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<use href="#aws-organizations" x="24" y="48" width="40" height="40"/>
+<text x="76" y="58" font-size="14" font-weight="700" fill="currentColor">Management account</text>
+<text x="76" y="80" font-size="13" fill="currentColor">Consolidated Billing: 1 hoá đơn chung</text>
+<text x="76" y="100" font-size="13" fill="currentColor">usage cộng dồn → đạt bậc giá sớm hơn</text>
+<text x="76" y="120" font-size="13" fill="currentColor">RI / Savings Plan dùng chung mọi account</text>
+<use href="#aws-budgets" x="448" y="52" width="32" height="32"/>
+<text x="464" y="102" font-size="13" text-anchor="middle" opacity="0.8" fill="currentColor">budget tổng</text>
+<path d="M87 168 V140" fill="none" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.5" marker-end="url(#c404a-arr)"/>
+<path d="M260 168 V140" fill="none" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.5" marker-end="url(#c404a-arr)"/>
+<path d="M433 168 V140" fill="none" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.5" marker-end="url(#c404a-arr)"/>
+<rect x="12" y="170" width="150" height="96" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+<use href="#aws-group-account" x="22" y="180" width="26" height="26"/>
+<text x="56" y="199" font-size="14" font-weight="700" fill="currentColor">Team A</text>
+<use href="#aws-budgets" x="22" y="216" width="26" height="26"/>
+<text x="56" y="228" font-size="13" fill="currentColor">budget riêng</text>
+<text x="56" y="248" font-size="13" fill="currentColor">+ Budget Action</text>
+<rect x="185" y="170" width="150" height="96" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+<use href="#aws-group-account" x="195" y="180" width="26" height="26"/>
+<text x="229" y="199" font-size="14" font-weight="700" fill="currentColor">Team B</text>
+<use href="#aws-budgets" x="195" y="216" width="26" height="26"/>
+<text x="229" y="228" font-size="13" fill="currentColor">budget riêng</text>
+<text x="229" y="248" font-size="13" fill="currentColor">+ Budget Action</text>
+<rect x="358" y="170" width="150" height="96" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
+<use href="#aws-group-account" x="368" y="180" width="26" height="26"/>
+<text x="402" y="199" font-size="14" font-weight="700" fill="currentColor">Team C</text>
+<use href="#aws-budgets" x="368" y="216" width="26" height="26"/>
+<text x="402" y="228" font-size="13" fill="currentColor">budget riêng</text>
+<text x="402" y="248" font-size="13" fill="currentColor">+ Budget Action</text>
+<path d="M87 266 V284 M260 266 V284 M433 266 V284" fill="none" stroke="currentColor" stroke-opacity="0.4" stroke-width="1.5"/>
+<path d="M87 284 H433" fill="none" stroke="currentColor" stroke-opacity="0.4" stroke-width="1.5"/>
+<path d="M260 284 V316" fill="none" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.5" marker-end="url(#c404a-arr)"/>
+<text x="270" y="304" font-size="13" opacity="0.8" fill="currentColor">dữ liệu billing mọi account</text>
+<rect x="12" y="320" width="496" height="76" rx="10" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="24" y="340" font-size="13" font-weight="700" fill="currentColor">Account riêng cho audit / FinOps</text>
+<use href="#aws-cost-and-usage-report" x="24" y="350" width="36" height="36"/>
+<text x="68" y="374" font-size="14" font-weight="700" fill="currentColor">CUR tập trung</text>
+<path d="M178 368 H232" fill="none" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.5" marker-end="url(#c404a-arr)"/>
+<use href="#aws-s3" x="240" y="350" width="36" height="36"/>
+<text x="284" y="366" font-size="13" fill="currentColor">S3 bucket: ít người</text>
+<text x="284" y="384" font-size="13" fill="currentColor">có quyền đọc billing</text>
+<use href="#aws-res-user" x="24" y="414" width="36" height="36"/>
+<text x="68" y="436" font-size="14" font-weight="700" fill="currentColor">FinOps</text>
+<path d="M126 431 H170" fill="none" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.5" marker-end="url(#c404a-arr)"/>
+<use href="#aws-iam-identity-center" x="176" y="412" width="40" height="40"/>
+<text x="226" y="428" font-size="13" font-weight="700" fill="currentColor">SSO 1 lần · permission set</text>
+<text x="226" y="448" font-size="13" fill="currentColor">chỉ xem billing, chỉ account cần</text>
+</svg>
+
 ### 13.2 Showback workflow
 1. CUR → Athena → một query chạy hằng ngày, group by tag `Team`.
 2. Kết quả gửi email / Slack cho từng team mỗi tuần.

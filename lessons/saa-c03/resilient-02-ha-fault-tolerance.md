@@ -115,68 +115,59 @@ Bảng dưới gom lại những khác biệt vừa giải thích:
 
 \* *RDS có tùy chọn Multi-AZ DB cluster (3 instance: 1 writer + 2 readable standby) — readable standby có thể phục vụ đọc, nhưng đây không phải mặc định.*
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>RDS Multi-AZ (standby im lặng) so với Read Replica (phục vụ đọc)</title>
-  <desc>Bên trái: Multi-AZ — primary sao chép đồng bộ sang standby ở AZ khác; standby không nhận traffic, chỉ chờ failover. Bên phải: Read Replica — primary sao chép bất đồng bộ sang replica; ứng dụng đọc trực tiếp từ replica để giảm tải đọc.</desc>
-  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Multi-AZ (HA) vs Read Replica (scale đọc)</text>
-  <g>
-    <rect x="14" y="38" width="338" height="262" rx="11" fill="#3b82f6" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="30" y="60" font-size="12.5" font-weight="700" fill="currentColor">RDS Multi-AZ — High Availability</text>
-    <rect x="40" y="76" width="120" height="50" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="100" y="98" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Primary</text>
-    <text x="100" y="114" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">AZ A · read+write</text>
-    <rect x="206" y="76" width="120" height="50" rx="8" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 3"/>
-    <text x="266" y="98" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Standby</text>
-    <text x="266" y="114" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">AZ B · IM LẶNG</text>
-    <g stroke="currentColor" stroke-opacity="0.55" fill="none">
-      <path d="M160 101 H200" marker-end="url(#rdsArr)"/>
-    </g>
-    <text x="183" y="92" font-size="9" text-anchor="middle" fill="#10b981" opacity="0.95" font-weight="700">sync</text>
-    <rect x="40" y="150" width="76" height="30" rx="7" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="78" y="170" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">App</text>
-    <g stroke="currentColor" stroke-opacity="0.5" fill="none">
-      <path d="M100 150 V130" marker-end="url(#rdsArr)"/>
-    </g>
-    <line x1="266" y1="150" x2="266" y2="135" stroke="#ef4444" stroke-opacity="0.6" stroke-width="2"/>
-    <line x1="258" y1="140" x2="274" y2="148" stroke="#ef4444" stroke-opacity="0.7" stroke-width="2"/>
-    <line x1="274" y1="140" x2="258" y2="148" stroke="#ef4444" stroke-opacity="0.7" stroke-width="2"/>
-    <text x="266" y="170" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.65">không đọc</text>
-    <rect x="30" y="206" width="308" height="80" rx="8" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.18"/>
-    <text x="44" y="226" font-size="10.5" fill="currentColor" opacity="0.85">• Sao chép ĐỒNG BỘ (synchronous)</text>
-    <text x="44" y="244" font-size="10.5" fill="currentColor" opacity="0.85">• Standby chỉ chờ failover (60–120s)</text>
-    <text x="44" y="262" font-size="10.5" fill="currentColor" opacity="0.85">• Failover qua DNS CNAME, tự động</text>
-    <text x="44" y="280" font-size="10.5" fill="currentColor" opacity="0.85">• Mục đích: chống mất AZ, KHÔNG scale đọc</text>
-  </g>
-  <g>
-    <rect x="368" y="38" width="338" height="262" rx="11" fill="#10b981" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="384" y="60" font-size="12.5" font-weight="700" fill="currentColor">Read Replica — Scale đọc</text>
-    <rect x="394" y="76" width="120" height="50" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="454" y="98" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Primary</text>
-    <text x="454" y="114" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">read+write</text>
-    <rect x="560" y="76" width="120" height="50" rx="8" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="620" y="98" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Read Replica</text>
-    <text x="620" y="114" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">read-only</text>
-    <g stroke="currentColor" stroke-opacity="0.55" fill="none">
-      <path d="M514 101 H554" marker-end="url(#rdsArr)"/>
-    </g>
-    <text x="537" y="92" font-size="9" text-anchor="middle" fill="#f59e0b" opacity="0.95" font-weight="700">async</text>
-    <rect x="394" y="150" width="76" height="30" rx="7" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="432" y="170" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">App</text>
-    <g stroke="currentColor" stroke-opacity="0.5" fill="none">
-      <path d="M454 150 V130" marker-end="url(#rdsArr)"/>
-      <path d="M470 165 H560 V130" marker-end="url(#rdsArr)"/>
-    </g>
-    <text x="540" y="160" font-size="9" text-anchor="middle" fill="#10b981" opacity="0.95" font-weight="700">đọc</text>
-    <rect x="384" y="206" width="308" height="80" rx="8" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.18"/>
-    <text x="398" y="226" font-size="10.5" fill="currentColor" opacity="0.85">• Sao chép BẤT ĐỒNG BỘ (asynchronous)</text>
-    <text x="398" y="244" font-size="10.5" fill="currentColor" opacity="0.85">• Replica PHỤC VỤ đọc (offload truy vấn)</text>
-    <text x="398" y="262" font-size="10.5" fill="currentColor" opacity="0.85">• Không tự failover (promote thủ công)</text>
-    <text x="398" y="280" font-size="10.5" fill="currentColor" opacity="0.85">• Có thể cross-region</text>
-  </g>
-  <defs>
-    <marker id="rdsArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
-  </defs>
+<ab-toggle data-labels="Multi-AZ|Read Replica">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 344" role="img" aria-labelledby="r02b-t r02b-d" font-family="ui-sans-serif, system-ui, sans-serif"><title id="r02b-t">RDS Multi-AZ: standby đồng bộ, im lặng, chỉ chờ failover</title><desc id="r02b-d">Ứng dụng đọc và ghi vào primary ở AZ A. Primary sao chép đồng bộ sang standby ở AZ B cùng Region: COMMIT chỉ trả về khi đã ghi xong ở cả hai AZ. Standby không nhận đọc hay ghi. Khi primary chết, RDS tự failover trong 60 đến 120 giây bằng cách đổi bản ghi DNS CNAME sang standby, không mất giao dịch đã commit (RPO bằng 0). Mục đích: chống mất AZ, không scale đọc.</desc><defs><marker id="r02b-arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.65"/></marker><marker id="r02b-arg" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="#10b981"/></marker><marker id="r02b-ara" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="#f59e0b"/></marker></defs>
+<text x="12" y="22" font-size="14" font-weight="700" fill="currentColor">Multi-AZ: chống mất AZ, không scale đọc</text>
+<use href="#aws-ec2" x="240" y="36" width="40" height="40"/>
+<text x="288" y="62" font-size="14" font-weight="700" fill="currentColor">App</text>
+<rect x="12" y="96" width="224" height="136" rx="10" fill="#3b82f6" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="24" y="225" font-size="13" font-weight="700" opacity="0.85" fill="currentColor">AZ A</text>
+<rect x="284" y="96" width="224" height="136" rx="10" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="5 4"/>
+<text x="496" y="225" font-size="13" font-weight="700" text-anchor="end" opacity="0.85" fill="currentColor">AZ B · cùng Region</text>
+<use href="#aws-rds" x="112" y="122" width="44" height="44"/>
+<text x="134" y="190" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Primary</text>
+<text x="134" y="211" font-size="13" text-anchor="middle" opacity="0.75" fill="currentColor">read + write</text>
+<use href="#aws-rds" x="366" y="122" width="44" height="44" opacity="0.35"/>
+<text x="388" y="190" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Standby</text>
+<text x="388" y="211" font-size="13" text-anchor="middle" opacity="0.75" fill="currentColor">im lặng</text>
+<path d="M250 78 C 230 100, 170 100, 146 118" fill="none" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.5" marker-end="url(#r02b-arr)"/>
+<path d="M270 78 C 290 100, 350 100, 374 118" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#r02b-arr)"/>
+<text x="322" y="104" font-size="18" font-weight="700" text-anchor="middle" fill="#f43f5e">✗</text>
+<text x="410" y="88" font-size="13" font-weight="700" text-anchor="middle" fill="#f43f5e">không đọc, không ghi</text>
+<path d="M160 144 H360" fill="none" stroke="#10b981" stroke-opacity="0.95" stroke-width="2.5" marker-end="url(#r02b-arg)"/>
+<text x="260" y="138" font-size="14" font-weight="700" text-anchor="middle" fill="#10b981">sync</text>
+<rect x="12" y="244" width="496" height="92" rx="8" fill="#10b981" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="24" y="266" font-size="13" font-weight="700" fill="currentColor">Ghi: COMMIT chỉ xong khi đã ghi ở cả 2 AZ</text>
+<text x="24" y="290" font-size="13" fill="currentColor">Primary chết: tự failover 60–120 s qua DNS CNAME</text>
+<text x="24" y="314" font-size="13" fill="currentColor">Không mất giao dịch đã commit (RPO = 0)</text>
 </svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 344" role="img" aria-labelledby="r02c-t r02c-d" font-family="ui-sans-serif, system-ui, sans-serif"><title id="r02c-t">RDS Read Replica: bất đồng bộ, phục vụ đọc</title><desc id="r02c-d">Ứng dụng ghi vào primary và đọc thêm từ read replica (read-only) ở AZ khác hoặc Region khác. Primary trả xong ngay rồi mới gửi thay đổi sang replica theo kiểu bất đồng bộ, nên replica chậm hơn một quãng replication lag. Khi primary chết, không có failover tự động: phải promote replica thủ công, và giao dịch chưa kịp gửi sang replica sẽ mất. Mục đích: scale đọc.</desc><defs><marker id="r02c-arr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.65"/></marker><marker id="r02c-arg" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="#10b981"/></marker><marker id="r02c-ara" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="#f59e0b"/></marker></defs>
+<text x="12" y="22" font-size="14" font-weight="700" fill="currentColor">Read Replica: scale đọc, có thể khác Region</text>
+<use href="#aws-ec2" x="240" y="36" width="40" height="40"/>
+<text x="288" y="62" font-size="14" font-weight="700" fill="currentColor">App</text>
+<rect x="12" y="96" width="224" height="136" rx="10" fill="#3b82f6" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="24" y="225" font-size="13" font-weight="700" opacity="0.85" fill="currentColor">AZ A</text>
+<rect x="284" y="96" width="224" height="136" rx="10" fill="#10b981" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="496" y="225" font-size="13" font-weight="700" text-anchor="end" opacity="0.85" fill="currentColor">AZ khác hoặc Region khác</text>
+<use href="#aws-rds" x="112" y="122" width="44" height="44"/>
+<text x="134" y="190" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Primary</text>
+<text x="134" y="211" font-size="13" text-anchor="middle" opacity="0.75" fill="currentColor">read + write</text>
+<use href="#aws-rds" x="366" y="122" width="44" height="44"/>
+<text x="388" y="190" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Read Replica</text>
+<text x="388" y="211" font-size="13" text-anchor="middle" opacity="0.75" fill="currentColor">read-only</text>
+<path d="M250 78 C 230 100, 170 100, 146 118" fill="none" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.5" marker-end="url(#r02c-arr)"/>
+<path d="M270 78 C 290 100, 350 100, 374 118" fill="none" stroke="#10b981" stroke-opacity="0.95" stroke-width="2" marker-end="url(#r02c-arg)"/>
+<text x="410" y="88" font-size="13" font-weight="700" text-anchor="middle" fill="#10b981">đọc</text>
+<path d="M160 144 H360" fill="none" stroke="#f59e0b" stroke-opacity="0.95" stroke-width="2.5" marker-end="url(#r02c-ara)"/>
+<text x="260" y="138" font-size="14" font-weight="700" text-anchor="middle" fill="#f59e0b">async</text>
+<rect x="12" y="244" width="496" height="92" rx="8" fill="#f59e0b" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.25"/>
+<text x="24" y="266" font-size="13" font-weight="700" fill="currentColor">Ghi: primary trả “xong” ngay, gửi sang replica sau</text>
+<text x="24" y="290" font-size="13" fill="currentColor">Primary chết: phải promote replica thủ công</text>
+<text x="24" y="314" font-size="13" fill="currentColor">Giao dịch chưa kịp gửi (replication lag) sẽ mất</text>
+</svg>
+<ab-note>Standby nhận mọi thay đổi đồng bộ nhưng không có endpoint để kết nối, nên bật Multi-AZ không làm database đọc nhanh hơn chút nào. Nó chỉ để thay primary khi AZ hoặc instance lỗi.</ab-note>
+<ab-note>Replica nhận đọc để giảm tải primary, nhưng luôn chậm hơn primary một quãng lag, nên không dùng làm failover tự động. Cần cả đọc nhanh lẫn HA thì bật cả hai.</ab-note>
+</ab-toggle>
 
 > Bẫy phổ biến: "Tăng khả năng đọc + đảm bảo HA" → cần **CẢ HAI**: Multi-AZ (cho HA) và Read Replica (cho scale read). Đề hay cho đáp án chỉ một trong hai để bẫy.
 

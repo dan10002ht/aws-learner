@@ -42,52 +42,14 @@ Cả bài này đi lần lượt qua từng tầng trên đường đi của req
 
 ## 2. Tầng tối ưu network
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 470" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Các tầng tối ưu network — từ user xuống service</title>
-  <desc>Luồng đi xuống qua các tầng: User, DNS Route 53, Edge POP CloudFront hoặc Global Accelerator, AWS backbone, VPC ALB hoặc API Gateway, ENI hoặc VPC endpoint, rồi tới EC2 Lambda DB. Mỗi hop là một cơ hội tối ưu.</desc>
-  <defs>
-    <marker id="np1Arr" markerWidth="11" markerHeight="11" refX="5" refY="8" orient="auto"><path d="M0 0 L5 8 L10 0" fill="none" stroke="currentColor" stroke-opacity="0.6"/></marker>
-  </defs>
-  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Các tầng tối ưu network — mỗi hop một cơ hội</text>
-  <rect x="180" y="38" width="360" height="42" rx="10" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="360" y="60" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">User</text>
-  <text x="360" y="74" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">trình duyệt / client app</text>
-  <line x1="360" y1="80" x2="360" y2="98" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#np1Arr)"/>
-  <text x="372" y="94" font-size="10" fill="currentColor" opacity="0.6">DNS resolution</text>
-  <rect x="120" y="100" width="480" height="46" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
-  <rect x="132" y="112" width="84" height="22" rx="11" fill="#3b82f6" fill-opacity="0.9"/>
-  <text x="174" y="127" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">DNS</text>
-  <text x="232" y="121" font-size="12.5" font-weight="700" fill="currentColor">Route 53</text>
-  <text x="232" y="138" font-size="10.5" fill="currentColor" opacity="0.62">latency / geo / failover routing</text>
-  <line x1="360" y1="146" x2="360" y2="164" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#np1Arr)"/>
-  <text x="372" y="160" font-size="10" fill="currentColor" opacity="0.6">Edge (POP gần user)</text>
-  <rect x="120" y="166" width="480" height="46" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
-  <rect x="132" y="178" width="84" height="22" rx="11" fill="#10b981" fill-opacity="0.92"/>
-  <text x="174" y="193" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">Edge POP</text>
-  <text x="232" y="187" font-size="12.5" font-weight="700" fill="currentColor">CloudFront cache · Lambda@Edge · GA</text>
-  <text x="232" y="204" font-size="10.5" fill="currentColor" opacity="0.62">TLS terminate, cache, anycast IP</text>
-  <line x1="360" y1="212" x2="360" y2="230" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#np1Arr)"/>
-  <text x="372" y="226" font-size="10" fill="currentColor" opacity="0.6">AWS backbone (private fiber)</text>
-  <rect x="120" y="232" width="480" height="42" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
-  <rect x="132" y="242" width="84" height="22" rx="11" fill="#f59e0b" fill-opacity="0.92"/>
-  <text x="174" y="257" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">Backbone</text>
-  <text x="232" y="259" font-size="11.5" fill="currentColor" opacity="0.85">private fiber giữa edge và region — ít jitter/loss</text>
-  <line x1="360" y1="274" x2="360" y2="292" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#np1Arr)"/>
-  <rect x="120" y="294" width="480" height="46" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
-  <rect x="132" y="306" width="84" height="22" rx="11" fill="#8b5cf6" fill-opacity="0.92"/>
-  <text x="174" y="321" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">VPC</text>
-  <text x="232" y="315" font-size="12.5" font-weight="700" fill="currentColor">ALB / API Gateway</text>
-  <text x="232" y="332" font-size="10.5" fill="currentColor" opacity="0.62">entry point vào region</text>
-  <line x1="360" y1="340" x2="360" y2="358" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#np1Arr)"/>
-  <text x="372" y="354" font-size="10" fill="currentColor" opacity="0.6">ENI / VPC endpoint</text>
-  <rect x="120" y="360" width="480" height="42" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
-  <rect x="132" y="370" width="84" height="22" rx="11" fill="#3b82f6" fill-opacity="0.9"/>
-  <text x="174" y="385" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">ENI</text>
-  <text x="232" y="387" font-size="11.5" fill="currentColor" opacity="0.85">ENI / VPC endpoint — private path tới service</text>
-  <line x1="360" y1="402" x2="360" y2="420" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#np1Arr)"/>
-  <rect x="180" y="422" width="360" height="40" rx="10" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="360" y="447" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">EC2 · Lambda · DB</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 755" role="img" aria-labelledby="saa204a-t saa204a-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="saa204a-t">Tối ưu theo vị trí: DNS, edge và region</title>
+<desc id="saa204a-d">DNS là truy vấn riêng. Hai ví dụ đường đi tách biệt: User qua CloudFront, API Gateway rồi Lambda; User qua anycast IP của Global Accelerator, ALB rồi EC2 và database. Hai tuyến từ edge về region không giao nhau.</desc>
+<defs><marker id="saa204a-arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<use href="#aws-res-client" x="240" y="25" width="40" height="40"/><text x="260" y="83" text-anchor="middle" font-size="13" fill="currentColor">User</text><use href="#aws-route-53" x="420" y="25" width="40" height="40"/><text x="440" y="83" text-anchor="middle" font-size="13" fill="currentColor">Route 53</text><path d="M290 45 H410" fill="none" stroke="currentColor" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#saa204a-arr)"/><text x="350" y="30" text-anchor="middle" font-size="13" fill="currentColor">DNS lookup</text><rect x="15" y="190" width="490" height="110" rx="10" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><rect x="15" y="405" width="490" height="330" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/><text x="65" y="212" text-anchor="middle" font-size="13" fill="currentColor">Edge POP</text><text x="65" y="427" text-anchor="middle" font-size="13" fill="currentColor">Region</text><path d="M250 95 V135 H140 V218" fill="none" stroke="#10b981" stroke-width="2"  marker-end="url(#saa204a-arr)"/><path d="M270 95 V135 H380 V218" fill="none" stroke="#3b82f6" stroke-width="2"  marker-end="url(#saa204a-arr)"/><text x="155" y="161" text-anchor="start" font-size="13" fill="currentColor">HTTPS / cache</text><text x="395" y="161" text-anchor="start" font-size="13" fill="currentColor">Anycast IP</text><use href="#aws-cloudfront" x="120" y="225" width="40" height="40"/><text x="140" y="283" text-anchor="middle" font-size="13" fill="currentColor">CloudFront</text><use href="#aws-global-accelerator" x="360" y="225" width="40" height="40"/><text x="380" y="283" text-anchor="middle" font-size="13" fill="currentColor">GA</text><path d="M140 290 V438" fill="none" stroke="#10b981" stroke-width="2"  marker-end="url(#saa204a-arr)"/><path d="M380 290 V438" fill="none" stroke="#3b82f6" stroke-width="2"  marker-end="url(#saa204a-arr)"/><text x="155" y="345" text-anchor="start" font-size="13" fill="currentColor">HTTP(S)</text><text x="395" y="345" text-anchor="start" font-size="13" fill="currentColor">TCP</text><text x="260" y="386" text-anchor="middle" font-size="13" fill="currentColor">AWS backbone · private fiber</text><use href="#aws-api-gateway" x="120" y="445" width="40" height="40"/><text x="140" y="503" text-anchor="middle" font-size="13" fill="currentColor">API Gateway</text><use href="#aws-alb" x="360" y="445" width="40" height="40"/><text x="380" y="503" text-anchor="middle" font-size="13" fill="currentColor">ALB</text><path d="M140 511 V563" fill="none" stroke="#10b981" stroke-width="2"  marker-end="url(#saa204a-arr)"/><path d="M380 511 V563" fill="none" stroke="#3b82f6" stroke-width="2"  marker-end="url(#saa204a-arr)"/><text x="155" y="543" text-anchor="start" font-size="13" fill="currentColor">invoke</text><text x="395" y="543" text-anchor="start" font-size="13" fill="currentColor">HTTP(S)</text><use href="#aws-lambda" x="120" y="570" width="40" height="40"/><text x="140" y="628" text-anchor="middle" font-size="13" fill="currentColor">Lambda</text><use href="#aws-ec2" x="360" y="570" width="40" height="40"/><text x="380" y="628" text-anchor="middle" font-size="13" fill="currentColor">EC2</text><path d="M380 635 V658" fill="none" stroke="currentColor" stroke-width="2"  marker-end="url(#saa204a-arr)"/><use href="#aws-rds" x="360" y="665" width="40" height="40"/><text x="380" y="723" text-anchor="middle" font-size="13" fill="currentColor">DB</text>
 </svg>
+
+Route 53 chọn theo latency / geo / failover. Tại edge, CloudFront cache và terminate TLS, Lambda@Edge xử lý gần user; GA cung cấp anycast IP. Backbone giảm jitter/loss. ALB hoặc API Gateway là các lựa chọn cửa vào; ENI / VPC endpoint cung cấp đường private tới service (không phải mọi request đều qua tất cả các thành phần).
 
 Mỗi hop (chặng) trên sơ đồ là một chỗ có thể rút bớt thời gian, và mỗi chặng ứng với một nhóm dịch vụ:
 
@@ -656,54 +618,22 @@ VPC peering cho cùng 10 VPC: $0 phí cố định, nhưng 45 kết nối phải
 | Số VPC | Pairwise → O(n²) | O(n) |
 | Cost | Data transfer | $0.05/h per attachment + data |
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 330" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>VPC Peering (full mesh) so với Transit Gateway (hub-and-spoke)</title>
-  <desc>Bên trái: bốn VPC nối peering từng cặp 1-1 tạo full mesh với 6 kết nối, không transitive routing, số kết nối tăng O(n bình phương). Bên phải: bốn VPC cùng gắn vào một Transit Gateway ở giữa theo hub-and-spoke, có transitive routing, chỉ 4 kết nối, tăng tuyến tính O(n).</desc>
-  <text x="180" y="24" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">VPC Peering — full mesh</text>
-  <text x="540" y="24" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Transit Gateway — hub-and-spoke</text>
-  <line x1="360" y1="40" x2="360" y2="300" stroke="currentColor" stroke-opacity="0.15"/>
-  <g stroke="#3b82f6" stroke-opacity="0.55" fill="none" stroke-width="1.5">
-    <line x1="90" y1="90" x2="270" y2="90"/>
-    <line x1="90" y1="230" x2="270" y2="230"/>
-    <line x1="90" y1="90" x2="90" y2="230"/>
-    <line x1="270" y1="90" x2="270" y2="230"/>
-    <line x1="90" y1="90" x2="270" y2="230"/>
-    <line x1="270" y1="90" x2="90" y2="230"/>
-  </g>
-  <g>
-    <circle cx="90" cy="90" r="26" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="90" y="94" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">VPC A</text>
-    <circle cx="270" cy="90" r="26" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="270" y="94" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">VPC B</text>
-    <circle cx="90" cy="230" r="26" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="90" y="234" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">VPC C</text>
-    <circle cx="270" cy="230" r="26" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="270" y="234" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">VPC D</text>
-  </g>
-  <text x="180" y="288" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.78">4 VPC → 6 kết nối · O(n²)</text>
-  <text x="180" y="306" font-size="10.5" text-anchor="middle" fill="#f59e0b" opacity="0.95">không transitive (A↛C qua B)</text>
-  <g stroke="#10b981" stroke-opacity="0.6" fill="none" stroke-width="1.5">
-    <line x1="450" y1="100" x2="540" y2="160"/>
-    <line x1="630" y1="100" x2="540" y2="160"/>
-    <line x1="450" y1="220" x2="540" y2="160"/>
-    <line x1="630" y1="220" x2="540" y2="160"/>
-  </g>
-  <rect x="498" y="138" width="84" height="44" rx="10" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.32"/>
-  <text x="540" y="158" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Transit GW</text>
-  <text x="540" y="173" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.65">hub</text>
-  <g>
-    <circle cx="450" cy="100" r="24" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="450" y="104" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">VPC A</text>
-    <circle cx="630" cy="100" r="24" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="630" y="104" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">VPC B</text>
-    <circle cx="450" cy="220" r="24" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="450" y="224" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">VPC C</text>
-    <circle cx="630" cy="220" r="24" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="630" y="224" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">VPC D</text>
-  </g>
-  <text x="540" y="288" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.78">4 VPC → 4 attachment · O(n)</text>
-  <text x="540" y="306" font-size="10.5" text-anchor="middle" fill="#10b981" opacity="0.95">transitive routing (A↔C qua hub)</text>
+<ab-toggle data-labels="VPC Peering|Transit Gateway">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 445" role="img" aria-labelledby="saa204c0-t saa204c0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="saa204c0-t">Bốn VPC: mesh và hub</title>
+<desc id="saa204c0-d">Bốn VPC: mesh và hub</desc>
+<defs><marker id="saa204c0-arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<text x="260" y="24" text-anchor="middle" font-size="13" fill="currentColor">Full mesh: peering</text><path d="M95 105 L425 105" fill="none" stroke="#3b82f6" stroke-width="2"/><path d="M95 105 L95 310" fill="none" stroke="#3b82f6" stroke-width="2"/><path d="M95 105 L425 310" fill="none" stroke="#3b82f6" stroke-width="2"/><path d="M425 105 L95 310" fill="none" stroke="#3b82f6" stroke-width="2"/><path d="M425 105 L425 310" fill="none" stroke="#3b82f6" stroke-width="2"/><path d="M95 310 L425 310" fill="none" stroke="#3b82f6" stroke-width="2"/><rect x="50" y="77" width="90" height="85" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><use href="#aws-vpc" x="75" y="85" width="40" height="40"/><text x="95" y="143" text-anchor="middle" font-size="13" fill="currentColor">VPC A</text><rect x="380" y="77" width="90" height="85" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><use href="#aws-vpc" x="405" y="85" width="40" height="40"/><text x="425" y="143" text-anchor="middle" font-size="13" fill="currentColor">VPC B</text><rect x="50" y="282" width="90" height="85" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><use href="#aws-vpc" x="75" y="290" width="40" height="40"/><text x="95" y="348" text-anchor="middle" font-size="13" fill="currentColor">VPC C</text><rect x="380" y="282" width="90" height="85" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><use href="#aws-vpc" x="405" y="290" width="40" height="40"/><text x="425" y="348" text-anchor="middle" font-size="13" fill="currentColor">VPC D</text><text x="260" y="400" text-anchor="middle" font-size="13" fill="currentColor">6 kết nối · O(n²)</text><text x="260" y="424" text-anchor="middle" font-size="13" fill="currentColor">Không bắc cầu qua VPC trung gian</text>
 </svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 445" role="img" aria-labelledby="saa204c1-t saa204c1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="saa204c1-t">Bốn VPC: mesh và hub</title>
+<desc id="saa204c1-d">Bốn VPC: mesh và hub</desc>
+<defs><marker id="saa204c1-arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<text x="260" y="24" text-anchor="middle" font-size="13" fill="currentColor">Hub-and-spoke: Transit Gateway</text><path d="M95 105 L260 200" fill="none" stroke="#10b981" stroke-width="2"/><path d="M425 105 L260 200" fill="none" stroke="#10b981" stroke-width="2"/><path d="M95 310 L260 200" fill="none" stroke="#10b981" stroke-width="2"/><path d="M425 310 L260 200" fill="none" stroke="#10b981" stroke-width="2"/><use href="#aws-transit-gateway" x="240" y="180" width="40" height="40"/><text x="260" y="238" text-anchor="middle" font-size="13" fill="currentColor">TGW</text><rect x="50" y="77" width="90" height="85" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><use href="#aws-vpc" x="75" y="85" width="40" height="40"/><text x="95" y="143" text-anchor="middle" font-size="13" fill="currentColor">VPC A</text><rect x="380" y="77" width="90" height="85" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><use href="#aws-vpc" x="405" y="85" width="40" height="40"/><text x="425" y="143" text-anchor="middle" font-size="13" fill="currentColor">VPC B</text><rect x="50" y="282" width="90" height="85" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><use href="#aws-vpc" x="75" y="290" width="40" height="40"/><text x="95" y="348" text-anchor="middle" font-size="13" fill="currentColor">VPC C</text><rect x="380" y="282" width="90" height="85" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><use href="#aws-vpc" x="405" y="290" width="40" height="40"/><text x="425" y="348" text-anchor="middle" font-size="13" fill="currentColor">VPC D</text><text x="260" y="400" text-anchor="middle" font-size="13" fill="currentColor">4 attachment · O(n)</text><text x="260" y="424" text-anchor="middle" font-size="13" fill="currentColor">Định tuyến qua hub: có transitive routing</text>
+</svg>
+<ab-note>Mỗi cặp cần một peering: n × (n − 1) / 2. A nối B và B nối C không cho phép A đi tới C qua B.</ab-note>
+<ab-note>Mỗi VPC gắn một attachment vào TGW; route được cấu hình qua hub thay cho từng cặp. Đổi lại có phí attachment và xử lý dữ liệu.</ab-note>
+</ab-toggle>
 
 > Quy tắc: ≤ 5 VPC dùng peering. ≥ 10 VPC dùng TGW.
 
