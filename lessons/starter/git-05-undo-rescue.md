@@ -75,47 +75,12 @@ git commit --amend --no-edit
 - `git revert` = ghi thêm một **bút toán đảo ngược** ("hôm qua ghi nhầm +5 triệu, hôm nay ghi -5 triệu"). Sổ vẫn đầy đủ, minh bạch, ai cũng thấy.
 - `git reset` = **xé trang sổ**. Sạch sẽ, nhưng nếu người khác đã photo trang đó thì rắc rối to.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>revert so với reset trên dòng lịch sử commit</title>
-  <desc>Cùng một lịch sử A-B-C. revert thêm một commit C' đảo ngược ở cuối nên lịch sử dài ra và an toàn khi đã push. reset kéo con trỏ HEAD lùi về B nên commit C bị gỡ khỏi nhánh.</desc>
-  <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">revert vs reset trên dòng lịch sử</text>
-  <defs>
-    <marker id="hArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
-  </defs>
-  <text x="16" y="58" font-size="12" font-weight="700" fill="#10b981">git revert C — thêm commit đảo ngược (lịch sử DÀI ra)</text>
-  <g>
-    <line x1="64" y1="92" x2="556" y2="92" stroke="currentColor" stroke-opacity="0.4" marker-end="url(#hArr)"/>
-    <circle cx="80" cy="92" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
-    <text x="80" y="96" font-size="12" text-anchor="middle" fill="currentColor">A</text>
-    <circle cx="200" cy="92" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
-    <text x="200" y="96" font-size="12" text-anchor="middle" fill="currentColor">B</text>
-    <circle cx="320" cy="92" r="16" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4"/>
-    <text x="320" y="96" font-size="12" text-anchor="middle" fill="currentColor">C</text>
-    <circle cx="460" cy="92" r="18" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.45"/>
-    <text x="460" y="96" font-size="11" text-anchor="middle" fill="currentColor">C'</text>
-    <rect x="430" y="118" width="120" height="20" rx="10" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="490" y="132" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.85">đảo ngược C</text>
-    <rect x="580" y="82" width="124" height="22" rx="11" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="642" y="97" font-size="10.5" text-anchor="middle" fill="#10b981">An toàn khi đã push</text>
-  </g>
-  <line x1="16" y1="168" x2="704" y2="168" stroke="currentColor" stroke-opacity="0.15"/>
-  <text x="16" y="200" font-size="12" font-weight="700" fill="#ef4444">git reset --hard B — kéo HEAD lùi (C bị GỠ khỏi nhánh)</text>
-  <g>
-    <line x1="64" y1="240" x2="240" y2="240" stroke="currentColor" stroke-opacity="0.4" marker-end="url(#hArr)"/>
-    <circle cx="80" cy="240" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
-    <text x="80" y="244" font-size="12" text-anchor="middle" fill="currentColor">A</text>
-    <circle cx="200" cy="240" r="16" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.4"/>
-    <text x="200" y="244" font-size="12" text-anchor="middle" fill="currentColor">B</text>
-    <rect x="172" y="266" width="56" height="20" rx="10" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="200" y="280" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.85">HEAD</text>
-    <line x1="240" y1="240" x2="296" y2="240" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"/>
-    <circle cx="320" cy="240" r="16" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 3"/>
-    <text x="320" y="244" font-size="12" text-anchor="middle" fill="currentColor" opacity="0.45">C</text>
-    <line x1="306" y1="226" x2="334" y2="254" stroke="#ef4444" stroke-opacity="0.7"/>
-    <line x1="334" y1="226" x2="306" y2="254" stroke="#ef4444" stroke-opacity="0.7"/>
-    <text x="360" y="244" font-size="10.5" fill="currentColor" opacity="0.7">không còn nhãn trỏ tới (vẫn trong reflog)</text>
-  </g>
-</svg>
+<ab-toggle data-labels="revert|reset">
+<svg viewBox="0 0 520 280" role="img" aria-labelledby="g05a-t g05a-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif"><title id="g05a-t">git revert C: thêm commit C' đảo ngược, lịch sử dài ra</title><desc id="g05a-d">Máy bạn: A, B, C rồi thêm C' đảo ngược C; main và HEAD ở C'. Đồng nghiệp đã kéo về A, B, C: chỉ cần kéo thêm C' là khớp. Không commit nào bị xoá nên an toàn khi đã push.</desc><text x="16" y="24" font-size="14" font-weight="700" fill="currentColor" font-family="ui-monospace, monospace">git revert C</text><text x="16" y="56" font-size="13" fill="currentColor" opacity="0.75">Máy bạn</text><text x="16" y="176" font-size="13" fill="currentColor" opacity="0.75">Bản đồng nghiệp đã kéo về</text><line x1="77" y1="104" x2="143" y2="104" stroke="currentColor" stroke-opacity="0.4" stroke-width="2"/><line x1="177" y1="104" x2="243" y2="104" stroke="currentColor" stroke-opacity="0.4" stroke-width="2"/><line x1="277" y1="104" x2="343" y2="104" stroke="currentColor" stroke-opacity="0.4" stroke-width="2"/><circle cx="60" cy="104" r="17" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.45"/><text x="60" y="109" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">A</text><circle cx="160" cy="104" r="17" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.45"/><text x="160" y="109" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">B</text><circle cx="260" cy="104" r="17" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.45"/><text x="260" y="109" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">C</text><circle cx="360" cy="104" r="17" fill="#10b981" fill-opacity="0.25" stroke="currentColor" stroke-opacity="0.45"/><text x="360" y="109" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">C'</text><rect x="302.5" y="57" width="115" height="22" rx="11" fill="#8b5cf6" fill-opacity="0.18" stroke="#8b5cf6"/><text x="360" y="73" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">main · HEAD</text><text x="386" y="109" font-size="13" fill="#10b981" font-weight="700">đảo ngược C</text><line x1="77" y1="220" x2="143" y2="220" stroke="currentColor" stroke-opacity="0.4" stroke-width="2"/><line x1="177" y1="220" x2="243" y2="220" stroke="currentColor" stroke-opacity="0.4" stroke-width="2"/><circle cx="60" cy="220" r="17" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.45"/><text x="60" y="225" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">A</text><circle cx="160" cy="220" r="17" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.45"/><text x="160" y="225" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">B</text><circle cx="260" cy="220" r="17" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.45"/><text x="260" y="225" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">C</text><line x1="277" y1="220" x2="343" y2="220" stroke="#10b981" stroke-width="2" stroke-dasharray="4 4"/><circle cx="360" cy="220" r="17" fill="#10b981" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="4 3"/><text x="360" y="225" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">C'</text><text x="386" y="217" font-size="13" fill="#10b981" font-weight="700">✓ kéo thêm C'</text><text x="386" y="234" font-size="13" fill="#10b981" font-weight="700">là khớp</text><text x="16" y="268" font-size="13" font-weight="700" fill="#10b981">Không xoá gì, chỉ thêm: an toàn khi đã push</text></svg>
+<svg viewBox="0 0 520 280" role="img" aria-labelledby="g05b-t g05b-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif"><title id="g05b-t">git reset --hard B: kéo HEAD lùi về B, C bị gỡ khỏi nhánh</title><desc id="g05b-d">Máy bạn: main và HEAD lùi về B; C không còn nhãn nào trỏ tới nhưng vẫn nằm trong reflog. Đồng nghiệp đã kéo về vẫn có C nên lịch sử hai bên lệch nhau. Chỉ an toàn khi chưa push.</desc><text x="16" y="24" font-size="14" font-weight="700" fill="currentColor" font-family="ui-monospace, monospace">git reset --hard B</text><text x="16" y="56" font-size="13" fill="currentColor" opacity="0.75">Máy bạn</text><text x="16" y="176" font-size="13" fill="currentColor" opacity="0.75">Bản đồng nghiệp đã kéo về</text><line x1="77" y1="104" x2="143" y2="104" stroke="currentColor" stroke-opacity="0.4" stroke-width="2"/><line x1="177" y1="104" x2="243" y2="104" stroke="currentColor" stroke-opacity="0.25" stroke-width="2" stroke-dasharray="4 4"/><circle cx="60" cy="104" r="17" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.45"/><text x="60" y="109" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">A</text><circle cx="160" cy="104" r="17" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.45"/><text x="160" y="109" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">B</text><circle cx="260" cy="104" r="17" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="4 3"/><text x="260" y="109" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor" opacity="0.45">C</text><line x1="248" y1="92" x2="272" y2="116" stroke="#f43f5e" stroke-width="2"/><line x1="272" y1="92" x2="248" y2="116" stroke="#f43f5e" stroke-width="2"/><rect x="102.5" y="57" width="115" height="22" rx="11" fill="#8b5cf6" fill-opacity="0.18" stroke="#8b5cf6"/><text x="160" y="73" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">main · HEAD</text><text x="286" y="104" font-size="13" fill="currentColor" opacity="0.8">không nhãn nào trỏ tới</text><text x="286" y="121" font-size="13" fill="currentColor" opacity="0.8">(vẫn trong reflog)</text><line x1="77" y1="220" x2="143" y2="220" stroke="currentColor" stroke-opacity="0.4" stroke-width="2"/><line x1="177" y1="220" x2="243" y2="220" stroke="currentColor" stroke-opacity="0.4" stroke-width="2"/><circle cx="60" cy="220" r="17" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.45"/><text x="60" y="225" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">A</text><circle cx="160" cy="220" r="17" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.45"/><text x="160" y="225" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">B</text><circle cx="260" cy="220" r="17" fill="#f43f5e" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.45"/><text x="260" y="225" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">C</text><text x="286" y="217" font-size="13" fill="#f43f5e" font-weight="700">✗ vẫn còn C:</text><text x="286" y="234" font-size="13" fill="#f43f5e" font-weight="700">hai bên lệch nhau</text><text x="16" y="268" font-size="13" font-weight="700" fill="#f43f5e">Xé trang sổ: chỉ an toàn khi chưa push</text></svg>
+<ab-note>Như ghi thêm một bút toán đảo ngược: C vẫn nằm trong sổ, C' xoá tác dụng của nó. Ai đã kéo A, B, C về chỉ việc kéo thêm C'.</ab-note>
+<ab-note>Như xé trang sổ: nhánh của bạn sạch, nhưng ai đã kéo C về vẫn giữ C. Hai lịch sử không còn khớp, nên chỉ dùng cho commit chưa push.</ab-note>
+</ab-toggle>
 
 ### `git revert` — hoàn tác an toàn
 
@@ -225,6 +190,55 @@ git switch main          # chuyển sang nhánh khác sửa lỗi gấp
 git switch tinh-nang-a
 git stash pop            # lấy lại đồ, làm tiếp như chưa có gì xảy ra
 ```
+
+<step-flow>
+<svg viewBox="0 0 660 420" role="img" aria-labelledby="g05c-t g05c-d" style="width:100%;max-width:660px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="g05c-t">git stash: cất đồ dở vào ngăn kéo, sang main sửa gấp, quay lại lấy ra</title>
+<desc id="g05c-d">Bốn cột theo thời gian đi xuống: nhánh đang đứng, bàn làm việc, ngăn kéo stash, commit trên main. Ban đầu bàn có đồ dở của tính năng A trên nhánh tinh-nang-a. Bước 1 git stash push cất đồ dở vào ngăn kéo, bàn sạch. Bước 2 git switch main. Bước 3 sửa lỗi B rồi commit lên main. Bước 4 git switch tinh-nang-a. Bước 5 git stash pop đưa đồ dở về bàn và xoá gói khỏi ngăn kéo.</desc>
+<defs><marker id="g05c-m" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<rect x="6" y="12" width="132" height="34" rx="8" fill="#64748b" fill-opacity="0.16" stroke="#64748b" stroke-opacity="0.5"/>
+<text x="72" y="34" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">Đang ở nhánh</text>
+<rect x="204" y="12" width="132" height="34" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="#3b82f6" stroke-opacity="0.5"/>
+<text x="270" y="34" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">Bàn làm việc</text>
+<line x1="270" y1="46" x2="270" y2="410" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<rect x="374" y="12" width="132" height="34" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="#f59e0b" stroke-opacity="0.5"/>
+<text x="440" y="34" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">Ngăn kéo stash</text>
+<line x1="440" y1="46" x2="440" y2="410" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<rect x="524" y="12" width="132" height="34" rx="8" fill="#8b5cf6" fill-opacity="0.16" stroke="#8b5cf6" stroke-opacity="0.5"/>
+<text x="590" y="34" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">Commit trên main</text>
+<line x1="590" y1="46" x2="590" y2="410" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<rect x="60" y="56" width="24" height="102" rx="4" fill="#3b82f6" fill-opacity="0.35"/><text x="94" y="74" font-size="12" font-weight="700" fill="#3b82f6">tinh-nang-a</text>
+<rect x="195.0" y="57" width="150" height="24" rx="12" fill="#3b82f6" fill-opacity="0.2" stroke="#3b82f6"/><text x="270" y="74" text-anchor="middle" font-size="12" fill="currentColor">đồ dở tính năng A</text>
+<g data-step="1">
+<line x1="274" y1="110" x2="436" y2="110" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.8" marker-end="url(#g05c-m)"/><text x="355.0" y="102" text-anchor="middle" font-size="12" fill="currentColor" font-family="ui-monospace, monospace">git stash push -m "…"</text>
+<rect x="365.0" y="121" width="150" height="24" rx="12" fill="#f59e0b" fill-opacity="0.2" stroke="#f59e0b"/><text x="440" y="138" text-anchor="middle" font-size="12" fill="currentColor">stash@{0}: dở A</text>
+<rect x="220.0" y="121" width="100" height="24" rx="12" fill="#64748b" fill-opacity="0.2" stroke="#64748b"/><text x="270" y="138" text-anchor="middle" font-size="12" fill="currentColor">bàn sạch</text>
+</g>
+<g data-step="2">
+<rect x="60" y="158" width="24" height="120" rx="4" fill="#8b5cf6" fill-opacity="0.35"/><text x="94" y="176" font-size="12" font-weight="700" fill="#8b5cf6">main</text>
+<text x="94" y="194" font-size="12" fill="currentColor" font-family="ui-monospace, monospace">git switch main</text>
+</g>
+<g data-step="3">
+<line x1="274" y1="230" x2="576" y2="230" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.8" marker-end="url(#g05c-m)"/><text x="425.0" y="222" text-anchor="middle" font-size="12" fill="currentColor" font-family="ui-monospace, monospace">sửa lỗi B, commit, push</text>
+<circle cx="590" cy="230" r="10" fill="#8b5cf6" fill-opacity="0.3" stroke="#8b5cf6"/>
+<text x="574" y="252" text-anchor="end" font-size="12" fill="currentColor">lỗi B đã sửa</text>
+</g>
+<g data-step="4">
+<rect x="60" y="278" width="24" height="132" rx="4" fill="#3b82f6" fill-opacity="0.35"/><text x="94" y="296" font-size="12" font-weight="700" fill="#3b82f6">tinh-nang-a</text>
+<text x="94" y="314" font-size="12" fill="currentColor" font-family="ui-monospace, monospace">git switch tinh-nang-a</text>
+</g>
+<g data-step="5">
+<line x1="436" y1="350" x2="274" y2="350" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.8" marker-end="url(#g05c-m)"/><text x="355.0" y="342" text-anchor="middle" font-size="12" fill="currentColor" font-family="ui-monospace, monospace">git stash pop</text>
+<rect x="195.0" y="363" width="150" height="24" rx="12" fill="#3b82f6" fill-opacity="0.2" stroke="#3b82f6"/><text x="270" y="380" text-anchor="middle" font-size="12" fill="currentColor">đồ dở A quay lại</text>
+<rect x="380.0" y="363" width="120" height="24" rx="12" fill="#64748b" fill-opacity="0.2" stroke="#64748b"/><text x="440" y="380" text-anchor="middle" font-size="12" fill="currentColor">ngăn kéo trống</text>
+</g>
+</svg>
+<step-note data-step="1">Bàn đang bừa mà chưa muốn commit. <code>stash</code> quét hết vào ngăn kéo, ghi chú <code>-m</code> để vài tuần sau còn nhớ gói này là gì.</step-note>
+<step-note data-step="2">Bàn sạch nên đổi nhánh không lo mang theo đồ dở của tính năng A sang <code>main</code>.</step-note>
+<step-note data-step="3">Sửa gấp lỗi B và commit trên <code>main</code> như bình thường. Đồ dở của A vẫn nằm yên trong ngăn kéo, không lẫn vào commit này.</step-note>
+<step-note data-step="4">Về lại nhánh của tính năng A. Bàn vẫn sạch: đồ dở chưa được lấy ra.</step-note>
+<step-note data-step="5"><code>pop</code> lấy gói mới nhất ra bàn rồi xoá khỏi ngăn kéo. Muốn giữ bản sao trong ngăn kéo thì dùng <code>git stash apply</code>.</step-note>
+</step-flow>
 
 > Lỗi người mới hay gặp: (1) Cất stash rồi… quên luôn, vài tuần sau `git stash list` thấy 7 gói không nhớ gói nào là gì — hãy luôn dùng `-m` để ghi chú. (2) Mặc định `git stash` **không cất file mới tạo chưa từng `git add`** (gọi là untracked file — file Git chưa theo dõi); muốn cất cả chúng, dùng `git stash -u`.
 

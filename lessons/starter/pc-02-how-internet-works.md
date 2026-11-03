@@ -294,6 +294,57 @@ Cookie hoạt động y hệt:
 2. Trình duyệt cất cookie đó.
 3. Mọi lần sau bạn mở Facebook, trình duyệt **tự động chìa cookie ra** — thế là không phải gõ mật khẩu lại.
 
+<step-flow>
+<svg viewBox="0 0 640 500" role="img" aria-labelledby="pc02c-t pc02c-d" style="width:100%;max-width:640px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="pc02c-t">Cookie: server cấp thẻ một lần, trình duyệt tự chìa thẻ ở mọi lần sau</title>
+<desc id="pc02c-d">Ba cột: ví cookie trong trình duyệt, trình duyệt, server trang web. Server quên bạn sau mỗi lượt hỏi đáp. Lần đầu: trình duyệt gửi email và mật khẩu, server trả trang kèm thẻ khach=1247, trình duyệt cất thẻ vào ví. Hôm sau: trình duyệt tự gửi kèm thẻ, server nhận ra khách 1247 và không hỏi mật khẩu. Sau khi xoá cookie: request không có thẻ, server coi là khách lạ và bắt đăng nhập lại.</desc>
+<defs><marker id="pc02c-m" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<rect x="20.0" y="12" width="120" height="34" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="#f59e0b" stroke-opacity="0.55"/>
+<text x="80" y="34" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">Ví cookie</text>
+<line x1="80" y1="46" x2="80" y2="492" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<rect x="220.0" y="12" width="120" height="34" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="#3b82f6" stroke-opacity="0.55"/>
+<text x="280" y="34" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">Trình duyệt</text>
+<line x1="280" y1="46" x2="280" y2="492" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<rect x="465.0" y="12" width="150" height="34" rx="8" fill="#8b5cf6" fill-opacity="0.16" stroke="#8b5cf6" stroke-opacity="0.55"/>
+<text x="540" y="34" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">Server trang web</text>
+<line x1="540" y1="46" x2="540" y2="492" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
+<text x="540" y="64" text-anchor="middle" font-size="12" fill="currentColor" opacity="0.7">quên bạn sau mỗi lượt</text>
+<g data-step="1">
+<line x1="284" y1="100" x2="536" y2="100" stroke="currentColor" stroke-opacity="0.8" stroke-width="1.8" marker-end="url(#pc02c-m)"/><text x="410.0" y="92" text-anchor="middle" font-size="12" fill="currentColor">đăng nhập: email + mật khẩu</text>
+</g>
+<g data-step="2">
+<line x1="536" y1="150" x2="284" y2="150" stroke="currentColor" stroke-opacity="0.8" stroke-width="1.8" marker-end="url(#pc02c-m)"/><text x="410.0" y="142" text-anchor="middle" font-size="12" fill="currentColor">trang chủ + Set-Cookie</text>
+<rect x="364.0" y="160" width="92" height="24" rx="5" fill="#f59e0b" fill-opacity="0.25" stroke="#f59e0b"/><text x="410.0" y="176" text-anchor="middle" font-size="12" font-weight="700" fill="currentColor">khach=1247</text>
+</g>
+<g data-step="3">
+<line x1="276" y1="210" x2="84" y2="210" stroke="currentColor" stroke-opacity="0.8" stroke-width="1.8" marker-end="url(#pc02c-m)"/><text x="180.0" y="202" text-anchor="middle" font-size="12" fill="currentColor">cất thẻ</text>
+<rect x="34" y="222" width="92" height="24" rx="5" fill="#f59e0b" fill-opacity="0.25" stroke="#f59e0b"/><text x="80" y="238" text-anchor="middle" font-size="12" font-weight="700" fill="currentColor">khach=1247</text>
+</g>
+<line x1="10" y1="262" x2="630" y2="262" stroke="currentColor" stroke-opacity="0.25"/><rect x="350" y="251" width="150" height="22" rx="11" fill="#64748b" fill-opacity="0.15"/><text x="425" y="266" text-anchor="middle" font-size="12" fill="currentColor">hôm sau, mở lại trang</text>
+<g data-step="4">
+<line x1="284" y1="304" x2="536" y2="304" stroke="currentColor" stroke-opacity="0.8" stroke-width="1.8" marker-end="url(#pc02c-m)"/><text x="410.0" y="296" text-anchor="middle" font-size="12" fill="currentColor">GET trang chủ + Cookie</text>
+<rect x="364.0" y="314" width="92" height="24" rx="5" fill="#f59e0b" fill-opacity="0.25" stroke="#f59e0b"/><text x="410.0" y="330" text-anchor="middle" font-size="12" font-weight="700" fill="currentColor">khach=1247</text>
+<path d="M100 250 C 120 290, 240 304, 274 304" fill="none" stroke="#f59e0b" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#pc02c-m)"/>
+<text x="110" y="300" font-size="12" fill="currentColor" opacity="0.8">tự chìa thẻ</text>
+</g>
+<g data-step="5">
+<line x1="536" y1="378" x2="284" y2="378" stroke="#10b981" stroke-opacity="0.8" stroke-width="1.8" marker-end="url(#pc02c-m)"/><text x="410.0" y="370" text-anchor="middle" font-size="12" fill="currentColor">chào khách 1247 · không hỏi mật khẩu</text>
+</g>
+<line x1="10" y1="410" x2="630" y2="410" stroke="currentColor" stroke-opacity="0.25"/><rect x="350" y="399" width="150" height="22" rx="11" fill="#64748b" fill-opacity="0.15"/><text x="425" y="414" text-anchor="middle" font-size="12" fill="currentColor">sau khi xoá cookie</text>
+<g data-step="6">
+<rect x="34" y="436" width="92" height="24" rx="5" fill="#f59e0b" fill-opacity="0.25" stroke="#f59e0b"/><text x="80" y="452" text-anchor="middle" font-size="12" font-weight="700" fill="currentColor">khach=1247</text><line x1="34" y1="436" x2="126" y2="460" stroke="#f43f5e" stroke-width="2"/><line x1="34" y1="460" x2="126" y2="436" stroke="#f43f5e" stroke-width="2"/>
+<line x1="284" y1="448" x2="536" y2="448" stroke="currentColor" stroke-opacity="0.8" stroke-width="1.8" marker-end="url(#pc02c-m)"/><text x="410.0" y="440" text-anchor="middle" font-size="12" fill="currentColor">GET trang chủ (không thẻ)</text>
+<line x1="536" y1="484" x2="284" y2="484" stroke="#f43f5e" stroke-opacity="0.8" stroke-width="1.8" marker-end="url(#pc02c-m)"/><text x="410.0" y="476" text-anchor="middle" font-size="12" fill="currentColor">khách lạ: mời đăng nhập</text>
+</g>
+</svg>
+<step-note data-step="1">Lần đầu, bạn chứng minh mình là ai bằng mật khẩu. Server kiểm xong nhưng sẽ quên ngay khi trả lời.</step-note>
+<step-note data-step="2">Để khỏi phải hỏi lại, server đưa kèm trang một tấm thẻ: dòng <code>Set-Cookie</code> trong phản hồi HTTP.</step-note>
+<step-note data-step="3">Trình duyệt cất thẻ vào ví, gắn với đúng trang đã cấp. Bạn không phải làm gì.</step-note>
+<step-note data-step="4">Lần sau mở trang, trình duyệt tự gửi kèm thẻ trong mỗi request (dòng <code>Cookie</code>). Đây là phần "tự động" khiến bạn không phải gõ lại mật khẩu.</step-note>
+<step-note data-step="5">Server vẫn đãng trí, nhưng chỉ cần đọc thẻ là biết bạn là khách 1247 đã đăng nhập.</step-note>
+<step-note data-step="6">Xoá cookie là vứt thẻ khỏi ví. Request tới tay server không còn thẻ, server coi bạn là khách lạ: phải đăng nhập lại.</step-note>
+</step-flow>
+
 ### Mặt trái của cookie
 
 Cookie cũng là lý do bạn vừa xem một đôi giày trên Shopee, lát sau **quảng cáo đôi giày đó bám theo bạn khắp nơi**. Một số cookie (gọi là cookie theo dõi) ghi lại bạn đã xem gì để các công ty quảng cáo "đoán ý" bạn.

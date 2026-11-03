@@ -261,9 +261,10 @@ Hãy theo dấu một thao tác quen thuộc — bạn bấm **"Đặt hàng"** 
 
 Cả sáu bước đó, nhìn theo thời gian (đi từ trái sang phải, rồi quay ngược về), trông như sau:
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 430" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Luồng một lần bấm Đặt hàng qua 6 bước</title>
-  <desc>Sơ đồ luồng theo thời gian đi xuống, bốn cột: Frontend, API, Backend trên cloud, Database. Bước 1 frontend gửi đơn tới API; bước 2 API chuyển vào backend; bước 3 backend xử lý; bước 4 backend ghi vào database; bước 5 backend gọi tiếp API ngân hàng để trừ tiền; bước 6 kết quả trả ngược về frontend hiển thị Đặt hàng thành công.</desc>
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 430" role="img" aria-labelledby="pc03o-t pc03o-d" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title id="pc03o-t">Luồng một lần bấm Đặt hàng qua 6 bước</title>
+  <desc id="pc03o-d">Sơ đồ luồng theo thời gian đi xuống, bốn cột: Frontend, API, Backend trên cloud, Database. Bước 1 frontend gửi đơn tới API; bước 2 API chuyển vào backend; bước 3 backend xử lý; bước 4 backend ghi vào database; bước 5 backend gọi tiếp API ngân hàng để trừ tiền; bước 6 kết quả trả ngược về frontend hiển thị Đặt hàng thành công.</desc>
   <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Một lần bấm "Đặt hàng" — 6 bước trong chưa đầy một giây</text>
   <g text-anchor="middle">
     <rect x="40" y="40" width="120" height="34" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
@@ -271,8 +272,8 @@ Cả sáu bước đó, nhìn theo thời gian (đi từ trái sang phải, rồ
     <rect x="216" y="40" width="120" height="34" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="276" y="62" font-size="12" font-weight="700" fill="currentColor">API</text>
     <rect x="392" y="40" width="140" height="34" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="462" y="58" font-size="12" font-weight="700" fill="currentColor">Backend</text>
-    <text x="462" y="71" font-size="9.5" fill="currentColor" opacity="0.6">(server trên cloud)</text>
+    <text x="462" y="57" font-size="12" font-weight="700" fill="currentColor">Backend</text>
+    <text x="462" y="70" font-size="10.5" fill="currentColor" opacity="0.65">(server trên cloud)</text>
     <rect x="588" y="40" width="116" height="34" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
     <text x="646" y="62" font-size="12" font-weight="700" fill="currentColor">Database</text>
   </g>
@@ -283,37 +284,50 @@ Cả sáu bước đó, nhìn theo thời gian (đi từ trái sang phải, rồ
     <line x1="646" y1="78" x2="646" y2="404"/>
   </g>
   <defs>
-    <marker id="ordA" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.65"/></marker>
+    <marker id="pc03o-m" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.65"/></marker>
   </defs>
-  <g font-size="11" fill="currentColor">
+  <g data-step="1" font-size="11.5" fill="currentColor">
+    <line x1="100" y1="106" x2="270" y2="106" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#pc03o-m)"/>
     <circle cx="100" cy="106" r="9" fill="#10b981" fill-opacity="0.9"/><text x="100" y="110" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">1</text>
-    <line x1="100" y1="106" x2="270" y2="106" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#ordA)"/>
-    <text x="108" y="100" opacity="0.85">gói đơn hàng, gửi đi</text>
+    <text x="114" y="99" opacity="0.85">gói đơn hàng, gửi đi</text>
+  </g>
+  <g data-step="2" font-size="11.5" fill="currentColor">
+    <line x1="276" y1="146" x2="456" y2="146" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#pc03o-m)"/>
     <circle cx="276" cy="146" r="9" fill="#f59e0b" fill-opacity="0.9"/><text x="276" y="150" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">2</text>
-    <line x1="276" y1="146" x2="456" y2="146" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#ordA)"/>
-    <text x="284" y="140" opacity="0.85">nhận theo mẫu chuẩn</text>
+    <text x="290" y="139" opacity="0.85">nhận theo mẫu chuẩn</text>
+  </g>
+  <g data-step="3" font-size="11.5" fill="currentColor">
     <circle cx="462" cy="190" r="9" fill="#3b82f6" fill-opacity="0.9"/><text x="462" y="194" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">3</text>
     <text x="476" y="186" opacity="0.85">kiểm hàng, tính tiền, trừ khuyến mãi</text>
+  </g>
+  <g data-step="4" font-size="11.5" fill="currentColor">
+    <line x1="462" y1="232" x2="640" y2="232" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#pc03o-m)"/>
     <circle cx="462" cy="232" r="9" fill="#8b5cf6" fill-opacity="0.95"/><text x="462" y="236" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">4</text>
-    <line x1="462" y1="232" x2="640" y2="232" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#ordA)"/>
-    <text x="470" y="226" opacity="0.85">ghi đơn vào sổ</text>
+    <text x="476" y="225" opacity="0.85">ghi đơn vào sổ</text>
   </g>
-  <g>
+  <g data-step="5">
     <rect x="392" y="266" width="140" height="40" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="462" y="282" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">API ngân hàng</text>
-    <text x="462" y="297" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.65">phần mềm gọi phần mềm</text>
+    <text x="462" y="283" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">API ngân hàng</text>
+    <text x="462" y="298" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">phần mềm gọi phần mềm</text>
     <circle cx="462" cy="266" r="9" fill="#3b82f6" fill-opacity="0.9"/><text x="462" y="270" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">5</text>
-    <text x="372" y="260" font-size="11" text-anchor="end" fill="currentColor" opacity="0.85">trừ tiền</text>
+    <text x="380" y="262" font-size="11.5" text-anchor="end" fill="currentColor" opacity="0.85">trừ tiền</text>
   </g>
-  <g>
+  <g data-step="6">
+    <line x1="462" y1="346" x2="106" y2="346" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#pc03o-m)"/>
     <circle cx="462" cy="346" r="9" fill="#10b981" fill-opacity="0.9"/><text x="462" y="350" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">6</text>
-    <line x1="462" y1="346" x2="106" y2="346" stroke="currentColor" stroke-opacity="0.6" marker-end="url(#ordA)"/>
-    <text x="454" y="340" font-size="11" text-anchor="end" fill="currentColor" opacity="0.85">trả kết quả về</text>
+    <text x="448" y="339" font-size="11.5" text-anchor="end" fill="currentColor" opacity="0.85">trả kết quả về</text>
     <rect x="40" y="362" width="170" height="34" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="125" y="383" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">"Đặt hàng thành công" ✓</text>
+    <text x="125" y="383" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">"Đặt hàng thành công" ✓</text>
   </g>
-  <text x="690" y="420" font-size="10" text-anchor="end" fill="currentColor" opacity="0.55">thời gian đi xuống ↓</text>
+  <text x="690" y="420" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.6">thời gian đi xuống ↓</text>
 </svg>
+<step-note data-step="1">Frontend chỉ là phần bạn nhìn thấy trên điện thoại: nó không tự quyết được còn hàng hay không, nên phải gói thông tin lại và gửi đi qua Internet.</step-note>
+<step-note data-step="2">API là "cửa nhận đơn" có mẫu cố định. Đơn đúng mẫu thì mới được chuyển vào bếp, nên app mobile hay web đều gửi theo cùng một cách.</step-note>
+<step-note data-step="3">Mọi quyết định quan trọng nằm ở backend trên server, không nằm trên điện thoại, để không ai tự sửa giá hay khuyến mãi từ phía máy mình.</step-note>
+<step-note data-step="4">Ghi vào database để đơn còn đó cả khi bạn đóng app hay đổi điện thoại: mai mốt tra "lịch sử đơn hàng" vẫn thấy.</step-note>
+<step-note data-step="5">Backend không tự trừ tiền trong tài khoản ngân hàng được. Nó gọi API của ngân hàng: phần mềm nói chuyện với phần mềm, y như frontend vừa gọi nó.</step-note>
+<step-note data-step="6">Kết quả đi ngược về đúng đường cũ. Lúc này frontend mới hiện màn hình xác nhận, dù cả chuyến đi chưa tới một giây.</step-note>
+</step-flow>
 
 Toàn bộ chuyến đi đó diễn ra trong **chưa đầy một giây**.
 

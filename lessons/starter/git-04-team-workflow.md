@@ -30,55 +30,78 @@ Bài này sẽ đi qua từng bước của quy trình đó, đúng như cách b
 
 Giờ đi vào chi tiết từng bước.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 270" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Quy trình 5 bước Pull Request: Branch → Push → PR → Review → Merge với vòng lặp sửa lại</title>
-  <desc>Năm bước nối tiếp từ trái sang phải: Tạo branch (git switch -c), Push (git push), mở Pull Request, Review (approve hoặc request changes), Merge (squash hoặc merge commit). Có vòng lặp quay từ Review về Push: khi bị yêu cầu sửa thì sửa code rồi push lại lên cùng nhánh, PR tự cập nhật.</desc>
-  <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Quy trình Pull Request — 5 bước</text>
-  <defs>
-    <marker id="prArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
-    <marker id="prArrLoop" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="#f59e0b" fill-opacity="0.9"/></marker>
-  </defs>
-  <g>
-    <rect x="14" y="62" width="124" height="60" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="24" y="80" font-size="11" font-weight="700" fill="#3b82f6">1 · Branch</text>
-    <text x="24" y="98" font-size="12" font-weight="700" fill="currentColor">Tạo nhánh</text>
-    <text x="24" y="114" font-size="10" fill="currentColor" opacity="0.7">git switch -c</text>
-  </g>
-  <line x1="138" y1="92" x2="156" y2="92" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#prArr)"/>
-  <g>
-    <rect x="158" y="62" width="124" height="60" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="168" y="80" font-size="11" font-weight="700" fill="#10b981">2 · Push</text>
-    <text x="168" y="98" font-size="12" font-weight="700" fill="currentColor">Đẩy lên GitHub</text>
-    <text x="168" y="114" font-size="10" fill="currentColor" opacity="0.7">git push</text>
-  </g>
-  <line x1="282" y1="92" x2="300" y2="92" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#prArr)"/>
-  <g>
-    <rect x="302" y="62" width="124" height="60" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="312" y="80" font-size="11" font-weight="700" fill="#8b5cf6">3 · PR</text>
-    <text x="312" y="98" font-size="12" font-weight="700" fill="currentColor">Pull Request</text>
-    <text x="312" y="114" font-size="10" fill="currentColor" opacity="0.7">mô tả Why/What</text>
-  </g>
-  <line x1="426" y1="92" x2="444" y2="92" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#prArr)"/>
-  <g>
-    <rect x="446" y="62" width="124" height="60" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="456" y="80" font-size="11" font-weight="700" fill="#f59e0b">4 · Review</text>
-    <text x="456" y="98" font-size="12" font-weight="700" fill="currentColor">Xem xét</text>
-    <text x="456" y="114" font-size="10" fill="currentColor" opacity="0.7">approve / sửa</text>
-  </g>
-  <line x1="570" y1="92" x2="588" y2="92" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#prArr)"/>
-  <g>
-    <rect x="590" y="62" width="116" height="60" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="600" y="80" font-size="11" font-weight="700" fill="#3b82f6">5 · Merge</text>
-    <text x="600" y="98" font-size="12" font-weight="700" fill="currentColor">Gộp vào main</text>
-    <text x="600" y="114" font-size="10" fill="currentColor" opacity="0.7">squash / merge</text>
-  </g>
-  <text x="528" y="56" font-size="10" fill="#10b981" opacity="0.95" font-weight="700" text-anchor="middle">approve →</text>
-  <g fill="none" stroke="#f59e0b" stroke-opacity="0.8" stroke-dasharray="5 4">
-    <path d="M508 122 v58 H220 v-50" marker-end="url(#prArrLoop)"/>
-  </g>
-  <text x="360" y="200" font-size="11" font-weight="700" text-anchor="middle" fill="#f59e0b">Request changes: sửa code → push lại → PR tự cập nhật</text>
-  <text x="360" y="218" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.65">(lặp đến khi được approve — không cần mở PR mới)</text>
+<step-flow>
+<svg viewBox="0 0 680 440" role="img" aria-labelledby="g04a-t g04a-d" style="width:100%;max-width:680px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="g04a-t">Quy trình Pull Request: nhánh đi từ máy bạn lên GitHub rồi được gộp vào main</title>
+<desc id="g04a-d">Hai vùng: GitHub ở trên, máy của bạn ở dưới, mỗi vùng có một đường main. Bước 1 tạo nhánh fix trên máy bằng git switch -c. Bước 2 git push đưa nhánh lên GitHub. Bước 3 mở Pull Request xin gộp nhánh vào main, kèm mô tả Why/What. Bước 4 đồng nghiệp review và request changes. Bước 4b bạn sửa, commit, push lại lên cùng nhánh, PR tự cập nhật, không cần mở PR mới; vòng này lặp tới khi được approve. Bước 5 approve rồi merge vào main bằng squash hoặc merge commit.</desc>
+<defs><marker id="g04a-m" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker><marker id="g04a-mo" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#f59e0b"/></marker></defs>
+<rect x="8" y="8" width="664" height="232" rx="10" fill="#8b5cf6" fill-opacity="0.08" stroke="#8b5cf6" stroke-opacity="0.35"/>
+<text x="20" y="30" font-size="13" font-weight="700" fill="currentColor">GitHub (kho chung)</text>
+<rect x="8" y="292" width="664" height="140" rx="10" fill="#3b82f6" fill-opacity="0.08" stroke="#3b82f6" stroke-opacity="0.35"/>
+<text x="20" y="422" font-size="13" font-weight="700" fill="currentColor">Máy của bạn</text>
+<line x1="40" y1="60" x2="600" y2="60" stroke="currentColor" stroke-opacity="0.35" stroke-width="2"/>
+<circle cx="60" cy="60" r="9" fill="#64748b" fill-opacity="0.25" stroke="currentColor" stroke-opacity="0.5"/>
+<circle cx="120" cy="60" r="9" fill="#64748b" fill-opacity="0.25" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="608" y="65" font-size="13" font-weight="700" fill="currentColor">main</text>
+<line x1="40" y1="330" x2="600" y2="330" stroke="currentColor" stroke-opacity="0.35" stroke-width="2"/>
+<circle cx="60" cy="330" r="9" fill="#64748b" fill-opacity="0.25" stroke="currentColor" stroke-opacity="0.5"/>
+<circle cx="120" cy="330" r="9" fill="#64748b" fill-opacity="0.25" stroke="currentColor" stroke-opacity="0.5"/>
+<text x="608" y="335" font-size="13" font-weight="700" fill="currentColor">main</text>
+<rect x="350" y="184" width="150" height="38" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="#f59e0b" stroke-opacity="0.5"/>
+<text x="425" y="208" text-anchor="middle" font-size="13" fill="currentColor">Đồng nghiệp</text>
+<g data-step="1">
+<path d="M120 330 C 160 330, 160 390, 200 390" fill="none" stroke="#3b82f6" stroke-width="2"/>
+<circle cx="200" cy="390" r="9" fill="#3b82f6" fill-opacity="0.3" stroke="#3b82f6"/><text x="200" y="394" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor">a</text>
+<text x="312" y="386" font-size="12" fill="currentColor">nhánh fix/nut-dang-nhap-bi-le</text>
+<text x="312" y="404" font-size="12" fill="currentColor" opacity="0.75" font-family="ui-monospace, monospace">git switch -c fix/…</text>
+<circle cx="132" cy="372" r="10" fill="#3b82f6"/><text x="132" y="376" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">1</text>
+</g>
+<g data-step="2">
+<line x1="200" y1="379" x2="200" y2="154" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#g04a-m)"/>
+<path d="M120 60 C 160 60, 160 140, 200 140" fill="none" stroke="#3b82f6" stroke-width="2"/>
+<circle cx="200" cy="140" r="9" fill="#3b82f6" fill-opacity="0.3" stroke="#3b82f6"/><text x="200" y="144" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor">a</text>
+<text x="190" y="270" text-anchor="end" font-size="12" fill="currentColor" font-family="ui-monospace, monospace">git push -u origin fix/…</text>
+<circle cx="200" cy="214" r="10" fill="#3b82f6"/><text x="200" y="218" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">2</text>
+</g>
+<g data-step="3">
+<line x1="209" y1="140" x2="330" y2="140" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="4 3"/>
+<rect x="330" y="116" width="200" height="48" rx="8" fill="#8b5cf6" fill-opacity="0.16" stroke="#8b5cf6"/>
+<text x="430" y="135" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">Pull Request</text>
+<text x="430" y="153" text-anchor="middle" font-size="12" fill="currentColor" opacity="0.8">xin gộp fix → main · Why/What</text>
+<circle cx="330" cy="116" r="10" fill="#8b5cf6"/><text x="330" y="120" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">3</text>
+</g>
+<g data-step="4">
+<line x1="425" y1="183" x2="425" y2="168" stroke="#f59e0b" stroke-width="2" marker-end="url(#g04a-mo)"/>
+<text x="508" y="200" font-size="12" fill="#f59e0b" font-weight="700">request changes</text>
+<text x="508" y="216" font-size="12" fill="currentColor" opacity="0.75">góp ý từng dòng</text>
+<circle cx="350" cy="184" r="10" fill="#f59e0b"/><text x="350" y="188" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">4</text>
+</g>
+<g data-step="5">
+<line x1="209" y1="390" x2="281" y2="390" stroke="#3b82f6" stroke-width="2"/>
+<circle cx="290" cy="390" r="9" fill="#f59e0b" fill-opacity="0.3" stroke="#f59e0b"/><text x="290" y="394" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor">b</text>
+<line x1="290" y1="379" x2="290" y2="154" stroke="#f59e0b" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#g04a-mo)"/>
+<line x1="209" y1="140" x2="281" y2="140" stroke="#3b82f6" stroke-width="2"/>
+<circle cx="290" cy="140" r="9" fill="#f59e0b" fill-opacity="0.3" stroke="#f59e0b"/><text x="290" y="144" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor">b</text>
+<text x="300" y="262" font-size="12" fill="currentColor">sửa, commit, push lại</text>
+<text x="300" y="278" font-size="12" fill="currentColor" opacity="0.75">cùng nhánh: PR tự cập nhật</text>
+<circle cx="290" cy="214" r="10" fill="#f59e0b"/><text x="290" y="218" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">4b</text>
+</g>
+<g data-step="6">
+<path d="M500 116 C 510 80, 530 62, 548 61" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#g04a-m)"/>
+<circle cx="560" cy="60" r="11" fill="#10b981" fill-opacity="0.35" stroke="#10b981" stroke-width="2"/>
+<text x="560" y="64" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor">M</text>
+<text x="540" y="38" text-anchor="middle" font-size="12" fill="currentColor">squash / merge commit</text>
+<text x="546" y="100" font-size="12" font-weight="700" fill="#10b981">approve → Merge</text>
+<circle cx="486" cy="90" r="10" fill="#10b981"/><text x="486" y="94" text-anchor="middle" font-size="11" font-weight="700" fill="#fff">5</text>
+</g>
 </svg>
+<step-note data-step="1">Đứng ở <code>main</code> đã <code>git pull</code>, tạo nhánh riêng cho đúng một việc. Code chung trên GitHub chưa bị đụng tới.</step-note>
+<step-note data-step="2">Lúc này nhánh mới chỉ có trên máy bạn. <code>git push</code> sao nó lên GitHub để người khác thấy được; <code>-u</code> chỉ cần lần đầu.</step-note>
+<step-note data-step="3">Push xong chưa ai bắt buộc phải xem. PR là lời mời: "gộp nhánh này vào <code>main</code> nhé", kèm mô tả Why/What để người đọc hiểu nhanh.</step-note>
+<step-note data-step="4">Đồng nghiệp đọc thay đổi, bình luận vào từng dòng. <code>Request changes</code> nghĩa là cần sửa rồi mới duyệt.</step-note>
+<step-note data-step="5">Không mở PR mới: chỉ sửa, commit, push lên đúng nhánh cũ, PR tự hiện commit mới. Vòng 4 và 4b lặp tới khi được approve.</step-note>
+<step-note data-step="6">Được approve (và hết conflict) thì bấm Merge. Code của nhánh giờ nằm trong <code>main</code>; nhánh có thể xoá.</step-note>
+</step-flow>
 
 ---
 

@@ -142,55 +142,67 @@ node dist/check.js
 
 Sơ đồ binary search trên 8 commit:
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>git bisect — binary search thu hẹp một nửa mỗi vòng tới khi tìm thủ phạm</title>
-  <desc>Dải 8 commit từ A (good) đến H (bad). Vòng 1 test E ra bad nên bug nằm trong A đến E. Vòng 2 test C ra good nên bug nằm trong C đến E. Vòng 3 test D ra bad nên D là thủ phạm. Mỗi vòng số commit cần xét giảm một nửa.</desc>
-  <text x="16" y="22" font-size="13.5" font-weight="700" fill="currentColor">git bisect — chia đôi liên tục tới khi bắt được commit lỗi</text>
-  <g font-size="11.5" fill="currentColor">
-    <text x="16" y="62" font-weight="700">Vòng 1</text>
-    <text x="16" y="78" font-size="10" opacity="0.7">test E → bad</text>
-    <g font-size="12.5" font-weight="700">
-      <rect x="92" y="46" width="40" height="30" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/><text x="112" y="66" text-anchor="middle" fill="currentColor">A</text>
-      <rect x="138" y="46" width="40" height="30" rx="6" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.18"/><text x="158" y="66" text-anchor="middle" fill="currentColor">B</text>
-      <rect x="184" y="46" width="40" height="30" rx="6" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.18"/><text x="204" y="66" text-anchor="middle" fill="currentColor">C</text>
-      <rect x="230" y="46" width="40" height="30" rx="6" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.18"/><text x="250" y="66" text-anchor="middle" fill="currentColor">D</text>
-      <rect x="276" y="46" width="40" height="30" rx="6" fill="#f59e0b" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.3"/><text x="296" y="66" text-anchor="middle" fill="currentColor">E</text>
-      <rect x="322" y="46" width="40" height="30" rx="6" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.18"/><text x="342" y="66" text-anchor="middle" fill="currentColor">F</text>
-      <rect x="368" y="46" width="40" height="30" rx="6" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.18"/><text x="388" y="66" text-anchor="middle" fill="currentColor">G</text>
-      <rect x="414" y="46" width="40" height="30" rx="6" fill="#ef4444" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/><text x="434" y="66" text-anchor="middle" fill="currentColor">H</text>
-    </g>
-    <text x="112" y="38" font-size="9.5" text-anchor="middle" fill="#10b981" font-weight="700">good</text>
-    <text x="434" y="38" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.8" font-weight="700">bad</text>
-    <text x="296" y="92" font-size="9" text-anchor="middle" fill="#f59e0b" font-weight="700">↑ giữa</text>
-    <text x="478" y="66" font-size="10.5" fill="currentColor" opacity="0.8">⇒ bug trong A…E</text>
-  </g>
-  <g font-size="11.5" fill="currentColor">
-    <text x="16" y="156" font-weight="700">Vòng 2</text>
-    <text x="16" y="172" font-size="10" opacity="0.7">test C → good</text>
-    <g font-size="12.5" font-weight="700">
-      <rect x="92" y="140" width="40" height="30" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/><text x="112" y="160" text-anchor="middle" fill="currentColor">A</text>
-      <rect x="138" y="140" width="40" height="30" rx="6" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.18"/><text x="158" y="160" text-anchor="middle" fill="currentColor">B</text>
-      <rect x="184" y="140" width="40" height="30" rx="6" fill="#f59e0b" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.3"/><text x="204" y="160" text-anchor="middle" fill="currentColor">C</text>
-      <rect x="230" y="140" width="40" height="30" rx="6" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.18"/><text x="250" y="160" text-anchor="middle" fill="currentColor">D</text>
-      <rect x="276" y="140" width="40" height="30" rx="6" fill="#ef4444" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/><text x="296" y="160" text-anchor="middle" fill="currentColor">E</text>
-    </g>
-    <text x="204" y="186" font-size="9" text-anchor="middle" fill="#f59e0b" font-weight="700">↑ giữa</text>
-    <text x="340" y="160" font-size="10.5" fill="currentColor" opacity="0.8">⇒ bug trong C…E</text>
-  </g>
-  <g font-size="11.5" fill="currentColor">
-    <text x="16" y="250" font-weight="700">Vòng 3</text>
-    <text x="16" y="266" font-size="10" opacity="0.7">test D → bad</text>
-    <g font-size="12.5" font-weight="700">
-      <rect x="92" y="234" width="40" height="30" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.12"/><text x="112" y="254" text-anchor="middle" fill="currentColor" opacity="0.45">A</text>
-      <rect x="138" y="234" width="40" height="30" rx="6" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.12"/><text x="158" y="254" text-anchor="middle" fill="currentColor" opacity="0.45">B</text>
-      <rect x="184" y="234" width="40" height="30" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/><text x="204" y="254" text-anchor="middle" fill="currentColor">C</text>
-      <rect x="230" y="234" width="40" height="30" rx="7" fill="#ef4444" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.4"/><text x="250" y="254" text-anchor="middle" fill="currentColor">D</text>
-      <rect x="276" y="234" width="40" height="30" rx="6" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.18"/><text x="296" y="254" text-anchor="middle" fill="currentColor">E</text>
-    </g>
-    <text x="250" y="280" font-size="9" text-anchor="middle" fill="#ef4444" font-weight="700">↑ thủ phạm</text>
-    <text x="340" y="254" font-size="10.5" fill="currentColor" opacity="0.85" font-weight="700">⇒ D là first bad commit</text>
-  </g>
+<step-flow>
+<svg viewBox="0 0 700 330" role="img" aria-labelledby="g07a-t g07a-d" style="width:100%;max-width:700px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="g07a-t">git bisect: mỗi vòng test commit ở giữa và loại một nửa phạm vi</title>
+<desc id="g07a-d">Dải 8 commit từ A (good) đến H (bad). Bắt đầu: phạm vi A đến H. Vòng 1 test E ra bad nên còn A đến E, F và G bị loại. Vòng 2 test C ra good nên còn C đến E. Vòng 3 test D ra bad, C good ngay trước nên D là first bad commit. Cuối cùng git bisect reset đưa bạn về nhánh ban đầu. Các khung phạm vi bên dưới ngắn dần theo từng vòng.</desc>
+<defs><marker id="g07a-m" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<line x1="72" y1="74" x2="90" y2="74" stroke="currentColor" stroke-opacity="0.3" stroke-width="2"/>
+<line x1="134" y1="74" x2="152" y2="74" stroke="currentColor" stroke-opacity="0.3" stroke-width="2"/>
+<line x1="196" y1="74" x2="214" y2="74" stroke="currentColor" stroke-opacity="0.3" stroke-width="2"/>
+<line x1="258" y1="74" x2="276" y2="74" stroke="currentColor" stroke-opacity="0.3" stroke-width="2"/>
+<line x1="320" y1="74" x2="338" y2="74" stroke="currentColor" stroke-opacity="0.3" stroke-width="2"/>
+<line x1="382" y1="74" x2="400" y2="74" stroke="currentColor" stroke-opacity="0.3" stroke-width="2"/>
+<line x1="444" y1="74" x2="462" y2="74" stroke="currentColor" stroke-opacity="0.3" stroke-width="2"/>
+<rect x="28" y="56" width="44" height="36" rx="7" fill="#10b981" fill-opacity="0.2" stroke="#10b981" stroke-opacity="0.9" stroke-width="1"/>
+<text x="50" y="79" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">A</text>
+<rect x="90" y="56" width="44" height="36" rx="7" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.3" stroke-width="1"/>
+<text x="112" y="79" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">B</text>
+<rect x="152" y="56" width="44" height="36" rx="7" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.3" stroke-width="1"/>
+<text x="174" y="79" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">C</text>
+<rect x="214" y="56" width="44" height="36" rx="7" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.3" stroke-width="1"/>
+<text x="236" y="79" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">D</text>
+<rect x="276" y="56" width="44" height="36" rx="7" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.3" stroke-width="1"/>
+<text x="298" y="79" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">E</text>
+<rect x="338" y="56" width="44" height="36" rx="7" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.3" stroke-width="1"/>
+<text x="360" y="79" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">F</text>
+<rect x="400" y="56" width="44" height="36" rx="7" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.3" stroke-width="1"/>
+<text x="422" y="79" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">G</text>
+<rect x="462" y="56" width="44" height="36" rx="7" fill="#f43f5e" fill-opacity="0.2" stroke="#f43f5e" stroke-opacity="0.9" stroke-width="1"/>
+<text x="484" y="79" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">H</text>
+<text x="50" y="36" text-anchor="middle" font-size="12" font-weight="700" fill="#10b981">good</text>
+<text x="484" y="36" text-anchor="middle" font-size="12" font-weight="700" fill="#f43f5e">bad</text>
+<text x="267" y="36" text-anchor="middle" font-size="12" fill="currentColor" opacity="0.7">cũ → mới</text>
+<g data-step="1">
+<path d="M28 132 V140 H506 V132" fill="none" stroke="currentColor" stroke-width="2.5"/><text x="524" y="144" font-size="13" fill="currentColor">bắt đầu: 8 commit</text>
+</g>
+<g data-step="2">
+<rect x="276" y="56" width="44" height="36" rx="7" fill="#f43f5e" fill-opacity="0.3" stroke="#f43f5e" stroke-opacity="0.9" stroke-width="2.5"/><text x="298" y="79" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">E</text><text x="298" y="110" text-anchor="middle" font-size="12" font-weight="700" fill="#f43f5e">E bad</text>
+<rect x="336" y="54" width="110" height="40" rx="7" fill="currentColor" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3"/>
+<path d="M28 172 V180 H320 V172" fill="none" stroke="#f59e0b" stroke-width="2.5"/><text x="524" y="184" font-size="13" fill="currentColor">vòng 1: còn A…E</text>
+</g>
+<g data-step="3">
+<rect x="152" y="56" width="44" height="36" rx="7" fill="#10b981" fill-opacity="0.3" stroke="#10b981" stroke-opacity="0.9" stroke-width="2.5"/><text x="174" y="79" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">C</text><text x="174" y="110" text-anchor="middle" font-size="12" font-weight="700" fill="#10b981">C good</text>
+<rect x="88" y="54" width="48" height="40" rx="7" fill="currentColor" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3"/>
+<path d="M152 212 V220 H320 V212" fill="none" stroke="#f59e0b" stroke-width="2.5"/><text x="524" y="224" font-size="13" fill="currentColor">vòng 2: còn C…E</text>
+</g>
+<g data-step="4">
+<rect x="214" y="56" width="44" height="36" rx="7" fill="#f43f5e" fill-opacity="0.3" stroke="#f43f5e" stroke-opacity="0.9" stroke-width="2.5"/><text x="236" y="79" text-anchor="middle" font-size="14" font-weight="700" fill="currentColor">D</text><text x="236" y="110" text-anchor="middle" font-size="12" font-weight="700" fill="#f43f5e">D bad</text>
+<path d="M214 252 V260 H258 V252" fill="none" stroke="#f43f5e" stroke-width="2.5"/><text x="524" y="264" font-size="13" fill="currentColor">vòng 3: D là thủ phạm</text>
+<text x="236" y="290" text-anchor="middle" font-size="12" font-weight="700" fill="#f43f5e">first bad commit</text>
+</g>
+<g data-step="5">
+<path d="M236 304 V316 H484 V114" fill="none" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#g07a-m)"/>
+<text x="524" y="304" font-size="13" fill="currentColor" font-family="ui-monospace, monospace">git bisect reset</text>
+<text x="524" y="321" font-size="12" fill="currentColor" opacity="0.75">về nhánh ban đầu</text>
+</g>
 </svg>
+<step-note data-step="1">Bạn chỉ cần cho Git hai mốc: A chưa có bug (<code>good</code>), H đã có bug (<code>bad</code>). Thủ phạm nằm đâu đó sau A, tới H.</step-note>
+<step-note data-step="2">Git checkout commit ở giữa là E. Test ra <code>bad</code> nên bug xuất hiện ở E hoặc trước đó: F, G khỏi phải xem.</step-note>
+<step-note data-step="3">Còn A…E, Git lấy C ở giữa. C <code>good</code> nên bug sinh ra sau C: B cũng bị loại.</step-note>
+<step-note data-step="4">Chỉ còn D ở giữa C (good) và E (bad). D <code>bad</code> mà C ngay trước nó good, nên D là commit đầu tiên có bug. 8 commit cần 3 lần test; 200 commit cần khoảng 8.</step-note>
+<step-note data-step="5">Bisect để bạn đứng ở một commit giữa lịch sử (detached HEAD). <code>git bisect reset</code> đưa bạn về nhánh ban đầu. Với <code>git bisect run</code>, Git tự làm các vòng 1 đến 3: chạy lệnh test, exit 0 là good, khác 0 là bad.</step-note>
+</step-flow>
 
 > Ghi nhớ: exit code `125` trong `bisect run` nghĩa "commit này không kiểm tra được, bỏ qua" (ví dụ build lỗi vì lý do khác). Đừng dùng nó cho kết quả good/bad.
 

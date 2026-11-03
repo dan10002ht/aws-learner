@@ -361,36 +361,77 @@ Giải phẫu vòng for "kiểu C" (JavaScript/Java/Go) gồm 3 phần, ngăn c�
 
 Python đi đường khác: `range(1, 6)` tạo sẵn dãy số rồi `for` duyệt qua từng số. Chú ý `range(1, 6)` **không bao gồm số 6** — tính từ 1 đến *trước* 6.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="-12 0 732 380" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Vòng đời của vòng lặp for — khởi tạo, điều kiện, thân, bước nhảy</title>
-  <desc>Vòng tròn các bước của for: khởi tạo i bằng 1 chạy một lần, rồi kiểm tra điều kiện i nhỏ hơn hoặc bằng 5; nếu đúng thì chạy thân vòng và tăng i lên 1 rồi quay lại kiểm tra; nếu sai thì thoát vòng lặp.</desc>
-  <defs>
-    <marker id="forArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
-  </defs>
-  <text x="16" y="22" font-size="13.5" font-weight="700" fill="currentColor">Vòng đời của for: 3 phần — khởi tạo · điều kiện · bước nhảy</text>
-  <rect x="40" y="48" width="150" height="44" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="115" y="70" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">1. Khởi tạo</text>
-  <text x="115" y="86" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">i = 1 (chỉ một lần)</text>
-  <line x1="115" y1="92" x2="115" y2="128" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#forArr)"/>
-  <polygon points="115,132 235,182 115,232 -5,182" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-  <text x="115" y="178" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">2. Điều kiện</text>
-  <text x="115" y="195" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.8">i &lt;= 5 ?</text>
-  <line x1="235" y1="182" x2="300" y2="182" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#forArr)"/>
-  <text x="248" y="174" font-size="10.5" fill="#10b981" font-weight="700">Đúng</text>
-  <rect x="304" y="138" width="170" height="44" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="389" y="160" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Thân vòng lặp</text>
-  <text x="389" y="176" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">print(i)</text>
-  <line x1="389" y1="182" x2="389" y2="218" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#forArr)"/>
-  <rect x="304" y="222" width="170" height="44" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="389" y="244" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">3. Bước nhảy</text>
-  <text x="389" y="260" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75">i = i + 1 (i++)</text>
-  <path d="M304 244 H115 V236" fill="none" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#forArr)"/>
-  <text x="150" y="262" font-size="10.5" fill="currentColor" opacity="0.7">quay lại kiểm tra</text>
-  <line x1="115" y1="232" x2="115" y2="300" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#forArr)"/>
-  <text x="124" y="290" font-size="10.5" fill="#ef4444" font-weight="700">Sai</text>
-  <rect x="40" y="304" width="150" height="40" rx="9" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.3"/>
-  <text x="115" y="328" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Thoát vòng lặp</text>
+<auto-anim data-dur="16">
+<svg viewBox="0 0 520 400" role="img" aria-labelledby="pr02a-t pr02a-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="pr02a-t">Vòng for chạy từng bước: khởi tạo, điều kiện, thân, bước nhảy, lặp 5 vòng rồi thoát</title>
+<desc id="pr02a-d">Sơ đồ khối của for: khởi tạo i bằng 1 chạy một lần, rồi kiểm tra điều kiện i nhỏ hơn hoặc bằng 5; đúng thì chạy thân print(i), rồi bước nhảy i = i + 1 và quay lại kiểm tra; sai thì thoát vòng lặp. Khối đang chạy được tô sáng, ô bên phải cho thấy giá trị i và phép so sánh, màn hình in dần 1, 2, 3, 4, 5. Khi i bằng 6, điều kiện 6 &lt;= 5 sai nên thoát. Dải dưới cùng chia thời gian thành vòng 1 đến vòng 5.</desc>
+<defs><marker id="pr02a-m" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<rect x="20" y="16" width="170" height="48" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<polygon points="105,92 190,134 105,176 20,134" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<rect x="236" y="110" width="160" height="48" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
+<rect x="236" y="196" width="160" height="48" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
+<rect x="20" y="240" width="170" height="44" rx="9" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.3"/>
+<rect x="20" y="16" width="170" height="48" rx="9" fill="#8b5cf6" fill-opacity="0" stroke="#f59e0b" stroke-width="4" opacity="1"><animate attributeName="opacity" dur="16.0s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0500;0.1000;0.1500;0.2000;0.2500;0.3000;0.3500;0.4000;0.4500;0.5000;0.5500;0.6000;0.6500;0.7000;0.7500;0.8000;0.8500;0.9000;0.9500;1" values="1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0"/></rect>
+<polygon points="105,92 190,134 105,176 20,134" fill="#3b82f6" fill-opacity="0" stroke="#f59e0b" stroke-width="4" opacity="0"><animate attributeName="opacity" dur="16.0s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0500;0.1000;0.1500;0.2000;0.2500;0.3000;0.3500;0.4000;0.4500;0.5000;0.5500;0.6000;0.6500;0.7000;0.7500;0.8000;0.8500;0.9000;0.9500;1" values="0;1;0;0;1;0;0;1;0;0;1;0;0;1;0;0;1;0;0;0;0"/></polygon>
+<rect x="236" y="110" width="160" height="48" rx="9" fill="#10b981" fill-opacity="0" stroke="#f59e0b" stroke-width="4" opacity="0"><animate attributeName="opacity" dur="16.0s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0500;0.1000;0.1500;0.2000;0.2500;0.3000;0.3500;0.4000;0.4500;0.5000;0.5500;0.6000;0.6500;0.7000;0.7500;0.8000;0.8500;0.9000;0.9500;1" values="0;0;1;0;0;1;0;0;1;0;0;1;0;0;1;0;0;0;0;0;0"/></rect>
+<rect x="236" y="196" width="160" height="48" rx="9" fill="#f59e0b" fill-opacity="0" stroke="#f59e0b" stroke-width="4" opacity="0"><animate attributeName="opacity" dur="16.0s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0500;0.1000;0.1500;0.2000;0.2500;0.3000;0.3500;0.4000;0.4500;0.5000;0.5500;0.6000;0.6500;0.7000;0.7500;0.8000;0.8500;0.9000;0.9500;1" values="0;0;0;1;0;0;1;0;0;1;0;0;1;0;0;1;0;0;0;0;0"/></rect>
+<rect x="20" y="240" width="170" height="44" rx="9" fill="currentColor" fill-opacity="0" stroke="#f59e0b" stroke-width="4" opacity="0"><animate attributeName="opacity" dur="16.0s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0500;0.1000;0.1500;0.2000;0.2500;0.3000;0.3500;0.4000;0.4500;0.5000;0.5500;0.6000;0.6500;0.7000;0.7500;0.8000;0.8500;0.9000;0.9500;1" values="0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;1;1;1"/></rect>
+<text x="105" y="36" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">1. Khởi tạo</text>
+<text x="105" y="55" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">i = 1 (chỉ một lần)</text>
+<text x="105" y="131" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">2. Điều kiện</text>
+<text x="105" y="149" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.85">i &lt;= 5 ?</text>
+<text x="316" y="130" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">Thân vòng lặp</text>
+<text x="316" y="149" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">print(i)</text>
+<text x="316" y="216" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">3. Bước nhảy</text>
+<text x="316" y="235" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">i = i + 1 (i++)</text>
+<text x="105" y="267" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">Thoát vòng lặp</text>
+<line x1="105" y1="64" x2="105" y2="89" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.6" marker-end="url(#pr02a-m)"/>
+<line x1="190" y1="134" x2="233" y2="134" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.6" marker-end="url(#pr02a-m)"/>
+<text x="212" y="125" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor" fill-opacity="1" style="fill:#10b981">Đúng</text>
+<line x1="316" y1="158" x2="316" y2="193" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.6" marker-end="url(#pr02a-m)"/>
+<path d="M236 220 H160 V164" fill="none" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.6" marker-end="url(#pr02a-m)"/>
+<text x="198" y="214" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.75">quay lại</text>
+<line x1="105" y1="176" x2="105" y2="237" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.6" marker-end="url(#pr02a-m)"/>
+<text x="88" y="214" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor" style="fill:#f43f5e">Sai</text>
+<rect x="420" y="16" width="90" height="48" rx="9" fill="#8b5cf6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.3"/>
+<rect x="420" y="92" width="90" height="84" rx="9" fill="#3b82f6" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="465" y="112" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">so sánh</text>
+<text x="465" y="47" text-anchor="middle" font-size="18" font-weight="700" fill="currentColor" opacity="1">i = 1<animate attributeName="opacity" dur="16.0s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0500;0.1000;0.1500;0.2000;0.2500;0.3000;0.3500;0.4000;0.4500;0.5000;0.5500;0.6000;0.6500;0.7000;0.7500;0.8000;0.8500;0.9000;0.9500;1" values="1;1;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0"/></text>
+<text x="465" y="47" text-anchor="middle" font-size="18" font-weight="700" fill="currentColor" opacity="0">i = 2<animate attributeName="opacity" dur="16.0s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0500;0.1000;0.1500;0.2000;0.2500;0.3000;0.3500;0.4000;0.4500;0.5000;0.5500;0.6000;0.6500;0.7000;0.7500;0.8000;0.8500;0.9000;0.9500;1" values="0;0;0;1;1;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0"/></text>
+<text x="465" y="47" text-anchor="middle" font-size="18" font-weight="700" fill="currentColor" opacity="0">i = 3<animate attributeName="opacity" dur="16.0s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0500;0.1000;0.1500;0.2000;0.2500;0.3000;0.3500;0.4000;0.4500;0.5000;0.5500;0.6000;0.6500;0.7000;0.7500;0.8000;0.8500;0.9000;0.9500;1" values="0;0;0;0;0;0;1;1;1;0;0;0;0;0;0;0;0;0;0;0;0"/></text>
+<text x="465" y="47" text-anchor="middle" font-size="18" font-weight="700" fill="currentColor" opacity="0">i = 4<animate attributeName="opacity" dur="16.0s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0500;0.1000;0.1500;0.2000;0.2500;0.3000;0.3500;0.4000;0.4500;0.5000;0.5500;0.6000;0.6500;0.7000;0.7500;0.8000;0.8500;0.9000;0.9500;1" values="0;0;0;0;0;0;0;0;0;1;1;1;0;0;0;0;0;0;0;0;0"/></text>
+<text x="465" y="47" text-anchor="middle" font-size="18" font-weight="700" fill="currentColor" opacity="0">i = 5<animate attributeName="opacity" dur="16.0s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0500;0.1000;0.1500;0.2000;0.2500;0.3000;0.3500;0.4000;0.4500;0.5000;0.5500;0.6000;0.6500;0.7000;0.7500;0.8000;0.8500;0.9000;0.9500;1" values="0;0;0;0;0;0;0;0;0;0;0;0;1;1;1;0;0;0;0;0;0"/></text>
+<text x="465" y="47" text-anchor="middle" font-size="18" font-weight="700" fill="currentColor" opacity="0">i = 6<animate attributeName="opacity" dur="16.0s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0500;0.1000;0.1500;0.2000;0.2500;0.3000;0.3500;0.4000;0.4500;0.5000;0.5500;0.6000;0.6500;0.7000;0.7500;0.8000;0.8500;0.9000;0.9500;1" values="0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;1"/></text>
+<g opacity="0"><animate attributeName="opacity" dur="16.0s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0500;0.1000;0.1500;0.2000;0.2500;0.3000;0.3500;0.4000;0.4500;0.5000;0.5500;0.6000;0.6500;0.7000;0.7500;0.8000;0.8500;0.9000;0.9500;1" values="0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0"/><text x="465" y="140" text-anchor="middle" font-size="16" font-weight="700" fill="currentColor">1 &lt;= 5</text><text x="465" y="163" text-anchor="middle" font-size="14" font-weight="700" fill="#10b981">Đúng</text></g>
+<g opacity="0"><animate attributeName="opacity" dur="16.0s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0500;0.1000;0.1500;0.2000;0.2500;0.3000;0.3500;0.4000;0.4500;0.5000;0.5500;0.6000;0.6500;0.7000;0.7500;0.8000;0.8500;0.9000;0.9500;1" values="0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0"/><text x="465" y="140" text-anchor="middle" font-size="16" font-weight="700" fill="currentColor">2 &lt;= 5</text><text x="465" y="163" text-anchor="middle" font-size="14" font-weight="700" fill="#10b981">Đúng</text></g>
+<g opacity="0"><animate attributeName="opacity" dur="16.0s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0500;0.1000;0.1500;0.2000;0.2500;0.3000;0.3500;0.4000;0.4500;0.5000;0.5500;0.6000;0.6500;0.7000;0.7500;0.8000;0.8500;0.9000;0.9500;1" values="0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0"/><text x="465" y="140" text-anchor="middle" font-size="16" font-weight="700" fill="currentColor">3 &lt;= 5</text><text x="465" y="163" text-anchor="middle" font-size="14" font-weight="700" fill="#10b981">Đúng</text></g>
+<g opacity="0"><animate attributeName="opacity" dur="16.0s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0500;0.1000;0.1500;0.2000;0.2500;0.3000;0.3500;0.4000;0.4500;0.5000;0.5500;0.6000;0.6500;0.7000;0.7500;0.8000;0.8500;0.9000;0.9500;1" values="0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0"/><text x="465" y="140" text-anchor="middle" font-size="16" font-weight="700" fill="currentColor">4 &lt;= 5</text><text x="465" y="163" text-anchor="middle" font-size="14" font-weight="700" fill="#10b981">Đúng</text></g>
+<g opacity="0"><animate attributeName="opacity" dur="16.0s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0500;0.1000;0.1500;0.2000;0.2500;0.3000;0.3500;0.4000;0.4500;0.5000;0.5500;0.6000;0.6500;0.7000;0.7500;0.8000;0.8500;0.9000;0.9500;1" values="0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0"/><text x="465" y="140" text-anchor="middle" font-size="16" font-weight="700" fill="currentColor">5 &lt;= 5</text><text x="465" y="163" text-anchor="middle" font-size="14" font-weight="700" fill="#10b981">Đúng</text></g>
+<g opacity="0"><animate attributeName="opacity" dur="16.0s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0500;0.1000;0.1500;0.2000;0.2500;0.3000;0.3500;0.4000;0.4500;0.5000;0.5500;0.6000;0.6500;0.7000;0.7500;0.8000;0.8500;0.9000;0.9500;1" values="0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;0;0;0;0"/><text x="465" y="140" text-anchor="middle" font-size="16" font-weight="700" fill="currentColor">6 &lt;= 5</text><text x="465" y="163" text-anchor="middle" font-size="14" font-weight="700" fill="#f43f5e">Sai</text></g>
+<rect x="236" y="262" width="274" height="44" rx="9" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="246" y="289" text-anchor="start" font-size="13" fill="currentColor" opacity="0.75">Màn hình:</text>
+<text x="336" y="291" text-anchor="middle" font-size="17" font-weight="700" fill="currentColor" opacity="0">1<animate attributeName="opacity" dur="16.0s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0500;0.1000;0.1500;0.2000;0.2500;0.3000;0.3500;0.4000;0.4500;0.5000;0.5500;0.6000;0.6500;0.7000;0.7500;0.8000;0.8500;0.9000;0.9500;1" values="0;0;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1"/></text>
+<text x="372" y="291" text-anchor="middle" font-size="17" font-weight="700" fill="currentColor" opacity="0">2<animate attributeName="opacity" dur="16.0s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0500;0.1000;0.1500;0.2000;0.2500;0.3000;0.3500;0.4000;0.4500;0.5000;0.5500;0.6000;0.6500;0.7000;0.7500;0.8000;0.8500;0.9000;0.9500;1" values="0;0;0;0;0;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1"/></text>
+<text x="408" y="291" text-anchor="middle" font-size="17" font-weight="700" fill="currentColor" opacity="0">3<animate attributeName="opacity" dur="16.0s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0500;0.1000;0.1500;0.2000;0.2500;0.3000;0.3500;0.4000;0.4500;0.5000;0.5500;0.6000;0.6500;0.7000;0.7500;0.8000;0.8500;0.9000;0.9500;1" values="0;0;0;0;0;0;0;0;1;1;1;1;1;1;1;1;1;1;1;1;1"/></text>
+<text x="444" y="291" text-anchor="middle" font-size="17" font-weight="700" fill="currentColor" opacity="0">4<animate attributeName="opacity" dur="16.0s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0500;0.1000;0.1500;0.2000;0.2500;0.3000;0.3500;0.4000;0.4500;0.5000;0.5500;0.6000;0.6500;0.7000;0.7500;0.8000;0.8500;0.9000;0.9500;1" values="0;0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;1;1;1;1;1"/></text>
+<text x="480" y="291" text-anchor="middle" font-size="17" font-weight="700" fill="currentColor" opacity="0">5<animate attributeName="opacity" dur="16.0s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0500;0.1000;0.1500;0.2000;0.2500;0.3000;0.3500;0.4000;0.4500;0.5000;0.5500;0.6000;0.6500;0.7000;0.7500;0.8000;0.8500;0.9000;0.9500;1" values="0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;1;1"/></text>
+<text x="20" y="334" text-anchor="start" font-size="13" fill="currentColor" opacity="0.7">thời gian</text>
+<rect x="21.0" y="346" width="22.0" height="14" rx="3" fill="#8b5cf6" fill-opacity="0.3"/>
+<rect x="45.0" y="346" width="70.0" height="14" rx="3" fill="#3b82f6" fill-opacity="0.3"/>
+<text x="80.0" y="380" text-anchor="middle" font-size="13" fill="currentColor">vòng 1</text>
+<rect x="117.0" y="346" width="70.0" height="14" rx="3" fill="#10b981" fill-opacity="0.3"/>
+<text x="152.0" y="380" text-anchor="middle" font-size="13" fill="currentColor">vòng 2</text>
+<rect x="189.0" y="346" width="70.0" height="14" rx="3" fill="#3b82f6" fill-opacity="0.3"/>
+<text x="224.0" y="380" text-anchor="middle" font-size="13" fill="currentColor">vòng 3</text>
+<rect x="261.0" y="346" width="70.0" height="14" rx="3" fill="#10b981" fill-opacity="0.3"/>
+<text x="296.0" y="380" text-anchor="middle" font-size="13" fill="currentColor">vòng 4</text>
+<rect x="333.0" y="346" width="70.0" height="14" rx="3" fill="#3b82f6" fill-opacity="0.3"/>
+<text x="368.0" y="380" text-anchor="middle" font-size="13" fill="currentColor">vòng 5</text>
+<rect x="405.0" y="346" width="94.0" height="14" rx="3" fill="#64748b" fill-opacity="0.3"/>
+<text x="452.0" y="380" text-anchor="middle" font-size="13" fill="currentColor">thoát</text>
+<rect x="20" y="340" width="3" height="26" fill="#f59e0b"><animate attributeName="x" dur="16.0s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0500;0.1000;0.1500;0.2000;0.2500;0.3000;0.3500;0.4000;0.4500;0.5000;0.5500;0.6000;0.6500;0.7000;0.7500;0.8000;0.8500;0.9000;0.9500;1" values="20.0;44.0;68.0;92.0;116.0;140.0;164.0;188.0;212.0;236.0;260.0;284.0;308.0;332.0;356.0;380.0;404.0;428.0;452.0;476.0;476.0"/></rect>
 </svg>
+</auto-anim>
 
 ### 3.2. Vòng lặp while — lặp đến khi điều kiện sai
 
@@ -457,6 +498,70 @@ std::cout << "Tiêu được " << ngay << " ngày, còn dư " << tien << std::en
 Điểm thú vị: Go **không có** từ khoá `while` — vòng `for` chỉ ghi mỗi điều kiện chính là "while phiên bản Go".
 
 > **Lỗi người mới hay gặp — VÒNG LẶP VÔ HẠN (infinite loop)**: Nếu trong thân vòng `while` bạn **quên thay đổi** thứ liên quan đến điều kiện (ví dụ quên dòng `tien = tien - 30`), điều kiện mãi mãi đúng → chương trình lặp **vĩnh viễn**, treo máy hoặc ngốn CPU. Quy tắc an toàn: mỗi khi viết `while`, tự hỏi ngay *"điều gì trong thân vòng sẽ khiến điều kiện này sai vào một lúc nào đó?"*. Nếu lỡ dính vòng vô hạn, nhấn `Ctrl + C` trong cửa sổ dòng lệnh để ngắt chương trình.
+
+Cùng đoạn code trên chạy hai lần: bản trên đầy đủ, bản dưới quên dòng `tien = tien - 30`.
+
+<auto-anim data-dur="10.8">
+<svg viewBox="0 0 520 362" role="img" aria-labelledby="pr02b-t pr02b-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="pr02b-t">while tien &gt;= 30: có trừ tiền thì dừng sau 3 ngày, quên trừ tiền thì lặp mãi</title>
+<desc id="pr02b-d">Hai bản chạy song song trên cùng trục thời gian. Bản trên có dòng tien = tien - 30: thanh tiền ngắn dần 100, 70, 40, 10; khi còn 10, điều kiện 10 &gt;= 30 sai nên dừng, in Tiêu được 3 ngày, còn dư 10. Bản dưới quên dòng trừ tiền: thanh tiền đứng yên ở 100, điều kiện luôn đúng, số ngày cứ tăng mãi, chỉ dừng khi bấm Ctrl + C.</desc>
+<rect x="8" y="10" width="504" height="138" rx="10" fill="#10b981" fill-opacity="0.06" stroke="#10b981" stroke-opacity="0.4"/>
+<text x="20" y="34" font-size="14" font-weight="700" fill="currentColor">Có dòng tien = tien - 30</text>
+<rect x="20" y="50" width="340.0" height="26" rx="4" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2"/>
+<rect x="20" y="50" height="26" rx="4" fill="#f59e0b" fill-opacity="0.45" width="340.0"><animate attributeName="width" dur="10.8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0833;0.1667;0.2500;0.3333;0.4167;0.5000;0.5833;0.6667;0.7500;0.8333;0.9167;1" values="340.0;238.0;238.0;136.0;136.0;34.0;34.0;34.0;34.0;34.0;34.0;34.0;34.0"/></rect>
+<line x1="122.0" y1="44" x2="122.0" y2="82" stroke="#f43f5e" stroke-width="2" stroke-dasharray="4 3"/>
+<text x="122.0" y="98" text-anchor="middle" font-size="13" fill="#f43f5e" font-weight="700">30</text>
+<text x="372.0" y="69" font-size="14" font-weight="700" fill="currentColor" opacity="0">tien = 10<animate attributeName="opacity" dur="10.8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0833;0.1667;0.2500;0.3333;0.4167;0.5000;0.5833;0.6667;0.7500;0.8333;0.9167;1" values="0;0;0;0;0;1;1;1;1;1;1;1;1"/></text>
+<text x="372.0" y="69" font-size="14" font-weight="700" fill="currentColor" opacity="0">tien = 40<animate attributeName="opacity" dur="10.8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0833;0.1667;0.2500;0.3333;0.4167;0.5000;0.5833;0.6667;0.7500;0.8333;0.9167;1" values="0;0;0;1;1;0;0;0;0;0;0;0;0"/></text>
+<text x="372.0" y="69" font-size="14" font-weight="700" fill="currentColor" opacity="0">tien = 70<animate attributeName="opacity" dur="10.8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0833;0.1667;0.2500;0.3333;0.4167;0.5000;0.5833;0.6667;0.7500;0.8333;0.9167;1" values="0;1;1;0;0;0;0;0;0;0;0;0;0"/></text>
+<text x="372.0" y="69" font-size="14" font-weight="700" fill="currentColor" opacity="1">tien = 100<animate attributeName="opacity" dur="10.8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0833;0.1667;0.2500;0.3333;0.4167;0.5000;0.5833;0.6667;0.7500;0.8333;0.9167;1" values="1;0;0;0;0;0;0;0;0;0;0;0;0"/></text>
+<text x="20" y="122" font-size="14" font-weight="700" fill="currentColor" opacity="1">ngay = 0<animate attributeName="opacity" dur="10.8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0833;0.1667;0.2500;0.3333;0.4167;0.5000;0.5833;0.6667;0.7500;0.8333;0.9167;1" values="1;0;0;0;0;0;0;0;0;0;0;0;0"/></text>
+<text x="20" y="122" font-size="14" font-weight="700" fill="currentColor" opacity="0">ngay = 1<animate attributeName="opacity" dur="10.8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0833;0.1667;0.2500;0.3333;0.4167;0.5000;0.5833;0.6667;0.7500;0.8333;0.9167;1" values="0;1;1;0;0;0;0;0;0;0;0;0;0"/></text>
+<text x="20" y="122" font-size="14" font-weight="700" fill="currentColor" opacity="0">ngay = 2<animate attributeName="opacity" dur="10.8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0833;0.1667;0.2500;0.3333;0.4167;0.5000;0.5833;0.6667;0.7500;0.8333;0.9167;1" values="0;0;0;1;1;0;0;0;0;0;0;0;0"/></text>
+<text x="20" y="122" font-size="14" font-weight="700" fill="currentColor" opacity="0">ngay = 3<animate attributeName="opacity" dur="10.8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0833;0.1667;0.2500;0.3333;0.4167;0.5000;0.5833;0.6667;0.7500;0.8333;0.9167;1" values="0;0;0;0;0;1;1;1;1;1;1;1;1"/></text>
+<text x="130" y="122" font-size="14" fill="currentColor" opacity="1">100 &gt;= 30 đúng: lặp tiếp<animate attributeName="opacity" dur="10.8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0833;0.1667;0.2500;0.3333;0.4167;0.5000;0.5833;0.6667;0.7500;0.8333;0.9167;1" values="1;0;0;0;0;0;0;0;0;0;0;0;0"/></text>
+<text x="130" y="122" font-size="14" fill="currentColor" opacity="0">chạy thân vòng lặp<animate attributeName="opacity" dur="10.8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0833;0.1667;0.2500;0.3333;0.4167;0.5000;0.5833;0.6667;0.7500;0.8333;0.9167;1" values="0;1;0;1;0;1;0;0;0;0;0;0;0"/></text>
+<text x="130" y="122" font-size="14" fill="currentColor" opacity="0">70 &gt;= 30 đúng: lặp tiếp<animate attributeName="opacity" dur="10.8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0833;0.1667;0.2500;0.3333;0.4167;0.5000;0.5833;0.6667;0.7500;0.8333;0.9167;1" values="0;0;1;0;0;0;0;0;0;0;0;0;0"/></text>
+<text x="130" y="122" font-size="14" fill="currentColor" opacity="0">40 &gt;= 30 đúng: lặp tiếp<animate attributeName="opacity" dur="10.8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0833;0.1667;0.2500;0.3333;0.4167;0.5000;0.5833;0.6667;0.7500;0.8333;0.9167;1" values="0;0;0;0;1;0;0;0;0;0;0;0;0"/></text>
+<text x="130" y="122" font-size="14" fill="#f43f5e" opacity="0">10 &gt;= 30 sai: dừng<animate attributeName="opacity" dur="10.8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0833;0.1667;0.2500;0.3333;0.4167;0.5000;0.5833;0.6667;0.7500;0.8333;0.9167;1" values="0;0;0;0;0;0;1;1;1;1;1;1;1"/></text>
+<rect x="8" y="158" width="504" height="138" rx="10" fill="#f43f5e" fill-opacity="0.06" stroke="#f43f5e" stroke-opacity="0.4"/>
+<text x="20" y="182" font-size="14" font-weight="700" fill="currentColor">Quên dòng trừ tiền</text>
+<rect x="20" y="198" width="340.0" height="26" rx="4" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2"/>
+<rect x="20" y="198" height="26" rx="4" fill="#f59e0b" fill-opacity="0.45" width="340.0"><animate attributeName="width" dur="10.8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0833;0.1667;0.2500;0.3333;0.4167;0.5000;0.5833;0.6667;0.7500;0.8333;0.9167;1" values="340.0;340.0;340.0;340.0;340.0;340.0;340.0;340.0;340.0;340.0;340.0;340.0;340.0"/></rect>
+<line x1="122.0" y1="192" x2="122.0" y2="230" stroke="#f43f5e" stroke-width="2" stroke-dasharray="4 3"/>
+<text x="122.0" y="246" text-anchor="middle" font-size="13" fill="#f43f5e" font-weight="700">30</text>
+<text x="372.0" y="217" font-size="14" font-weight="700" fill="currentColor" opacity="1">tien = 100<animate attributeName="opacity" dur="10.8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0833;0.1667;0.2500;0.3333;0.4167;0.5000;0.5833;0.6667;0.7500;0.8333;0.9167;1" values="1;1;1;1;1;1;1;1;1;1;1;1;1"/></text>
+<text x="20" y="270" font-size="14" font-weight="700" fill="currentColor" opacity="1">ngay = 0<animate attributeName="opacity" dur="10.8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0833;0.1667;0.2500;0.3333;0.4167;0.5000;0.5833;0.6667;0.7500;0.8333;0.9167;1" values="1;0;0;0;0;0;0;0;0;0;0;0;0"/></text>
+<text x="20" y="270" font-size="14" font-weight="700" fill="currentColor" opacity="0">ngay = 1<animate attributeName="opacity" dur="10.8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0833;0.1667;0.2500;0.3333;0.4167;0.5000;0.5833;0.6667;0.7500;0.8333;0.9167;1" values="0;1;1;0;0;0;0;0;0;0;0;0;0"/></text>
+<text x="20" y="270" font-size="14" font-weight="700" fill="currentColor" opacity="0">ngay = 2<animate attributeName="opacity" dur="10.8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0833;0.1667;0.2500;0.3333;0.4167;0.5000;0.5833;0.6667;0.7500;0.8333;0.9167;1" values="0;0;0;1;1;0;0;0;0;0;0;0;0"/></text>
+<text x="20" y="270" font-size="14" font-weight="700" fill="currentColor" opacity="0">ngay = 3<animate attributeName="opacity" dur="10.8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0833;0.1667;0.2500;0.3333;0.4167;0.5000;0.5833;0.6667;0.7500;0.8333;0.9167;1" values="0;0;0;0;0;1;1;0;0;0;0;0;0"/></text>
+<text x="20" y="270" font-size="14" font-weight="700" fill="currentColor" opacity="0">ngay = 4<animate attributeName="opacity" dur="10.8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0833;0.1667;0.2500;0.3333;0.4167;0.5000;0.5833;0.6667;0.7500;0.8333;0.9167;1" values="0;0;0;0;0;0;0;1;1;0;0;0;0"/></text>
+<text x="20" y="270" font-size="14" font-weight="700" fill="currentColor" opacity="0">ngay = 5<animate attributeName="opacity" dur="10.8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0833;0.1667;0.2500;0.3333;0.4167;0.5000;0.5833;0.6667;0.7500;0.8333;0.9167;1" values="0;0;0;0;0;0;0;0;0;1;1;0;0"/></text>
+<text x="20" y="270" font-size="14" font-weight="700" fill="currentColor" opacity="0">ngay = 6<animate attributeName="opacity" dur="10.8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0833;0.1667;0.2500;0.3333;0.4167;0.5000;0.5833;0.6667;0.7500;0.8333;0.9167;1" values="0;0;0;0;0;0;0;0;0;0;0;1;1"/></text>
+<text x="130" y="270" font-size="14" fill="currentColor" opacity="1">100 &gt;= 30 đúng: lặp tiếp<animate attributeName="opacity" dur="10.8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0833;0.1667;0.2500;0.3333;0.4167;0.5000;0.5833;0.6667;0.7500;0.8333;0.9167;1" values="1;0;1;0;1;0;1;0;1;0;1;0;0"/></text>
+<text x="130" y="270" font-size="14" fill="currentColor" opacity="0">chạy thân vòng lặp<animate attributeName="opacity" dur="10.8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0833;0.1667;0.2500;0.3333;0.4167;0.5000;0.5833;0.6667;0.7500;0.8333;0.9167;1" values="0;1;0;1;0;1;0;1;0;1;0;1;1"/></text>
+<text x="500" y="34" text-anchor="end" font-size="13" font-weight="700" fill="#10b981" opacity="0">✓ 3 ngày, dư 10<animate attributeName="opacity" dur="10.8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0833;0.1667;0.2500;0.3333;0.4167;0.5000;0.5833;0.6667;0.7500;0.8333;0.9167;1" values="0;0;0;0;0;0;1;1;1;1;1;1;1"/></text>
+<text x="500" y="182" text-anchor="end" font-size="13" font-weight="700" fill="#f43f5e" opacity="0">✗ vô hạn: Ctrl + C<animate attributeName="opacity" dur="10.8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0833;0.1667;0.2500;0.3333;0.4167;0.5000;0.5833;0.6667;0.7500;0.8333;0.9167;1" values="0;0;0;0;0;0;0;1;1;1;1;1;1"/></text>
+<text x="20" y="310" font-size="13" fill="currentColor" opacity="0.7">thời gian (mỗi ô: một lần kiểm tra hoặc một lần chạy thân)</text>
+<rect x="21.0" y="320" width="38.0" height="14" rx="3" fill="#3b82f6" fill-opacity="0.3"/>
+<rect x="61.0" y="320" width="38.0" height="14" rx="3" fill="#f59e0b" fill-opacity="0.3"/>
+<rect x="101.0" y="320" width="38.0" height="14" rx="3" fill="#3b82f6" fill-opacity="0.3"/>
+<rect x="141.0" y="320" width="38.0" height="14" rx="3" fill="#f59e0b" fill-opacity="0.3"/>
+<rect x="181.0" y="320" width="38.0" height="14" rx="3" fill="#3b82f6" fill-opacity="0.3"/>
+<rect x="221.0" y="320" width="38.0" height="14" rx="3" fill="#f59e0b" fill-opacity="0.3"/>
+<rect x="261.0" y="320" width="38.0" height="14" rx="3" fill="#3b82f6" fill-opacity="0.3"/>
+<rect x="301.0" y="320" width="38.0" height="14" rx="3" fill="#f59e0b" fill-opacity="0.3"/>
+<rect x="341.0" y="320" width="38.0" height="14" rx="3" fill="#3b82f6" fill-opacity="0.3"/>
+<rect x="381.0" y="320" width="38.0" height="14" rx="3" fill="#f59e0b" fill-opacity="0.3"/>
+<rect x="421.0" y="320" width="38.0" height="14" rx="3" fill="#3b82f6" fill-opacity="0.3"/>
+<rect x="461.0" y="320" width="38.0" height="14" rx="3" fill="#f59e0b" fill-opacity="0.3"/>
+<rect x="20" y="342" width="12" height="12" rx="2" fill="#3b82f6" fill-opacity="0.3"/>
+<text x="38" y="353" font-size="13" fill="currentColor">kiểm tra điều kiện</text>
+<rect x="190" y="342" width="12" height="12" rx="2" fill="#f59e0b" fill-opacity="0.3"/>
+<text x="208" y="353" font-size="13" fill="currentColor">chạy thân</text>
+<rect x="20" y="315" width="3" height="24" fill="#f59e0b"><animate attributeName="x" dur="10.8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0.0000;0.0833;0.1667;0.2500;0.3333;0.4167;0.5000;0.5833;0.6667;0.7500;0.8333;0.9167;1" values="20.0;60.0;100.0;140.0;180.0;220.0;260.0;300.0;340.0;380.0;420.0;460.0;460.0"/></rect>
+</svg>
+</auto-anim>
 
 ## 4. break và continue — hai nút điều khiển khẩn cấp
 
@@ -763,6 +868,81 @@ Hình dung: hàng rào dài 10 mét, mỗi 1 mét cắm một cọc — cần ba
 | In 1 → 10 (Python) | `range(1, 11)` | `range(1, 10)` → thiếu số 10 |
 | In 1 → 10 (JS/Java/Go) | `i = 1; i <= 10` | `i = 1; i < 10` → thiếu số 10 |
 | Lặp đúng 10 lần từ 0 | `i = 0; i < 10` | `i = 0; i <= 10` → thừa 1 lần (11 lần) |
+
+<svg viewBox="0 0 520 330" role="img" aria-labelledby="pr02c-t pr02c-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="pr02c-t">Lệch 1: hàng rào 10 m cần 11 cọc; range(1, 11) lấy 1 đến 10, range(1, 10) thiếu số 10</title>
+<desc id="pr02c-d">Trên: hàng rào dài 10 mét, mỗi mét một cọc, có cọc ở cả hai đầu nên 10 khoảng cần 11 cọc. Dưới: trục số từ 1 đến 11. range(1, 11) lấy 1 đến 10, dừng trước 11, đủ 10 số. range(1, 10) dừng trước 10 nên chỉ có 9 số, thiếu số 10.</desc>
+<text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">Hàng rào 10 m, mỗi 1 m một cọc</text>
+<path d="M40 44 V36 H480 V44" fill="none" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5"/>
+<text x="260.0" y="58" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.8">10 khoảng × 1 m</text>
+<line x1="40" y1="78" x2="480" y2="78" stroke="#f59e0b" stroke-width="3" stroke-opacity="0.6"/>
+<line x1="40" y1="96" x2="480" y2="96" stroke="#f59e0b" stroke-width="3" stroke-opacity="0.6"/>
+<rect x="35" y="66" width="10" height="44" rx="2" fill="#8b5cf6" fill-opacity="0.6" stroke="#8b5cf6"/>
+<text x="40" y="128" text-anchor="middle" font-size="13" fill="currentColor">1</text>
+<rect x="79" y="66" width="10" height="44" rx="2" fill="#8b5cf6" fill-opacity="0.35" stroke="#8b5cf6"/>
+<text x="84" y="128" text-anchor="middle" font-size="13" fill="currentColor">2</text>
+<rect x="123" y="66" width="10" height="44" rx="2" fill="#8b5cf6" fill-opacity="0.35" stroke="#8b5cf6"/>
+<text x="128" y="128" text-anchor="middle" font-size="13" fill="currentColor">3</text>
+<rect x="167" y="66" width="10" height="44" rx="2" fill="#8b5cf6" fill-opacity="0.35" stroke="#8b5cf6"/>
+<text x="172" y="128" text-anchor="middle" font-size="13" fill="currentColor">4</text>
+<rect x="211" y="66" width="10" height="44" rx="2" fill="#8b5cf6" fill-opacity="0.35" stroke="#8b5cf6"/>
+<text x="216" y="128" text-anchor="middle" font-size="13" fill="currentColor">5</text>
+<rect x="255" y="66" width="10" height="44" rx="2" fill="#8b5cf6" fill-opacity="0.35" stroke="#8b5cf6"/>
+<text x="260" y="128" text-anchor="middle" font-size="13" fill="currentColor">6</text>
+<rect x="299" y="66" width="10" height="44" rx="2" fill="#8b5cf6" fill-opacity="0.35" stroke="#8b5cf6"/>
+<text x="304" y="128" text-anchor="middle" font-size="13" fill="currentColor">7</text>
+<rect x="343" y="66" width="10" height="44" rx="2" fill="#8b5cf6" fill-opacity="0.35" stroke="#8b5cf6"/>
+<text x="348" y="128" text-anchor="middle" font-size="13" fill="currentColor">8</text>
+<rect x="387" y="66" width="10" height="44" rx="2" fill="#8b5cf6" fill-opacity="0.35" stroke="#8b5cf6"/>
+<text x="392" y="128" text-anchor="middle" font-size="13" fill="currentColor">9</text>
+<rect x="431" y="66" width="10" height="44" rx="2" fill="#8b5cf6" fill-opacity="0.35" stroke="#8b5cf6"/>
+<text x="436" y="128" text-anchor="middle" font-size="13" fill="currentColor">10</text>
+<rect x="475" y="66" width="10" height="44" rx="2" fill="#8b5cf6" fill-opacity="0.6" stroke="#8b5cf6"/>
+<text x="480" y="128" text-anchor="middle" font-size="13" fill="currentColor">11</text>
+<text x="504" y="22" text-anchor="end" font-size="14" font-weight="700" fill="#8b5cf6">11 cọc, không phải 10</text>
+<line x1="16" y1="146" x2="504" y2="146" stroke="currentColor" stroke-opacity="0.15"/>
+<text x="16" y="172" font-size="14" font-weight="700" fill="currentColor">range của Python dừng TRƯỚC số cuối</text>
+<text x="40" y="198" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">1</text>
+<text x="84" y="198" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">2</text>
+<text x="128" y="198" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">3</text>
+<text x="172" y="198" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">4</text>
+<text x="216" y="198" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">5</text>
+<text x="260" y="198" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">6</text>
+<text x="304" y="198" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">7</text>
+<text x="348" y="198" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">8</text>
+<text x="392" y="198" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">9</text>
+<text x="436" y="198" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">10</text>
+<text x="480" y="198" text-anchor="middle" font-size="13" fill="currentColor" opacity="0.7">11</text>
+<text x="16" y="220" font-size="13" font-weight="700" fill="currentColor" font-family="ui-monospace, monospace">range(1, 11)</text>
+<text x="504" y="220" text-anchor="end" font-size="13" font-weight="700" fill="#10b981">10 số: 1 → 10 ✓</text>
+<line x1="40" y1="234" x2="436" y2="234" stroke="#10b981" stroke-width="3" stroke-opacity="0.5"/>
+<circle cx="40" cy="234" r="8" fill="#10b981" fill-opacity="0.75"/>
+<circle cx="84" cy="234" r="8" fill="#10b981" fill-opacity="0.75"/>
+<circle cx="128" cy="234" r="8" fill="#10b981" fill-opacity="0.75"/>
+<circle cx="172" cy="234" r="8" fill="#10b981" fill-opacity="0.75"/>
+<circle cx="216" cy="234" r="8" fill="#10b981" fill-opacity="0.75"/>
+<circle cx="260" cy="234" r="8" fill="#10b981" fill-opacity="0.75"/>
+<circle cx="304" cy="234" r="8" fill="#10b981" fill-opacity="0.75"/>
+<circle cx="348" cy="234" r="8" fill="#10b981" fill-opacity="0.75"/>
+<circle cx="392" cy="234" r="8" fill="#10b981" fill-opacity="0.75"/>
+<circle cx="436" cy="234" r="8" fill="#10b981" fill-opacity="0.75"/>
+<circle cx="480" cy="234" r="8" fill="none" stroke="#10b981" stroke-width="2" stroke-dasharray="3 2"/>
+<text x="480" y="258" text-anchor="middle" font-size="13" fill="#10b981">dừng</text>
+<text x="16" y="284" font-size="13" font-weight="700" fill="currentColor" font-family="ui-monospace, monospace">range(1, 10)</text>
+<text x="504" y="284" text-anchor="end" font-size="13" font-weight="700" fill="#f43f5e">9 số: thiếu 10 ✗</text>
+<line x1="40" y1="298" x2="392" y2="298" stroke="#f43f5e" stroke-width="3" stroke-opacity="0.5"/>
+<circle cx="40" cy="298" r="8" fill="#f43f5e" fill-opacity="0.75"/>
+<circle cx="84" cy="298" r="8" fill="#f43f5e" fill-opacity="0.75"/>
+<circle cx="128" cy="298" r="8" fill="#f43f5e" fill-opacity="0.75"/>
+<circle cx="172" cy="298" r="8" fill="#f43f5e" fill-opacity="0.75"/>
+<circle cx="216" cy="298" r="8" fill="#f43f5e" fill-opacity="0.75"/>
+<circle cx="260" cy="298" r="8" fill="#f43f5e" fill-opacity="0.75"/>
+<circle cx="304" cy="298" r="8" fill="#f43f5e" fill-opacity="0.75"/>
+<circle cx="348" cy="298" r="8" fill="#f43f5e" fill-opacity="0.75"/>
+<circle cx="392" cy="298" r="8" fill="#f43f5e" fill-opacity="0.75"/>
+<circle cx="436" cy="298" r="8" fill="none" stroke="#f43f5e" stroke-width="2" stroke-dasharray="3 2"/>
+<text x="436" y="322" text-anchor="middle" font-size="13" fill="#f43f5e">dừng</text>
+</svg>
 
 > **Lỗi người mới hay gặp**: Khi vòng lặp cho kết quả "gần đúng nhưng sai sai", việc đầu tiên hãy nghi ngờ lệch 1. Cách kiểm tra nhanh: **thử bằng tay với trường hợp nhỏ** — thay vì 1000 lần, chạy thử 3 lần rồi đếm xem có đúng 3 không, và kiểm tra **giá trị đầu tiên** lẫn **giá trị cuối cùng** có đúng như mong đợi.
 
