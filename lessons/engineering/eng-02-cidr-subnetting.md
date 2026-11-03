@@ -226,7 +226,7 @@ python3 -c "import ipaddress as i; print(i.ip_network('10.0.0.0/16').overlaps(i.
 # True
 ```
 
-> **Ghi nhớ:** Hai CIDR **cùng prefix** thì hoặc trùng hệt nhau, hoặc không overlap. Overlap "một phần" chỉ xảy ra khi prefix khác nhau.
+> **Ghi nhớ:** Hai CIDR **cùng prefix** thì hoặc trùng hệt nhau, hoặc không overlap. Với CIDR hợp lệ, khi prefix khác nhau mà có overlap thì block nhỏ nằm trọn trong block lớn; không có giao một phần mà không bao hàm.
 
 ## 7. Route table & longest-prefix match
 

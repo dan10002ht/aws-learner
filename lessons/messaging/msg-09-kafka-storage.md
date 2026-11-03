@@ -130,36 +130,15 @@ Mỗi partition được nhân bản thành **replication-factor** bản (ví d�
 - **1 leader**: nhận **mọi** đọc và ghi cho partition đó. Producer/consumer luôn nói chuyện với leader.
 - **N-1 follower**: liên tục **fetch** dữ liệu từ leader để copy y hệt. Follower **không** phục vụ client (trừ tính năng fetch-from-follower cho đọc gần vùng địa lý).
 
-**ISR (In-Sync Replicas)** là tập các replica (gồm cả leader) đang **theo kịp** leader — cụ thể là đã fetch trong vòng `replica.lag.time.max.ms` (mặc định 30s). Follower tụt lại quá lâu bị **loại khỏi ISR**; khi bắt kịp lại thì được thêm vào. ISR là "danh sách những bản đủ tin cậy để bầu làm leader mới".
+**ISR (In-Sync Replicas)** là tập các replica (gồm cả leader) đang **theo kịp** leader — follower phải tiếp tục fetch và bắt kịp log end của leader trong khoảng `replica.lag.time.max.ms` (mặc định 30s). Chỉ còn gửi fetch nhưng không bắt kịp vẫn có thể bị loại khỏi ISR. Follower tụt lại quá lâu bị **loại khỏi ISR**; khi bắt kịp lại thì được thêm vào. ISR là "danh sách những bản đủ tin cậy để bầu làm leader mới".
 
-<svg viewBox="0 0 660 300" role="img" aria-labelledby="rep-t rep-d" style="width:100%;max-width:620px;height:auto;display:block;margin:1.25rem auto">
-<title id="rep-t">Replication: producer ghi leader, follower fetch, ISR và high watermark</title>
-<desc id="rep-d">Producer gửi tới leader trên broker 1; hai follower trên broker 2 và 3 fetch để đồng bộ; ISR gồm cả ba; high watermark là offset đã được mọi ISR sao chép</desc>
-<rect x="30" y="60" width="160" height="120" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="110" y="80" text-anchor="middle" font-size="11" fill="currentColor">Broker 1 — LEADER</text>
-<text x="110" y="100" text-anchor="middle" font-size="9" fill="currentColor">log: 0 1 2 3 4 5</text>
-<text x="110" y="118" text-anchor="middle" font-size="9" fill="currentColor">LEO = 6</text>
-<text x="110" y="150" text-anchor="middle" font-size="9" fill="currentColor">HW = 5 (offset 0..4 đã commit)</text>
-<rect x="30" y="70" width="115" height="16" rx="3" fill="#10b981" fill-opacity="0.14" stroke="none"/>
-<rect x="470" y="40" width="160" height="90" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="550" y="60" text-anchor="middle" font-size="11" fill="currentColor">Broker 2 — follower</text>
-<text x="550" y="80" text-anchor="middle" font-size="9" fill="currentColor">log: 0 1 2 3 4</text>
-<text x="550" y="98" text-anchor="middle" font-size="9" fill="currentColor">theo kịp → trong ISR</text>
-<rect x="470" y="150" width="160" height="90" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="550" y="170" text-anchor="middle" font-size="11" fill="currentColor">Broker 3 — follower</text>
-<text x="550" y="190" text-anchor="middle" font-size="9" fill="currentColor">log: 0 1 2 3 4</text>
-<text x="550" y="208" text-anchor="middle" font-size="9" fill="currentColor">theo kịp → trong ISR</text>
-<rect x="30" y="215" width="180" height="55" rx="6" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="120" y="234" text-anchor="middle" font-size="10" fill="currentColor">Producer acks=all</text>
-<text x="120" y="251" text-anchor="middle" font-size="9" fill="currentColor">chỉ được ack khi ISR đã copy</text>
-<line x1="120" y1="215" x2="110" y2="180" stroke="currentColor" stroke-width="1.5" marker-end="url(#ar)"/>
-<line x1="190" y1="95" x2="470" y2="80" stroke="currentColor" stroke-width="1" marker-end="url(#ar)"/>
-<text x="330" y="80" text-anchor="middle" font-size="9" fill="currentColor">fetch</text>
-<line x1="190" y1="130" x2="470" y2="190" stroke="currentColor" stroke-width="1" marker-end="url(#ar)"/>
-<text x="330" y="175" text-anchor="middle" font-size="9" fill="currentColor">fetch</text>
-<text x="330" y="285" text-anchor="middle" font-size="10" fill="currentColor">ISR = {B1, B2, B3}. HW = min(LEO các ISR) = 5 → consumer chỉ đọc offset &lt; HW (tới offset 4)</text>
-<defs><marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
-</svg>
+<step-flow>
+<svg font-family="ui-sans-serif, system-ui, sans-serif" viewBox="0 0 680 365" role="img" aria-labelledby="fixmsg09-t fixmsg09-d" style="width:100%;max-width:680px;height:auto;display:block;margin:1.25rem auto"><title id="fixmsg09-t">Follower fetch và high watermark tiến khi ISR bắt kịp</title><desc id="fixmsg09-d">Follower fetch và high watermark tiến khi ISR bắt kịp</desc><defs><marker id="fixmsg09-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs><rect x="20" y="45" width="220" height="135" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="130" y="70" font-size="13" text-anchor="middle" fill="currentColor">B1 — leader</text><text x="130" y="94" font-size="13" text-anchor="middle" fill="currentColor">log: 0 1 2 3 4 5</text><text x="130" y="116" font-size="13" text-anchor="middle" fill="currentColor">LEO = 6</text><text x="130" y="150" font-size="13" text-anchor="middle" fill="currentColor">HW đầu = 5 · đọc 0..4</text><rect x="440" y="35" width="210" height="105" rx="5" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/><text x="545" y="60" font-size="13" text-anchor="middle" fill="currentColor">B2 — follower · ISR</text><text x="545" y="83" font-size="13" text-anchor="middle" fill="currentColor">log: 0 1 2 3 4</text><text x="545" y="107" font-size="13" text-anchor="middle" fill="currentColor">LEO đầu = 5</text><rect x="440" y="210" width="210" height="105" rx="5" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/><text x="545" y="235" font-size="13" text-anchor="middle" fill="currentColor">B3 — follower · ISR</text><text x="545" y="258" font-size="13" text-anchor="middle" fill="currentColor">log: 0 1 2 3 4</text><text x="545" y="282" font-size="13" text-anchor="middle" fill="currentColor">LEO đầu = 5</text><rect x="20" y="230" width="220" height="70" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="130" y="255" font-size="13" text-anchor="middle" fill="currentColor">Producer · acks=all</text><text x="130" y="278" font-size="13" text-anchor="middle" fill="currentColor">đợi ISR copy offset 5</text><g data-step="1"><path d="M130 230 L130 180" stroke="currentColor" fill="none" stroke-width="2" marker-end="url(#fixmsg09-a)"/><text x="280" y="30" font-size="13" text-anchor="middle" fill="currentColor">ISR = {B1, B2, B3}</text></g><g data-step="2"><path d="M440 70 L240 90" stroke="currentColor" fill="none" stroke-width="2" marker-end="url(#fixmsg09-a)"/><path d="M440 245 L240 145" stroke="currentColor" fill="none" stroke-width="2" marker-end="url(#fixmsg09-a)"/><text x="335" y="78" font-size="13" text-anchor="middle" fill="currentColor">fetch request</text><text x="335" y="200" font-size="13" text-anchor="middle" fill="currentColor">fetch request</text></g><g data-step="3"><path d="M240 118 L440 105" stroke="currentColor" fill="none" stroke-width="2" marker-end="url(#fixmsg09-a)"/><path d="M240 170 L440 278" stroke="currentColor" fill="none" stroke-width="2" marker-end="url(#fixmsg09-a)"/><text x="340" y="133" font-size="13" text-anchor="middle" fill="currentColor">response: offset 5</text><text x="350" y="284" font-size="13" text-anchor="middle" fill="currentColor">response: offset 5</text></g><g data-step="4"><rect x="590" y="72" width="26" height="24" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="603" y="90" font-size="13" text-anchor="middle" fill="currentColor">5</text><rect x="590" y="247" width="26" height="24" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="603" y="265" font-size="13" text-anchor="middle" fill="currentColor">5</text><text x="345" y="340" font-size="14" text-anchor="middle" fill="currentColor">Sau fetch kế tiếp báo LEO=6: HW → 6, ack offset 5</text></g></svg>
+<step-note data-step="1">Snapshot ban đầu: leader LEO=6, hai follower LEO=5, nên HW=5 và consumer chỉ thấy offset 0..4.</step-note>
+<step-note data-step="2">Follower khởi tạo fetch tới leader; fetch liên tục chưa đủ để ở lại ISR nếu không bắt kịp.</step-note>
+<step-note data-step="3">Leader trả offset 5. Hướng dữ liệu trả về ngược với hướng fetch request.</step-note>
+<step-note data-step="4">Hai follower đã copy offset 5; khi fetch tiếp theo báo LEO=6, leader biết cả ISR đã có record và tiến HW lên 6. Đây là bước tiếp của snapshot minh hoạ, không đổi HW=5 ban đầu.</step-note>
+</step-flow>
 
 ### 2.5 High watermark: chỉ đọc được cái đã commit
 

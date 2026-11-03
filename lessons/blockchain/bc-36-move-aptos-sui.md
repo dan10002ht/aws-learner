@@ -25,32 +25,48 @@ Move đảo ngược triết lý: một đồng coin là **một tờ tiền v�
 
 ### 2.2 Bản chất: `mapping`-balance vs resource
 
-<svg viewBox="0 0 720 300" role="img" aria-labelledby="cmp-t cmp-d" style="width:100%;max-width:680px;height:auto;display:block;margin:1.25rem auto">
-<title id="cmp-t">Mapping-balance của Solidity vs resource của Move</title>
-<desc id="cmp-d">Bên trái Solidity chỉnh sửa hai con số trong một bảng, bên phải Move di chuyển một đối tượng coin từ chủ này sang chủ khác</desc>
-<text x="180" y="26" text-anchor="middle" font-size="14" fill="currentColor">Solidity — sửa con số trong bảng</text>
-<rect x="70" y="55" width="220" height="90" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="180" y="80" text-anchor="middle" font-size="12" fill="currentColor">mapping(address =&gt; uint256)</text>
-<text x="105" y="108" text-anchor="start" font-size="12" fill="currentColor">Alice: 100 → 90</text>
-<text x="105" y="130" text-anchor="start" font-size="12" fill="currentColor">Bob:&#160;&#160;&#160;20 → 30</text>
-<text x="180" y="180" text-anchor="middle" font-size="11" fill="currentColor">Nếu quên trừ Alice → tiền in ra từ hư không</text>
-<text x="180" y="200" text-anchor="middle" font-size="11" fill="currentColor">Tổng cung không được ngôn ngữ bảo vệ</text>
-<line x1="360" y1="40" x2="360" y2="270" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4"/>
-<text x="545" y="26" text-anchor="middle" font-size="14" fill="currentColor">Move — di chuyển một tờ tiền</text>
-<rect x="410" y="70" width="90" height="60" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="455" y="95" text-anchor="middle" font-size="12" fill="currentColor">Alice</text>
-<rect x="425" y="150" width="60" height="34" rx="6" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="455" y="172" text-anchor="middle" font-size="11" fill="currentColor">Coin 10</text>
-<rect x="590" y="70" width="90" height="60" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="635" y="95" text-anchor="middle" font-size="12" fill="currentColor">Bob</text>
-<line x1="490" y1="167" x2="605" y2="130" stroke="currentColor" stroke-width="1.5" marker-end="url(#mv)"/>
-<text x="547" y="150" text-anchor="middle" font-size="11" fill="#10b981">move</text>
-<text x="545" y="210" text-anchor="middle" font-size="11" fill="currentColor">Coin rời Alice thì Alice hết coin đó</text>
-<text x="545" y="228" text-anchor="middle" font-size="11" fill="currentColor">Không copy, không mất — tổng cung tự bảo toàn</text>
-<defs><marker id="mv" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<ab-toggle data-labels="Mapping|Resource">
+<svg viewBox="0 0 520 270" role="img" aria-labelledby="bc36-fix-0-t bc36-fix-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="bc36-fix-0-t">Mapping: sửa số dư</title>
+<desc id="bc36-fix-0-d">Hai chủ Alice và Bob cố định; biểu diễn số dư hoặc quyền giữ một Coin 10.</desc>
+<text x="260" y="26" font-size="15" fill="currentColor" text-anchor="middle">Solidity: cập nhật hai số dư</text>
+<rect x="30" y="60" width="195" height="125" rx="4" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<rect x="295" y="60" width="195" height="125" rx="4" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="127" y="86" font-size="14" fill="currentColor" text-anchor="middle">Alice</text>
+<text x="392" y="86" font-size="14" fill="currentColor" text-anchor="middle">Bob</text>
+<line x1="230" y1="135" x2="290" y2="135" stroke="currentColor"/>
+<path d="M280 130 L290 135 L280 140" fill="none" stroke="currentColor"/>
+<text x="260" y="118" font-size="13" fill="currentColor" text-anchor="middle">10</text>
+<rect x="50" y="105" width="155" height="48" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<rect x="315" y="105" width="155" height="48" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="127" y="135" font-size="15" fill="currentColor" text-anchor="middle">100 → 90</text>
+<text x="392" y="135" font-size="15" fill="currentColor" text-anchor="middle">20 → 30</text>
+<text x="260" y="215" font-size="14" fill="currentColor" text-anchor="middle">mapping(address → uint256)</text>
+<text x="260" y="244" font-size="14" fill="currentColor" text-anchor="middle">Quên trừ Alice: 100 + 30 ≠ 120</text>
 </svg>
+<svg viewBox="0 0 520 270" role="img" aria-labelledby="bc36-fix-1-t bc36-fix-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="bc36-fix-1-t">Resource: chuyển quyền giữ</title>
+<desc id="bc36-fix-1-d">Hai chủ Alice và Bob cố định; biểu diễn số dư hoặc quyền giữ một Coin 10.</desc>
+<text x="260" y="26" font-size="15" fill="currentColor" text-anchor="middle">Move: chuyển Coin không copy/drop</text>
+<rect x="30" y="60" width="195" height="125" rx="4" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<rect x="295" y="60" width="195" height="125" rx="4" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="127" y="86" font-size="14" fill="currentColor" text-anchor="middle">Alice</text>
+<text x="392" y="86" font-size="14" fill="currentColor" text-anchor="middle">Bob</text>
+<line x1="230" y1="135" x2="290" y2="135" stroke="currentColor"/>
+<path d="M280 130 L290 135 L280 140" fill="none" stroke="currentColor"/>
+<text x="260" y="118" font-size="13" fill="currentColor" text-anchor="middle">10</text>
+<rect x="70" y="105" width="115" height="48" rx="4" fill="none" stroke="currentColor" stroke-dasharray="4 3"/>
+<text x="127" y="135" font-size="13" fill="currentColor" text-anchor="middle">đã chuyển</text>
+<rect x="335" y="105" width="115" height="48" rx="4" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="392" y="135" font-size="15" fill="currentColor" text-anchor="middle">Coin 10</text>
+<text x="260" y="215" font-size="14" fill="currentColor" text-anchor="middle">Coin rời Alice; Bob giữ chính giá trị đó</text>
+<text x="260" y="244" font-size="13" fill="currentColor" text-anchor="middle">Mint/burn và tổng value do module kiểm soát</text>
+</svg>
+<ab-note>Solidity cập nhật Alice 100 → 90 và Bob 20 → 30. Bỏ phép trừ sẽ làm tổng tăng; developer phải giữ bất biến.</ab-note>
+<ab-note>Move chặn copy/bỏ ngầm Coin thiếu copy/drop; hình chỉ theo dõi Coin 10 được chuyển, không phải toàn bộ số dư. Module vẫn có thể mint/unpack: tổng cung không tự được bảo toàn.</ab-note>
+</ab-toggle>
 
-Trong Solidity, tính đúng đắn của tài sản là **trách nhiệm của lập trình viên** (nhớ trừ, nhớ kiểm tra overflow, nhớ chống re-entrancy). Trong Move, một phần lớn tính đúng đắn ấy **là bất biến của ngôn ngữ**: bạn *không thể viết ra* code làm mất hay nhân đôi resource mà compiler không chặn.
+Trong Solidity, tính đúng đắn của tài sản là **trách nhiệm của lập trình viên** (nhớ trừ, nhớ kiểm tra overflow, nhớ chống re-entrancy). Trong Move, compiler kiểm soát **sao chép và bỏ giá trị resource**: thiếu `copy`/`drop` thì không thể copy hay bỏ ngầm. Module định nghĩa type vẫn có thể tạo, unpack và sửa `value`; quyền mint/burn và bảo toàn tổng giá trị vẫn phải được lập trình đúng.
 
 ### 2.3 Abilities — 4 "quyền" của một type
 
@@ -73,7 +89,7 @@ module my_addr::asset {
         value: u64,
     }
 
-    /// Đúc coin — chỉ nơi duy nhất giá trị được TẠO ra.
+    /// Ví dụ abilities: mint công khai này KHÔNG kiểm quyền, không dùng làm tiền thật.
     public fun mint(value: u64): Coin {
         Coin { value }
     }
@@ -223,7 +239,7 @@ Cả hai đều là **Move**, nhưng "flavor" Move khác nhau: Aptos gần Move 
 
 ### 2.8 Vì sao Move an toàn hơn cho tài sản
 
-1. **Bảo toàn tài sản là bất biến ngôn ngữ**: thiếu `copy`/`drop` khiến "in tiền từ hư không" hay "làm mất tiền âm thầm" *không biên dịch được*, thay vì chỉ là lỗi logic runtime.
+1. **Resource không được copy/bỏ ngầm**: thiếu `copy`/`drop` khiến các thao tác đó không hợp lệ. Bảo toàn tổng `value` và quyền mint/burn cần logic module hoặc capability; `mint` công khai ở 2.3 cho phép caller tạo giá trị tuỳ ý.
 2. **Bounds & type an toàn tại compile-time**: không có con trỏ tự do, không truy cập ngoài giới hạn; global storage truy cập qua `acquires` được kiểm soát.
 3. **Không có re-entrancy kiểu DAO**: Move không cho phép callback tuỳ ý vào code người ngoài ở giữa việc cập nhật state theo cách để lộ trạng thái nửa vời như pattern call-trước-cập-nhật của Solidity.
 4. **`signer` không giả mạo**: quyền sở hữu được biểu diễn bằng capability, không phải một địa chỉ có thể bị spoof.
@@ -278,6 +294,6 @@ module my_addr::wallet {
 - Khác biệt bản chất với Solidity: Solidity đặt tài sản ở **tầng dữ liệu** (số trong `mapping`) và phó thác đúng đắn cho developer; Move nâng nó lên **tầng type** mà compiler cưỡng chế.
 - **Aptos**: account-centric, global storage `(address, type)`, thao tác bằng `move_to`/`borrow_global`, song song bằng Block-STM.
 - **Sui**: object-centric, mọi thứ là object có UID, chuyển bằng `transfer`, cho phép **thực thi song song** và đường đi nhanh cho owned object.
-- Move an toàn hơn vì **bảo toàn tài sản, loại re-entrancy kiểu DAO, `signer` không giả mạo, và có Move Prover** — xoá bỏ cả một họ lỗi đắt giá của Solidity ngay tại compile-time.
+- Move hỗ trợ an toàn bằng **kiểm soát copy/drop resource, hạn chế re-entrancy kiểu DAO, `signer` không giả mạo, và Move Prover** — xoá bỏ cả một họ lỗi đắt giá của Solidity ngay tại compile-time.
 
 > **Bài tiếp theo:** so sánh hệ sinh thái L1 hiệu năng cao và cách chọn nền tảng theo bài toán — từ mô hình thực thi tới trải nghiệm developer.

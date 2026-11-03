@@ -173,10 +173,14 @@ db.execute(q)
 
 ```python
 # ✓ Code phòng thủ — parameterized query (prepared statement)
-db.execute(
-    "SELECT * FROM users WHERE name = %s AND pass = %s",
-    (name, pw),  # driver gửi data tách biệt khỏi câu lệnh -> không thể "thoát" ra code
-)
+row = db.execute(
+    "SELECT id, password_hash FROM users WHERE name = %s",
+    (name,),  # driver gửi data tách biệt khỏi câu lệnh
+).fetchone()
+# verify_password dùng thư viện Argon2id/bcrypt, không so sánh mật khẩu thô.
+if row is None or not verify_password(row[1], pw):
+    raise InvalidCredentials()
+# Chỉ tạo session cho row[0] sau khi xác minh thành công.
 ```
 
 <ab-toggle data-labels="Nối chuỗi|Placeholder">

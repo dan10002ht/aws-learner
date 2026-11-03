@@ -186,7 +186,7 @@ Kết quả:
 | city    | doanh_thu |
 |---------|-----------|
 | HCM     | 36000000  |
-| Ha Noi  | 21000000  |
+| Ha Noi  | 21300000  |
 | Da Nang | 1050000   |
 
 > Lỗi người mới hay gặp: viết `SELECT c.city, p.name, SUM(...)` nhưng `GROUP BY c.city`. Một số database báo lỗi, một số (như SQLite/MySQL chế độ lỏng) trả về `p.name` ngẫu nhiên trong rổ — sai âm thầm. Hãy luôn đưa **mọi** cột không-tổng-hợp vào `GROUP BY`.
@@ -215,7 +215,7 @@ Kết quả:
 | customer_id | doanh_thu |
 |-------------|-----------|
 | 4           | 36000000  |
-| 1           | 18500000  |
+| 1           | 18650000  |
 
 Thử dùng `WHERE doanh_thu > 10000000` thay cho `HAVING` → **báo lỗi**, vì lúc `WHERE` chạy thì `SUM` còn chưa được tính.
 
@@ -324,7 +324,7 @@ FROM (
 
 | doanh_thu_tb_moi_khach |
 |------------------------|
-| 14637500               |
+| 14587500               |
 
 > Lỗi người mới hay gặp: subquery trong `FROM` **bắt buộc** phải có bí danh (`AS theo_khach`). Quên đặt tên là báo lỗi cú pháp ngay.
 
@@ -370,7 +370,7 @@ Kết quả:
 
 | trung_binh | cao_nhat |
 |------------|----------|
-| 14637500   | 36000000 |
+| 14587500   | 36000000 |
 
 Bạn có thể khai báo **nhiều** CTE, cách nhau bằng dấu phẩy, và CTE sau dùng được CTE trước:
 
@@ -564,7 +564,7 @@ ORDER BY hang;
 | name | doanh_thu | hang |
 |------|-----------|------|
 | Dung | 36000000  | 1    |
-| An   | 18500000  | 2    |
+| An   | 18650000  | 2    |
 | Chi  | 2650000   | 3    |
 | Binh | 1050000   | 4    |
 

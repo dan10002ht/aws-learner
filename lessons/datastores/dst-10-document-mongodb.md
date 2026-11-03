@@ -21,7 +21,7 @@ Trong SQL, một entity bị "xé" ra nhiều bảng và bạn phải `JOIN` l�
 
 Một document là **BSON** (Binary JSON) — JSON dạng nhị phân, thêm kiểu dữ liệu mà JSON thuần thiếu: `ObjectId`, `Date`, `Decimal128`, `int32/int64`, `binary`. Đây là ví dụ một document `order` với dữ liệu **nested** (object lồng object, array lồng object):
 
-```json
+```javascript
 {
   "_id": ObjectId("665f1a2b9c1e4a0012ab34cd"),
   "code": "ORD-2026-001",
@@ -132,7 +132,7 @@ Cân bằng: index tăng tốc **đọc** nhưng làm **ghi chậm hơn** và t�
 ```javascript
 // Doanh thu mỗi khách trong tháng 7/2026, kèm tên khách, top chi tiêu
 db.orders.aggregate([
-  // 1) $match: lọc SỚM để giảm dữ liệu (dùng được index) — luôn đặt đầu
+  // 1) $match: lọc SỚM để giảm dữ liệu (dùng được index) — đưa lên sớm khi không phụ thuộc stage trước
   { $match: {
       status: "paid",
       createdAt: { $gte: ISODate("2026-07-01"), $lt: ISODate("2026-08-01") }
@@ -150,7 +150,7 @@ db.orders.aggregate([
       foreignField: "_id",
       as: "customer"
   }},
-  { $unwind: "$customer" },         // biến mảng 1 phần tử thành object
+  { $unwind: { path: "$customer", preserveNullAndEmptyArrays: true } }, // giữ order thiếu customer
   // 4) $sort + $limit: xếp hạng, lấy top 5
   { $sort: { revenue: -1 } },
   { $limit: 5 },
@@ -163,14 +163,14 @@ Các stage cốt lõi cần nhớ:
 
 | Stage | Vai trò (tương đương SQL) |
 |-------|---------------------------|
-| `$match` | `WHERE` — **đặt đầu** để dùng index và cắt dữ liệu sớm |
+| `$match` | `WHERE` — đưa lên sớm khi điều kiện không phụ thuộc field do stage trước sinh ra |
 | `$group` | `GROUP BY` + hàm tổng hợp (`$sum`, `$avg`, `$max`, `$push`) |
 | `$lookup` | `LEFT JOIN` sang collection khác |
 | `$unwind` | "nổ" mảng thành nhiều document, mỗi phần tử một dòng |
 | `$sort` / `$limit` | `ORDER BY` / `LIMIT` |
 | `$project` | `SELECT` các cột, tính field mới |
 
-Mẹo hiệu năng: `$match` và `$sort` càng gần đầu càng tốt để tận dụng index; `$lookup` trên trường **có index** ở collection `from`, nếu không sẽ scan mỗi lần join.
+Mẹo hiệu năng: `$match` trên field gốc đưa lên sớm; `$sort` chỉ có thể tận dụng index collection khi đứng đầu hoặc sau `$match` phù hợp. `$sort` theo `revenue` sau `$group` trong ví dụ phải sắp kết quả tổng hợp; `$lookup` trên trường **có index** ở collection `from`, nếu không sẽ scan mỗi lần join.
 
 
 <step-flow>
@@ -213,7 +213,7 @@ Một node đơn chết là mất dịch vụ. **Replica set** là một nhóm n
 
 - **Write concern** `w: "majority"`: write chỉ được xác nhận khi **đa số** node đã ghi → chống mất dữ liệu khi failover. `w:1` nhanh hơn nhưng có thể mất write nếu primary chết trước khi replicate.
 - **Read preference**: `primary` (mặc định, đọc dữ liệu mới nhất) hay `secondaryPreferred` (giảm tải, chấp nhận trễ replication — eventual consistency).
-- Nên có **số node lẻ** (3, 5) để election luôn đạt majority; node thứ 3 có thể là **arbiter** (chỉ bỏ phiếu, không giữ dữ liệu) khi thiếu tài nguyên.
+- Nên có **số node lẻ** (3, 5) để election luôn đạt majority; node thứ 3 có thể là **arbiter** (chỉ bỏ phiếu, không giữ dữ liệu) khi thiếu tài nguyên. Arbiter không giữ dữ liệu: với primary-secondary-arbiter, mất một node dữ liệu thì `w:"majority"` không thể được đáp ứng, dù vẫn đủ phiếu election. Ưu tiên ba node giữ dữ liệu.
 
 ### 2.7 Sharding — Scale ngang khi một node không đủ
 
@@ -308,7 +308,7 @@ db.orders.createIndex({ "customer.tier": 1, createdAt: -1 })
 | Anti-pattern | Vì sao hại | Cách đúng |
 |--------------|-----------|-----------|
 | **Unbounded array** (embed mảng tăng vô hạn: mọi comment, mọi event vào 1 doc) | Document phình quá **giới hạn 16 MB**, ghi ngày càng chậm (rewrite cả doc), index multikey nổ | **Reference**: tách sang collection riêng, mỗi phần tử một document |
-| **Massive document** | Đọc 1 field vẫn tải cả doc lớn qua mạng và RAM | Tách document, chỉ embed phần đọc cùng nhau |
+| **Massive document** | Không dùng projection có thể truyền cả doc; projection giảm mạng nhưng đọc/lưu trữ document lớn vẫn tốn tài nguyên | Tách document, chỉ embed phần đọc cùng nhau |
 | **Query không index** | COLLSCAN, chậm tuyến tính | `explain()` rồi tạo index đúng theo ESR |
 | **Lạm dụng `$lookup`** | Join runtime trên dữ liệu lớn tốn kém | Cân nhắc embed hoặc denormalize field hay đọc |
 | **Shard key cardinality thấp** | Dồn 1 shard (jumbo chunk), scatter-gather | Chọn key cardinality cao, khớp query pattern |

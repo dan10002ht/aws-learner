@@ -6,7 +6,7 @@ Sau bài này bạn có thể:
 - Giải thích cặp **private key / public key**, và **địa chỉ ví** được suy ra từ đâu.
 - Hiểu **đường cong elliptic secp256k1** ở mức trực giác — vì sao "một chiều" và vì sao an toàn.
 - Đọc hiểu quy trình **ký (sign)** và **kiểm (verify)** một giao dịch bằng **ECDSA**.
-- Trả lời dứt điểm: **vì sao verify chữ ký không bao giờ làm lộ private key**.
+- Trả lời dứt điểm: **vì sao verify không cần private key và an toàn khi triển khai đúng**.
 - So sánh **ECDSA vs EdDSA** và **ECC vs RSA** — biết mỗi thứ dùng ở đâu.
 
 ---
@@ -21,7 +21,7 @@ Mật mã **khóa công khai** giải bằng **hai chìa khác nhau nhưng liên
 - **Public key** — như **địa chỉ hộp thư** dán ngoài đường: ai cũng thấy được, dùng để **nhận** và để **kiểm chứng** bạn là chủ.
 - **Private key** — **chìa mở hộp** giữ kín tuyệt đối: chỉ chủ mới có, dùng để **ký** (chứng minh quyền sở hữu).
 
-Điều kỳ diệu: từ private key **suy ra được** public key **rất dễ**, nhưng từ public key **quay ngược** về private key thì **bất khả về mặt tính toán**. Đó là một **hàm một chiều có cửa sập** (trapdoor one-way function). Toàn bộ quyền sở hữu trên blockchain đứng trên tính chất này.
+Điều kỳ diệu: từ private key **suy ra được** public key **rất dễ**, nhưng từ public key **quay ngược** về private key thì **bất khả về mặt tính toán**. Ở đây ta dựa vào **độ khó tính ngược của phép nhân vô hướng ECC**, không phải một cửa sập để đảo phép nhân. Toàn bộ quyền sở hữu trên blockchain đứng trên tính chất này.
 
 > Trên blockchain **không có "mật khẩu tài khoản" nào lưu ở đâu cả**. "Sở hữu coin" = **biết private key** có thể tạo ra chữ ký hợp lệ. Mất private key = mất coin vĩnh viễn; lộ private key = mất coin ngay lập tức. Không có nút "quên mật khẩu".
 
@@ -51,7 +51,7 @@ Trong Bitcoin/Ethereum, chuỗi suy dẫn chỉ đi **một hướng**, không �
 <defs><marker id="ka" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
 </svg>
 
-- **Private key** thực chất chỉ là **một số nguyên 256-bit ngẫu nhiên** `k` (khoảng từ 1 tới ~1.16×10⁷⁷ — nhiều hơn số nguyên tử ước lượng trong vũ trụ quan sát được). Đoán trúng bằng brute-force là bất khả.
+- **Private key** thực chất chỉ là **một số nguyên 256-bit ngẫu nhiên** `k` (khoảng từ 1 tới ~1.16×10⁷⁷ — một không gian khóa khổng lồ). Đoán trúng bằng brute-force là bất khả.
 - **Public key** = `K = k · G`, với `G` là **điểm sinh (generator)** cố định của đường cong. Đây là **phép nhân điểm trên đường cong elliptic** — dễ tính xuôi, cực khó tính ngược.
 - **Address** = băm public key lại cho gọn (Ethereum: `keccak256(K)` lấy 20 byte cuối; Bitcoin: `RIPEMD160(SHA256(K))`).
 
@@ -61,7 +61,7 @@ Trong Bitcoin/Ethereum, chuỗi suy dẫn chỉ đi **một hướng**, không �
 
 1. **Cộng điểm**: trên đường cong định nghĩa được phép "cộng" hai điểm `P + Q` ra một điểm thứ ba, theo quy tắc hình học (kẻ đường thẳng, lấy giao, lật). Đây **không phải** cộng tọa độ thông thường.
 2. **Nhân vô hướng**: `k · G` nghĩa là cộng `G` với chính nó `k` lần. Nhờ thuật toán "double-and-add", tính `k·G` chỉ mất ~256 bước dù `k` khổng lồ — **rất nhanh**.
-3. **Bài toán logarit rời rạc (ECDLP)**: biết `G` và `K = k·G`, tìm lại `k` **không có** thuật toán nhanh nào — phải thử gần như toàn bộ không gian. Đây chính là "cửa sập": xuôi dễ, ngược bất khả.
+3. **Bài toán logarit rời rạc (ECDLP)**: biết `G` và `K = k·G`, tìm lại `k` chưa có thuật toán cổ điển hiệu quả trên đường cong này. Thuật toán generic như Pollard rho cần cỡ √n phép toán với nhóm bậc n (khoảng 2¹²⁸ cho nhóm 256-bit), vẫn bất khả thi thực tế.
 
 > Vì sao chọn ECC thay vì RSA? Cùng mức an toàn, ECC dùng **khóa ngắn hơn nhiều**: một khóa **256-bit ECC** an toàn tương đương một khóa **~3072-bit RSA**. Khóa ngắn ⇒ chữ ký nhỏ, tính nhanh, tiết kiệm dung lượng on-chain — cực kỳ quan trọng khi mỗi byte đều tốn phí.
 
@@ -94,7 +94,7 @@ Khi Alice gửi coin, ví của cô **không** gửi private key đi đâu cả.
 </g>
 <g data-step="4">
 <rect x="60" y="250" width="240" height="56" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
-<text x="180" y="273" text-anchor="middle" font-size="13" fill="currentColor">4. Broadcast: Tx + sig + pubKey</text>
+<text x="180" y="273" text-anchor="middle" font-size="13" fill="currentColor">4. Broadcast: Tx + sig (+ pubKey)</text>
 <text x="180" y="292" text-anchor="middle" font-size="13" fill="currentColor">private key KHÔNG bao giờ rời máy</text>
 <line x1="180" y1="230" x2="180" y2="248" stroke="currentColor" stroke-width="1.2" marker-end="url(#bc03-med-a)"/>
 <line x1="300" y1="278" x2="430" y2="200" stroke="currentColor" stroke-width="1.5" marker-end="url(#bc03-med-a)"/>
@@ -104,7 +104,7 @@ Khi Alice gửi coin, ví của cô **không** gửi private key đi đâu cả.
 <text x="545" y="173" text-anchor="middle" font-size="13" fill="currentColor">5. Verify(z, sig, pubKey)</text>
 <text x="545" y="192" text-anchor="middle" font-size="13" fill="currentColor">tính lại z từ Tx, so khớp</text>
 <rect x="420" y="230" width="250" height="50" rx="8" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
-<text x="545" y="260" text-anchor="middle" font-size="13" fill="currentColor">6. Hợp lệ ⇒ nhận vào mempool</text>
+<text x="545" y="260" text-anchor="middle" font-size="13" fill="currentColor">6. Đủ kiểm tra ⇒ xét nhận mempool</text>
 <line x1="545" y1="206" x2="545" y2="228" stroke="currentColor" stroke-width="1.2" marker-end="url(#bc03-med-a)"/>
 </g>
 <defs><marker id="bc03-med-a" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
@@ -112,7 +112,7 @@ Khi Alice gửi coin, ví của cô **không** gửi private key đi đâu cả.
 <step-note data-step="1">Nội dung giao dịch xác định điều chủ ví cho phép, gồm người nhận và số tiền.</step-note>
 <step-note data-step="2">Băm tạo thông điệp 256-bit để thuật toán ký xử lý; sửa giao dịch sẽ đổi hash.</step-note>
 <step-note data-step="3">Chỉ máy giữ private key tạo được chữ ký hợp lệ; cặp (r, s) không phải private key.</step-note>
-<step-note data-step="4">Chỉ Tx, chữ ký và public key đi qua ranh giới mạng; private key vẫn ở máy Alice.</step-note>
+<step-note data-step="4">Tx và chữ ký đi qua mạng; Bitcoin có thể gửi kèm public key, Ethereum khôi phục nó từ chữ ký. Private key vẫn ở máy Alice.</step-note>
 <step-note data-step="5">Node tự băm lại Tx và kiểm chữ ký bằng public key. Hợp lệ là điều kiện cần để xét nhận vào mempool.</step-note>
 </step-flow>
 
@@ -120,16 +120,16 @@ Chữ ký chứng minh **đồng thời hai điều** chỉ trong một cặp s�
 - **Authentication** — người ký thực sự nắm private key ứng với public key này (⇒ đúng chủ sở hữu).
 - **Integrity** — nếu ai đó sửa dù chỉ 1 bit trong Tx (đổi "Bob" thành "Eve", đổi số tiền), `z` đổi hoàn toàn, chữ ký cũ **verify thất bại**. Không sửa lén được.
 
-### 2.5 Vì sao verify KHÔNG bao giờ làm lộ private key?
+### 2.5 Vì sao verify không cần private key?
 
 Đây là câu hỏi trọng tâm hay bị hiểu sai. Trực giác: "muốn kiểm chữ ký chẳng phải cần chìa gốc sao?" — **Không.** Toán học được thiết kế **bất đối xứng có chủ đích**:
 
-- **Sign** cần private key: chữ ký ECDSA là cặp `(r, s)` với `s = k⁻¹·(z + r·d) mod n`, trong đó `d` là **private key** (chính là số bí mật ta gọi `k` ở mục 2.2 — ký hiệu chuẩn của ECDSA đổi sang `d` cho khỏi lẫn), còn `k` ở đây là một **nonce** ngẫu nhiên bí mật **sinh mới mỗi lần ký** (và `r` suy từ `k·G`). Chỉ chủ private key mới tính được.
+- **Sign** cần private key: chữ ký ECDSA là cặp `(r, s)` với `s = k⁻¹·(z + r·d) mod n`, trong đó `d` là **private key** (chính là số bí mật ta gọi `k` ở mục 2.2 — ký hiệu chuẩn của ECDSA đổi sang `d` cho khỏi lẫn), còn `k` ở đây là một **nonce** bí mật, sinh ngẫu nhiên an toàn hoặc tất định theo message và private key (và `r` suy từ `k·G`). Chỉ chủ private key mới tính được.
 - **Verify** chỉ cần public key `K`: mạng làm vài phép nhân điểm trên đường cong với `(r, s)`, `z` và `K`, rồi kiểm một đẳng thức hình học có đúng không. **Không có phép nào trong verify chạm tới private key.**
 
-Nói cách khác: chữ ký là **bằng chứng zero-knowledge kiểu nhẹ** — nó thuyết phục cả thế giới rằng "tôi biết private key" **mà không tiết lộ private key**. Bạn có thể phát cùng một public key cho hàng tỷ người, ký hàng triệu giao dịch, và không giao dịch nào rò rỉ một bit nào của `k`.
+Chữ ký cho phép kiểm quyền ký **mà không truyền private key**, nhưng không phải chứng minh zero-knowledge theo định nghĩa mật mã. Với thuật toán, nonce và triển khai an toàn, việc công khai chữ ký không cho phép tính private key trong khả năng thực tế; lỗi nonce hoặc side-channel vẫn có thể làm lộ khóa.
 
-> **Cạm bẫy chí mạng — nonce phải thật sự ngẫu nhiên & không tái dùng.** Nếu ví dùng **lại cùng một nonce `k`** cho hai chữ ký khác nhau, kẻ tấn công **giải hệ hai phương trình** và **lấy được private key** ngay lập tức. Đây chính là lỗi từng làm crack ký PlayStation 3 (Sony dùng nonce cố định). Ví hiện đại dùng **RFC 6979** (nonce tất định, sinh từ chính message + private key) để triệt tiêu rủi ro này. Đây là lý do lớn khiến EdDSA được ưa chuộng — xem 2.7.
+> **Cạm bẫy chí mạng — nonce phải sinh an toàn & không tái dùng cho message khác.** Nếu ví dùng **lại cùng một nonce `k`** cho hai chữ ký khác nhau, kẻ tấn công **giải hệ hai phương trình** và **lấy được private key** ngay lập tức. Đây chính là lỗi từng làm crack ký PlayStation 3 (Sony dùng nonce cố định). Ví hiện đại dùng **RFC 6979** (nonce tất định, sinh từ chính message + private key) để triệt tiêu rủi ro này. Đây là lý do lớn khiến EdDSA được ưa chuộng — xem 2.7.
 
 ### 2.6 Ví dụ code — ký & verify bằng thư viện chuẩn
 
@@ -141,7 +141,7 @@ import { Wallet, verifyMessage } from "ethers";
 
 // 1) Sinh ví ngẫu nhiên: private key 256-bit -> public key -> address
 const wallet = Wallet.createRandom();
-console.log("private key:", wallet.privateKey); // GIỮ KÍN tuyệt đối
+// Không log private key; chỉ dùng trong bộ ký và giữ kín tuyệt đối.
 console.log("public key :", wallet.signingKey.publicKey);
 console.log("address    :", wallet.address);    // suy ra từ public key
 
@@ -160,7 +160,7 @@ const tampered = verifyMessage("Alice gui 100 coin cho Bob", signature);
 console.log("sau khi sửa nội dung, cùng chủ?", tampered === wallet.address); // false
 ```
 
-Điểm mấu chốt trong code: hàm `verifyMessage` **chỉ nhận `message` và `signature`**, không bao giờ nhận private key — vậy mà vẫn khôi phục đúng address người ký. Đúng bản chất bất đối xứng ở 2.5. Trong Solidity, chính cơ chế này lộ ra qua opcode `ecrecover`:
+Điểm mấu chốt trong code: hàm `verifyMessage` **chỉ nhận `message` và `signature`**, không bao giờ nhận private key — vậy mà vẫn khôi phục đúng address người ký. Đúng bản chất bất đối xứng ở 2.5. Trong Solidity, chính cơ chế này lộ ra qua precompile `ecrecover`:
 
 ```solidity
 // SPDX-License-Identifier: MIT
@@ -196,12 +196,12 @@ Hai họ chữ ký đường cong elliptic thống trị blockchain hôm nay:
 |----------|----------------------|---------------------|
 | Đường cong | secp256k1 (`y²=x³+7`) | Curve25519 (Edwards) |
 | Dùng ở | Bitcoin, Ethereum | Solana, Cardano, Monero, SSH, TLS |
-| Nonce | Cần nonce ngẫu nhiên — **rủi ro nếu sai** | **Tất định** (sinh từ key+message) — không có lớp lỗi nonce |
+| Nonce | Nonce ngẫu nhiên an toàn hoặc tất định (RFC 6979) | **Tất định** (sinh từ key+message); vẫn cần triển khai đúng |
 | Tốc độ verify | Chậm hơn | Nhanh hơn, dễ batch-verify |
-| Kháng side-channel | Khó làm đúng | Thiết kế sẵn để chống |
+| Kháng side-channel | Khó làm đúng | Thuận lợi cho constant-time; vẫn cần triển khai đúng |
 | Chuẩn hóa | Cũ, phổ biến rộng | Mới hơn, sạch hơn |
 
-Trực giác: **EdDSA là bản thiết kế lại "sạch" của ý tưởng ECDSA** — loại bỏ hầu hết cạm bẫy triển khai (đặc biệt là nonce ở 2.5), nhanh và an toàn hơn theo mặc định. Bitcoin/Ethereum vẫn ở ECDSA chủ yếu vì lý do lịch sử và tương thích ngược; chuỗi mới thường chọn Ed25519.
+Trực giác: **EdDSA là bản thiết kế lại "sạch" của ý tưởng ECDSA** — giảm phụ thuộc vào nguồn ngẫu nhiên khi ký (nonce ở 2.5), nhưng vẫn cần chống side-channel và lỗi triển khai. Bitcoin/Ethereum vẫn ở ECDSA chủ yếu vì lý do lịch sử và tương thích ngược; chuỗi mới thường chọn Ed25519.
 
 ### 2.8 ECC vs RSA — vì sao blockchain gần như luôn chọn ECC
 
@@ -226,7 +226,7 @@ Blockchain đo mọi thứ bằng **byte on-chain** và **gas**. Khóa & chữ k
 2. Ví **serialize + băm** transaction thành `z` (một hash 256-bit).
 3. Ví ký `z` bằng **private key nằm trong máy bạn** → tạo `(r, s, v)`. **Private key không rời thiết bị.**
 4. Ví broadcast `transaction + chữ ký` ra mạng P2P.
-5. Mỗi node **tự verify**: từ chữ ký + `z` khôi phục ra address; nếu khớp `from` và số dư đủ ⇒ giao dịch hợp lệ.
+5. Node khôi phục public key rồi address người gửi từ chữ ký + `z`; Ethereum không serialize trường `from` hay public key riêng. Node còn kiểm nonce, số dư, gas và quy tắc giao dịch; nhận vào mempool còn phụ thuộc policy/phí.
 6. Không node nào — kể cả node đầu tiên nhận — **cần hay có** private key của bạn. Họ chỉ cần public key/address, thứ vốn công khai.
 
 Đó là vì sao bạn có thể dùng cùng một ví trên chuỗi công khai mà cả thế giới nhìn thấy mọi giao dịch, nhưng **không ai giả mạo được** chữ ký của bạn.
@@ -236,8 +236,8 @@ Blockchain đo mọi thứ bằng **byte on-chain** và **gas**. Khóa & chữ k
 ## 4. Tóm tắt
 - Blockchain đứng trên **mật mã khóa công khai**: private key giữ kín để **ký**, public key/address công khai để **nhận & verify**.
 - Suy dẫn **private → public → address** là **một chiều** nhờ **phép nhân điểm trên đường cong elliptic secp256k1** và **hash** — không đảo ngược được (bài toán ECDLP).
-- **Ký** cần private key; **verify** chỉ cần public key — nên kiểm chữ ký **không bao giờ làm lộ** private key. Chữ ký chứng minh đồng thời **đúng chủ** (authentication) và **không bị sửa** (integrity).
-- **Cạm bẫy nonce**: tái dùng nonce trong ECDSA làm lộ private key — RFC 6979 và EdDSA sinh ra để chặn lỗi này.
+- **Ký** cần private key; **verify** chỉ cần public key — nên không cần truyền private key khi kiểm; an toàn còn phụ thuộc nonce và triển khai. Chữ ký chứng minh đồng thời **đúng chủ** (authentication) và **không bị sửa** (integrity).
+- **Cạm bẫy nonce**: tái dùng nonce trong ECDSA làm lộ private key — RFC 6979 và EdDSA dùng nonce tất định để giảm rủi ro sinh nonce sai.
 - **ECDSA** (Bitcoin/Ethereum) vs **EdDSA** (Solana/Cardano): EdDSA là bản thiết kế sạch hơn, tất định, nhanh hơn.
 - **ECC vs RSA**: cùng mức an toàn, ECC khóa & chữ ký nhỏ hơn cả chục lần ⇒ hợp với blockchain vốn tính từng byte, từng đơn vị gas.
 

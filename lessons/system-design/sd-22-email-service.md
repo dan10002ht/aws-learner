@@ -62,7 +62,7 @@ Ba điều rút ra, cả ba đều ảnh hưởng tới thiết kế:
 |---|---|---|
 | `2xx` | Thành công | Xong. Ghi vào Sent |
 | `4xx` | **Lỗi tạm thời** (greylisting, server bận, quota đầy tạm) | **Retry backoff mũ**, giữ trong queue tới 48–72 giờ |
-| `5xx` | Vĩnh viễn (`550 no such user`, `552 quá lớn`, `554 bị chặn`) | **Không retry**. Sinh bounce, gỡ địa chỉ khỏi danh sách |
+| `5xx` | Vĩnh viễn (`550 no such user`, `552 quá lớn`, `554 bị chặn`) | **Không retry nguyên trạng**. Sinh bounce; chỉ suppress địa chỉ với lỗi xác nhận địa chỉ không hợp lệ |
 
 > **Nguyên tắc**: `4xx` không phải lỗi, nó là **lời hẹn**. Greylisting — chiến thuật chống spam phổ biến — cố tình trả `451 try again later` cho lần gửi đầu, vì bot spam thường không retry còn MTA thật thì có. Hệ thống coi mọi lỗi là vĩnh viễn sẽ mất 10–20% thư hợp lệ ngay ngày đầu chạy thật.
 
@@ -704,8 +704,8 @@ Và một điểm dễ bỏ sót: **`thread_id` là cục bộ theo từng ngư�
                    2xx delivered        4xx deferred           5xx bounced
                    ghi trạng thái       retry backoff:         sinh DSN gửi
                    vào Sent             1m,5m,15m,1h,4h…       cho người gửi,
-                                        bỏ cuộc sau 72h        gỡ địa chỉ khỏi
-                                        → bounce               danh sách
+                                        bỏ cuộc sau 72h        suppress tuỳ loại
+                                        → bounce               lỗi địa chỉ
 ```
 
 **Vì sao bước ③ đứng trước ④?** Vì "thư đã vào Sent" là điều người dùng kiểm chứng được ngay, còn "thư đã tới Bob" thì không. Enqueue trước rồi ghi Sent sau, một sự cố giữa hai bước tạo ra thư đang trên đường đi mà người gửi không thấy dấu vết — không hiển thị được, không thu hồi được. Thứ tự ngược lại chỉ tạo rủi ro nhẹ: thư nằm trong Sent với trạng thái `queued`, một job dò tìm sẽ enqueue lại.

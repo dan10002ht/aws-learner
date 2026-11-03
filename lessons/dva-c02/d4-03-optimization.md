@@ -1,6 +1,6 @@
 # Optimization & Caching
 
-Domain 4 chiem ~18% de DVA-C02, va day la nhom topic "tien" nhat: chi can nho dung **khi nao dung cai gi** la an diem. Bai nay di tu compute (Lambda) -> data caching (ElastiCache, DAX) -> edge/network caching (API Gateway, CloudFront, S3 TA) -> giam xu ly thua (SNS filtering). Moi phan deu co bay kinh dien.
+Domain 4 chiem ~18% de DVA-C02, va day la nhom topic "tien" nhat: chi can nho dung **khi nao dung cai gi** la an diem. Bai nay di tu compute (Lambda) -> data caching (ElastiCache, DAX) -> edge caching va tang toc truyen (API Gateway, CloudFront, S3 TA) -> giam xu ly thua (SNS filtering). Moi phan deu co bay kinh dien.
 
 ## 1. Lambda Concurrency
 
@@ -147,7 +147,7 @@ Cache in-memory dat truoc database de giam latency va offload read. Hai engine:
 | Ghi cache khi nao | Khi **cache miss** (doc) | Khi **ghi** database |
 | Du lieu trong cache | Chi data duoc doc gan day | Toan bo data vua ghi (ke ca chua doc) |
 | Cache miss penalty | Co (lan dau doc phai vao DB) | Ban dau co the miss data cu |
-| Stale data | Co the cu neu DB doi ma cache chua het TTL | **Luon moi** voi data vua ghi |
+| Stale data | Co the cu neu DB doi ma cache chua het TTL | Moi sau khi ca DB va cache cap nhat thanh cong; khong nguyen tu |
 | Cache size | Nho hon (chi data hay doc) | Lon hon (ca data khong ai doc) |
 | Ghi du lieu thua | Khong | Co (ghi ca data co the khong bao gio doc) |
 
@@ -167,7 +167,7 @@ Write-through:
 ```python
 def save_user(user_id, data):
     db.write(user_id, data)
-    cache.set(user_id, data)          # cap nhat cache ngay
+    cache.set(user_id, data, ttl=300) # cap nhat cache; can retry/invalidate neu loi
 ```
 
 <ab-toggle data-labels="Lazy loading|Write-through">
@@ -308,41 +308,12 @@ Message chi duoc gui toi subscriber neu **moi thuoc tinh** trong policy khop (lo
 
 ## Buc tranh hop nhat - cac tang cache tren duong request
 
-Cac dich vu caching o tren khong canh tranh nhau ma **xep chong** doc theo duong request, moi tang chan bot tai cho tang sau. Tu gan user nhat xuong database:
+Co the ket hop nhieu cache theo workload: CloudFront cho response o edge, API Gateway stage cache cho REST API, ElastiCache cho du lieu ung dung hoac DAX rieng cho DynamoDB. Khong phai request nao cung qua tat ca cac tang. **S3 Transfer Acceleration la duong truyen toi bucket, khong phai response cache.**
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 412" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Cac tang cache xep chong tren duong request</title>
-  <desc>Tu user xuong: edge cache (CloudFront, S3 Transfer Acceleration) gan user, roi API layer cache (API Gateway stage cache), roi data cache (DAX cho DynamoDB, ElastiCache generic), cuoi cung la database. Moi tang chan bot tai cho tang sau.</desc>
-  <rect x="280" y="14" width="160" height="38" rx="19" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
-  <text x="360" y="38" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">User (toan cau)</text>
-  <line x1="360" y1="52" x2="360" y2="72" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#stackArr)"/>
-  <rect x="56" y="72" width="608" height="62" rx="11" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
-  <rect x="68" y="84" width="120" height="20" rx="10" fill="#3b82f6" fill-opacity="0.9"/>
-  <text x="128" y="98" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">EDGE CACHE</text>
-  <text x="200" y="98" font-size="12" font-weight="700" fill="currentColor">CloudFront · S3 Transfer Acceleration</text>
-  <text x="68" y="124" font-size="10.5" fill="currentColor" opacity="0.72">Tai edge gan user — static content, phan phoi dia ly, tang toc upload S3.</text>
-  <line x1="360" y1="134" x2="360" y2="154" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#stackArr)"/>
-  <rect x="56" y="154" width="608" height="62" rx="11" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-  <rect x="68" y="166" width="150" height="20" rx="10" fill="#10b981" fill-opacity="0.95"/>
-  <text x="143" y="180" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">API LAYER CACHE</text>
-  <text x="230" y="180" font-size="12" font-weight="700" fill="currentColor">API Gateway stage cache</text>
-  <text x="68" y="206" font-size="10.5" fill="currentColor" opacity="0.72">Cache response REST API theo cache key — giam goi Lambda/backend cho GET lap lai.</text>
-  <line x1="360" y1="216" x2="360" y2="236" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#stackArr)"/>
-  <rect x="56" y="236" width="608" height="62" rx="11" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-  <rect x="68" y="248" width="120" height="20" rx="10" fill="#8b5cf6" fill-opacity="0.95"/>
-  <text x="128" y="262" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">DATA CACHE</text>
-  <text x="200" y="262" font-size="12" font-weight="700" fill="currentColor">DAX (DynamoDB) · ElastiCache (generic)</text>
-  <text x="68" y="288" font-size="10.5" fill="currentColor" opacity="0.72">In-memory truoc DB — DAX microsecond cho DynamoDB; ElastiCache cho moi nguon.</text>
-  <line x1="360" y1="298" x2="360" y2="318" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#stackArr)"/>
-  <rect x="56" y="318" width="608" height="58" rx="11" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-  <rect x="68" y="330" width="100" height="20" rx="10" fill="#f59e0b" fill-opacity="0.95"/>
-  <text x="118" y="344" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">DATABASE</text>
-  <text x="180" y="344" font-size="12" font-weight="700" fill="currentColor">DynamoDB · RDS · nguon goc du lieu</text>
-  <text x="68" y="368" font-size="10.5" fill="currentColor" opacity="0.72">Chi cham toi khi MISS o moi tang cache phia tren.</text>
-  <text x="690" y="224" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.6" transform="rotate(90 690 224)">moi tang chan bot tai cho tang sau →</text>
-  <defs>
-    <marker id="stackArr" markerWidth="9" markerHeight="9" refX="4.5" refY="7" orient="auto"><path d="M0 0 L4.5 7 L9 0" fill="none" stroke="currentColor" stroke-opacity="0.6"/></marker>
-  </defs>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 685" role="img" aria-labelledby="fix-cache-t fix-cache-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="fix-cache-t">Cache và S3 Transfer Acceleration là hai đường riêng</title><desc id="fix-cache-d">Đọc API có thể qua CloudFront, stage cache, app rồi cache dữ liệu; ElastiCache và DAX là lựa chọn theo DB. Upload qua edge TA tới S3, không phải cache trước DB.</desc>
+<defs><marker id="fix-cache-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs><use href="#aws-s3" x="405" y="571" width="24" height="24"/>
+<text x="260" y="22" text-anchor="middle" font-size="16" fill="currentColor">Đường đọc và đường upload tách biệt</text><rect x="10" y="55" width="120" height="60" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="70.0" y="90.0" text-anchor="middle" font-size="13" fill="currentColor">Client</text><rect x="195" y="55" width="160" height="60" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="275.0" y="85.0" text-anchor="middle" font-size="13" fill="currentColor">CloudFront</text><text x="275.0" y="105.0" text-anchor="middle" font-size="13" fill="currentColor">response cache</text><path d="M130 85 H195" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#fix-cache-arr)"/><rect x="195" y="180" width="160" height="65" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="275.0" y="212.5" text-anchor="middle" font-size="13" fill="currentColor">API Gateway</text><text x="275.0" y="232.5" text-anchor="middle" font-size="13" fill="currentColor">REST stage cache</text><path d="M275 115 V180" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#fix-cache-arr)"/><text x="297" y="152" text-anchor="middle" font-size="13" fill="#3b82f6">miss</text><rect x="195" y="310" width="160" height="60" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="275.0" y="345.0" text-anchor="middle" font-size="13" fill="currentColor">App</text><path d="M275 245 V310" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#fix-cache-arr)"/><text x="297" y="280" text-anchor="middle" font-size="13" fill="#3b82f6">miss</text><rect x="10" y="435" width="225" height="65" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="122.5" y="467.5" text-anchor="middle" font-size="13" fill="currentColor">ElastiCache → DB</text><text x="122.5" y="487.5" text-anchor="middle" font-size="13" fill="currentColor">cache ứng dụng</text><rect x="285" y="435" width="225" height="65" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="397.5" y="467.5" text-anchor="middle" font-size="13" fill="currentColor">DAX → DynamoDB</text><text x="397.5" y="487.5" text-anchor="middle" font-size="13" fill="currentColor">cache DynamoDB</text><path d="M275 370 V405 H122 V435" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#fix-cache-arr)"/><path d="M275 405 H397 V435" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#fix-cache-arr)"/><rect x="10" y="565" width="150" height="65" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="85.0" y="602.5" text-anchor="middle" font-size="13" fill="currentColor">Upload client</text><rect x="195" y="565" width="160" height="65" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="275.0" y="597.5" text-anchor="middle" font-size="13" fill="currentColor">S3 TA edge</text><text x="275.0" y="617.5" text-anchor="middle" font-size="13" fill="currentColor">tăng tốc truyền</text><rect x="400" y="565" width="110" height="65" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="464" y="602.5" text-anchor="middle" font-size="13" fill="currentColor">S3 bucket</text><path d="M160 597 H195" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#fix-cache-arr)"/><path d="M355 597 H400" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#fix-cache-arr)"/><text x="260" y="535" text-anchor="middle" font-size="13" fill="currentColor">Chọn cache phù hợp; DB được gọi khi miss</text><text x="260" y="660" text-anchor="middle" font-size="13" fill="currentColor">Transfer Acceleration không trả response từ cache</text>
 </svg>
 
 ## Tong ket nhanh - chon dung dich vu

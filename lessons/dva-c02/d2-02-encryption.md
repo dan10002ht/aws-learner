@@ -31,7 +31,7 @@ Cách phân biệt nhanh:
 
 ## 3. Envelope Encryption — phần được hỏi NHIỀU NHẤT
 
-Tại sao cần envelope encryption? Vì **KMS Encrypt/Decrypt API chỉ xử lý tối đa 4 KB dữ liệu**. Muốn mã hóa file 1 GB thì sao? → Không gửi 1 GB lên KMS. Thay vào đó:
+Tại sao cần envelope encryption? Vì **KMS Encrypt với symmetric key chỉ nhận tối đa 4.096 byte plaintext**. Muốn mã hóa file 1 GB thì sao? → Không gửi 1 GB lên KMS. Thay vào đó:
 
 1. Gọi `GenerateDataKey` → KMS trả về **2 thứ**:
    - **Plaintext data key** (key thật, dùng để mã hóa data ngay tại máy bạn).
@@ -47,7 +47,7 @@ Khi cần giải mã:
 <step-flow>
 <svg viewBox="0 0 760 690" role="img" aria-labelledby="d22a-t d22a-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
 <title id="d22a-t">Envelope encryption với KMS: GenerateDataKey để mã hoá, Decrypt để giải mã, 9 bước</title>
-<desc id="d22a-d">Sơ đồ tuần tự ba lifeline App (client), KMS (CMK không rời KMS), Lưu trữ. Mã hoá file 1 GB: App gọi GenerateDataKey, KMS trả 2 thứ là Plaintext (data key thật) và CiphertextBlob (encrypted data key, chính data key đó đã được CMK mã hoá); App mã hoá data lớn bằng AES tại client, file 1 GB không gửi lên KMS vì Encrypt chỉ nhận tối đa 4 KB; xoá plaintext key khỏi RAM; lưu ciphertext kèm encrypted data key. Giải mã: App đọc ciphertext và encrypted data key, gửi encrypted data key nhỏ dưới 4 KB lên KMS Decrypt, nhận lại plaintext data key trong RAM, giải mã data tại client.</desc>
+<desc id="d22a-d">Sơ đồ tuần tự ba lifeline App (client), KMS (CMK không rời KMS), Lưu trữ. Mã hoá file 1 GB: App gọi GenerateDataKey, KMS trả 2 thứ là Plaintext (data key thật) và CiphertextBlob (encrypted data key, chính data key đó đã được CMK mã hoá); App mã hoá data lớn bằng AES tại client, file 1 GB không gửi lên KMS vì Encrypt chỉ nhận tối đa 4 KB; xoá plaintext key khỏi RAM; lưu ciphertext kèm encrypted data key. Giải mã: App đọc ciphertext và encrypted data key, gửi encrypted data key nhỏ lên KMS Decrypt, nhận lại plaintext data key trong RAM, giải mã data tại client.</desc>
 <defs>
 <marker id="d22a-arr" markerWidth="9" markerHeight="9" refX="7" refY="3.2" orient="auto"><path d="M0 0 L7 3.2 L0 6.4 z" fill="currentColor"/></marker>
 </defs>
@@ -98,7 +98,7 @@ Khi cần giải mã:
 <line x1="648" y1="506" x2="136" y2="506" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#d22a-arr)"/>
 </g>
 <g data-step="7">
-<text x="265" y="533" text-anchor="middle" font-size="13" fill="currentColor">7 · Decrypt(CiphertextBlob), dưới 4 KB</text>
+<text x="265" y="533" text-anchor="middle" font-size="13" fill="currentColor">7 · Decrypt(CiphertextBlob)</text>
 <line x1="132" y1="542" x2="394" y2="542" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.5" marker-end="url(#d22a-arr)"/>
 </g>
 <g data-step="8">
@@ -118,7 +118,7 @@ Khi cần giải mã:
 <step-note data-step="4">Plaintext key là thứ duy nhất mở được dữ liệu mà không cần hỏi KMS; để nó nằm lại trong RAM hay trên đĩa là mất lớp bảo vệ của KMS.</step-note>
 <step-note data-step="5">Encrypted data key nằm cạnh dữ liệu chính là cái phong bì: lộ nó vô hại vì chỉ KMS có CMK mới mở được, và app không phải tự nhớ key nào đi với file nào.</step-note>
 <step-note data-step="6">Phong bì đi kèm dữ liệu nên lúc đọc là có luôn thứ cần gửi cho KMS.</step-note>
-<step-note data-step="7">Chỉ blob nhỏ đi lên KMS nên lọt giới hạn 4 KB của <code>Decrypt</code>. Không bắt buộc <code>KeyId</code> vì blob mang metadata của key; đây là lúc <code>kms:Decrypt</code> được kiểm quyền.</step-note>
+<step-note data-step="7">Chỉ encrypted data key đi lên KMS; <code>Decrypt</code> nhận CiphertextBlob tối đa 6.144 byte. Với symmetric key, <code>KeyId</code> là tùy chọn vì blob mang metadata; đây là lúc <code>kms:Decrypt</code> được kiểm quyền.</step-note>
 <step-note data-step="8">KMS trả lại đúng data key ở bước 2; CMK vẫn chưa từng rời KMS.</step-note>
 <step-note data-step="9">Giải mã chạy local như bước 3, xong lại xoá plaintext key khỏi RAM như bước 4.</step-note>
 </step-flow>
@@ -158,7 +158,7 @@ const { Plaintext, CiphertextBlob } = await kms.send(new GenerateDataKeyCommand(
 
 // Khi giải mã:
 const { Plaintext: dataKey } = await kms.send(new DecryptCommand({
-  CiphertextBlob, // không cần truyền KeyId, KMS tự biết key nào
+  CiphertextBlob, // symmetric key: KeyId tùy chọn; nên truyền để kiểm đúng key
 }));
 ```
 
@@ -166,19 +166,19 @@ const { Plaintext: dataKey } = await kms.send(new DecryptCommand({
 
 > Bẫy: Câu hỏi kinh điển: "Cần mã hóa file 10 GB bằng KMS, làm thế nào?" → KHÔNG gọi `Encrypt` (vì giới hạn 4KB). Đáp án là **envelope encryption với `GenerateDataKey`**. Đây gần như chắc chắn xuất hiện trong đề.
 
-> Bẫy: `Decrypt` không cần truyền `KeyId` — KMS đọc metadata trong `CiphertextBlob` để biết dùng key nào (trừ multi-Region/asymmetric thì nên truyền). Nhưng truyền KeyId vào là best practice bảo mật để tránh nhầm key.
+> Bẫy: `Decrypt` với symmetric key có thể bỏ `KeyId` — KMS đọc metadata trong `CiphertextBlob`. Với asymmetric key, **bắt buộc** truyền `KeyId` và `EncryptionAlgorithm`. Nhưng truyền KeyId vào là best practice bảo mật để tránh nhầm key.
 
 ## 4. Giới hạn 4 KB và khi nào dùng API nào
 
 | API | Dùng khi | Giới hạn |
 |---|---|---|
-| `Encrypt` | Mã hóa dữ liệu nhỏ (≤ 4KB): password, config, một secret nhỏ | 4 KB |
-| `Decrypt` | Giải mã ciphertext do KMS sinh ra | 4 KB ciphertext |
+| `Encrypt` (symmetric key) | Mã hóa dữ liệu nhỏ (≤ 4KB): password, config, một secret nhỏ | 4 KB |
+| `Decrypt` | Giải mã ciphertext tương thích KMS (asymmetric còn nhận ciphertext tạo bằng public key bên ngoài) | 6.144 byte CiphertextBlob |
 | `GenerateDataKey` | Mã hóa dữ liệu lớn (envelope encryption), trả plaintext + encrypted key | data tùy ý |
 | `GenerateDataKeyWithoutPlaintext` | Sinh data key để dùng SAU (chưa mã hóa ngay) | — |
-| `ReEncrypt` | Đổi data từ key này sang key khác **mà không lộ plaintext** | 4 KB |
+| `ReEncrypt` | Đổi data từ key này sang key khác **mà không lộ plaintext** | 6.144 byte CiphertextBlob |
 
-> Mẹo thi: Con số **4 KB** xuất hiện rất nhiều. Nhớ: `Encrypt`/`Decrypt`/`ReEncrypt` = 4KB; muốn lớn hơn = data key.
+> Mẹo thi: Con số **4 KB** xuất hiện rất nhiều. Nhớ: 4.096 byte là giới hạn **plaintext của Encrypt symmetric**; Decrypt/ReEncrypt nhận ciphertext blob tới 6.144 byte. Dữ liệu lớn dùng data key.
 
 ## 5. Key Policy vs IAM Policy vs Grants
 

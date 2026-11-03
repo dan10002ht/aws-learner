@@ -315,14 +315,14 @@ Khi HTML về tới browser, nó không hiện ra ngay tức thì mà qua mấy 
     <path d="M496 132 L496 200 L546 200" stroke-opacity="0.6" stroke-dasharray="6 5" marker-end="url(#rp-arrow)"/>
     <path d="M304 232 L208 232 L208 134" stroke-opacity="0.6" stroke-dasharray="6 5" marker-end="url(#rp-arrow)"/>
   </g>
-  <text x="240" y="190" font-size="11" fill="currentColor" opacity="0.75">vòng lặp: sửa DOM → Layout → Paint lại</text>
+  <text x="240" y="190" font-size="11" fill="currentColor" opacity="0.75">sửa DOM → cập nhật tuỳ loại thay đổi</text>
 </svg>
 
 1. **Phân tích HTML (parse).** Browser đọc HTML từ trên xuống, dựng một cây cấu trúc gọi là **DOM** (Document Object Model) — bản đồ mọi phần tử trên trang dưới dạng cây cha-con.
 2. **Phân tích CSS.** Browser đọc các quy tắc CSS, tính ra mỗi phần tử trông thế nào.
 3. **Layout (sắp đặt).** Tính toán vị trí và kích thước: phần tử này rộng bao nhiêu, nằm ở đâu.
 4. **Paint (vẽ).** Tô màu, vẽ chữ, ảnh lên màn hình thành các điểm ảnh.
-5. **Chạy JavaScript.** JS có thể *thay đổi* DOM sau đó (thêm phần tử, đổi nội dung), khiến browser vẽ lại phần liên quan.
+5. **Chạy JavaScript.** JS có thể chạy cả khi HTML đang parse, trước lần paint đầu; thứ tự trên chỉ mô tả pipeline render. JS thay đổi DOM có thể gây layout + paint, chỉ paint hoặc composite tuỳ thay đổi, không phải lần sửa nào cũng chạy lại toàn bộ pipeline.
 
 > Ghi nhớ: **DOM** là cầu nối quan trọng nhất. HTML là văn bản tĩnh; khi browser đọc xong, nó biến thành DOM — một cấu trúc *sống* mà JavaScript có thể đọc và sửa. Khi bạn viết `document.getElementById(...)`, bạn đang nói chuyện với DOM.
 

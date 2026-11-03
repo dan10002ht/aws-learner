@@ -37,7 +37,7 @@ function UncontrolledInput() {
 | Validate realtime / format khi gõ | Dễ | Khó |
 | Hiệu năng form lớn | Kém nếu không tối ưu | Tốt |
 | Set giá trị động từ code | Dễ | Phải dùng ref |
-| File input | Bắt buộc uncontrolled | — |
+| File input | Không điều khiển giá trị file bằng state | Bắt buộc uncontrolled |
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Controlled vs Uncontrolled — hai mô hình quản lý giá trị input</title>

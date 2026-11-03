@@ -459,13 +459,13 @@ Ghép tất cả lại bằng một hành trình thật, chú thích tầng nào
 2. ARP (L2): biết IP gateway rồi nhưng cần MAC → hỏi ARP (hoặc lấy từ ARP cache).
 3. TCP (L4): bắt tay 3 bước (SYN/SYN-ACK/ACK) tới cổng 443 — 1 RTT.
 4. TLS (L6): bắt tay TLS 1.3, kiểm cert, thống nhất khoá phiên — 1 RTT (hoặc 0-RTT nếu resume phiên L5).
-5. HTTP (L7): gửi "GET / HTTP/2", server trả response (có thể từ CDN edge cache).
+5. HTTP (L7): gửi request GET cho `/` bằng các frame HTTP/2 (không có request-line dạng text), server trả response (có thể từ CDN edge cache).
 6. Mỗi gói thực ra: HTTP bọc trong TCP (L4) bọc trong IP (L3) bọc trong frame Ethernet (L2)
    → router (L3) chuyển giữa các mạng, switch (L2) chuyển trong từng LAN, bit chạy trên dây (L1).
 7. Trình duyệt nhận HTML, dựng trang; ảnh/CSS/JS có thể lấy từ cache trình duyệt (L7).
 ```
 
-Mỗi bước trên ánh xạ về đúng một tầng — và mỗi tầng có **cache** (bước 1, 2, 5, 7) lẫn **điểm có thể fail/bị tấn công** (DNS sai, ARP spoof, port chặn, cert lỗi). Đây là lý do "tấm bản đồ 7 tầng" đáng để thuộc: nó cho bạn một danh sách kiểm tra có thứ tự cho **mọi** sự cố mạng.
+Các bước trên có thể đi qua nhiều tầng; các lớp trong hệ thống có **cache** (bước 1, 2, 5, 7) lẫn **điểm có thể fail/bị tấn công** (DNS sai, ARP spoof, port chặn, cert lỗi). Đây là lý do "tấm bản đồ 7 tầng" đáng để thuộc: nó cho bạn một danh sách kiểm tra có thứ tự cho **mọi** sự cố mạng.
 
 ## 12. Liên hệ sang AWS — theo tầng
 

@@ -167,10 +167,12 @@ pg_basebackup -h leader.db -U replicator -D /var/lib/pg/standby \
 # 3+4: khởi động, Postgres tự replay WAL từ LSN của backup rồi bắt kịp
 pg_ctl -D /var/lib/pg/standby start
 ```
-Kiểm tra lag trên standby:
+Quan sát thời gian từ transaction cuối được replay trên standby (không phải phép đo lag độc lập):
 ```sql
-SELECT now() - pg_last_xact_replay_timestamp() AS replication_lag;
+SELECT now() - pg_last_xact_replay_timestamp() AS time_since_last_replayed_xact;
 ```
+
+Chỉ số này tăng cả khi primary idle và có thể `NULL` nếu chưa replay transaction nào. Đối chiếu LSN trên primary/standby hoặc dùng heartbeat để phân biệt idle với backlog.
 
 ### 2.6 Failover: khi leader chết
 

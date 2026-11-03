@@ -91,52 +91,115 @@ Vài hạn ngắn khác thuộc về chính quá trình login, liệt kê để 
 | `accessCodeLifespanUserAction` | 300 s | thời gian cho một required action |
 | `clientSessionIdleTimeout` / `MaxLifespan` | 0 / 0 | client session (0 = theo SSO) |
 
-Sơ đồ dưới: cấu hình mặc định, app chỉ refresh khi access token hết hạn, user rời máy lúc 09:10.
+Hai nhánh độc lập dưới đây dùng mặc định với persistent sessions; user rời máy lúc 09:10.
 
-<svg viewBox="0 0 720 275" role="img" aria-labelledby="kc10-a-t kc10-a-d" style="width:100%;height:auto">
-<title id="kc10-a-t">Dòng thời gian access token, refresh và SSO Session Idle</title>
-<desc id="kc10-a-d">Login 09:00, refresh 09:05 và 09:10, mỗi refresh dời hạn idle 30 phút tới 09:30, 09:35 rồi 09:40; user rời máy từ 09:10; quay lại 09:38 thì API trả 401 nhưng refresh thành công, quay lại 09:41 thì refresh trả invalid_grant.</desc>
-<text x="360" y="18" text-anchor="middle" font-size="12" font-weight="700" fill="currentColor">SSO Session Idle 30 phút, Access Token 5 phút, app refresh khi AT hết hạn</text>
-<text x="92" y="53" text-anchor="end" font-size="10.5" fill="currentColor">Access token</text>
-<rect x="100" y="40" width="65" height="18" rx="4" fill="#3b82f6" fill-opacity="0.35"/>
-<rect x="165" y="40" width="65" height="18" rx="4" fill="#3b82f6" fill-opacity="0.25"/>
-<rect x="230" y="40" width="65" height="18" rx="4" fill="#3b82f6" fill-opacity="0.35"/>
-<text x="132" y="53" text-anchor="middle" font-size="10" fill="currentColor">AT1</text>
-<text x="197" y="53" text-anchor="middle" font-size="10" fill="currentColor">AT2</text>
-<text x="262" y="53" text-anchor="middle" font-size="10" fill="currentColor">AT3</text>
-<text x="92" y="84" text-anchor="end" font-size="10.5" fill="currentColor">Refresh</text>
-<circle cx="100" cy="80" r="5" fill="#8b5cf6" fill-opacity="0.8"/>
-<circle cx="165" cy="80" r="5" fill="#8b5cf6" fill-opacity="0.8"/>
-<circle cx="230" cy="80" r="5" fill="#8b5cf6" fill-opacity="0.8"/>
-<text x="100" y="99" text-anchor="middle" font-size="10" fill="currentColor">login</text>
-<text x="165" y="99" text-anchor="middle" font-size="10" fill="currentColor">refresh</text>
-<text x="230" y="99" text-anchor="middle" font-size="10" fill="currentColor">refresh</text>
-<text x="92" y="132" text-anchor="end" font-size="10.5" fill="currentColor">Hạn idle</text>
-<rect x="100" y="112" width="390" height="10" rx="3" fill="#84cc16" fill-opacity="0.15"/>
-<rect x="165" y="126" width="390" height="10" rx="3" fill="#84cc16" fill-opacity="0.25"/>
-<rect x="230" y="140" width="390" height="10" rx="3" fill="#84cc16" fill-opacity="0.45"/>
-<text x="494" y="121" font-size="10" fill="currentColor">09:30</text>
-<text x="559" y="135" font-size="10" fill="currentColor">09:35</text>
-<text x="624" y="149" font-size="10" fill="currentColor">hết 09:40</text>
-<text x="92" y="176" text-anchor="end" font-size="10.5" fill="currentColor">User</text>
-<rect x="230" y="164" width="364" height="18" rx="4" fill="#64748b" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.4" stroke-dasharray="4 3"/>
-<text x="412" y="177" text-anchor="middle" font-size="10" fill="currentColor">rời máy, không request nào tới Keycloak</text>
-<line x1="100" y1="200" x2="690" y2="200" stroke="currentColor" stroke-opacity="0.5" stroke-width="1"/>
-<text x="100" y="214" text-anchor="middle" font-size="10" fill="currentColor">09:00</text>
-<text x="165" y="214" text-anchor="middle" font-size="10" fill="currentColor">09:05</text>
-<text x="230" y="214" text-anchor="middle" font-size="10" fill="currentColor">09:10</text>
-<text x="295" y="214" text-anchor="middle" font-size="10" fill="currentColor">09:15</text>
-<text x="360" y="214" text-anchor="middle" font-size="10" fill="currentColor">09:20</text>
-<text x="425" y="214" text-anchor="middle" font-size="10" fill="currentColor">09:25</text>
-<text x="490" y="214" text-anchor="middle" font-size="10" fill="currentColor">09:30</text>
-<line x1="594" y1="30" x2="594" y2="200" stroke="#84cc16" stroke-width="1.5"/>
-<line x1="620" y1="30" x2="620" y2="200" stroke="#ef4444" stroke-opacity="0.6" stroke-width="1" stroke-dasharray="3 3"/>
-<line x1="633" y1="30" x2="633" y2="200" stroke="#ef4444" stroke-width="1.5"/>
-<text x="594" y="236" text-anchor="end" font-size="10.5" fill="currentColor">09:38: API trả 401 (AT3 hết 09:15), refresh vẫn 200</text>
-<text x="633" y="258" text-anchor="end" font-size="10.5" fill="currentColor">09:41: refresh trả invalid_grant, phải nhập lại mật khẩu</text>
+<ab-toggle data-labels="Về lúc 09:38|Về lúc 09:41">
+<svg viewBox="0 0 520 440" role="img" aria-labelledby="kc10-fix-0-t kc10-fix-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="kc10-fix-0-t">Hai nhánh refresh độc lập trên cùng trục thời gian</title>
+<desc id="kc10-fix-0-d">Login 09:00, refresh 09:05 và 09:10. Nhánh A refresh 09:38 dời idle tới 10:08; nhánh B không refresh thêm nên 09:41 thất bại.</desc>
+<text x="260" y="24" font-size="15" fill="currentColor" text-anchor="middle">SSO Idle 30 phút · Access token 5 phút</text>
+<text x="15" y="50" font-size="13" fill="currentColor" text-anchor="start">Access token</text>
+<text x="15" y="100" font-size="13" fill="currentColor" text-anchor="start">Login / refresh</text>
+<text x="15" y="150" font-size="13" fill="currentColor" text-anchor="start">Hạn idle sau từng lần refresh</text>
+<rect x="60" y="58" width="30" height="20" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="75" y="73" font-size="13" fill="currentColor" text-anchor="middle">AT1</text>
+<circle cx="60" cy="112" r="4" fill="#8b5cf6"/>
+<rect x="60" y="158" width="180" height="10" rx="4" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<rect x="90" y="58" width="30" height="20" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="105" y="73" font-size="13" fill="currentColor" text-anchor="middle">AT2</text>
+<circle cx="90" cy="112" r="4" fill="#8b5cf6"/>
+<rect x="90" y="173" width="180" height="10" rx="4" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<rect x="120" y="58" width="30" height="20" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="135" y="73" font-size="13" fill="currentColor" text-anchor="middle">AT3</text>
+<circle cx="120" cy="112" r="4" fill="#8b5cf6"/>
+<rect x="120" y="188" width="180" height="10" rx="4" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="60" y="133" font-size="13" fill="currentColor" text-anchor="middle">09:00</text>
+<text x="100" y="133" font-size="13" fill="currentColor" text-anchor="middle">05</text>
+<text x="140" y="133" font-size="13" fill="currentColor" text-anchor="middle">10</text>
+<text x="245" y="169" font-size="13" fill="currentColor" text-anchor="start">09:30</text>
+<text x="275" y="184" font-size="13" fill="currentColor" text-anchor="start">09:35</text>
+<text x="305" y="199" font-size="13" fill="currentColor" text-anchor="start">09:40</text>
+<rect x="120" y="217" width="168" height="18" rx="4" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="205" y="249" font-size="13" fill="currentColor" text-anchor="middle">Rời máy từ 09:10; không refresh</text>
+<rect x="288" y="267" width="180" height="16" rx="4" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<rect x="288" y="58" width="30" height="20" rx="4" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="303" y="73" font-size="13" fill="currentColor" text-anchor="middle">AT4</text>
+<text x="260" y="311" font-size="14" fill="currentColor" text-anchor="middle">Nhánh A: quay lại 09:38 → refresh 200</text>
+<text x="260" y="335" font-size="13" fill="currentColor" text-anchor="middle">API 401 (AT3 hết 09:15); AT4 tới 09:43</text>
+<text x="260" y="356" font-size="14" fill="currentColor" text-anchor="middle">Idle mới: 10:08 (09:38 + 30 phút)</text>
+<line x1="288" y1="85" x2="288" y2="283" stroke="#8b5cf6" stroke-dasharray="4 3"/>
+<line x1="60" y1="380" x2="480" y2="380" stroke="currentColor"/>
+<line x1="60" y1="376" x2="60" y2="384" stroke="currentColor"/>
+<text x="60" y="401" font-size="13" fill="currentColor" text-anchor="middle">09:00</text>
+<line x1="120" y1="376" x2="120" y2="384" stroke="currentColor"/>
+<text x="120" y="420" font-size="13" fill="currentColor" text-anchor="middle">09:10</text>
+<line x1="180" y1="376" x2="180" y2="384" stroke="currentColor"/>
+<text x="180" y="401" font-size="13" fill="currentColor" text-anchor="middle">09:20</text>
+<line x1="240" y1="376" x2="240" y2="384" stroke="currentColor"/>
+<text x="240" y="420" font-size="13" fill="currentColor" text-anchor="middle">09:30</text>
+<line x1="300" y1="376" x2="300" y2="384" stroke="currentColor"/>
+<text x="300" y="401" font-size="13" fill="currentColor" text-anchor="middle">09:40</text>
+<line x1="360" y1="376" x2="360" y2="384" stroke="currentColor"/>
+<text x="360" y="420" font-size="13" fill="currentColor" text-anchor="middle">09:50</text>
+<line x1="420" y1="376" x2="420" y2="384" stroke="currentColor"/>
+<text x="420" y="401" font-size="13" fill="currentColor" text-anchor="middle">10:00</text>
+<line x1="480" y1="376" x2="480" y2="384" stroke="currentColor"/>
+<text x="480" y="420" font-size="13" fill="currentColor" text-anchor="middle">10:10</text>
 </svg>
+<svg viewBox="0 0 520 440" role="img" aria-labelledby="kc10-fix-1-t kc10-fix-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="kc10-fix-1-t">Hai nhánh refresh độc lập trên cùng trục thời gian</title>
+<desc id="kc10-fix-1-d">Login 09:00, refresh 09:05 và 09:10. Nhánh A refresh 09:38 dời idle tới 10:08; nhánh B không refresh thêm nên 09:41 thất bại.</desc>
+<text x="260" y="24" font-size="15" fill="currentColor" text-anchor="middle">SSO Idle 30 phút · Access token 5 phút</text>
+<text x="15" y="50" font-size="13" fill="currentColor" text-anchor="start">Access token</text>
+<text x="15" y="100" font-size="13" fill="currentColor" text-anchor="start">Login / refresh</text>
+<text x="15" y="150" font-size="13" fill="currentColor" text-anchor="start">Hạn idle sau từng lần refresh</text>
+<rect x="60" y="58" width="30" height="20" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="75" y="73" font-size="13" fill="currentColor" text-anchor="middle">AT1</text>
+<circle cx="60" cy="112" r="4" fill="#8b5cf6"/>
+<rect x="60" y="158" width="180" height="10" rx="4" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<rect x="90" y="58" width="30" height="20" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="105" y="73" font-size="13" fill="currentColor" text-anchor="middle">AT2</text>
+<circle cx="90" cy="112" r="4" fill="#8b5cf6"/>
+<rect x="90" y="173" width="180" height="10" rx="4" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<rect x="120" y="58" width="30" height="20" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="135" y="73" font-size="13" fill="currentColor" text-anchor="middle">AT3</text>
+<circle cx="120" cy="112" r="4" fill="#8b5cf6"/>
+<rect x="120" y="188" width="180" height="10" rx="4" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="60" y="133" font-size="13" fill="currentColor" text-anchor="middle">09:00</text>
+<text x="100" y="133" font-size="13" fill="currentColor" text-anchor="middle">05</text>
+<text x="140" y="133" font-size="13" fill="currentColor" text-anchor="middle">10</text>
+<text x="245" y="169" font-size="13" fill="currentColor" text-anchor="start">09:30</text>
+<text x="275" y="184" font-size="13" fill="currentColor" text-anchor="start">09:35</text>
+<text x="305" y="199" font-size="13" fill="currentColor" text-anchor="start">09:40</text>
+<rect x="120" y="217" width="186" height="18" rx="4" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="205" y="249" font-size="13" fill="currentColor" text-anchor="middle">Rời máy từ 09:10; không refresh</text>
+<line x1="300" y1="158" x2="300" y2="283" stroke="#f43f5e" stroke-dasharray="4 3"/>
+<text x="260" y="311" font-size="14" fill="currentColor" text-anchor="middle">Nhánh B: quay lại 09:41 → invalid_grant</text>
+<text x="260" y="335" font-size="13" fill="currentColor" text-anchor="middle">Không có refresh lúc 09:38 trong nhánh này</text>
+<text x="260" y="356" font-size="14" fill="currentColor" text-anchor="middle">Idle hết 09:40; cần đăng nhập lại</text>
+<line x1="60" y1="380" x2="480" y2="380" stroke="currentColor"/>
+<line x1="60" y1="376" x2="60" y2="384" stroke="currentColor"/>
+<text x="60" y="401" font-size="13" fill="currentColor" text-anchor="middle">09:00</text>
+<line x1="120" y1="376" x2="120" y2="384" stroke="currentColor"/>
+<text x="120" y="420" font-size="13" fill="currentColor" text-anchor="middle">09:10</text>
+<line x1="180" y1="376" x2="180" y2="384" stroke="currentColor"/>
+<text x="180" y="401" font-size="13" fill="currentColor" text-anchor="middle">09:20</text>
+<line x1="240" y1="376" x2="240" y2="384" stroke="currentColor"/>
+<text x="240" y="420" font-size="13" fill="currentColor" text-anchor="middle">09:30</text>
+<line x1="300" y1="376" x2="300" y2="384" stroke="currentColor"/>
+<text x="300" y="401" font-size="13" fill="currentColor" text-anchor="middle">09:40</text>
+<line x1="360" y1="376" x2="360" y2="384" stroke="currentColor"/>
+<text x="360" y="420" font-size="13" fill="currentColor" text-anchor="middle">09:50</text>
+<line x1="420" y1="376" x2="420" y2="384" stroke="currentColor"/>
+<text x="420" y="401" font-size="13" fill="currentColor" text-anchor="middle">10:00</text>
+<line x1="480" y1="376" x2="480" y2="384" stroke="currentColor"/>
+<text x="480" y="420" font-size="13" fill="currentColor" text-anchor="middle">10:10</text>
+</svg>
+<ab-note>09:38 refresh thành công: idle dời tới 10:08.</ab-note>
+<ab-note>Không refresh từ 09:10: tới 09:41 session đã hết idle.</ab-note>
+</ab-toggle>
 
-Hạn idle chỉ nhảy ở các chấm tím, không nhảy theo thao tác của user. Từ 09:15 tới 09:40 user có session còn sống mà không có access token hợp lệ; app đúng thì bắt 401, refresh, gọi lại, user không thấy gì.
+Idle chỉ dời khi Keycloak nhận xác thực/refresh. AT3 hết 09:15; session còn tới 09:40 nếu không refresh thêm.
 
 Câu hay bị nhắc lại "idle 30 phút thực ra là 32 phút vì có 2 phút ân hạn" có điều kiện: persistent user sessions **không** bật. Từ 26.0.0 nó bật mặc định (3.7), nên ở 26.8.1 mặc định 30 phút là 30 phút.
 

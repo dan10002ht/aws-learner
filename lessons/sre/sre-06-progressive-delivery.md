@@ -32,12 +32,12 @@ Khi metric bắt đầu đỏ sau một lần deploy, bạn có hai lựa chọn
 2. **Migrate**: backfill dữ liệu sang `username`, đổi code sang đọc `username`. Deploy. (Rollback an toàn.)
 3. **Contract**: xóa cột `user_name` — chỉ sau khi đã chắc chắn ổn định nhiều ngày.
 
-Nhờ vậy mọi bước đều có thể quay lui mà không mất dữ liệu.
+Expand và Migrate giữ cửa rollback khi còn duy trì cả hai cột. Trước Contract phải deploy bản bỏ đọc/ghi cột cũ và hết cửa sổ rollback về bản cần cột đó; sau khi xoá cột, muốn quay về bản cũ phải khôi phục schema/data hoặc roll forward.
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Expand / Contract migration 3 pha backward-compatible</title>
-  <desc>Vòng đời migration ba pha: Expand thêm cột username và ghi cả hai cột; Migrate backfill dữ liệu và đọc cột mới; Contract xóa cột cũ user_name. Mỗi pha đều rollback an toàn vì luôn tương thích ngược.</desc>
-  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Expand / Contract — mỗi pha đều rollback an toàn</text>
+  <title>Expand / Contract: hai pha giữ rollback, Contract thu hẹp tương thích</title>
+  <desc>Vòng đời migration ba pha: Expand thêm cột username và ghi cả hai cột; Migrate backfill dữ liệu và đọc cột mới; Contract xóa cột cũ user_name. Hai pha đầu giữ cửa rollback; Contract xoá cột nên bản cũ còn cần cột đó không chạy được trực tiếp.</desc>
+  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">Expand / Contract — rollback trước Contract</text>
   <g>
     <rect x="14" y="44" width="218" height="120" rx="11" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="30" y="68" font-size="13" font-weight="700" fill="currentColor">1 · Expand</text>
@@ -59,7 +59,7 @@ Nhờ vậy mọi bước đều có thể quay lui mà không mất dữ liệu
     <text x="504" y="68" font-size="13" font-weight="700" fill="currentColor">3 · Contract</text>
     <text x="504" y="90" font-size="11" fill="currentColor" opacity="0.85">Xóa cột cũ user_name</text>
     <text x="504" y="108" font-size="11" fill="currentColor" opacity="0.85">Chỉ sau khi ổn định nhiều ngày</text>
-    <text x="504" y="126" font-size="11" fill="currentColor" opacity="0.85">Dọn code ghi cột cũ</text>
+    <text x="504" y="126" font-size="11" fill="currentColor" opacity="0.85">Bỏ code cột cũ trước DROP</text>
     <text x="504" y="151" font-size="10.5" font-weight="700" fill="currentColor" opacity="0.7">điểm không quay lui</text>
   </g>
   <defs>
@@ -71,7 +71,7 @@ Nhờ vậy mọi bước đều có thể quay lui mà không mất dữ liệu
     <path d="M232 104 H251" marker-end="url(#sreMig)"/>
     <path d="M469 104 H488" marker-end="url(#sreMig)"/>
   </g>
-  <text x="360" y="200" text-anchor="middle" font-size="11.5" font-weight="700" fill="currentColor">Luôn backward-compatible: bản cũ và bản mới chạy song song được</text>
+  <text x="360" y="200" text-anchor="middle" font-size="11.5" font-weight="700" fill="currentColor">Sau Contract: chỉ rollback về bản không còn cần cột cũ</text>
   <text x="360" y="222" text-anchor="middle" font-size="10.5" fill="currentColor" opacity="0.75">Không bao giờ "đổi tên cột rồi deploy code mới" trong một bước — đó là cái bẫy khiến rollback bất khả thi</text>
 </svg>
 
@@ -141,7 +141,7 @@ Các tín hiệu (SLI) thường dùng để gate canary:
 - **Saturation** (CPU, memory, restart/crash loop)
 - Các business metric quan trọng (ví dụ tỷ lệ checkout thành công)
 
-Ví dụ rule chặn canary bằng PromQL — error rate của canary cao hơn 5x_ baseline thì rollback:
+Ví dụ rule chặn canary bằng PromQL — error rate của canary vượt ngưỡng tuyệt đối 1% thì abort:
 
 ```promql
 # Tỷ lệ lỗi 5xx của canary
@@ -160,7 +160,7 @@ histogram_quantile(0.99,
 # canary chậm hơn baseline >20% -> abort
 ```
 
-Cấu hình một bước canary (kiểu Argo Rollouts / Flagger) trông như sau:
+Phần steps của Argo Rollouts dưới đây gọi các AnalysisTemplate đã định nghĩa riêng (provider Prometheus, query, interval, count và điều kiện thành công/thất bại nằm trong từng template):
 
 ```yaml
 strategy:
@@ -174,14 +174,17 @@ strategy:
             - templateName: latency-p99
       - setWeight: 25
       - pause: { duration: 15m }
+      - analysis:
+          templates:
+            - templateName: error-rate
+            - templateName: latency-p99
       - setWeight: 50
       - pause: { duration: 15m }
+      - analysis:
+          templates:
+            - templateName: error-rate
+            - templateName: latency-p99
       - setWeight: 100
-    analysis:
-      successCondition: "result < 0.01"   # error rate < 1%
-      failureLimit: 1                       # 1 lần fail là rollback ngay
-      interval: 1m
-      count: 10
 ```
 
 > Nguyên tắc: Dùng **cả ngưỡng tuyệt đối lẫn ngưỡng so sánh**. Ngưỡng tuyệt đối ("error rate < 1%") bắt lỗi nghiêm trọng. Ngưỡng so sánh ("không tệ hơn baseline 20%") bắt regression tinh vi mà ngưỡng cố định bỏ sót khi baseline vốn đã có chút lỗi nền.

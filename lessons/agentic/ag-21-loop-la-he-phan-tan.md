@@ -182,12 +182,12 @@ Khi loop bắn mỗi 5 phút mà một task chạy 40 phút, lượt sau sẽ th
 3. [lock 2026-10-14 14:32] sửa format tiền ở export CSV
 ```
 
-Đây là **mutex trên đĩa**: nó sống qua restart, mọi lượt sau đều đọc được. Nhưng mutex này **không tự nhả** khi agent giữ nó chết. Nên nó phải là **lease** — khoá có thời hạn: quá TTL (time-to-live) thì coi là mồ côi và nhận lại. Khái niệm lease, cùng vấn đề "người giữ lock cũ sống lại và ghi đè", dạy kỹ ở [[ds-15-coordination]].
+Đây là **dấu claim trên đĩa**, sống qua restart nhưng tự nó chưa phải mutex: hai lượt có thể cùng đọc task trống rồi cùng ghi. Cần single writer hoặc cơ chế claim nguyên tử (ví dụ giữ `flock` qua toàn bộ đoạn đọc–kiểm–ghi). Claim phải có vòng đời dạng **lease**; quá TTL chỉ là tín hiệu kiểm tra task mồ côi, không tự cho phép hai worker chạy đồng thời. Khái niệm lease, cùng vấn đề "người giữ lock cũ sống lại và ghi đè", dạy kỹ ở [[ds-15-coordination]].
 
 Ba luật vận hành (từ một skill loop nhặt task, kinh nghiệm thực tế):
 
-- stamp **dưới TTL** → đang chạy thật → bỏ qua task này.
-- stamp **quá TTL** → mồ côi → nhận lại.
+- stamp **dưới TTL** → claim chưa hết hạn → bỏ qua task này (không chứng minh worker còn sống).
+- stamp **quá TTL** → kiểm tra claim mồ côi; chỉ nhận lại theo cơ chế claim nguyên tử/single writer và điều kiện liveness bên dưới.
 - **Trước khi coi là mồ côi, kiểm agent còn sống không** (danh sách agent/task nền của công cụ). Timestamp chỉ là phương án dự phòng khi mất trạng thái; cướp task của một agent còn sống là kiểu hỏng nặng nhất.
 
 TTL bao nhiêu? Case thực tế ở [[ag-19-vong-lap-nhat-task]]: ngưỡng 30 phút làm **agent thứ hai bị spawn lên cùng worktree** khi task thật (build + test + hai vòng verifier) chạy hơn 60 phút; ngưỡng được nới lên 90.

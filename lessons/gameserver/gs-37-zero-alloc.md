@@ -37,11 +37,11 @@ tick 1481 : 1.127 µs
 
 Khoảng cách giữa các gai: **176, 176, 175** tick — ở 60 Hz là **một gai mỗi 2,93 giây**, đều như đồng hồ. Không có gì trong logic game chạy theo chu kỳ 2,93 giây. Runtime thì có: cùng lần chạy đó, `runtime/metrics` báo **11 chu kỳ GC trong 1.800 tick**, trung bình một GC mỗi 164 tick.
 
-Chu kỳ gai khớp chu kỳ GC. Và đây là chỗ phản trực giác: đo `PauseNs` của chính 11 chu kỳ đó ra **p50 = 29 µs, max = 61 µs**. Sáu mươi mốt micro giây không giải thích nổi một tick 3.201 µs. Ai đi tìm thủ phạm bằng cách nhìn stop-the-world pause sẽ không thấy gì và kết luận "GC ổn mà".
+Khoảng cách gai gợi ý liên hệ với GC, nhưng không xác định độ dài pha mark hay ghép từng gai với từng chu kỳ. Và đây là chỗ phản trực giác: đo `PauseNs` của chính 11 chu kỳ đó ra **p50 = 29 µs, max = 61 µs**. Sáu mươi mốt micro giây không giải thích nổi một tick 3.201 µs. Ai đi tìm thủ phạm bằng cách nhìn stop-the-world pause sẽ không thấy gì và kết luận "GC ổn mà".
 
 *(Apple M4, 10 core, 16 GB, Go 1.26.5, `GOGC` mặc định. Số dao động giữa các lần chạy — lần tệ nhất trong 6 lần có một tick **17.310 µs = 103,8 % ngân sách**, tức mất trọn một tick.)*
 
-Bài này đi tìm 3.140 µs còn thiếu.
+Bài này tìm phần chi phí tick mà thống kê STW riêng lẻ không giải thích được; không lấy hai cực trị chưa ghép cùng tick để suy chính xác thời gian mark assist.
 
 ---
 
@@ -79,60 +79,7 @@ Chia tick của chính lần chạy mục 2 làm hai nhóm, theo `/cpu/classes/g
 
 Mười tám trên một nghìn năm trăm là **1,2 %** — đúng lý do bài 36 nhấn mạnh p99: ở p50 và p90 nhóm này vô hình, tới p99 mới ló ra một nửa. Mỗi cái là một lần người chơi thấy khựng.
 
-<svg viewBox="0 0 700 250" role="img" aria-labelledby="gs37-a-t gs37-a-d" style="width:100%;height:auto">
-<title id="gs37-a-t">Một chu kỳ GC trải lên chuỗi tick: STW ngắn, mark assist dài</title>
-<desc id="gs37-a-d">Trục thời gian gồm nhiều tick 16,67 mili giây. Hai vạch stop-the-world chỉ vài chục micro giây nằm ở đầu và cuối chu kỳ GC. Giữa hai vạch đó là pha mark kéo dài nhiều tick, và các tick nằm trong pha này bị mark assist làm nở ra từ 98 lên tới 3201 micro giây.</desc>
-<text x="20" y="20" font-size="11" font-weight="bold" fill="currentColor">176 tick giữa hai gai — chu kỳ GC</text>
-<line x1="20" y1="40" x2="680" y2="40" stroke="currentColor" stroke-opacity="0.35"/>
-<g font-size="9" fill="currentColor" opacity="0.75">
-<text x="20" y="34">tick 600</text>
-<text x="640" y="34">tick 780</text>
-</g>
-<rect x="150" y="46" width="4" height="34" fill="#ef4444" fill-opacity="0.85"/>
-<rect x="410" y="46" width="4" height="34" fill="#ef4444" fill-opacity="0.85"/>
-<rect x="154" y="46" width="256" height="34" fill="#f59e0b" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.3"/>
-<text x="282" y="67" text-anchor="middle" font-size="11" fill="currentColor">pha MARK — chạy đồng thời, kéo dài nhiều tick</text>
-<text x="152" y="94" text-anchor="middle" font-size="9" fill="currentColor">STW 29 µs</text>
-<text x="412" y="94" text-anchor="middle" font-size="9" fill="currentColor">STW</text>
-<text x="20" y="128" font-size="10" font-weight="bold" fill="currentColor">thời gian làm việc của mỗi tick</text>
-<g fill="#3b82f6" fill-opacity="0.55">
-<rect x="20" y="196" width="16" height="6"/>
-<rect x="42" y="196" width="16" height="6"/>
-<rect x="64" y="196" width="16" height="6"/>
-<rect x="86" y="196" width="16" height="6"/>
-<rect x="108" y="196" width="16" height="6"/>
-<rect x="130" y="196" width="16" height="6"/>
-<rect x="440" y="196" width="16" height="6"/>
-<rect x="462" y="196" width="16" height="6"/>
-<rect x="484" y="196" width="16" height="6"/>
-<rect x="506" y="196" width="16" height="6"/>
-<rect x="528" y="196" width="16" height="6"/>
-<rect x="550" y="196" width="16" height="6"/>
-<rect x="572" y="196" width="16" height="6"/>
-<rect x="594" y="196" width="16" height="6"/>
-<rect x="616" y="196" width="16" height="6"/>
-<rect x="638" y="196" width="16" height="6"/>
-<rect x="660" y="196" width="16" height="6"/>
-</g>
-<g fill="#ef4444" fill-opacity="0.6">
-<rect x="160" y="160" width="16" height="42"/>
-<rect x="182" y="140" width="16" height="62"/>
-<rect x="204" y="150" width="16" height="52"/>
-<rect x="226" y="136" width="16" height="66"/>
-<rect x="248" y="152" width="16" height="50"/>
-<rect x="270" y="146" width="16" height="56"/>
-<rect x="292" y="164" width="16" height="38"/>
-<rect x="314" y="154" width="16" height="48"/>
-<rect x="336" y="170" width="16" height="32"/>
-<rect x="358" y="158" width="16" height="44"/>
-<rect x="380" y="176" width="16" height="26"/>
-</g>
-<line x1="20" y1="202" x2="680" y2="202" stroke="currentColor" stroke-opacity="0.4"/>
-<text x="82" y="216" text-anchor="middle" font-size="9" fill="currentColor">98 µs</text>
-<text x="282" y="130" text-anchor="middle" font-size="10" font-weight="bold" fill="currentColor">mark assist: 270 µs → 3.201 µs</text>
-<text x="560" y="216" text-anchor="middle" font-size="9" fill="currentColor">98 µs</text>
-<text x="20" y="238" font-size="9" fill="currentColor" opacity="0.75">Nhìn STW pause thì thấy 29 µs và kết luận GC ổn. Cái ăn ngân sách nằm ở phần cam.</text>
-</svg>
+<svg font-family="ui-sans-serif, system-ui, sans-serif" viewBox="0 0 520 438" role="img" aria-labelledby="fixgs37-t fixgs37-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto"><title id="fixgs37-t">GC: so phân vị tick, tách riêng thống kê STW</title><desc id="fixgs37-d">GC: so phân vị tick, tách riêng thống kê STW</desc><defs><marker id="fixgs37-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs><text x="260" y="25" font-size="15" text-anchor="middle" fill="currentColor">Phân vị thời gian tick — không phải timeline</text><text x="48" y="82" font-size="13" text-anchor="middle" fill="currentColor">p50</text><rect x="85" y="68" width="9.64386129334583" height="18" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="99.64386129334584" y="82" font-size="13" text-anchor="start" fill="currentColor">98 µs</text><rect x="85" y="93" width="26.569821930646672" height="18" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="116.56982193064667" y="107" font-size="13" text-anchor="start" fill="currentColor">270 µs</text><text x="48" y="157" font-size="13" text-anchor="middle" fill="currentColor">p99</text><rect x="85" y="143" width="24.503280224929707" height="18" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="114.50328022492971" y="157" font-size="13" text-anchor="start" fill="currentColor">249 µs</text><rect x="85" y="168" width="250.14995313964386" height="18" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="340.14995313964386" y="182" font-size="13" text-anchor="start" fill="currentColor">2542 µs</text><text x="48" y="232" font-size="13" text-anchor="middle" fill="currentColor">max</text><rect x="85" y="218" width="49.49859418931584" height="18" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="139.49859418931584" y="232" font-size="13" text-anchor="start" fill="currentColor">503 µs</text><rect x="85" y="243" width="315.0" height="18" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="405.0" y="257" font-size="13" text-anchor="start" fill="currentColor">3201 µs</text><text x="260" y="295" font-size="13" text-anchor="middle" fill="currentColor">Xanh: 1.482 tick GC ngủ · Cam: 18 tick GC chạy</text><text x="260" y="320" font-size="13" text-anchor="middle" fill="currentColor">Trong 1.500 tick sau warmup; cùng thang đo 0–3.201 µs</text><path d="M85 340 L400 340" stroke="currentColor" fill="none" stroke-width="2" /><text x="85" y="359" font-size="13" text-anchor="middle" fill="currentColor">0</text><text x="400" y="359" font-size="13" text-anchor="middle" fill="currentColor">3.201 µs</text><text x="260" y="393" font-size="13" text-anchor="middle" fill="currentColor">STW của 11 chu kỳ: p50 29 µs · max 61 µs</text><text x="260" y="416" font-size="13" text-anchor="middle" fill="currentColor">Phân vị chu kỳ ≠ thời gian STW của một tick cụ thể</text></svg>
 
 Từ đây trở đi, "chi phí GC" nghĩa là **CPU mà GC lấy của goroutine tick**, không phải STW pause — hai đại lượng khác nhau hai bậc độ lớn.
 

@@ -55,7 +55,7 @@ SET maintenance_work_mem = '2GB';
 -- CONCURRENTLY luôn chạy ĐƠN LUỒNG (không dùng worker), đổi lại là không khoá ghi.
 SET max_parallel_maintenance_workers = 4;
 CREATE INDEX idx_orders_created ON orders (created_at);              -- có parallel, nhưng KHOÁ ghi
--- CREATE INDEX CONCURRENTLY idx_orders_created ON orders (created_at); -- không khoá ghi, nhưng đơn luồng & lâu hơn
+-- CREATE INDEX CONCURRENTLY idx_orders_created ON orders (created_at); -- không khoá ghi, nhưng quét hai lần & lâu hơn; scan đầu có thể parallel
 ```
 
 **Công đoạn 3 — ghi index pages.** B-tree được dựng **bottom-up** từ dữ liệu đã sort (nhanh hơn nhiều so với chèn từng key). Kích thước index đáng kể: một B-tree trên cột `bigint` của bảng 500M dòng thường **10–15 GB** — toàn bộ phải ghi xuống đĩa.
@@ -70,41 +70,26 @@ CREATE INDEX idx_orders_created ON orders (created_at);              -- có para
 
 Đây là đặc trưng của **MVCC** (Multi-Version Concurrency Control) trong Postgres, và là nguồn đau âm ỉ ở production.
 
-**Bản chất:** khi bạn `UPDATE` một dòng, Postgres **không sửa tại chỗ** — nó ghi một **phiên bản dòng mới (new tuple)** ở vị trí khác và đánh dấu phiên bản cũ là "chết" (dead). Vì phiên bản mới nằm ở **ctid (địa chỉ vật lý) khác**, **mọi index trỏ tới dòng đó phải thêm một entry mới** trỏ tới ctid mới. Entry cũ trong index trỏ tới tuple chết thì **vẫn còn nằm đó** cho tới khi được dọn.
+**Bản chất:** khi bạn `UPDATE` một dòng, Postgres **không sửa tại chỗ** — nó ghi một **phiên bản dòng mới (new tuple)** ở vị trí khác và đánh dấu phiên bản cũ là "chết" (dead). Vì phiên bản mới nằm ở **ctid (địa chỉ vật lý) khác**, **các index cần entry mới khi update không đủ điều kiện HOT** trỏ tới ctid mới. Entry cũ trong index trỏ tới tuple chết thì **vẫn còn nằm đó** cho tới khi được dọn.
 
 Analogy: index như **mục lục sách**. Mỗi lần sửa một trang, thay vì tẩy xoá bạn **chép trang đó sang tờ mới ở cuối** và **thêm một dòng mục lục** trỏ tới tờ mới — dòng mục lục cũ vẫn nằm đó. Sửa nhiều lần → mục lục dày cộp toàn dòng trỏ tới trang đã bỏ.
 
-<svg viewBox="0 0 660 240" role="img" aria-labelledby="bl-t bl-d" style="width:100%;max-width:620px;height:auto;display:block;margin:1.25rem auto">
-<title id="bl-t">MVCC làm index bloat qua nhiều lần update</title>
-<desc id="bl-d">Mỗi update tạo tuple mới và index entry mới, entry cũ trỏ tới dead tuple chỉ được dọn khi autovacuum chạy</desc>
-<text x="120" y="30" text-anchor="middle" font-size="12" fill="currentColor">Index (B-tree)</text>
-<rect x="30" y="40" width="180" height="26" rx="4" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="120" y="57" text-anchor="middle" font-size="10" fill="currentColor">entry → tuple v1 (DEAD)</text>
-<rect x="30" y="72" width="180" height="26" rx="4" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="120" y="89" text-anchor="middle" font-size="10" fill="currentColor">entry → tuple v2 (DEAD)</text>
-<rect x="30" y="104" width="180" height="26" rx="4" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="120" y="121" text-anchor="middle" font-size="10" fill="currentColor">entry → tuple v3 (DEAD)</text>
-<rect x="30" y="136" width="180" height="26" rx="4" fill="#10b981" fill-opacity="0.18" stroke="currentColor"/>
-<text x="120" y="153" text-anchor="middle" font-size="10" fill="currentColor">entry → tuple v4 (LIVE)</text>
-<text x="120" y="192" text-anchor="middle" font-size="10" fill="currentColor">4 update cùng 1 dòng</text>
-<text x="120" y="208" text-anchor="middle" font-size="10" fill="currentColor">→ 4 index entry, 3 rác</text>
-<rect x="300" y="40" width="150" height="122" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="375" y="62" text-anchor="middle" font-size="11" fill="currentColor">autovacuum</text>
-<text x="375" y="82" text-anchor="middle" font-size="9.5" fill="currentColor">dọn dead entry,</text>
-<text x="375" y="98" text-anchor="middle" font-size="9.5" fill="currentColor">nhưng KHÔNG trả</text>
-<text x="375" y="114" text-anchor="middle" font-size="9.5" fill="currentColor">đĩa cho OS —</text>
-<text x="375" y="130" text-anchor="middle" font-size="9.5" fill="currentColor">page vẫn phình,</text>
-<text x="375" y="146" text-anchor="middle" font-size="9.5" fill="currentColor">chỉ đánh dấu trống</text>
-<line x1="210" y1="100" x2="298" y2="100" stroke="currentColor" stroke-width="1.5" marker-end="url(#bx)"/>
-<rect x="490" y="40" width="150" height="122" rx="8" fill="#f43f5e" fill-opacity="0.12" stroke="currentColor"/>
-<text x="565" y="66" text-anchor="middle" font-size="11" fill="currentColor">Hệ quả:</text>
-<text x="565" y="88" text-anchor="middle" font-size="9.5" fill="currentColor">index to hơn thực</text>
-<text x="565" y="104" text-anchor="middle" font-size="9.5" fill="currentColor">→ ít fit cache</text>
-<text x="565" y="120" text-anchor="middle" font-size="9.5" fill="currentColor">→ scan nhiều page</text>
-<text x="565" y="136" text-anchor="middle" font-size="9.5" fill="currentColor">→ query chậm dần</text>
-<line x1="450" y1="100" x2="488" y2="100" stroke="currentColor" stroke-width="1.5" marker-end="url(#bx)"/>
-<defs><marker id="bx" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<ab-toggle data-labels="Ban đầu|Sau 3 update">
+<svg viewBox="0 0 520 345" role="img" aria-labelledby="dst20fix-bloat1-t dst20fix-bloat1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="dst20fix-bloat1-t">Tích lũy version và index bloat</title>
+<desc id="dst20fix-bloat1-d">Tích lũy version và index bloat</desc>
+<text x="260" y="28" font-size="13" text-anchor="middle" fill="currentColor">Một dòng, update không HOT</text><rect x="45" y="55" width="240" height="200" rx="6" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/><text x="165" y="82" font-size="13" text-anchor="middle" fill="currentColor">Index page (giữ kích thước)</text><rect x="65" y="102" width="200" height="26" rx="6" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="165" y="120" font-size="13" text-anchor="middle" fill="currentColor">v1 → tuple LIVE</text><rect x="65" y="134" width="200" height="26" fill="none" stroke="currentColor" stroke-dasharray="3 4" opacity="0.4"/><rect x="65" y="166" width="200" height="26" fill="none" stroke="currentColor" stroke-dasharray="3 4" opacity="0.4"/><rect x="65" y="198" width="200" height="26" fill="none" stroke="currentColor" stroke-dasharray="3 4" opacity="0.4"/><text x="400" y="85" font-size="13" text-anchor="middle" fill="currentColor">0/4 entry chết</text><rect x="355" y="105" width="90" height="125" fill="none" stroke="currentColor"/><rect x="355" y="230.0" width="90" height="0.0" fill="#f43f5e" fill-opacity="0.35"/><text x="260" y="290" font-size="13" text-anchor="middle" fill="currentColor">v1 ban đầu</text><text x="260" y="320" font-size="13" text-anchor="middle" fill="currentColor">VACUUM tái dùng chỗ; không tự trả đĩa OS</text>
+<defs><marker id="dst20fix-bloat1-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 Z" fill="currentColor"/></marker></defs>
 </svg>
+<svg viewBox="0 0 520 345" role="img" aria-labelledby="dst20fix-bloat4-t dst20fix-bloat4-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="dst20fix-bloat4-t">Tích lũy version và index bloat</title>
+<desc id="dst20fix-bloat4-d">Tích lũy version và index bloat</desc>
+<text x="260" y="28" font-size="13" text-anchor="middle" fill="currentColor">Một dòng, update không HOT</text><rect x="45" y="55" width="240" height="200" rx="6" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/><text x="165" y="82" font-size="13" text-anchor="middle" fill="currentColor">Index page (giữ kích thước)</text><rect x="65" y="102" width="200" height="26" rx="6" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/><text x="165" y="120" font-size="13" text-anchor="middle" fill="currentColor">v1 → tuple DEAD</text><rect x="65" y="134" width="200" height="26" rx="6" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/><text x="165" y="152" font-size="13" text-anchor="middle" fill="currentColor">v2 → tuple DEAD</text><rect x="65" y="166" width="200" height="26" rx="6" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/><text x="165" y="184" font-size="13" text-anchor="middle" fill="currentColor">v3 → tuple DEAD</text><rect x="65" y="198" width="200" height="26" rx="6" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="165" y="216" font-size="13" text-anchor="middle" fill="currentColor">v4 → tuple LIVE</text><text x="400" y="85" font-size="13" text-anchor="middle" fill="currentColor">3/4 entry chết</text><rect x="355" y="105" width="90" height="125" fill="none" stroke="currentColor"/><rect x="355" y="136.25" width="90" height="93.75" fill="#f43f5e" fill-opacity="0.35"/><text x="260" y="290" font-size="13" text-anchor="middle" fill="currentColor">3 update → v1–v3 chết, v4 sống</text><text x="260" y="320" font-size="13" text-anchor="middle" fill="currentColor">VACUUM tái dùng chỗ; không tự trả đĩa OS</text>
+<defs><marker id="dst20fix-bloat4-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 Z" fill="currentColor"/></marker></defs>
+</svg>
+<ab-note>Một entry sống, phần còn lại trên page còn trống.</ab-note>
+<ab-note>Ví dụ không HOT: ba update sau v1 tạo bốn entry, ba entry cũ chờ dọn. Autovacuum cho tái sử dụng page; index phình làm giảm khả năng fit cache và tăng số page phải scan.</ab-note>
+</ab-toggle>
 
 **Tối ưu HOT (Heap-Only Tuple):** Postgres có một cứu cánh — nếu update **không đụng cột nào được index** và page cũ **còn chỗ trống**, nó làm HOT update: tuple mới nằm cùng page và **index KHÔNG cần entry mới**. Vì thế `fillfactor < 100` (chừa chỗ trống trong page) và **tránh index cột hay bị update** giúp giảm bloat mạnh.
 
@@ -300,7 +285,7 @@ Partial index nhỏ hơn nhiều → fit cache, rẻ khi update (chỉ đụng k
 
 ## 7. Tóm tắt
 - **Build index** = full scan (đọc cả bảng) + sort (`maintenance_work_mem`, tràn thì **sort đĩa**) + ghi index pages + **ghi/ship WAL**. Thứ giết p99 thường là **cache eviction** khi quét bảng đẩy hot data khỏi buffer cache. Build giờ thấp điểm, dùng `CONCURRENTLY`.
-- **Index bloat** sinh từ **MVCC**: mỗi update tạo tuple mới + index entry mới; autovacuum dọn nhưng **không thu nhỏ**. Đo bằng `pgstattuple`/`pgstatindex`, khắc phục bằng **`REINDEX CONCURRENTLY`** (bloat index) hoặc **`pg_repack`** (bloat heap+index). **Không** dùng `VACUUM FULL` ở production.
+- **Index bloat** sinh từ **MVCC**: update tạo tuple mới; update không HOT cần index entry mới; autovacuum dọn nhưng **không thu nhỏ**. Đo bằng `pgstattuple`/`pgstatindex`, khắc phục bằng **`REINDEX CONCURRENTLY`** (bloat index) hoặc **`pg_repack`** (bloat heap+index). **Không** dùng `VACUUM FULL` ở production.
 - **Index thừa/trùng/không dùng**: soi `pg_stat_user_indexes.idx_scan = 0` (thận trọng với chu kỳ/reset/replica), phát hiện **chồng lấp prefix** — `(a)` thừa nếu đã có `(a,b)`. Giá của index thừa: **chậm mọi write**, tốn đĩa và cache.
 - Test an toàn: **invisible index (MySQL)** để giả lập xoá có nút undo; **HypoPG (Postgres)** để thử index mới **không tốn IO build**.
 - Index làm **chậm** hệ khi: bảng **write-heavy** (mỗi index cắt throughput ghi) và cột **low-selectivity** (planner bỏ qua, chỉ tổ tốn). Dùng **partial index** cho các trường hợp lệch phân bố.

@@ -161,15 +161,15 @@ Limit 100/phút, bây giờ 12:01:18 → `e = 18/60 = 0,3`, phần cửa sổ tr
 ```
  12:00 (prev) = 84 request
  12:01 (curr) = 36 request      e = 0,30
- estimate = 36 + 84 × 0,70 = 94,8  →  94 < 100  →  CHO QUA
+ estimate = 36 + 84 × 0,70 = 94,8 < 100  →  CHO QUA
 ```
 
 Giả định ngầm: **request trong cửa sổ trước phân bố đều**. Giả định đó gần như luôn sai một chút — và đây là chỗ reviewer giỏi sẽ hỏi: *sai theo chiều nào?*
 
 - **Chiều lọt (false accept)**: 84 request của 12:00 dồn hết vào 12:00:59. Cửa sổ trượt [12:00:18 → 12:01:18] thật sự chứa 84 + 36 = **120 request**, thuật toán ước lượng 94,8 và vẫn cho qua → vượt 20% limit.
-- **Chiều chặn nhầm (false reject)**: 84 request đó dồn vào 12:00:00–12:00:05. Cửa sổ trượt thật chỉ có 36 request, nhưng thuật toán vẫn tính 94,8 và chặn client ở request thứ ~6 tiếp theo — bị phạt oan cho traffic đã ra khỏi cửa sổ từ lâu.
+- **Chiều chặn nhầm (false reject)**: 84 request đó dồn vào 12:00:00–12:00:05. Cửa sổ trượt thật chỉ có 36 request, nhưng thuật toán vẫn tính 94,8 và chặn request thứ 6 tiếp theo nếu kiểm tra estimate + 1 ≤ 100 trước khi tăng, giả sử e không đổi trong burst — bị phạt oan cho traffic đã ra khỏi cửa sổ từ lâu.
 
-Giới hạn lý thuyết của sai số là `prev × (1 − e)`, tối đa gần bằng **một lần limit** ở trường hợp bệnh hoạn nhất. Nhưng trên traffic thật phân bố đều hơn nhiều: Cloudflare công bố số liệu kinh điển — trên 400 triệu request, sliding window counter chỉ cho lọt **0,003%** request lẽ ra phải chặn, tỉ lệ chặn nhầm cùng bậc. Đó là lý do nó là lựa chọn mặc định của gần như mọi limiter thương mại.
+Với `e` là phần cửa sổ hiện tại đã trôi, đếm dư tối đa `prev × (1 − e)`, đếm hụt tối đa `prev × e`; sai số tuyệt đối tối đa là `prev × max(e, 1 − e)` (ở đây lần lượt 58,8 và 25,2), tối đa gần bằng **một lần limit** ở trường hợp bệnh hoạn nhất. Nhưng trên traffic thật phân bố đều hơn nhiều: Cloudflare công bố số liệu kinh điển — trên 400 triệu request, sliding window counter chỉ cho lọt **0,003%** request lẽ ra phải chặn, tỉ lệ chặn nhầm cùng bậc. Đó là lý do nó là lựa chọn mặc định của gần như mọi limiter thương mại.
 
 Muốn chính xác hơn mà không tốn như log? **Chia nhỏ cửa sổ**: thay vì 2 counter cho window 60 giây, dùng **12 counter 5 giây**, cộng các bucket nằm trọn trong cửa sổ và chỉ nội suy bucket rìa. Sai số giảm theo độ phân giải, bộ nhớ chỉ tăng tuyến tính theo số bucket. Đây là kiến trúc nhiều limiter production dùng thật.
 

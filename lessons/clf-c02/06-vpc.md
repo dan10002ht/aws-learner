@@ -54,13 +54,13 @@ Sau bài này bạn có thể:
 
 #### Đúng cách
 1. **VPC Endpoint Gateway cho S3 & DynamoDB** — **FREE**, không qua NAT, không tốn data transfer trong region.
-2. **VPC Endpoint Interface cho các AWS service khác** (Logs, KMS, Secrets) — $0.01/giờ + $0.01/GB nhưng vẫn rẻ hơn NAT nhiều.
+2. **VPC Endpoint Interface cho các AWS service khác** (Logs, KMS, Secrets) — $0.01/giờ mỗi endpoint/AZ + $0.01/GB ở bậc đầu; so tổng traffic và số endpoint/AZ với NAT trước khi kết luận rẻ hơn.
 3. **CloudWatch Logs trong same region** với app, không cross-region.
 4. **Đặt RDS cùng AZ với app chính** (Multi-AZ vẫn OK, chỉ chú ý read traffic về primary).
 5. **VPC Flow Logs** để monitor data flow, alert khi cross-AZ vượt threshold.
 6. **Cost Explorer group by "Usage Type"** xem `DataTransfer-*` mỗi tháng.
 
-→ Bill giảm từ $9k xuống **~$200/tháng**. Saving = 97%.
+→ Chưa đủ dữ kiện để chốt bill sau tối ưu hay % saving. Gateway endpoint bỏ phí NAT cho S3/DynamoDB; interface endpoint vẫn tính **$0.01/GB** ở bậc đầu, cộng phí endpoint/AZ/giờ và data transfer nếu áp dụng. Ví dụ 50 TB (50.000 GB) qua **interface** endpoint vẫn khoảng **$500 data processing**, chưa gồm phí giờ.
 
 (Đây là **anti-pattern phổ biến nhất** về cost. NAT Gateway data processing fee là **silent killer** mà nhiều team không để ý đến khi audit.)
 

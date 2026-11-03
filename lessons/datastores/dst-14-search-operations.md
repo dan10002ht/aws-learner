@@ -201,7 +201,7 @@ Nhớ: aggregation `terms` phải chạy trên trường **keyword** (hoặc s�
 
 Một index quá lớn cho một máy → ES **cắt index thành nhiều shard**, mỗi shard giữ một phần document và có thể nằm trên node khác nhau → **scale ngang** cả dung lượng lẫn thông lượng.
 
-- **Primary shard**: bản gốc nhận ghi. Số primary **cố định lúc tạo index** (không đổi được sau đó — muốn đổi phải reindex). Ví dụ trên đặt `number_of_shards: 3`.
+- **Primary shard**: bản gốc nhận ghi. Số primary **cố định lúc tạo index** (không cập nhật trực tiếp sau đó — dùng reindex, hoặc split/shrink sang index mới khi đủ điều kiện). Ví dụ trên đặt `number_of_shards: 3`.
 - **Replica shard**: bản sao của primary, đặt trên node **khác** primary. Vai trò kép: **HA** (primary chết, replica được promote thành primary) và **tăng throughput đọc** (đọc/search chia đều primary + replica). Số replica **đổi được động**.
 
 <svg viewBox="0 0 640 300" role="img" aria-labelledby="sh-t sh-d" style="width:100%;max-width:620px;height:auto;display:block;margin:1.25rem auto">
@@ -236,7 +236,7 @@ ES quyết định shard bằng công thức mặc định:
 shard = hash(_routing) % number_of_primary_shards
 ```
 
-Mặc định `_routing` = `_id` của document. Vì mẫu số là **số primary shard**, đổi số này sẽ làm hàm hash trỏ sai → đó là lý do **không đổi được số primary sau khi tạo** (phải reindex sang index mới).
+Mặc định `_routing` = `_id` của document. Vì mẫu số là **số primary shard**, đổi số này sẽ làm hàm hash trỏ sai → đó là lý do **không đổi trực tiếp setting primary trên index hiện tại**; reindex hoặc split/shrink tạo index mới với số shard phù hợp.
 
 Bạn có thể **custom routing** để gom document liên quan vào cùng shard (ví dụ routing theo `user_id`) → search theo user chỉ chạm 1 shard thay vì tất cả, nhanh hơn nhiều:
 

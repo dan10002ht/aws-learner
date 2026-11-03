@@ -228,7 +228,7 @@ Lời giải: mỗi node vật lý được đặt lên vòng **không phải 1 
 </svg>
 
 Vnode đem lại ba lợi ích quyết định:
-- **Cân bằng tải mượt**: mỗi node giữ nhiều cung nhỏ trải khắp vòng, tổng lại xấp xỉ đều. Càng nhiều vnode, độ lệch (variance) càng nhỏ — với ~100–200 vnode/node, lệch tải thường dưới vài %.
+- **Cân bằng tải mượt**: mỗi node giữ nhiều cung nhỏ trải khắp vòng, tổng lại xấp xỉ đều. Càng nhiều vnode, độ lệch (variance) càng nhỏ — 100–200 vnode/node không bảo đảm lệch tải dưới vài %. Kết quả còn phụ thuộc cách chọn token, số node, trọng số và phân bố key/request; cần đo tải thực tế.
 - **Chết node là chia đều gánh, không dồn một chỗ**: khi node chết, hàng trăm cung nhỏ của nó được **nhiều node khác nhau** hứng — không tạo hot node.
 - **Trọng số theo capacity (weight)**: node mạnh gấp đôi thì cấp gấp đôi số vnode → nhận gấp đôi tải. Cụm heterogeneous vẫn cân.
 
@@ -242,11 +242,14 @@ Dưới đây là một implement gọn, đúng, chạy được bằng Python (
 
 ```python
 import hashlib
-from bisect import bisect_right, insort
+from bisect import bisect_left, insort
 
 class ConsistentHashRing:
     def __init__(self, vnodes=150):
+        if not isinstance(vnodes, int) or vnodes <= 0:
+            raise ValueError("vnodes phải là số nguyên dương")
         self.vnodes = vnodes          # số virtual node mỗi node vật lý
+        self._nodes = {}              # node -> tập token thực tế
         self._ring = {}               # hash-điểm -> tên node vật lý
         self._sorted = []             # danh sách hash-điểm đã sort (để bisect)
 
@@ -256,32 +259,38 @@ class ConsistentHashRing:
         return int.from_bytes(h[:4], "big")
 
     def add_node(self, node: str, weight: int = 1):
-        # weight nhân số vnode -> node mạnh hơn nhận nhiều tải hơn
-        for i in range(self.vnodes * weight):
-            point = self._hash(f"{node}#{i}")
+        if node in self._nodes:
+            raise ValueError("node đã có trong ring")
+        if not isinstance(weight, int) or weight <= 0:
+            raise ValueError("weight phải là số nguyên dương")
+        points = [self._hash(f"{node}#{i}")
+                  for i in range(self.vnodes * weight)]
+        # Từ chối collision trước khi thay đổi ring, không ghi đè chủ token.
+        if len(set(points)) != len(points) or any(p in self._ring for p in points):
+            raise ValueError("collision token; chọn node id/hash khác")
+        self._nodes[node] = points
+        for point in points:
             self._ring[point] = node
-            insort(self._sorted, point)     # giữ mảng luôn sort
+            insort(self._sorted, point)
 
-    def remove_node(self, node: str, weight: int = 1):
-        for i in range(self.vnodes * weight):
-            point = self._hash(f"{node}#{i}")
-            if point in self._ring:
-                del self._ring[point]
-                self._sorted.remove(point)
+    def remove_node(self, node: str):
+        for point in self._nodes.pop(node, []):
+            del self._ring[point]
+            self._sorted.remove(point)
 
     def get_node(self, key: str) -> str:
         if not self._ring:
             raise ValueError("ring rỗng")
         p = self._hash(key)
-        # đi theo chiều kim đồng hồ: điểm đầu tiên > p
-        idx = bisect_right(self._sorted, p)
+        # đi theo chiều kim đồng hồ: điểm đầu tiên >= p
+        idx = bisect_left(self._sorted, p)
         if idx == len(self._sorted):
             idx = 0                          # vượt cuối vòng thì quay về đầu
         return self._ring[self._sorted[idx]]
 ```
 
 Điểm cốt lõi cần nắm trong code này:
-- **`get_node` là O(log M)**: `bisect_right` tìm nhị phân trên mảng điểm đã sort. Đây chính là bước "đi CW tới node kế tiếp".
+- **`get_node` là O(log M)**: `bisect_left` tìm nhị phân trên mảng điểm đã sort. Đây chính là bước "đi CW tới node kế tiếp".
 - **Vòng cuộn lại**: nếu key nằm sau điểm cuối cùng, `idx` reset về 0 — đúng ngữ nghĩa vòng tròn.
 - **`weight` nhân vnode**: nút mạnh cấp nhiều vnode hơn, nhận nhiều key hơn — đó là cách cụm không đồng nhất vẫn cân bằng.
 
@@ -314,7 +323,7 @@ Kết quả điển hình: thêm node E chỉ dời **~20% key** (đúng 1/5), v
 
 | Hệ thống | Dùng consistent hashing để làm gì | Chi tiết đáng nhớ |
 |----------|-----------------------------------|-------------------|
-| **Amazon DynamoDB / Dynamo paper** | Partition dữ liệu quanh ring, replica là N node kế tiếp CW | Chính paper Dynamo (2007) phổ biến hoá vnode |
+| **Amazon Dynamo (paper 2007)** | Partition dữ liệu quanh ring, replica là N node kế tiếp CW | Chính paper Dynamo (2007) phổ biến hoá vnode |
 | **Apache Cassandra** | Mỗi node giữ nhiều **token** (vnode) trên ring; replica = các node kế tiếp | `num_tokens: 256` trong `cassandra.yaml` chính là số vnode |
 | **Riak** | Ring 2^160 chia thành `ring_size` partition (mặc định 64) | Partition gán vòng cho node |
 | **memcached (ketama)** | Client rải key qua nhiều server cache; thêm/bớt server ít cache miss | Thư viện `libketama` là chuẩn de-facto |
@@ -347,7 +356,7 @@ Vì sao slot thay vì ring? Vì **16384 slot là một mức trừu tượng c�
 user:{1000}:profile   và   user:{1000}:cart
 ```
 
-Cả hai băm phần trong `{}` là `1000` → cùng slot → cùng node → làm được lệnh multi-key. Ring thuần không cho bạn khả năng "ghim cùng chỗ" tiện lợi này. Về bản chất, slot là **một biến thể rời rạc hoá của consistent hashing**: 16384 "vnode toàn cục" mà node nào cũng có thể sở hữu bất kỳ tập slot nào.
+Cả hai băm phần trong `{}` là `1000` → cùng slot → cùng node → làm được lệnh multi-key. Ring cũng có thể hash cùng tag/partition key để ghim nhiều key cùng node; lợi ích riêng của slot là lớp ánh xạ cố định, dễ quản lý resharding. Về bản chất, slot là **một biến thể rời rạc hoá của consistent hashing**: 16384 "vnode toàn cục" mà node nào cũng có thể sở hữu bất kỳ tập slot nào.
 
 ---
 
@@ -366,6 +375,6 @@ Cả hai băm phần trong `{}` là `1000` → cùng slot → cùng node → là
 - **Consistent hashing** hash node và key lên **một vòng cố định 2^32**; key thuộc node **kế tiếp theo chiều kim đồng hồ**. Thêm/bớt node chỉ dời **~1/N** key, không đụng các node khác.
 - **Virtual node** rải mỗi node thành nhiều điểm trên vòng → **cân bằng tải đều**, **chết node thì chia gánh cho nhiều node** (tránh hot node), và **weight theo capacity**.
 - Code cốt lõi: mảng điểm đã sort + **binary search (`bisect`)** để tìm node kế tiếp — O(log M).
-- Có mặt trong **Cassandra (num_tokens), DynamoDB/Dynamo, Riak, memcached ketama, CDN**. **Redis Cluster** dùng biến thể rời rạc — **16384 hash slot** — để resharding từng phần và hỗ trợ hash tag.
+- Có mặt trong **Cassandra (num_tokens), Dynamo (paper), Riak, memcached ketama, CDN**. **Redis Cluster** dùng biến thể rời rạc — **16384 hash slot** — để resharding từng phần và hỗ trợ hash tag.
 
-> **Bài tiếp theo (Bài 12):** khi đã chia được dữ liệu ra nhiều node, làm sao **giữ nhiều bản sao (replication)** cho nhất quán và chịu lỗi — leader-based vs leaderless, và quorum.
+> **Bài tiếp theo (Bài 12):** sau replication ở Bài 7–9 và partitioning, ta học **rebalancing & routing** — chuyển dữ liệu và định tuyến khi membership thay đổi.

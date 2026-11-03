@@ -104,7 +104,7 @@ Mọi lệnh **ghi đi qua cache**: app ghi vào cache, cache **ghi tiếp xuố
 <ab-note>Trả OK sau khi ghi cache; flush theo lô giảm latency nhưng có thể mất dữ liệu chưa flush nếu cache chết.</ab-note>
 </ab-toggle>
 
-**Ưu**: cache **luôn khớp DB** (write-through cache không bao giờ stale so với dữ liệu vừa ghi), và dữ liệu **bền ngay** vì đã nằm ở DB. Thường ghép với read-through để cache luôn "nóng và đúng".
+**Ưu**: sau lần ghi thành công, cache và DB cùng nhận giá trị mới, dữ liệu đã nằm ở DB. Điều này cần mọi writer đi qua cùng đường ghi, xử lý lỗi ghi từng phần và điều phối concurrent read/write; write-through tự nó không bảo đảm cache không bao giờ stale. Thường ghép với read-through để giữ cache nóng.
 
 **Nhược**: mỗi ghi phải chờ **cả hai** → **write latency cao hơn**. Và nó ghi *mọi* thứ vào cache kể cả dữ liệu hiếm khi đọc → **phí RAM** (giảm bằng TTL).
 
@@ -122,7 +122,7 @@ App ghi vào cache và cache **trả về ngay lập tức**, chưa chạm DB. C
 |---|---|---|---|---|---|---|
 | **Cache-aside** | App | Ghi DB + invalidate cache | Có thể stale tới khi TTL/invalidate | — (ghi thẳng DB) | Không (DB là nguồn) | Đọc nhiều, mặc định phổ biến |
 | **Read-through** | Cache (loader) | (thường ghép write-through) | Như cache-aside nhưng gọn code | — | Không | Khi có lib loader sẵn |
-| **Write-through** | (ghép read-through) | Ghi cache→DB đồng bộ | Luôn khớp | **Cao** | Không | Cần cache luôn đúng |
+| **Write-through** | (ghép read-through) | Ghi cache→DB đồng bộ | Khớp sau ghi thành công, cần xử lý race/lỗi | **Cao** | Không sau khi DB xác nhận | Cần ghi đồng bộ cache và DB |
 | **Write-behind** | (ghép read-through) | Ghi cache, flush DB sau | Lệch tạm thời | **Rất thấp** | **Có** | Ghi dày đặc, chịu được mất ít |
 
 Lưu ý: read và write là **hai trục độc lập** — thực tế thường **kết hợp**: ví dụ *cache-aside cho đọc + invalidate cho ghi* (combo phổ biến nhất), hay *read-through + write-through* (cache library "toàn quyền"), hay *read-through + write-behind* (throughput ghi cao).
@@ -217,26 +217,48 @@ Vài điểm cốt lõi trong đoạn trên:
 - **`delete` chứ không `set` giá trị mới**: tránh ghi đè bằng dữ liệu có thể đã lỗi thời do race với request khác; để cache lazy nạp lại là an toàn hơn.
 - **Cache cả kết quả rỗng** (negative caching) với TTL ngắn: chống **cache penetration** — kẻ tấn công spam id không tồn tại để mọi request đều miss và đập DB.
 
-Chống **cache stampede** khi một key hot hết hạn (single-flight bằng Redis lock):
+Chống **cache stampede** bằng lease có token riêng, compare-and-delete và thời hạn chờ hữu hạn; caller thua không dồn xuống DB. DB timeout cần ngắn hơn lease 5s hoặc có gia hạn. Mẫu Redis đơn; với Cluster, lock/data key phải cùng slot để chạy Lua:
 
 ```python
-def get_hot(key: str):
-    val = r.get(key)
-    if val is not None:
-        return json.loads(val)
+import time, uuid
 
+UNLOCK = """
+if redis.call('GET', KEYS[1]) == ARGV[1] then
+    return redis.call('DEL', KEYS[1])
+end
+return 0
+"""
+# Chỉ publish nếu lease vẫn thuộc caller; SET + kiểm token là nguyên tử.
+PUBLISH_IF_OWNER = """
+if redis.call('GET', KEYS[1]) == ARGV[1] then
+    redis.call('SET', KEYS[2], ARGV[2], 'EX', ARGV[3])
+    return 1
+end
+return 0
+"""
+
+def get_hot(key: str, wait_s=0.5):
     lock_key = f"lock:{key}"
-    # Chỉ 1 request giành được lock đi nạp DB; số còn lại chờ rồi đọc lại cache
-    if r.set(lock_key, "1", nx=True, ex=5):          # NX = chỉ set nếu chưa có
-        try:
-            data = db.load(key)
-            r.set(key, json.dumps(data), ex=300)
-            return data
-        finally:
-            r.delete(lock_key)
-    else:
-        time.sleep(0.05)                             # backoff ngắn
-        return get_hot(key)                          # thử lại — lúc này thường đã hit
+    deadline = time.monotonic() + wait_s
+    while time.monotonic() < deadline:
+        val = r.get(key)
+        if val is not None:
+            return json.loads(val)
+        token = uuid.uuid4().hex
+        if r.set(lock_key, token, nx=True, ex=5):
+            try:
+                val = r.get(key)  # caller trước có thể vừa nạp xong
+                if val is not None:
+                    return json.loads(val)
+                row = db.load(key)
+                if r.eval(PUBLISH_IF_OWNER, 2, lock_key, key,
+                              token, json.dumps(row), 300):
+                    return row
+                # Lease hết: không ghi đè cache của owner mới.
+            finally:
+                r.eval(UNLOCK, 1, lock_key, token)
+        time.sleep(min(0.05, max(0, deadline - time.monotonic())))
+    raise TimeoutError("cache rebuild đang bận; retry với backoff")
 ```
 
 ---
@@ -244,8 +266,8 @@ def get_hot(key: str):
 ## 4. Chọn chiến lược nào? — trade-off consistency vs performance
 
 - **Đọc nhiều, ghi vừa, chịu được stale ngắn** → **cache-aside + invalidate + TTL**. Mặc định 90% trường hợp. Đơn giản, resilient.
-- **Muốn code gọn, có sẵn cache library với loader** → **read-through** (đường đọc) ghép **write-through** (đường ghi) để cache luôn đúng.
-- **Cache bắt buộc luôn khớp DB, ghi không quá nóng** → **write-through**. Trả giá bằng write latency.
+- **Muốn code gọn, có sẵn cache library với loader** → **read-through** (đường đọc) ghép **write-through** (đường ghi) để đồng bộ cache khi ghi, kèm xử lý race/lỗi.
+- **Cần cập nhật cache đồng bộ khi ghi, ghi không quá nóng** → **write-through**. Trả giá bằng write latency.
 - **Ghi cực dày (counter, metrics, telemetry), chịu được mất vài bản ghi cuối** → **write-behind**, kèm buffer bền (Kafka/WAL/replica) để giảm rủi ro.
 - **Tuyệt đối không được sai** (tiền, tồn kho lúc checkout) → cân nhắc **không cache**, hoặc write-through + invalidate chặt, hoặc đọc thẳng nguồn cho đường quan trọng.
 
@@ -256,7 +278,7 @@ Nguyên tắc xuyên suốt: **cache là tối ưu hiệu năng, DB là nguồn 
 ## 5. Tóm tắt
 - **Cache-aside (lazy)**: app tự đọc cache → miss thì đọc DB → set lại; ghi thì **ghi DB rồi invalidate**. Phổ biến nhất, đơn giản, resilient.
 - **Read-through**: dời việc nạp-khi-miss từ app vào **lớp cache** (loader) → code gọn.
-- **Write-through**: ghi cache **và** DB **đồng bộ** → cache luôn đúng, bền ngay, nhưng **write latency cao**.
+- **Write-through**: ghi cache **và** DB **đồng bộ** → DB đã lưu khi trả thành công, giảm stale nếu điều phối writer/race/lỗi đúng, nhưng **write latency cao**.
 - **Write-behind (write-back)**: ghi cache, trả về ngay, **flush DB sau theo lô** → ghi cực nhanh và gộp được tải, nhưng **rủi ro mất dữ liệu** nếu cache crash trước khi flush.
 - **TTL** là lưới an toàn chống stale; kết hợp **invalidate-on-write**, **TTL jitter**, **stale-while-revalidate** để cân tươi vs hit rate.
 - Cache có nhiều tầng: **browser → CDN → app-local → distributed**; càng gần user càng rẻ, càng xa càng chậm và là nguồn sự thật.

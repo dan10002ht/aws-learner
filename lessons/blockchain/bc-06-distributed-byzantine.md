@@ -125,7 +125,7 @@ Năm 1999, **Castro & Liskov** công bố **PBFT (Practical Byzantine Fault Tole
 <line x1="130" y1="166" x2="670" y2="166" stroke="currentColor" stroke-width="0.5"/>
 <line x1="130" y1="216" x2="670" y2="216" stroke="currentColor" stroke-width="0.5"/>
 <g data-step="1">
-<text x="200" y="46" text-anchor="middle" font-size="13" fill="currentColor">request</text>
+<text x="200" y="18" text-anchor="middle" font-size="13" fill="currentColor">request</text>
 <line x1="150" y1="24" x2="230" y2="66" stroke="currentColor" stroke-width="1" marker-end="url(#bc06-med-a)"/>
 </g>
 <g data-step="2">
@@ -134,7 +134,7 @@ Năm 1999, **Castro & Liskov** công bố **PBFT (Practical Byzantine Fault Tole
 <line x1="240" y1="66" x2="330" y2="166" stroke="#3b82f6" stroke-width="1" marker-end="url(#bc06-med-a)"/>
 </g>
 <g data-step="3">
-<text x="410" y="90" text-anchor="middle" font-size="13" fill="currentColor">prepare (all↔all)</text>
+<text x="410" y="90" text-anchor="middle" font-size="13" fill="currentColor">prepare (backup → all)</text>
 <line x1="345" y1="116" x2="435" y2="166" stroke="currentColor" stroke-width="1" marker-end="url(#bc06-med-a)"/>
 <line x1="345" y1="166" x2="435" y2="116" stroke="currentColor" stroke-width="1" marker-end="url(#bc06-med-a)"/>
 <line x1="345" y1="116" x2="435" y2="66" stroke="currentColor" stroke-width="1" marker-end="url(#bc06-med-a)"/>
@@ -146,7 +146,7 @@ Năm 1999, **Castro & Liskov** công bố **PBFT (Practical Byzantine Fault Tole
 <line x1="470" y1="166" x2="560" y2="116" stroke="#10b981" stroke-width="1" marker-end="url(#bc06-med-a)"/>
 </g>
 <g data-step="5">
-<text x="630" y="46" text-anchor="middle" font-size="13" fill="currentColor">reply</text>
+<text x="620" y="18" text-anchor="middle" font-size="13" fill="currentColor">reply</text>
 <line x1="590" y1="66" x2="650" y2="24" stroke="currentColor" stroke-width="1" marker-end="url(#bc06-med-a)"/>
 <line x1="590" y1="116" x2="650" y2="24" stroke="currentColor" stroke-width="1" marker-end="url(#bc06-med-a)"/>
 </g>
@@ -155,14 +155,14 @@ Năm 1999, **Castro & Liskov** công bố **PBFT (Practical Byzantine Fault Tole
 </svg>
 <step-note data-step="1">Client gửi request tới primary để được đề xuất thứ tự; đây chưa phải pha bỏ phiếu.</step-note>
 <step-note data-step="2">Primary phát pre-prepare cho backup trong cùng view và sequence number.</step-note>
-<step-note data-step="3">Với f = 1, backup cần pre-prepare và 2 phiếu prepare khớp từ các replica khác để prepared.</step-note>
-<step-note data-step="4">Replica chờ 2f + 1 = 3 commit khớp, tính cả chính nó; một node im lặng vẫn không cản quorum.</step-note>
+<step-note data-step="3">Với f = 1, backup cần pre-prepare và 2 prepare khớp từ các backup khác nhau, có thể gồm phiếu của chính backup đó để prepared.</step-note>
+<step-note data-step="4">Replica phải prepared rồi có 2f + 1 = 3 commit khớp từ các replica khác nhau, có thể gồm chính nó; một node im lặng vẫn không cản quorum.</step-note>
 <step-note data-step="5">Client đợi f + 1 = 2 reply khớp để có ít nhất một trả lời từ replica trung thực.</step-note>
 </step-flow>
 
 - **Pre-prepare**: primary đề xuất thứ tự cho request, phát cho các backup.
-- **Prepare**: mỗi node phát "tôi thấy đề xuất này", chờ nhận `2f` phiếu prepare khớp → chắc chắn *đa số trung thực* đồng ý *cùng một thứ tự*.
-- **Commit**: mỗi node phát commit, chờ `2f + 1` phiếu commit → chốt. Ba pha là cần thiết để chống cả trường hợp primary chính là kẻ Byzantine (khi đó cơ chế **view-change** thay leader).
+- **Prepare**: backup phát "tôi thấy đề xuất này". Replica đạt *prepared* khi đã có request, pre-prepare và `2f` prepare khớp từ các backup khác nhau (có thể gồm phiếu của chính nó), cùng view, sequence number và digest.
+- **Commit**: replica phát commit sau khi prepared; *committed-local* cần prepared và `2f + 1` commit khớp từ các replica khác nhau (có thể gồm chính nó) → chốt. Ba pha là cần thiết để chống cả trường hợp primary chính là kẻ Byzantine (khi đó cơ chế **view-change** thay leader).
 
 Đặc điểm quan trọng: PBFT cho **finality tức thì** (block đã commit là *bất khả đảo ngược*, không có "chờ 6 xác nhận"), nhưng **giao tiếp O(n²)** thông điệp → chỉ scale tới vài chục–vài trăm node, và cần **biết trước danh sách thành viên** (permissioned). Đây chính là lý do Bitcoin cần một cách tiếp cận *khác*.
 
@@ -195,14 +195,14 @@ PBFT giải Byzantine đẹp, nhưng có hai giả định chết người với
 
 | Chiều | BFT cổ điển (PBFT) | Nakamoto consensus (Bitcoin) |
 |-------|---------------------|------------------------------|
-| Đơn vị "phiếu" | 1 node = 1 phiếu | **1 đơn vị công/tài nguyên** = 1 phiếu (hashpower ở PoW, stake ở PoS) |
+| Đơn vị "phiếu" | 1 node = 1 phiếu | **1 đơn vị công** = 1 phiếu (hashpower ở Bitcoin PoW) |
 | Thành viên | Cố định, biết trước (permissioned) | **Mở, không cần xin phép** (permissionless) |
 | Chống Sybil | Không có → phải giới hạn thành viên | **Có** — tạo node giả *miễn phí*, nhưng công/stake thì *tốn tiền thật* |
-| Ngưỡng an toàn | < 1/3 node Byzantine | < **1/2** hashpower/stake (51% attack) |
+| Ngưỡng an toàn | < 1/3 node Byzantine | < **1/2** hashpower cho bảo đảm xác suất của Bitcoin PoW |
 | Finality | Tức thì, tuyệt đối | Xác suất, càng nhiều block càng chắc |
 | Quy mô | Vài trăm node | Hàng chục nghìn node |
 
-Cái tài tình: gắn quyền bỏ phiếu vào **một tài nguyên đắt đỏ, khan hiếm bên ngoài** (điện năng để tính hash, hoặc vốn bị khóa). Muốn lật đồng thuận, kẻ tấn công không "tạo node giả" được nữa — phải **thực sự sở hữu > 50% tài nguyên toàn mạng**, một chi phí khổng lồ và tự hủy (tấn công thành công thì tài sản chính mình mất giá). Niềm tin được **thay bằng chi phí kinh tế**: bạn không cần tin ai, chỉ cần tin rằng *không kẻ nào bỏ ra nổi số tiền để tấn công lớn hơn số tiền chúng kiếm được*.
+Cái tài tình: gắn quyền bỏ phiếu vào **một tài nguyên đắt đỏ, khan hiếm bên ngoài** (điện năng để tính hash, hoặc vốn bị khóa). Muốn lật đồng thuận, kẻ tấn công không "tạo node giả" được nữa — phải trả chi phí tài nguyên theo cơ chế đồng thuận. Với PoW, >50% hashpower tạo lợi thế dài hạn; dưới ngưỡng vẫn có thể reorg với xác suất giảm theo độ sâu. Ngưỡng PoS phụ thuộc giao thức, không dùng chung mốc 50% (tấn công thành công thì tài sản chính mình mất giá). Niềm tin được **thay bằng chi phí kinh tế**: bạn không cần tin ai, chỉ cần tin rằng *không kẻ nào bỏ ra nổi số tiền để tấn công lớn hơn số tiền chúng kiếm được*.
 
 Đó là ý nghĩa đầy đủ của "**giải bài toán niềm tin phi tập trung**": biến bài toán Byzantine Generals — vốn cần biết trước và giới hạn số tướng — thành một bài toán **mở, chống Sybil, tự khích lệ kinh tế**, nơi các bên xa lạ và không tin nhau vẫn hội tụ về một sổ cái chung mà không cần bất kỳ trung gian nào.
 
@@ -212,7 +212,7 @@ Cái tài tình: gắn quyền bỏ phiếu vào **một tài nguyên đắt đ�
 
 | Tiêu chí | Raft/Paxos (crash-only) | PBFT (BFT cổ điển) | Nakamoto (PoW/PoS) |
 |----------|-------------------------|--------------------|--------------------|
-| **Chịu lỗi** | Chỉ crash, ≤ n/2 chết | Byzantine, < n/3 | Byzantine kinh tế, < 1/2 tài nguyên |
+| **Chịu lỗi** | Chỉ crash, < n/2 chết | Byzantine, < n/3 | PoW: < 1/2 hashpower; PoS-BFT: < 1/3 stake |
 | **Thành viên** | Biết trước | Biết trước | Mở, permissionless |
 | **Chống Sybil** | Không | Không | Có (PoW/PoS) |
 | **Finality** | Tức thì | Tức thì | Xác suất (PoW) / tức thì kèm điều kiện (PoS-BFT) |
@@ -224,7 +224,7 @@ Cái tài tình: gắn quyền bỏ phiếu vào **một tài nguyên đắt đ�
 ## 4. Ví dụ thực tế — số học để "cảm" được ngưỡng
 
 - **Tendermint / Cosmos**: 100 validator, tổng stake S. Chain **finalize** một block khi ≥ **67 phiếu (> 2/3)** theo trọng số stake. Kẻ tấn công cần > 1/3 stake để *chặn* finality (liveness attack), và > 2/3 để *chốt block sai* (safety attack). Đó là lý do phân tán stake ra nhiều validator lại quan trọng: gom stake vào ít bên làm ngưỡng tấn công rẻ đi.
-- **Bitcoin**: không "đếm 2/3" gì cả — mỗi block là một cuộc bỏ phiếu bằng hashpower. Muốn viết lại lịch sử k block, kẻ tấn công phải đào nhanh hơn cả phần còn lại của mạng trong suốt k block. Với > 50% hashpower thì *chắc chắn* làm được (51% attack); dưới 50% xác suất thành công **giảm mũ** theo k — đây là gốc rễ tại sao ta chờ **6 xác nhận** cho giao dịch giá trị lớn.
+- **Bitcoin**: không "đếm 2/3" gì cả — mỗi block là một cuộc bỏ phiếu bằng hashpower. Muốn viết lại lịch sử k block, kẻ tấn công phải tạo nhánh có tổng công việc vượt nhánh chính. Với >50% hashpower và đủ thời gian trong mô hình lý tưởng thì có lợi thế đuổi vượt (51% attack); dưới 50% xác suất thành công **giảm mũ** theo k — đây là gốc rễ tại sao ta chờ **6 xác nhận** cho giao dịch giá trị lớn.
 
 Hai ví dụ cho thấy cùng một bài toán Byzantine được "định giá" bằng hai đơn vị khác nhau: **tỷ lệ node/stake trung thực** (BFT) vs **tỷ lệ tài nguyên trung thực** (Nakamoto).
 

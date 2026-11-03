@@ -43,11 +43,11 @@ Hai con số này phục vụ **hai giai đoạn khác nhau**:
 Đây là điểm **nhiều người hiểu sai** và gây incident thật. CPU và memory bị ép trần theo hai cơ chế **hoàn toàn khác nhau**, vì bản chất tài nguyên khác nhau:
 
 - **CPU là tài nguyên *nén được* (compressible).** Vượt limit → cgroup **throttle**: kernel không cấp thêm slice CPU trong chu kỳ đó, tiến trình bị *làm chậm* nhưng **không chết**. Hậu quả: latency tăng vọt (p99 xấu) mà log không báo lỗi gì — rất khó chẩn đoán.
-- **Memory là tài nguyên *không nén được* (incompressible).** Đã cấp byte thì không "đòi lại" nhẹ nhàng được. Vượt memory limit → kernel **OOMKiller giết** container ngay (exit code **137** = 128 + tín hiệu SIGKILL 9). Pod restart, bạn thấy `OOMKilled` trong `kubectl describe`.
+- **Memory là tài nguyên *không nén được* (incompressible).** Đã cấp byte thì không "đòi lại" nhẹ nhàng được. Memory limit được kernel thực thi phản ứng: khi không reclaim đủ bộ nhớ, có thể **OOMKill** process trong container. Exit **137** = 128 + SIGKILL 9, riêng mã này không chứng minh OOM; kiểm tra reason `OOMKilled`. Container được restart tuỳ restart policy.
 
 <svg viewBox="0 0 660 250" role="img" aria-labelledby="lim-t lim-d" style="width:100%;max-width:620px;height:auto;display:block;margin:1.25rem auto">
 <title id="lim-t">CPU vượt limit bị throttle, Memory vượt limit bị OOMKill</title>
-<desc id="lim-d">So sánh hai cơ chế: CPU nén được nên chỉ bị làm chậm, Memory không nén được nên container bị giết</desc>
+<desc id="lim-d">So sánh hai cơ chế: CPU nén được nên chỉ bị làm chậm, Memory được thực thi phản ứng; OOMKill xảy ra khi không reclaim đủ bộ nhớ. Exit 137 chỉ cho biết SIGKILL.</desc>
 <rect x="30" y="30" width="280" height="190" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
 <text x="170" y="55" text-anchor="middle" font-size="13" fill="currentColor">CPU — nén được</text>
 <line x1="60" y1="150" x2="280" y2="150" stroke="currentColor" stroke-width="1"/>
@@ -63,8 +63,8 @@ Hai con số này phục vụ **hai giai đoạn khác nhau**:
 <text x="490" y="84" text-anchor="middle" font-size="10" fill="currentColor">limit</text>
 <path d="M380,160 L420,150 L460,130 L500,105 L525,92" fill="none" stroke="currentColor" stroke-width="1.6"/>
 <text x="530" y="88" text-anchor="middle" font-size="16" fill="currentColor">✗</text>
-<text x="490" y="188" text-anchor="middle" font-size="11" fill="currentColor">Chạm trần → OOMKilled</text>
-<text x="490" y="206" text-anchor="middle" font-size="11" fill="currentColor">giết ngay, exit 137</text>
+<text x="490" y="188" text-anchor="middle" font-size="11" fill="currentColor">Không reclaim đủ → OOMKill</text>
+<text x="490" y="206" text-anchor="middle" font-size="11" fill="currentColor">137: SIGKILL; kiểm reason</text>
 </svg>
 
 Hệ quả thực tế khi đặt sai:
@@ -75,35 +75,35 @@ Hệ quả thực tế khi đặt sai:
 
 ### 2.3 QoS class — ai bị hy sinh trước khi node ngộp
 
-Khi một node **cạn memory thật** (không chỉ 1 Pod vượt limit, mà cả node hết RAM), kubelet phải **evict** (đuổi) bớt Pod để cứu node. Nó chọn nạn nhân theo **QoS class** — một nhãn Kubernetes **tự suy ra** từ cách bạn đặt requests/limits:
+Khi một node **cạn memory thật** (không chỉ 1 Pod vượt limit, mà cả node hết RAM), kubelet phải **evict** (đuổi) bớt Pod để cứu node. Với memory pressure, kubelet xếp theo **usage có vượt request không → Pod Priority → mức dùng so với request**. **QoS class** giúp ước lượng nhóm dễ bị evict, không phải thứ tự tuyệt đối; QoS được suy ra từ requests/limits:
 
 | QoS class | Điều kiện | Bị evict |
 |-----------|-----------|----------|
-| **Guaranteed** | Mọi container có requests **=** limits cho **cả** CPU lẫn memory | **Cuối cùng** — được ưu ái nhất |
-| **Burstable** | Có ít nhất 1 request nhưng **không** thoả điều kiện Guaranteed | Ở giữa; ưu tiên giết Pod vượt request nhiều nhất |
-| **BestEffort** | **Không** đặt request/limit nào | **Đầu tiên** — hy sinh trước |
+| **Guaranteed** | Mọi container có request và limit **dương, bằng nhau** cho **cả CPU lẫn memory** | Thường được bảo vệ khi còn trong request |
+| **Burstable** | Có ít nhất 1 CPU/memory request hoặc limit, nhưng không Guaranteed | Nếu vượt request, xét Priority rồi mức dùng so với request |
+| **BestEffort** | Không có CPU/memory request hay limit | Dễ thành ứng viên khi dùng memory; còn xét Priority |
 
 <svg viewBox="0 0 560 210" role="img" aria-labelledby="qos-t qos-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
-<title id="qos-t">Thứ tự evict theo QoS class</title>
-<desc id="qos-d">Khi node cạn memory, BestEffort bị đuổi trước, rồi Burstable, Guaranteed được giữ lâu nhất</desc>
+<title id="qos-t">QoS giúp ước lượng rủi ro eviction</title>
+<desc id="qos-d">QoS giúp ước lượng rủi ro; memory eviction xét vượt request, Pod Priority rồi mức dùng so với request, không có thứ tự tuyệt đối theo class.</desc>
 <rect x="40" y="40" width="150" height="130" rx="10" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
 <text x="115" y="66" text-anchor="middle" font-size="12" fill="currentColor">BestEffort</text>
 <text x="115" y="90" text-anchor="middle" font-size="10" fill="currentColor">không request</text>
-<text x="115" y="140" text-anchor="middle" font-size="11" fill="currentColor">đuổi #1</text>
+<text x="115" y="140" text-anchor="middle" font-size="11" fill="currentColor">dễ vượt request</text>
 <rect x="205" y="40" width="150" height="130" rx="10" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
 <text x="280" y="66" text-anchor="middle" font-size="12" fill="currentColor">Burstable</text>
-<text x="280" y="90" text-anchor="middle" font-size="10" fill="currentColor">request &lt; limit</text>
-<text x="280" y="140" text-anchor="middle" font-size="11" fill="currentColor">đuổi #2</text>
+<text x="280" y="90" text-anchor="middle" font-size="10" fill="currentColor">không Guaranteed</text>
+<text x="280" y="140" text-anchor="middle" font-size="11" fill="currentColor">xét usage / request</text>
 <rect x="370" y="40" width="150" height="130" rx="10" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
 <text x="445" y="66" text-anchor="middle" font-size="12" fill="currentColor">Guaranteed</text>
-<text x="445" y="90" text-anchor="middle" font-size="10" fill="currentColor">request = limit</text>
-<text x="445" y="140" text-anchor="middle" font-size="11" fill="currentColor">giữ lâu nhất</text>
+<text x="445" y="90" text-anchor="middle" font-size="10" fill="currentColor">CPU + RAM: req=lim</text>
+<text x="445" y="140" text-anchor="middle" font-size="11" fill="currentColor">bảo vệ trong request</text>
 <line x1="40" y1="190" x2="520" y2="190" stroke="currentColor" stroke-width="1.3" marker-end="url(#qar)"/>
-<text x="280" y="205" text-anchor="middle" font-size="10" fill="currentColor">node càng ngộp → càng đuổi sang phải</text>
+<text x="280" y="205" text-anchor="middle" font-size="10" fill="currentColor">Memory eviction: vượt request → Priority → usage/request</text>
 <defs><marker id="qar" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
 </svg>
 
-Vì thế các workload **quan trọng** (database, payment) nên đặt để đạt **Guaranteed**; các job phụ, batch có thể để **Burstable/BestEffort** để chúng "nhường ghế" khi cần. Đây là công cụ quản lý rủi ro rất mạnh mà nhiều người bỏ qua.
+Guaranteed xét mọi container, cả CPU và memory với request/limit dương. Không suy thứ tự eviction chỉ từ ba hộp trên. Vì thế các workload **quan trọng** (database, payment) nên đặt để đạt **Guaranteed**; các job phụ, batch có thể để **Burstable/BestEffort** để chúng "nhường ghế" khi cần. Đây là công cụ quản lý rủi ro rất mạnh mà nhiều người bỏ qua.
 
 ### 2.4 Scheduler quyết định thế nào — và cách bạn can thiệp
 

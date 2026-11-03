@@ -4,6 +4,8 @@
 
 Tiền đề: [[foundations-01-cap-theorem]], [[foundations-02-consistency-models]]. Bài này trả lời "đánh đổi C/A xảy ra **trong code** thế nào".
 
+Trong bài, **RDS Multi-AZ standby** chỉ deployment **DB instance**; **Multi-AZ DB cluster** có hai readable replica, nên cần phân biệt khi chọn kiến trúc scale đọc.
+
 ---
 
 ## 1. Câu chuyện mở đầu — Họp gia đình quyết mua nhà
@@ -109,8 +111,8 @@ Gia đình bạn có 5 người. Mọi quyết định lớn cần "đồng thu�
 | **RDS Read Replica** | Asynchronous | Có thể cross-region. Lag từ ms tới phút. |
 | **Aurora primary + reader** | Async, nhưng lag thấp (~20ms) | Shared storage → reader chỉ cần update cache, không replay log. |
 | **DynamoDB** (single region) | Không phải single-leader cổ điển — partition có 3 replica với 1 leader/partition | Quorum-based, xem mục 4. |
-| **ElastiCache Redis cluster** | Async mặc định | Có thể bật `min-replicas-to-write` cho semi-sync. |
-| **MemoryDB** | Sync transaction log qua Multi-AZ | Khác ElastiCache: durable + strong consistency. |
+| **ElastiCache Redis cluster** | Async mặc định | `min-replicas-to-write` giới hạn ghi theo replica/lag, không chờ ACK từng write như semi-sync. |
+| **MemoryDB** | Sync transaction log qua Multi-AZ | Khác ElastiCache: durable; primary strong, replica eventual. |
 
 ### 2.4 Failover — đắt hơn bạn nghĩ
 
@@ -176,7 +178,7 @@ Khi leader chết, **failover không tức thời**:
   <text x="360" y="222" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">Mỗi bước cộng dồn độ trễ → DNS TTL thường là thủ phạm lớn nhất. Aurora ~30s nhờ shared storage.</text>
 </svg>
 
-> Bẫy thi: "Multi-AZ = high availability nghĩa là zero downtime"? **Sai.** Multi-AZ giảm RTO xuống phút, nhưng **không phải 0**. Muốn ~0 phải dùng Aurora với Global Database + warm standby hoặc active-active multi-region (eventual).
+> Bẫy thi: "Multi-AZ = high availability nghĩa là zero downtime"? **Sai.** Multi-AZ giảm RTO xuống phút, nhưng **không phải 0**. Aurora Global Database/warm standby cũng cần phát hiện lỗi, promote và đổi routing; active-active giảm ảnh hưởng nhưng không bảo đảm ~0 downtime cho mọi request.
 
 ---
 
@@ -197,13 +199,13 @@ Khi leader chết, **failover không tức thời**:
 
 | Service | Multi-leader? | Ghi chú |
 |---------|---------------|---------|
-| **DynamoDB Global Tables** | ✓ | LWW theo timestamp. Conflict → mất update âm thầm. |
+| **DynamoDB Global Tables** | ✓ | **MREC**: LWW có thể mất concurrent update; **MRSC**: strong cross-region, có giới hạn region/tính năng riêng. |
 | **Aurora Multi-Master** | Đã **deprecated** (2024) | Quá khó dùng, conflict nhiều. |
 | **Aurora Global Database** | ✗ Single-writer | Region phụ read-only. Có Write Forwarding nhưng latency cao. |
 | **S3 Multi-Region Access Points + CRR** | ✓ active-active | LWW theo timestamp object. |
 | **CockroachDB / Spanner** (không phải AWS thuần) | Quorum cross-region, không phải multi-leader thuần |  |
 
-> Pattern thực tế: dùng single-leader trong region (consistency), multi-leader giữa các region (availability). Đó chính là **DynamoDB Global Tables**.
+> Pattern thực tế: dùng single-leader trong region (consistency), multi-leader giữa các region (availability). Đó là model của **DynamoDB Global Tables MREC**; MRSC chọn bảo đảm mạnh hơn.
 
 ---
 
@@ -213,9 +215,9 @@ Khi leader chết, **failover không tức thời**:
 
 Với **N** replica, **W** = số node phải ack cho write, **R** = số node đọc:
 
-> **W + R > N** → đảm bảo read luôn thấy write mới nhất (strong consistency).
+> **W + R > N** → mọi read quorum giao với mọi write quorum. Đây là điều kiện giao nhau, **chưa đủ để chứng minh linearizability**.
 
-Vì với W + R > N, mọi write quorum và mọi read quorum đều **có giao điểm ≥ 1 node** — node đó có giá trị mới nhất.
+Vì với W + R > N, mọi write quorum và mọi read quorum đều **có giao điểm ≥ 1 node** — ít nhất một node giữ write đã hoàn tất, nếu dùng cùng tập replica bền vững. Còn cần version ordering, xử lý concurrent write/read reconciliation và failure model đúng.
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Vì sao W cộng R lớn hơn N đảm bảo giao điểm</title>
@@ -266,7 +268,7 @@ Vì với W + R > N, mọi write quorum và mọi read quorum đều **có giao 
 
 Aurora lưu **6 copies / 3 AZ** (2 copies/AZ). Write quorum **4/6**, read quorum **3/6**.
 
-- 4 + 3 = 7 > 6 → ✓ strong consistency.
+- 4 + 3 = 7 > 6 → read/write quorum giao nhau; tính đúng còn dựa vào giao thức storage và phục hồi.
 - Mất **1 AZ (2 copies)** → vẫn còn 4 copies → write OK (4/4).
 - Mất **1 AZ + 1 copy** = mất 3 → còn 3 → **write fail** (cần 4), nhưng **read vẫn OK** (cần 3).
 - → Aurora chịu được **AZ failure mà không mất availability ghi**, và **AZ + 1 disk failure** mà không mất khả năng đọc.
@@ -382,24 +384,24 @@ Aurora lưu **6 copies / 3 AZ** (2 copies/AZ). Write quorum **4/6**, read quorum
 <ab-note>Ba copy còn lại đủ read quorum nhưng không đủ write quorum.</ab-note>
 </ab-toggle>
 
-Mất ≥4 copy mới mất data (11 nines durability).
+Mất quorum là mất khả năng phục vụ, **không đồng nghĩa mất dữ liệu vĩnh viễn**. Số copy còn lại, phiên bản chúng giữ, lỗi tương quan và khả năng repair/backup quyết định phục hồi.
 
-> Đây là lý do AWS quảng cáo Aurora "11 nines of durability" — phải mất ≥4 copies cùng lúc (gần như impossible) mới mất data.
+> Không suy "11 nines durability" từ W=4/R=3. Chỉ số durability cần mô hình lỗi và phạm vi dịch vụ riêng; không thể chứng minh bằng phép cộng quorum.
 
-### 4.3 DynamoDB — N=3, W=2, R=1 (eventual) hoặc R=2 (strong)
+### 4.3 DynamoDB — replica và read mode
 
 DynamoDB chia table thành nhiều **partition**, mỗi partition có **3 replica** trong region.
 
-- **Eventually consistent read**: R=1 → có thể đọc replica chưa sync → 0.5 RCU.
-- **Strongly consistent read**: R=2 (thực chất đọc từ leader của partition) → 1 RCU.
-- **Write**: W=2 (leader + 1 follower sync, follower thứ 3 async).
+- **Eventually consistent read** có thể trả phiên bản cũ → 0.5 RCU cho item tới 4KB.
+- **Strongly consistent read** trả write mới nhất đã thành công → 1 RCU cho item tới 4KB. Không suy R=2 từ giá RCU hay đồng nhất leader read với đọc hai replica.
+- Paper DynamoDB mô tả leader và majority cho replication; API read mode là hợp đồng nên dựa vào, không phải một tham số R tùy chọn.
 
 ### 4.4 Kafka / MSK — ISR & acks
 
 Kafka có khái niệm **ISR** (In-Sync Replicas):
 - `acks=0`: producer không chờ → max throughput, có thể mất data.
 - `acks=1`: chờ leader → mất data nếu leader chết trước khi sync.
-- `acks=all`: chờ tất cả ISR → durable. Đây là **CP mode**.
+- `acks=all`: chờ ISR; độ bền và khả năng ghi phụ thuộc `min.insync.replicas`, RF, leader election và lỗi. ISR là tập động, không phải majority cố định.
 
 `min.insync.replicas=2` + `acks=all` + replication factor 3 → mất 1 broker vẫn OK, mất 2 broker → write fail (CP đúng nghĩa).
 
@@ -422,11 +424,11 @@ Khi bầu leader, hoặc khi nhiều node phải đồng ý "giá trị X là cu
 - Thiết kế **để dễ hiểu** hơn Paxos.
 - 3 vai trò: Leader / Follower / Candidate.
 - Term-based: mỗi nhiệm kỳ có 1 leader. Khi leader mất, follower timeout → trở thành candidate → xin vote → nếu được majority → leader mới.
-- Dùng trong: etcd (Kubernetes), Consul, **DynamoDB internals** (theo paper 2022), **Aurora storage layer**.
+- Dùng trong: etcd (Kubernetes), Consul. Không suy giao thức của mọi storage layer AWS là Raft chỉ từ việc dùng quorum.
 
 ### 5.4 Điều bạn cần nhớ cho thi
 
-- Bất kỳ "strong consistency multi-node" nào trên AWS đều có Paxos/Raft phía dưới. Bạn không gọi trực tiếp.
+- Strong consistency multi-node cần giao thức điều phối đúng; không thể khẳng định mọi service đều dùng đúng Paxos/Raft. API AWS thường che giấu chi tiết này.
 - Consensus cần **majority** (N/2 + 1). Vì sao N thường là **số lẻ**: 3, 5, 7. Với N=4, majority = 3 → chịu được 1 failure, **giống N=3**. Tăng N chẵn không giúp gì, lại tốn tiền.
 - Consensus = trade latency for safety. Mỗi quyết định cần ≥1 round-trip → không thể "nhanh hơn tốc độ ánh sáng giữa các DC".
 
@@ -438,7 +440,7 @@ Khi bầu leader, hoặc khi nhiều node phải đồng ý "giá trị X là cu
 - Mỗi write strong cross-region cần ≥1 round-trip để đạt quorum → tối thiểu 150ms/write.
 - 1000 write/s → cần connection pool khổng lồ, latency p99 thê thảm.
 
-→ Đây là lý do **Aurora Global Database** chọn **single-writer** (chỉ region chính ghi, replica async). Spanner làm được multi-region strong nhờ TrueTime + atomic clock — không có service AWS tương đương.
+→ Đây là lý do **Aurora Global Database** chọn **single-writer** (chỉ region chính ghi, replica async). Spanner cung cấp multi-region strong với TrueTime và giao thức transaction. AWS cũng có **DynamoDB Global Tables MRSC** và **Aurora DSQL** cho các nhu cầu strong multi-region tương ứng; không coi chúng tương đương mọi tính năng.
 
 ---
 
@@ -450,7 +452,7 @@ Khi bầu leader, hoặc khi nhiều node phải đồng ý "giá trị X là cu
 
 ### 7.2 Game leaderboard global, 100M user
 - **Cần**: latency thấp ở mọi region, accept dữ liệu trễ vài giây.
-- **Chọn**: DynamoDB Global Tables (multi-leader, LWW). Counter dùng `ADD` (CRDT) để tránh mất update.
+- **Chọn**: DynamoDB Global Tables (multi-leader, LWW). Counter `ADD` chỉ atomic trong region; để tránh mất increment ở MREC, dùng một writer cho mỗi item hoặc counter tách region rồi tổng hợp.
 
 ### 7.3 Kafka pipeline cho clickstream
 - **Cần**: durable, ordered, throughput cao.
@@ -463,7 +465,7 @@ Khi bầu leader, hoặc khi nhiều node phải đồng ý "giá trị X là cu
 1. **"Tăng số Read Replica = tăng write throughput"** → **Sai.** Replica chỉ tăng read. Write vẫn qua 1 primary.
 2. **"Multi-AZ + Read Replica thay thế nhau"** → **Sai.** Multi-AZ cho HA (standby không serve). Read Replica cho scale read (async, không phải HA).
 3. **"Aurora 6 copies tốn 6x tiền"** → **Sai.** Bạn trả 1 unit storage, AWS tự quản 6 copies.
-4. **"DynamoDB Global Tables strong consistency"** → **Sai.** Eventual + LWW.
+4. **"DynamoDB Global Tables strong consistency"** → **Đúng với MRSC**; MREC là eventual + LWW.
 5. **"Multi-AZ failover = zero downtime"** → **Sai.** 60-120s downtime cho RDS, ~30s cho Aurora.
 6. **"Aurora Global Database có thể write ở 2 region"** → **Chỉ với Write Forwarding** (single writer thực sự ở primary region, request forward về). Đừng nhầm là multi-master.
 

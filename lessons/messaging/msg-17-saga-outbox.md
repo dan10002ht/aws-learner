@@ -153,14 +153,16 @@ Cả Saga choreography lẫn hệ event-driven nói chung đều vấp một cá
 
 ```java
 // ✗ SAI: hai hệ thống, hai lần ghi, KHÔNG atomic
-@Transactional
 public void placeOrder(Order o) {
-    orderRepository.save(o);          // (1) ghi vào Postgres
-    kafkaTemplate.send("orders", evt); // (2) publish ra Kafka
+    // TransactionTemplate dùng transaction manager của Postgres;
+    // giả định không có transaction bao ngoài, Kafka producer không transactional.
+    dbTransactionTemplate.executeWithoutResult(tx -> orderRepository.save(o));
+    // (1) DB đã COMMIT khi executeWithoutResult trả về
+    kafkaTemplate.send("orders", evt).join(); // (2) đợi broker ack
 }
 ```
 
-`@Transactional` chỉ bao được (1) — nó là transaction của **Postgres**. Kafka **nằm ngoài** transaction đó. Ta có **hai** cửa ghi vào **hai** hệ thống khác nhau → có 4 kịch bản, 2 trong đó gây **lệch dữ liệu vĩnh viễn**:
+Transaction của **Postgres** kết thúc ở (1); publish Kafka ở (2) là thao tác riêng. Nếu đặt cả `save` và `send` trong một method `@Transactional` thì `save` chưa phải commit: DB thường commit khi method trả về, nên bảng dưới không mô tả cách viết đó. Ta có **hai** cửa ghi vào **hai** hệ thống khác nhau → có 4 kịch bản, 2 trong đó gây **lệch dữ liệu vĩnh viễn**:
 
 | Thứ tự | (1) DB | (2) Publish | Kết quả |
 |--------|--------|-------------|---------|
@@ -169,7 +171,15 @@ public void placeOrder(Order o) {
 | C | rollback ✗  | (không gọi) | Đúng (không có gì xảy ra) |
 | D | commit ✓  | send ✓  nhưng **app crash trước khi ack** | Có thể **gửi lại** → event trùng |
 
-Đảo thứ tự (publish trước, save sau) cũng không cứu được: publish xong rồi DB rollback → có **event ma** cho một đơn không tồn tại. **Không có thứ tự nào đúng** vì hai lần ghi vào hai hệ thống không thể atomic nếu không có 2PC — mà ta vừa từ chối 2PC.
+Đảo thứ tự (publish trước, DB commit sau) cũng không cứu được: publish xong rồi DB rollback → có **event ma** cho một đơn không tồn tại. **Không có thứ tự nào đúng** vì hai lần ghi vào hai hệ thống không thể atomic nếu không có 2PC — mà ta vừa từ chối 2PC.
+
+<step-flow>
+<svg font-family="ui-sans-serif, system-ui, sans-serif" viewBox="0 0 520 330" role="img" aria-labelledby="fixmsg17-t fixmsg17-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto"><title id="fixmsg17-t">Khe crash giữa DB commit và publish Kafka</title><desc id="fixmsg17-d">Khe crash giữa DB commit và publish Kafka</desc><defs><marker id="fixmsg17-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs><text x="75" y="35" font-size="13" text-anchor="middle" fill="currentColor">Service</text><text x="275" y="35" font-size="13" text-anchor="middle" fill="currentColor">Postgres</text><text x="465" y="35" font-size="13" text-anchor="middle" fill="currentColor">Kafka</text><path d="M75 45 L75 275" stroke="currentColor" fill="none" stroke-width="2" stroke-dasharray="4 4"/><path d="M275 45 L275 275" stroke="currentColor" fill="none" stroke-width="2" stroke-dasharray="4 4"/><path d="M465 45 L465 275" stroke="currentColor" fill="none" stroke-width="2" stroke-dasharray="4 4"/><g data-step="1"><path d="M75 85 L275 85" stroke="currentColor" fill="none" stroke-width="2" marker-end="url(#fixmsg17-a)"/><text x="175" y="73" font-size="13" text-anchor="middle" fill="currentColor">save + commit</text></g><g data-step="2"><path d="M275 120 L75 120" stroke="currentColor" fill="none" stroke-width="2" marker-end="url(#fixmsg17-a)"/><text x="175" y="145" font-size="13" text-anchor="middle" fill="currentColor">commit OK</text></g><g data-step="3"><rect x="35" y="165" width="80" height="40" rx="5" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/><path d="M48 176 L100 195" stroke="#f43f5e" fill="none" stroke-width="2" /><path d="M48 195 L100 176" stroke="#f43f5e" fill="none" stroke-width="2" /><path d="M75 185 L465 185" stroke="#f43f5e" fill="none" stroke-width="2" stroke-dasharray="5 4"/><text x="310" y="176" font-size="13" text-anchor="middle" fill="currentColor">crash trước publish</text><text x="310" y="211" font-size="14" text-anchor="middle" fill="currentColor">DB có đơn · Kafka chưa có event</text></g><g data-step="4"><text x="260" y="305" font-size="14" text-anchor="middle" fill="currentColor">Outbox: lưu event cùng commit DB để relay gửi lại</text></g></svg>
+<step-note data-step="1">DB transaction ghi đơn hàng rồi commit. Đây là thứ tự của code dùng TransactionTemplate phía trên.</step-note>
+<step-note data-step="2">Service nhận commit thành công; Kafka chưa tham gia thao tác nào.</step-note>
+<step-note data-step="3">Nếu service crash ở khe này thì đơn hàng đã bền nhưng downstream chưa có event.</step-note>
+<step-note data-step="4">Outbox đóng khe mất event bằng cùng transaction DB; relay vẫn cần retry và consumer idempotent.</step-note>
+</step-flow>
 
 > Đây là **dual-write problem**: mỗi khi bạn thấy code "ghi DB **rồi** gọi ra ngoài (publish/HTTP)", hãy nghi ngờ. Đó là điểm rò rỉ nhất quán.
 

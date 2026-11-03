@@ -378,7 +378,7 @@ FE chạy `localhost:5173`, BE `localhost:4000` → **khác origin** → browser
 | Preflight OPTIONS 404 | Route không xử lý OPTIONS | Đặt `app.use(cors())` **trước** mọi route |
 | Header `Authorization` bị chặn | Không nằm trong allowed headers | `cors` mặc định cho phép; nếu custom thì khai báo |
 
-> Bẫy: đừng "fix" CORS bằng `origin: "*"` rồi để lên production. Wildcard không đi cùng `credentials:true` và mở API cho mọi site. Whitelist origin cụ thể đọc từ env (`CORS_ORIGIN`) — mỗi môi trường một giá trị.
+> Bẫy: đừng "fix" CORS bằng `origin: "*"` rồi để lên production. Wildcard không đi cùng `credentials:true` và cho JS ở mọi origin đọc phản hồi không dùng credentials. CORS không phải auth: client ngoài browser vẫn gọi được API, nên backend luôn phải xác thực và kiểm quyền. Whitelist origin cụ thể đọc từ env (`CORS_ORIGIN`) — mỗi môi trường một giá trị.
 
 ## 9. Frontend — API client với axios interceptor
 

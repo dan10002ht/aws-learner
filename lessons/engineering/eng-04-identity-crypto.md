@@ -432,60 +432,35 @@ Quy tắc thực dụng: **dự án mới → OIDC; tích hợp với IdP doanh 
 
 ## 8. Passkeys / WebAuthn (FIDO2) — khai tử password
 
-Passkey = cặp khoá bất đối xứng thay cho password, chuẩn **WebAuthn + FIDO2**. Từ 2025–2026, Apple, Google, Microsoft đều bật passkey **mặc định** và đồng bộ qua iCloud Keychain / Google Password Manager; các dịch vụ lớn (Google, GitHub, Amazon, Microsoft) đẩy passkey thành phương thức đăng nhập chính.
+Passkey = cặp khoá bất đối xứng thay cho password, chuẩn **WebAuthn + FIDO2**. Các nền tảng hỗ trợ passkey đồng bộ qua iCloud Keychain / Google Password Manager; các dịch vụ lớn (Google, GitHub, Amazon, Microsoft) đẩy passkey thành phương thức đăng nhập chính.
+
+Có hai loại: **device-bound** giữ khoá trên một authenticator (có thể dùng Secure Enclave/TPM), còn **synced passkey** cho phép nhà cung cấp đồng bộ khoá được mã hoá giữa các thiết bị. Trong cả hai trường hợp, website chỉ nhận public key và chữ ký, không nhận private key.
 
 Cơ chế (chính là ý tưởng public-key ở phần 1):
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 470" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Passkey / WebAuthn — luồng đăng ký và đăng nhập đối xứng</title>
-  <desc>Đăng ký: server gửi challenge, thiết bị tạo cặp khoá riêng cho website, private key giữ trong Secure Enclave, gửi public key cho server lưu. Đăng nhập: server gửi challenge, thiết bị ký bằng private key sau khi xác thực sinh trắc, server verify chữ ký bằng public key đã lưu.</desc>
-  <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Passkey / WebAuthn (FIDO2)</text>
-  <defs>
-    <marker id="arP" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor"/></marker>
-  </defs>
-  <!-- ===== Column heads ===== -->
-  <rect x="30" y="44" width="290" height="30" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="175" y="64" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Thiết bị (Secure Enclave / TPM)</text>
-  <rect x="400" y="44" width="290" height="30" rx="8" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="545" y="64" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Server</text>
-  <g stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4">
-    <line x1="175" y1="74" x2="175" y2="450"/>
-    <line x1="545" y1="74" x2="545" y2="450"/>
-  </g>
-  <!-- ===== ĐĂNG KÝ ===== -->
-  <text x="16" y="100" font-size="12.5" font-weight="700" fill="#10b981">Đăng ký (register)</text>
-  <g stroke="currentColor" stroke-opacity="0.6" fill="none" stroke-width="1.4"><line x1="545" y1="120" x2="178" y2="120" marker-end="url(#arP)"/></g>
-  <text x="360" y="114" font-size="10" text-anchor="middle" fill="currentColor">① server gửi challenge</text>
-  <rect x="35" y="134" width="280" height="44" rx="7" fill="#10b981" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.2"/>
-  <text x="175" y="151" font-size="10" text-anchor="middle" fill="currentColor">② tạo cặp khoá RIÊNG cho website này</text>
-  <text x="175" y="168" font-size="10" text-anchor="middle" fill="currentColor">private key ở trong Secure Enclave (mở bằng Face ID/vân tay)</text>
-  <g stroke="currentColor" stroke-opacity="0.6" fill="none" stroke-width="1.4"><line x1="175" y1="200" x2="542" y2="200" marker-end="url(#arP)"/></g>
-  <text x="360" y="194" font-size="10" text-anchor="middle" fill="currentColor">③ gửi public key + credential ID → server lưu</text>
-  <line x1="16" y1="226" x2="704" y2="226" stroke="currentColor" stroke-opacity="0.18"/>
-  <!-- ===== ĐĂNG NHẬP ===== -->
-  <text x="16" y="252" font-size="12.5" font-weight="700" fill="#8b5cf6">Đăng nhập (login)</text>
-  <g stroke="currentColor" stroke-opacity="0.6" fill="none" stroke-width="1.4"><line x1="545" y1="272" x2="178" y2="272" marker-end="url(#arP)"/></g>
-  <text x="360" y="266" font-size="10" text-anchor="middle" fill="currentColor">① server gửi challenge ngẫu nhiên</text>
-  <rect x="35" y="286" width="280" height="44" rx="7" fill="#8b5cf6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.2"/>
-  <text x="175" y="303" font-size="10" text-anchor="middle" fill="currentColor">② ký challenge bằng private key</text>
-  <text x="175" y="320" font-size="10" text-anchor="middle" fill="currentColor">sau khi xác thực sinh trắc — secret không rời thiết bị</text>
-  <g stroke="currentColor" stroke-opacity="0.6" fill="none" stroke-width="1.4"><line x1="175" y1="352" x2="542" y2="352" marker-end="url(#arP)"/></g>
-  <text x="360" y="346" font-size="10" text-anchor="middle" fill="currentColor">gửi chữ ký lên server</text>
-  <rect x="405" y="366" width="280" height="40" rx="7" fill="#8b5cf6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.2"/>
-  <text x="545" y="390" font-size="10" text-anchor="middle" fill="currentColor">③ verify chữ ký bằng public key đã lưu</text>
-  <text x="360" y="438" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">Server chỉ lưu public key · credential gắn chặt origin → phishing-resistant</text>
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 540" role="img" aria-labelledby="fixeng-pass-t fixeng-pass-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="fixeng-pass-t">Passkey đăng ký và đăng nhập</title>
+<desc id="fixeng-pass-d">Hai lifeline cố định; chỉ public key và chữ ký gửi tới website. Khoá có thể device-bound hoặc synced.</desc>
+<defs><marker id="fixeng-pass-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="currentColor"/></marker></defs>
+<text x="260" y="24" font-size="15" text-anchor="middle" fill="currentColor">Passkey: website không nhận private key</text><rect x="12" y="42" width="232" height="46" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="128.0" y="70.0" font-size="13" text-anchor="middle" fill="currentColor">Thiết bị / authenticator</text><rect x="324" y="42" width="184" height="46" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="416.0" y="70.0" font-size="13" text-anchor="middle" fill="currentColor">Website / server</text><line x1="128" y1="88" x2="128" y2="460" stroke="currentColor" stroke-dasharray="4 4" opacity="0.4"/><line x1="416" y1="88" x2="416" y2="460" stroke="currentColor" stroke-dasharray="4 4" opacity="0.4"/><g data-step="1"><path d="M416 118 L128 118" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#fixeng-pass-a)"/><text x="272" y="108" font-size="13" text-anchor="middle" fill="currentColor">Đăng ký: challenge</text><rect x="12" y="136" width="232" height="50" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="128.0" y="166.0" font-size="13" text-anchor="middle" fill="currentColor">Tạo cặp khoá riêng / site</text></g><g data-step="2"><path d="M128 218 L416 218" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#fixeng-pass-a)"/><text x="272" y="208" font-size="13" text-anchor="middle" fill="currentColor">Public key + credential ID</text><rect x="324" y="234" width="184" height="38" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="416.0" y="258.0" font-size="13" text-anchor="middle" fill="currentColor">Lưu public key</text></g><g data-step="3"><path d="M416 308 L128 308" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#fixeng-pass-a)"/><text x="272" y="298" font-size="13" text-anchor="middle" fill="currentColor">Đăng nhập: challenge mới</text><rect x="12" y="326" width="232" height="50" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="128.0" y="356.0" font-size="13" text-anchor="middle" fill="currentColor">Sinh trắc/PIN → ký</text></g><g data-step="4"><path d="M128 408 L416 408" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#fixeng-pass-a)"/><text x="272" y="398" font-size="13" text-anchor="middle" fill="currentColor">Chữ ký gắn với origin</text><rect x="324" y="428" width="184" height="36" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="416.0" y="451.0" font-size="13" text-anchor="middle" fill="currentColor">Verify bằng public key</text></g><text x="260" y="495" font-size="13" text-anchor="middle" fill="currentColor">Device-bound: khoá gắn một authenticator.</text><text x="260" y="518" font-size="13" text-anchor="middle" fill="currentColor">Synced: khoá đồng bộ mã hoá qua nhà cung cấp.</text>
 </svg>
+<step-note data-step="1">Challenge và origin ràng buộc thao tác với website; mỗi site dùng credential riêng.</step-note>
+<step-note data-step="2">Website giữ public key và credential ID. Khoá riêng do authenticator quản lý, có thể device-bound hoặc synced.</step-note>
+<step-note data-step="3">Authenticator xác thực người dùng bằng sinh trắc hoặc PIN trước khi ký dữ liệu WebAuthn chứa challenge.</step-note>
+<step-note data-step="4">Server kiểm challenge, origin và chữ ký bằng public key đã lưu để chống replay và phishing.</step-note>
+</step-flow>
 
 ```
 Đăng ký:
   1. Server gửi challenge
   2. Thiết bị tạo cặp khoá RIÊNG cho website này
-     (private key nằm trong Secure Enclave/TPM, mở bằng Face ID/vân tay/PIN)
+     (private key do authenticator quản lý; device-bound hoặc đồng bộ mã hoá, mở bằng sinh trắc/PIN)
   3. Gửi public key + credential ID cho server lưu
 
 Đăng nhập:
   1. Server gửi challenge ngẫu nhiên
-  2. Thiết bị ký challenge bằng private key (sau khi xác thực sinh trắc)
+  2. Thiết bị ký challenge bằng private key (sau khi xác thực người dùng, ví dụ sinh trắc/PIN)
   3. Server verify chữ ký bằng public key đã lưu
 ```
 
@@ -495,7 +470,7 @@ Vì sao **phishing-resistant** — hơn hẳn cả password + TOTP:
 - Server chỉ lưu **public key** → DB bị dump cũng không có gì để crack, không có password reuse.
 - Challenge ngẫu nhiên mỗi lần → chống replay.
 
-> **Ghi nhớ:** Password = "shared secret cả hai bên cùng biết" (lộ một bên là toang). Passkey = "chứng minh sở hữu private key, secret không bao giờ rời thiết bị". Đây là cùng một nguyên lý với chữ ký số và SigV4 — nắm một lần, hiểu cả ba.
+> **Ghi nhớ:** Password = "shared secret cả hai bên cùng biết" (lộ một bên là toang). Passkey = "chứng minh sở hữu private key mà không gửi nó cho website". Đây là nguyên lý chữ ký số; SigV4 dùng HMAC với shared secret, không phải cặp public/private key.
 
 ## 9. Khi nào dùng gì — bảng tra nhanh
 

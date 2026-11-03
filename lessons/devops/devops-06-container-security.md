@@ -82,7 +82,7 @@ Mỗi binary trong image là một CVE tiềm năng. `ubuntu:latest` mang theo `
 | `gcr.io/distroless/*` | ~2–20 MB | **Không** | Production binary, bảo mật cao nhất |
 | `scratch` | 0 | Không | Static binary (Go, Rust) thuần |
 
-**Distroless** chỉ có runtime tối thiểu (libc, CA cert, tzdata) — không shell, không package manager. Attacker RCE được vào container cũng không có `sh` để chạy lệnh tiếp.
+**Distroless** chứa thành phần tối thiểu tuỳ biến thể: `static` cho binary static (không có libc), `base`/`cc` thêm thư viện cần thiết. Tag thông thường không có shell/package manager; tag `debug` có shell. Không có `sh` làm giảm công cụ sẵn có nhưng không ngăn được mọi khai thác RCE.
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 345" role="img" aria-labelledby="do06-size-t do06-size-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="sans-serif" font-size="13">
 <title id="do06-size-t">Khoảng kích thước base image</title>
@@ -146,7 +146,7 @@ Image cuối chỉ có đúng một binary tĩnh + tag `:nonroot` đã sẵn use
       <rect x="420" y="98" width="268" height="34" rx="7" fill="#10b981" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.25"/>
       <text x="434" y="120" font-weight="700">/app  (binary tĩnh)</text>
       <rect x="420" y="138" width="268" height="26" rx="7" fill="currentColor" fill-opacity="0.07"/>
-      <text x="434" y="155" font-size="11">libc + CA cert + tzdata</text>
+      <text x="434" y="155" font-size="11">static: CA cert + tzdata</text>
       <rect x="420" y="170" width="268" height="26" rx="7" fill="currentColor" fill-opacity="0.07"/>
       <text x="434" y="187" font-size="11">USER nonroot</text>
     </g>
@@ -289,7 +289,7 @@ spec:
 
 Pod nào dùng image chưa ký (hoặc ký bằng key lạ) sẽ bị từ chối ngay tại admission.
 
-> Bẫy production: Luôn ký và verify theo **digest** (`@sha256:...`), không theo **tag**. Tag là con trỏ có thể di chuyển — `myapp:1.4` hôm nay và tuần sau có thể trỏ tới hai image khác nhau. Ký tag là ký một cái tên, không phải ký nội dung.
+> Bẫy production: Luôn ký và verify theo **digest** (`@sha256:...`), không theo **tag**. Tag là con trỏ có thể di chuyển — `myapp:1.4` hôm nay và tuần sau có thể trỏ tới hai image khác nhau. Cosign có thể resolve tag thành digest khi ký; rủi ro là tag đổi đích giữa các bước. Pin digest để build, ký và verify cùng một artifact.
 
 ## 6. SBOM: danh sách thành phần để truy vết
 
@@ -310,7 +310,7 @@ cosign attest --predicate sbom.json --type cyclonedx \
   myrepo/api@sha256:abc123...
 ```
 
-SBOM gắn kèm + ký (signed attestation) chính là **provenance** — bằng chứng truy vết nguồn gốc, đáp ứng các chuẩn supply chain như SLSA.
+SBOM gắn kèm + ký là **attestation về thành phần**. **Build provenance** theo SLSA mô tả quá trình build, builder và đầu vào; cần sinh attestation riêng, chữ ký không biến SBOM thành provenance.
 
 ## 7. Runtime security: image sạch vẫn cần canh lúc chạy
 
@@ -346,66 +346,22 @@ Ráp tất cả thành một chuỗi liền mạch từ source tới chạy:
 7. **Scan lại định kỳ** image đang chạy trong registry để bắt CVE mới công bố.
 8. **Runtime monitoring** (Falco) canh hành vi lúc chạy.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Pipeline supply chain defense-in-depth từ base image tới runtime</title>
-  <desc>Chuỗi tám mắt xích nối tiếp: pin base theo digest, build CI sạch, scan Trivy, sinh SBOM Syft, ký cosign, admission control Kyverno, scan lại định kỳ, runtime monitoring Falco; mỗi mắt xích chú thích loại tấn công nó chặn.</desc>
-  <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Chuỗi cung ứng: mỗi mắt xích chặn một loại tấn công</text>
-  <defs>
-    <marker id="arrcs" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor" fill-opacity="0.8"/></marker>
-  </defs>
-  <g font-size="11.5">
-    <g>
-      <rect x="16" y="44" width="210" height="58" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
-      <text x="30" y="66" font-weight="700" fill="currentColor">1. Pin base @digest</text>
-      <text x="30" y="86" font-size="10.5" fill="currentColor" opacity="0.65">chặn: base bị poison / đổi ngầm</text>
-    </g>
-    <g>
-      <rect x="255" y="44" width="210" height="58" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
-      <text x="269" y="66" font-weight="700" fill="currentColor">2. Build CI sạch</text>
-      <text x="269" y="86" font-size="10.5" fill="currentColor" opacity="0.65">chặn: máy dev nhiễm / không reproducible</text>
-    </g>
-    <g>
-      <rect x="494" y="44" width="210" height="58" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
-      <text x="508" y="66" font-weight="700" fill="currentColor">3. Scan (Trivy)</text>
-      <text x="508" y="86" font-size="10.5" fill="currentColor" opacity="0.65">chặn: CVE đã biết trong OS/lib</text>
-    </g>
-    <g>
-      <rect x="494" y="123" width="210" height="58" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
-      <text x="508" y="145" font-weight="700" fill="currentColor">4. SBOM (Syft)</text>
-      <text x="508" y="165" font-size="10.5" fill="currentColor" opacity="0.65">chặn: transitive dep / typosquat ẩn</text>
-    </g>
-    <g>
-      <rect x="255" y="123" width="210" height="58" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
-      <text x="269" y="145" font-weight="700" fill="currentColor">5. Ký (cosign)</text>
-      <text x="269" y="165" font-size="10.5" fill="currentColor" opacity="0.65">chặn: tráo image / MITM ở registry</text>
-    </g>
-    <g>
-      <rect x="16" y="123" width="210" height="58" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
-      <text x="30" y="145" font-weight="700" fill="currentColor">6. Admission (Kyverno)</text>
-      <text x="30" y="165" font-size="10.5" fill="currentColor" opacity="0.65">chặn: deploy image chưa ký / sai digest</text>
-    </g>
-    <g>
-      <rect x="16" y="202" width="210" height="58" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
-      <text x="30" y="224" font-weight="700" fill="currentColor">7. Scan lại định kỳ</text>
-      <text x="30" y="244" font-size="10.5" fill="currentColor" opacity="0.65">chặn: CVE mới công bố sau khi push</text>
-    </g>
-    <g>
-      <rect x="255" y="202" width="210" height="58" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
-      <text x="269" y="224" font-weight="700" fill="currentColor">8. Runtime (Falco)</text>
-      <text x="269" y="244" font-size="10.5" fill="currentColor" opacity="0.65">chặn: zero-day / hành vi bất thường</text>
-    </g>
-  </g>
-  <g stroke="currentColor" stroke-opacity="0.7" stroke-width="2" fill="none" marker-end="url(#arrcs)">
-    <line x1="226" y1="73" x2="251" y2="73"/>
-    <line x1="465" y1="73" x2="490" y2="73"/>
-    <path d="M599 102 v17"/>
-    <line x1="494" y1="152" x2="469" y2="152"/>
-    <line x1="255" y1="152" x2="230" y2="152"/>
-    <path d="M121 181 v17"/>
-    <line x1="226" y1="231" x2="251" y2="231"/>
-  </g>
-  <text x="360" y="300" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.62">source → build → registry → cluster → runtime: mỗi tầng giả định tầng trước có thể thủng</text>
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 468" role="img" aria-labelledby="fixeng-supply-t fixeng-supply-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="fixeng-supply-t">Supply chain: artifact, metadata và enforcement</title>
+<desc id="fixeng-supply-d">Artifact đi từ base qua CI vào registry rồi qua admission tới runtime; SBOM và chữ ký gắn với artifact, scan và Falco rẽ sang nhánh phát hiện.</desc>
+<defs><marker id="fixeng-supply-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="currentColor"/></marker></defs>
+<text x="260" y="24" font-size="15" text-anchor="middle" fill="currentColor">Artifact qua ranh giới admission</text><rect x="12" y="60" width="136" height="50" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="80.0" y="90.0" font-size="13" text-anchor="middle" fill="currentColor">Base @digest</text><rect x="194" y="60" width="136" height="50" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="262.0" y="90.0" font-size="13" text-anchor="middle" fill="currentColor">CI sạch</text><rect x="376" y="60" width="132" height="50" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="442.0" y="90.0" font-size="13" text-anchor="middle" fill="currentColor">Registry</text><rect x="376" y="330" width="132" height="50" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="442.0" y="360.0" font-size="13" text-anchor="middle" fill="currentColor">Runtime</text><path d="M350 280 H516" stroke="#f43f5e" stroke-dasharray="5 4" stroke-width="2"/><text x="215" y="319" font-size="13" text-anchor="middle" fill="currentColor">Ranh giới policy</text><rect x="12" y="160" width="136" height="46" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="80.0" y="188.0" font-size="13" text-anchor="middle" fill="currentColor">Trivy: CVE</text><rect x="194" y="160" width="136" height="46" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="262.0" y="188.0" font-size="13" text-anchor="middle" fill="currentColor">Syft: SBOM</text><rect x="194" y="232" width="136" height="46" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="262.0" y="260.0" font-size="13" text-anchor="middle" fill="currentColor">cosign: ký</text><rect x="12" y="330" width="136" height="50" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="80.0" y="360.0" font-size="13" text-anchor="middle" fill="currentColor">Scan định kỳ</text><rect x="194" y="330" width="136" height="50" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="262.0" y="360.0" font-size="13" text-anchor="middle" fill="currentColor">Falco: hành vi</text><g data-step="1"><path d="M148 85 L190 85" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#fixeng-supply-a)"/></g><g data-step="2"><path d="M330 85 L372 85" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#fixeng-supply-a)"/></g><g data-step="3"><path d="M260 110 L80 156" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#fixeng-supply-a)"/></g><g data-step="4"><path d="M442 110 V135 H262 V156" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#fixeng-supply-a)"/></g><g data-step="5"><path d="M262 206 L262 228" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#fixeng-supply-a)"/><path d="M330 255 H350 V135 H442" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#fixeng-supply-a)"/></g><g data-step="6"><path d="M442 110 L442 326" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#fixeng-supply-a)"/><text x="442" y="250" font-size="13" text-anchor="middle" fill="currentColor">Kyverno: verify</text></g><g data-step="7"><path d="M376 100 H360 V300 H80 V326" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#fixeng-supply-a)"/></g><g data-step="8"><path d="M376 355 L334 355" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#fixeng-supply-a)"/></g><text x="260" y="420" font-size="13" text-anchor="middle" fill="currentColor">Vàng: inventory / phát hiện, không tự chặn.</text><text x="260" y="445" font-size="13" text-anchor="middle" fill="currentColor">Admission Enforce mới từ chối image sai policy.</text>
 </svg>
+<step-note data-step="1">Pin digest tránh base đổi ngầm; vẫn phải kiểm độ tin cậy và lỗ hổng của base.</step-note>
+<step-note data-step="2">Build trong CI sạch giảm phụ thuộc máy dev; không tự bảo đảm reproducible build.</step-note>
+<step-note data-step="3">Trivy phát hiện CVE đã biết trong OS/lib; CI phải dùng kết quả để chặn theo policy.</step-note>
+<step-note data-step="4">Syft tạo inventory giúp truy vết dependency, kể cả transitive; không tự phát hiện hay chặn typosquat.</step-note>
+<step-note data-step="5">Cosign ký digest để verifier phát hiện artifact bị tráo; chữ ký phải được kiểm với danh tính tin cậy.</step-note>
+<step-note data-step="6">Kyverno ở chế độ Enforce từ chối image chưa ký hoặc không đạt policy digest trước khi chạy.</step-note>
+<step-note data-step="7">Quét lại image trong registry phát hiện CVE mới sau khi push; cần quy trình khắc phục riêng.</step-note>
+<step-note data-step="8">Falco cảnh báo hành vi bất thường lúc chạy; không tự chặn mọi zero-day, cần response/enforcement riêng.</step-note>
+</step-flow>
 
 > Bẫy production: Mắt xích yếu nhất thường là **dependency của dependency**. App của bạn import lib A, lib A kéo theo 200 transitive dependency bạn chưa từng đọc tên. SBOM + scan trên SBOM là cách duy nhất nhìn thấy chúng. Một typosquat package (tên gần giống package thật) lọt vào là cả chuỗi sụp.
 

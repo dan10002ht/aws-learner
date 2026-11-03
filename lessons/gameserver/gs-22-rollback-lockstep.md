@@ -239,7 +239,6 @@ Khi input thật tới và khác dự đoán, máy làm bốn việc **trong cù
 Toàn bộ vòng lặp, chạy một lần mỗi frame:
 
 ```go
-saved[frame%W] = SaveState(&world)          // ring buffer W frame
 inputs[frame][me] = ReadInput()
 net.Send(frame, inputs[frame][me], lastW)   // kèm W input gần nhất, chống mất gói
 
@@ -250,6 +249,7 @@ if first := firstWrongFrame(); first >= 0 { // input thật khác cái đã đo�
         world.Step(inputs[f])               // input đã được sửa
     }
 }
+saved[frame%W] = SaveState(&world)          // lưu state hiện tại SAU rollback
 inputs[frame][opp] = inputs[frame-1][opp]   // ③ đoán: giữ nguyên frame trước
 world.Step(inputs[frame])
 Render(world)                               // chỉ frame này ra màn hình

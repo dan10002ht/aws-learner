@@ -194,7 +194,7 @@ contract VaultSafe is ReentrancyGuard {
 
 Hai lớp phòng thủ độc lập:
 1. **Checks-Effects-Interactions (CEI)**: luôn cập nhật state **trước** khi gọi ra ngoài. Khi attacker re-enter, `balances[msg.sender]` đã = 0 → `require` chặn.
-2. **`nonReentrant`**: khoá mutex, mọi lời gọi lồng nhau vào hàm cùng contract đều revert. Dùng CEI làm gốc, guard làm lưới an toàn.
+2. **`nonReentrant`**: khoá mutex, lời gọi lồng vào các hàm cùng dùng guard đều revert; hàm/getter không gắn guard vẫn có thể được gọi. Dùng CEI làm gốc, guard làm lưới an toàn.
 
 > Có **cross-function** và **read-only reentrancy**: attacker re-enter vào một hàm *khác* (hoặc đọc getter) khi state đang dở dang. Vì thế CEI phải áp dụng nhất quán toàn contract, không chỉ trong đúng hàm bị gọi.
 
@@ -275,18 +275,29 @@ function submitAnswer(string calldata answer) external {
 ```
 
 **Phòng chống:**
-- **Commit-reveal**: giai đoạn 1 gửi `hash(answer, nonce)`; giai đoạn 2 mới reveal → mempool không lộ nội dung.
-- **Slippage protection**: mọi swap phải có `amountOutMin` / `deadline` (Uniswap bắt buộc) để sandwich không có lời.
+- **Commit-reveal**: giai đoạn 1 gửi `hash(sender, answer, nonce)` với nonce bí mật đủ mạnh; đóng commit rồi mới mở reveal, tránh sao chép commitment sau khi thấy đáp án.
+- **Slippage protection**: mọi swap phải có `amountOutMin` / `deadline` (Uniswap bắt buộc) để giới hạn giá thực thi và thời gian chờ; vẫn có thể bị sandwich có lời trong biên slippage cho phép.
 - **Private orderflow / batch auction**: Flashbots Protect, CoW Swap — không đưa tx vào mempool công khai.
 
 ```solidity
-// ✓ Commit-reveal
+// ✓ Trích trong contract có answerHash và reward; thời hạn tính từ lúc deploy.
 mapping(address => bytes32) public commit;
-function commitAnswer(bytes32 h) external { commit[msg.sender] = h; }   // giai đoạn commit
+uint256 public commitDeadline = block.timestamp + 1 days;
+uint256 public revealDeadline = commitDeadline + 1 days;
+bool public rewardClaimed;
+function commitAnswer(bytes32 h) external {
+    require(block.timestamp < commitDeadline && h != bytes32(0), "commit closed");
+    commit[msg.sender] = h;
+}
 function reveal(string calldata answer, uint256 nonce) external {
-    require(commit[msg.sender] == keccak256(abi.encodePacked(answer, nonce)));
-    require(keccak256(bytes(answer)) == answerHash);
-    payable(msg.sender).transfer(reward);
+    require(block.timestamp >= commitDeadline && block.timestamp < revealDeadline, "reveal closed");
+    require(!rewardClaimed && commit[msg.sender] != bytes32(0), "no claim");
+    require(commit[msg.sender] == keccak256(abi.encode(msg.sender, answer, nonce)), "bad reveal");
+    require(keccak256(bytes(answer)) == answerHash, "wrong answer");
+    delete commit[msg.sender];                 // tiêu thụ trước khi trả thưởng
+    rewardClaimed = true;                      // một giải thưởng, không trả lần hai
+    (bool ok, ) = payable(msg.sender).call{value: reward}("");
+    require(ok, "payout failed");
 }
 ```
 
@@ -308,12 +319,12 @@ contract ProxyBad {
 // Attacker deploy 1 lib có setOwner() ghi slot 0 → chiếm quyền owner.
 ```
 
-Nạn nhân kinh điển: **Parity multisig 2017** — một `delegatecall` tới library cho phép bất kỳ ai gọi `initWallet` và trở thành owner, rồi `selfdestruct` khoá vĩnh viễn ~513k ETH.
+Nạn nhân kinh điển: **Parity multisig 2017** có hai sự cố. Tháng 7, gọi `initWallet` qua `delegatecall` chiếm quyền ví để rút tiền. Tháng 11, library dùng chung chưa được khởi tạo bị gọi `initWallet` trực tiếp rồi `selfdestruct`; các ví phụ thuộc mất code thực thi, khoá ~513k ETH theo ngữ nghĩa EVM lúc đó.
 
 **Phòng chống:**
 - **Không bao giờ** để người dùng truyền `target` của `delegatecall`. Địa chỉ implementation phải là **immutable / do admin quản lý**, đổi qua cơ chế upgrade có kiểm soát.
 - Dùng chuẩn **proxy đã kiểm toán** (OpenZeppelin `TransparentUpgradeableProxy` / UUPS) thay vì tự viết.
-- Canh **storage layout** giữa proxy và implementation phải khớp; UUPS đặt logic upgrade trong implementation với `onlyOwner`.
+- Canh **storage layout** giữa proxy và implementation phải khớp; UUPS đặt logic upgrade trong implementation và phải kiểm quyền qua `_authorizeUpgrade` (ví dụ `onlyOwner` hoặc role phù hợp).
 
 ```solidity
 // ✓ Implementation cố định, chỉ admin đổi qua quy trình upgrade chuẩn

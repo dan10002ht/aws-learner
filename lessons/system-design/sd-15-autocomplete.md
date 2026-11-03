@@ -134,10 +134,10 @@ Hệ thống tách làm hai nửa gần như **độc lập hoàn toàn**, và n
 ```
 ĐƯỜNG ĐỌC (online, 48K QPS, < 100 ms)
 ──────────────────────────────────────
- User gõ ─(debounce 150-250ms)─▶ [Browser cache] ─hit─▶ [CDN edge TTL 60s]
-                                                            │ hit ▼
-                                              [API Gateway + rate limit]
+ User gõ ─(debounce 150-250ms)─▶ [Browser cache] ─miss▶ [CDN edge TTL 60s]
                                                             │ miss ▼
+                                              [API Gateway + rate limit]
+                                                            │      ▼
                                           ┌──────────────────────────────────────┐
                                           │ Query Service fleet (stateless, ~25) │
                                           └──────────────────┬───────────────────┘
@@ -153,12 +153,20 @@ Hệ thống tách làm hai nửa gần như **độc lập hoàn toàn**, và n
                                                       ┌──────────┐
                                                       │ Trie DB  │ (KV / doc store)
                                                       └────▲─────┘
+Cache hit tại browser/CDN trả kết quả ngay; chỉ miss mới đi tiếp.
 ĐƯỜNG GHI (offline, batch)                                 │ snapshot + SWAP ATOMIC
 ──────────────────────────                                 │
  Search svc ─▶ Stream ─▶ Log store ─▶ Aggregator ─▶ Filter ─▶ Workers
  (log query   (Kafka/   (S3, append  (gộp tần suất (nhạy cảm  (dựng trie + gom
   ĐÃ SUBMIT)   Kinesis)  -only)       theo cửa sổ)  / spam)     top-k + snapshot)
 ```
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 555" role="img" aria-labelledby="fixsd15-query-t fixsd15-query-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="fixsd15-query-t">Đường query: cache hit dừng tại tầng cache</title>
+<desc id="fixsd15-query-d">Browser hit trả kết quả; miss tới CDN; CDN miss tới API và Query Service. Shard map chọn trie theo tiền tố. Trie DB dùng nạp khi khởi động hoặc miss.</desc>
+<defs><marker id="fixsd15-query-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="currentColor"/></marker></defs>
+<rect x="15" y="25" width="140" height="38" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="85.0" y="49.0" font-size="13" text-anchor="middle" fill="currentColor">Browser cache</text><rect x="195" y="25" width="140" height="38" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="265.0" y="49.0" font-size="13" text-anchor="middle" fill="currentColor">CDN · TTL 60s</text><rect x="375" y="25" width="130" height="38" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="440.0" y="49.0" font-size="13" text-anchor="middle" fill="currentColor">Kết quả</text><rect x="195" y="115" width="140" height="38" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="265.0" y="139.0" font-size="13" text-anchor="middle" fill="currentColor">API Gateway</text><rect x="185" y="195" width="160" height="38" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="265.0" y="219.0" font-size="13" text-anchor="middle" fill="currentColor">Query Service</text><rect x="185" y="275" width="160" height="38" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="265.0" y="299.0" font-size="13" text-anchor="middle" fill="currentColor">Shard Map</text><rect x="10" y="365" width="150" height="40" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="85.0" y="390.0" font-size="13" text-anchor="middle" fill="currentColor">Trie 1 · a…f</text><rect x="185" y="365" width="150" height="40" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="260.0" y="390.0" font-size="13" text-anchor="middle" fill="currentColor">Trie 2 · g…r</text><rect x="360" y="365" width="150" height="40" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="435.0" y="390.0" font-size="13" text-anchor="middle" fill="currentColor">Trie N · s…z</text><rect x="185" y="465" width="150" height="40" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="260.0" y="490.0" font-size="13" text-anchor="middle" fill="currentColor">Trie DB</text><path d="M155 44 H195" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#fixsd15-query-a)"/><text x="175" y="35" font-size="13" text-anchor="middle" fill="currentColor">miss</text><path d="M335 44 H375" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#fixsd15-query-a)"/><text x="355" y="35" font-size="13" text-anchor="middle" fill="currentColor">hit</text><path d="M85 25 V8 H440 V25" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#fixsd15-query-a)"/><text x="260" y="19" font-size="13" text-anchor="middle" fill="currentColor">hit</text><path d="M265 63 V115" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#fixsd15-query-a)"/><text x="290" y="95" font-size="13" text-anchor="middle" fill="currentColor">miss</text><path d="M265 153 V195" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#fixsd15-query-a)"/><path d="M265 233 V275" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#fixsd15-query-a)"/><path d="M215 313 V340 H85 V365" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#fixsd15-query-a)"/><path d="M260 313 V365" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#fixsd15-query-a)"/><path d="M315 313 V340 H435 V365" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#fixsd15-query-a)"/><path d="M85 405 V440 H260 V465" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#fixsd15-query-a)"/><text x="260" y="457" font-size="13" text-anchor="middle" fill="currentColor">nạp khi khởi động/miss</text><path d="M260 405 V465" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#fixsd15-query-a)"/><path d="M435 405 V440 H260" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#fixsd15-query-a)"/><text x="260" y="535" font-size="13" text-anchor="middle" fill="currentColor">Hit trả ngay; miss mới xuống tầng tiếp theo.</text>
+</svg>
 
 - **Query Service stateless và chỉ-đọc** — không bao giờ ghi vào trie → scale ngang tuyến tính, chết một node không mất dữ liệu.
 - **Trie nằm trong RAM, không nằm trong DB** — Trie DB chỉ lưu bền để khởi động lại và rollback; để đường nóng chạm disk/DB là thua ngân sách 30 ms.

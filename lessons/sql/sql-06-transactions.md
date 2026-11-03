@@ -240,7 +240,7 @@ Ta cần biết 3 hiện tượng lỗi (read phenomena) trước. Sơ đồ dư
 <g data-step="9"><rect x="518.0" y="188" width="116" height="42" rx="6" fill="#3b82f6" fill-opacity="0.16" stroke="#f43f5e" stroke-opacity="0.9" stroke-width="1.6"/><text x="576" y="205" font-size="13" text-anchor="middle" fill="currentColor">COUNT → 4 đơn</text><text x="576" y="222" font-size="13" font-weight="700" text-anchor="middle" fill="#f43f5e">bóng ma!</text><line x1="642" y1="164" x2="606" y2="186" stroke="#f43f5e" stroke-width="1.6" stroke-opacity="0.85" marker-end="url(#sq06i-m)"/><text x="637.0" y="258" font-size="13" font-style="italic" text-anchor="middle" fill="#f43f5e" font-weight="700">cùng điều kiện, thêm 1 hàng</text><rect x="526" y="274" width="222" height="58" rx="7" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/><text x="536" y="293" font-size="12" fill="currentColor" opacity="0.8">chặn từ mức:</text><text x="536" y="312" font-size="13" font-weight="700" fill="currentColor">SERIALIZABLE (chuẩn SQL)</text><text x="536" y="330" font-size="13" font-weight="700" fill="currentColor">REPEATABLE READ (PG)</text></g>
 </svg>
 <step-note data-step="1">T1 đặt balance về 0 nhưng chưa COMMIT: thay đổi này vẫn có thể bị huỷ bất cứ lúc nào.</step-note>
-<step-note data-step="2">Ở READ UNCOMMITTED, T2 được đọc thẳng bản nháp của T1 nên thấy 0, và có thể đã dùng con số đó để quyết định (từ chối giao dịch, gửi email).</step-note>
+<step-note data-step="2">Trong mô hình READ UNCOMMITTED cho phép dirty read (không phải PostgreSQL), T2 được đọc thẳng bản nháp của T1 nên thấy 0, và có thể đã dùng con số đó để quyết định (từ chối giao dịch, gửi email).</step-note>
 <step-note data-step="3">T1 ROLLBACK, số 0 biến mất nhưng T2 đã đọc nó. READ COMMITTED chặn được vì mỗi câu chỉ thấy dữ liệu <em>đã</em> commit.</step-note>
 <step-note data-step="4">T1 đọc hàng <code>id = 1</code> lần đầu ra 500, transaction vẫn đang mở.</step-note>
 <step-note data-step="5">T2 sửa thành 400 và COMMIT đàng hoàng. Không có gì bẩn ở đây, nên READ COMMITTED không chặn được.</step-note>
@@ -284,12 +284,12 @@ Giống non-repeatable read nhưng ở mức **tập hợp hàng**: đọc lại
 
 | Isolation level | Dirty read | Non-repeatable read | Phantom read |
 |---|---|---|---|
-| READ UNCOMMITTED | có thể | có thể | có thể |
+| READ UNCOMMITTED | có thể* | có thể | có thể |
 | **READ COMMITTED** (mặc định PostgreSQL) | không | có thể | có thể |
 | **REPEATABLE READ** | không | không | có thể* |
 | **SERIALIZABLE** | không | không | không |
 
-> *Trên PostgreSQL, REPEATABLE READ chặn luôn cả phantom; chuẩn SQL thì không bắt buộc — tuỳ database.
+> *Bảng mô tả mức cho phép theo chuẩn SQL. PostgreSQL xử lý READ UNCOMMITTED như READ COMMITTED nên không có dirty read; REPEATABLE READ của PostgreSQL chặn luôn phantom. Hình dirty read phía trên minh hoạ chuẩn SQL, không phải hành vi PostgreSQL.
 
 Cách đặt mức:
 
@@ -301,7 +301,7 @@ COMMIT;
 
 > Ghi nhớ: 99% trường hợp dùng **READ COMMITTED** (mặc định) là đủ. Chỉ nâng lên **SERIALIZABLE** khi logic thật sự nhạy cảm với việc đọc nhất quán (báo cáo tài chính, kiểm kho chính xác). Càng chặt càng dễ bị xung đột phải thử lại.
 
-## 5. Deadlock — hai người chờ nhau mãi mãi
+## 5. Deadlock — hai transaction tạo vòng chờ
 
 Deadlock xảy ra khi hai transaction giữ khoá (lock) của nhau và cùng chờ. Ví dụ kinh điển:
 

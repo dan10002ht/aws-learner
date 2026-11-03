@@ -69,7 +69,7 @@ Trục **context** đã học ở [[ag-12-verifier-doc-lap]]: verifier không đ
 
 Hai paper đo trên tác vụ tóm tắt và suy luận, không phải review code — nên việc áp sang code là **suy luận**, không phải kết quả đo trực tiếp.
 
-**Cơ chế suy luận ra:** gọi `e` là xác suất bên viết để lại một lỗi, `m` là xác suất verifier bỏ sót lỗi đó. Lỗi lọt qua cả hai với xác suất `e × m` **chỉ khi hai sự kiện độc lập**. Hai model cùng họ có chung dữ liệu, chung thói quen sinh code, nên lỗi mà bên viết hay mắc lại chính là lỗi bên chấm hay coi là "trông ổn" — `m` không còn độc lập với `e`, xác suất lọt lớn hơn tích. Khác họ không làm `m` về 0; nó chỉ làm hai điểm mù **ít trùng nhau hơn**.
+**Cơ chế suy luận ra:** gọi `e` là xác suất bên viết để lại lỗi, `m` là xác suất verifier bỏ sót **với điều kiện bên viết đã để lại lỗi**. Xác suất lọt là `e × m` theo quy tắc xác suất có điều kiện, không cần giả định độc lập. Nếu dùng xác suất bỏ sót biên thay cho `m`, tích chỉ đúng khi hai sự kiện độc lập. Chung họ model có thể tạo điểm mù chung; khác họ có thể giảm trùng lặp, nhưng không bảo đảm xác suất thấp hơn nếu chưa đo trên tập lỗi cụ thể.
 
 **Số chưa đo, không điền.** Bài không đưa con số "khác họ bắt được nhiều hơn X%" vì chưa có phép đo trên code của bạn. Cách đo nằm ở §4 (bộ bug cài sẵn, so tỉ lệ bắt giữa hai verifier).
 

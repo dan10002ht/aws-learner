@@ -230,50 +230,21 @@ Dữ liệu mẫu — đơn hàng 1 gồm 2 sản phẩm:
 
 Chuẩn hoá là quá trình tách bảng để **mỗi sự thật chỉ lưu một chỗ**, tránh lặp và mâu thuẫn. Hãy bắt đầu từ một bảng "xấu" rồi sửa dần.
 
-Hành trình từ bảng "xấu" nhồi mọi thứ → schema sạch đạt 3NF:
+Hành trình từ bảng "xấu" nhồi mọi thứ → schema tách bảng (giả định mỗi sản phẩm có một dòng trong đơn):
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 470" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Chuẩn hoá: tách bảng xấu qua 1NF, 2NF, 3NF thành customers, orders, order_items</title>
-  <desc>Bảng xấu nhồi order_id, customer_name và danh sách products. Qua 1NF tách ô danh sách thành nhiều dòng, qua 2NF và 3NF tách thành ba bảng: customers giữ tên khách, orders giữ thông tin đơn, order_items giữ từng dòng hàng. Mũi tên thể hiện cột nào chuyển sang bảng nào.</desc>
-  <text x="16" y="22" font-size="13" font-weight="700" fill="currentColor">Bảng "xấu" (chưa chuẩn hoá)</text>
-  <rect x="16" y="32" width="420" height="56" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="28" y="52" font-size="11.5" font-weight="700" fill="currentColor">order_id · customer_name · products = "Áo, Quần"</text>
-  <text x="28" y="72" font-size="10.5" fill="currentColor" opacity="0.72">Lặp tên khách + ô chứa danh sách → khó sửa, dễ lệch.</text>
-  <line x1="226" y1="88" x2="226" y2="112" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#nfArr)"/>
-  <text x="236" y="106" font-size="10" fill="#3b82f6" opacity="0.95" font-weight="700">1NF: tách ô danh sách thành nhiều dòng</text>
-  <rect x="16" y="118" width="420" height="34" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="28" y="139" font-size="11" fill="currentColor">order_id · customer_name · product (mỗi ô 1 giá trị)</text>
-  <line x1="226" y1="152" x2="226" y2="176" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#nfArr)"/>
-  <text x="236" y="170" font-size="10" fill="#3b82f6" opacity="0.95" font-weight="700">2NF + 3NF: tách theo cột phụ thuộc vào khoá nào</text>
-  <text x="16" y="208" font-size="13" font-weight="700" fill="currentColor">Schema đạt 3NF — ba bảng tách bạch</text>
-  <g font-size="10" fill="currentColor" opacity="0.9" font-weight="700">
-    <text x="28" y="232">customer_name →</text>
-    <text x="300" y="232">order_id →</text>
-    <text x="512" y="232">product, quantity →</text>
-  </g>
-  <g fill="none" stroke="#10b981" stroke-opacity="0.7">
-    <path d="M120 238 C120 268, 116 282, 116 304" marker-end="url(#nfArr2)"/>
-    <path d="M340 238 C340 268, 360 282, 360 304" marker-end="url(#nfArr2)"/>
-    <path d="M576 238 C576 268, 604 282, 604 304" marker-end="url(#nfArr2)"/>
-  </g>
-  <rect x="16" y="306" width="200" height="64" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="116" y="328" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">customers</text>
-  <text x="116" y="346" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">id (PK)</text>
-  <text x="116" y="361" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">name</text>
-  <rect x="260" y="306" width="200" height="64" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="360" y="328" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">orders</text>
-  <text x="360" y="346" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">id (PK)</text>
-  <text x="360" y="361" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">customer_id (FK)</text>
-  <rect x="504" y="306" width="200" height="64" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="604" y="328" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">order_items</text>
-  <text x="604" y="346" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">(order_id, product_id) PK</text>
-  <text x="604" y="361" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">quantity</text>
-  <text x="16" y="406" font-size="10.5" fill="currentColor" opacity="0.72">customer_name chỉ phụ thuộc order_id → ra orders/customers; product+quantity phụ thuộc cả khoá → ra order_items.</text>
-  <defs>
-    <marker id="nfArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
-    <marker id="nfArr2" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="#10b981" fill-opacity="0.7"/></marker>
-  </defs>
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 552" role="img" aria-labelledby="fix-sql04-nf-t fix-sql04-nf-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif,system-ui,sans-serif">
+<title id="fix-sql04-nf-t">Chuẩn hoá: từ danh sách sản phẩm tới ba bảng liên kết</title>
+<desc id="fix-sql04-nf-d">Chuẩn hoá: từ danh sách sản phẩm tới ba bảng liên kết</desc>
+<defs><marker id="fix-sql04-nf-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<text x="16" y="24" font-size="15" text-anchor="start" fill="currentColor">Tách theo phụ thuộc hàm, không theo tên cột</text><rect x="16" y="42" width="488" height="64" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="28" y="65" font-size="13" text-anchor="start" fill="currentColor">order_id · customer_name · products</text><text x="28" y="88" font-size="13" text-anchor="start" fill="currentColor">1 · Lan Anh · &quot;Áo, Quần&quot;; 2 · Minh · &quot;Mũ&quot;</text><g data-step="1"><path d="M260 106 V148" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#fix-sql04-nf-a)"/><text x="276" y="133" font-size="13" text-anchor="start" fill="currentColor">1NF</text><rect x="16" y="150" width="488" height="86" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="28" y="173" font-size="13" text-anchor="start" fill="currentColor">order_id · customer_name · product</text><text x="28" y="196" font-size="13" text-anchor="start" fill="currentColor">1 · Lan Anh · Áo; 1 · Lan Anh · Quần</text><text x="28" y="219" font-size="13" text-anchor="start" fill="currentColor">2 · Minh · Mũ (mỗi ô một giá trị)</text></g><g data-step="2"><path d="M260 236 L123 316" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#fix-sql04-nf-a)"/><path d="M260 236 L381 316" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#fix-sql04-nf-a)"/><text x="16" y="253" font-size="13" fill="currentColor">2NF: order_id → customer_name</text><rect x="16" y="320" width="214" height="80" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="28" y="343" font-size="13" fill="currentColor">orders: id (PK)</text><rect x="258" y="320" width="246" height="80" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="270" y="343" font-size="13" fill="currentColor">order_items: khoá tổ hợp</text><text x="270" y="366" font-size="13" fill="currentColor">(order_id, product_id)</text><text x="270" y="389" font-size="13" fill="currentColor">quantity</text></g>
+<g data-step="3"><text x="28" y="366" font-size="13" fill="currentColor">customer_id (FK)</text><path d="M123 400 V440" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#fix-sql04-nf-a)"/><text x="258" y="426" font-size="13" fill="currentColor">3NF: customer_id → name</text><rect x="16" y="444" width="214" height="50" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="28" y="466" font-size="13" fill="currentColor">customers: id (PK), name</text><text x="258" y="472" font-size="13" fill="currentColor">tên khách lưu một nơi</text></g>
+<text x="16" y="510" font-size="13" text-anchor="start" fill="currentColor">order_items giữ quantity theo khoá tổ hợp.</text><text x="16" y="534" font-size="13" text-anchor="start" fill="currentColor">Ví dụ city/zip bên dưới minh hoạ 3NF riêng.</text>
 </svg>
+<step-note data-step="1">Tách danh sách sản phẩm thành dòng; giả định một sản phẩm xuất hiện tối đa một dòng mỗi đơn, khoá là (order_id, product).</step-note>
+<step-note data-step="2">Tên khách phụ thuộc order_id, không phụ thuộc toàn bộ khoá tổ hợp: tách thông tin đơn khỏi dòng hàng để đạt 2NF.</step-note>
+<step-note data-step="3">Ở schema cuối, thêm customer_id để tham chiếu customers; tên khách phụ thuộc customer_id nên tách khỏi orders. quantity vẫn ở order_items. Ví dụ city/zip trong phần 3NF là ví dụ độc lập.</step-note>
+</step-flow>
 
 Bảng `orders` ban đầu nhồi mọi thứ vào một chỗ:
 
@@ -294,7 +265,7 @@ Cột `products` đang chứa danh sách `"Áo, Quần"` — vi phạm 1NF. **1N
 
 ### 2NF — bỏ phụ thuộc một phần vào khoá
 
-2NF áp dụng khi khoá chính là tổ hợp. **Mọi cột không-khoá phải phụ thuộc vào TOÀN BỘ khoá**, không chỉ một phần. Ở bảng trên, khoá là `(order_id, product)`, nhưng `customer_name` chỉ phụ thuộc vào `order_id` — đó là phụ thuộc một phần. Tách ra:
+2NF áp dụng khi khoá chính là tổ hợp. **Mọi cột không-khoá phải phụ thuộc vào TOÀN BỘ khoá**, không chỉ một phần. Ở bảng trên, khoá là `(order_id, product)`, nhưng `customer_name` chỉ phụ thuộc vào `order_id` — đó là phụ thuộc một phần. Tách thông tin đơn khỏi dòng hàng; schema cuối dưới đây dùng thêm bảng `customers` với phụ thuộc `customer_id → name`, nên tên khách không lặp trong `orders`. Ví dụ `city/zip` ở mục sau minh hoạ 3NF độc lập.
 
 ```sql
 -- orders: thông tin thuộc về cả đơn hàng
@@ -320,7 +291,7 @@ CREATE TABLE order_items (
 |---|---|---|---|
 | 1 | 1 | Hà Nội | 100000 |
 
-Ở đây `city_zip` phụ thuộc vào `customer_city`, mà `customer_city` lại không phải khoá → phụ thuộc bắc cầu (`id → city → zip`). Nếu Hà Nội đổi mã zip, bạn phải sửa nhiều dòng. Tách `city`/`zip` sang bảng riêng.
+Trong mô hình ví dụ, giả định mỗi thành phố có đúng một mã zip (không phải quy tắc địa chỉ thực tế). Ở đây `city_zip` phụ thuộc vào `customer_city`, mà `customer_city` lại không phải khoá → phụ thuộc bắc cầu (`id → city → zip`). Nếu Hà Nội đổi mã zip, bạn phải sửa nhiều dòng. Tách `city`/`zip` sang bảng riêng.
 
 > Ghi nhớ nhanh 3NF: "mỗi cột không-khoá phụ thuộc vào **khoá, toàn bộ khoá, và không gì ngoài khoá**" (the key, the whole key, and nothing but the key).
 

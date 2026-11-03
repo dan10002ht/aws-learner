@@ -396,7 +396,7 @@ bool hasDupFast(const std::vector<int>& arr) {   // time O(n), space O(n)
 
 Đôi khi một thao tác *thỉnh thoảng* rất đắt nhưng *thường xuyên* rất rẻ. **Amortized analysis** tính chi phí trung bình trải đều qua nhiều lần gọi.
 
-Ví dụ kinh điển: **dynamic array** (`list` Python, `ArrayList` Java, slice Go, array JS). Khi `append` mà mảng đầy, nó cấp một mảng mới **gấp đôi** và copy toàn bộ phần tử cũ — lần đó tốn `O(n)`. Nhưng vì dung lượng nhân đôi, những lần copy như vậy rất thưa: thêm `n` phần tử chỉ tốn tổng cộng `~2n` thao tác copy. Chia đều ra, mỗi `append` là **amortized O(1)**.
+Ví dụ kinh điển: **dynamic array** (`list` Python, `ArrayList` Java, slice Go, array JS). Hệ số tăng và cách biểu diễn tuỳ implementation, không phải mọi loại đều nhân đôi. Xét mô hình dynamic array có sức chứa ban đầu 1: khi đầy, cấp mảng **gấp đôi** và copy phần tử cũ — lần đó tốn `O(n)`. Với `n` lần append từ mảng rỗng, tổng số copy nhỏ hơn `2n`, cộng thêm `n` lần ghi mới. Chia đều ra, mỗi `append` là **amortized O(1)**.
 
 <auto-anim data-dur="10">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 442" role="img" aria-labelledby="dsa01-amortized-t dsa01-amortized-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">

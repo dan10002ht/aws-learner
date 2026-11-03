@@ -71,21 +71,22 @@ SLI là **một con số đo trực tiếp mức độ tốt của dịch vụ t
 SLI = (số request "tốt") / (tổng số request hợp lệ) × 100%
 ```
 
-Bốn nhóm SLI phổ biến nhất (the four golden signals nghiêng về phía SLI):
+Phân biệt SLI hướng người dùng và metric vận hành trong bốn golden signals:
 
 | Loại SLI | Đo cái gì | Ví dụ "tốt" |
 |---|---|---|
 | Availability | Tỉ lệ request thành công | HTTP status != 5xx |
-| Latency | Tỉ lệ request đủ nhanh | p99 < 300ms |
+| Latency SLI | Tỉ lệ request đủ nhanh | ≥ 99% request có latency < 300ms |
 | Error rate | Tỉ lệ lỗi | < 0.1% request trả 5xx |
-| Throughput / Saturation | Tải hệ thống chịu được | queue depth < 1000 |
+| Throughput (traffic) | Lượng công việc mỗi đơn vị thời gian | request/s; metric tải để chẩn đoán |
+| Saturation | Mức cạn tài nguyên | queue depth, CPU; metric vận hành, không tự là SLI người dùng |
 
 ### Chọn đúng metric
 
 Đây là phần dễ làm sai nhất. Vài nguyên tắc:
 
 - **Đo từ góc nhìn người dùng, không phải góc nhìn server.** "CPU 80%" không phải SLI tốt — người dùng không quan tâm CPU. "Tỉ lệ trang load < 1s" mới là cái họ cảm nhận.
-- **Latency phải dùng percentile, không dùng trung bình.** Trung bình che giấu đuôi (tail). Nếu trung bình 100ms nhưng p99 là 4s, thì 1% người dùng (có thể là khách hàng lớn nhất) đang khổ.
+- **Latency cần đo đuôi phân phối:** dùng percentile để chẩn đoán, tỉ lệ request dưới ngưỡng để tính SLI; tránh chỉ dùng trung bình. Trung bình che giấu đuôi (tail). Nếu trung bình 100ms nhưng p99 là 4s, thì 1% người dùng (có thể là khách hàng lớn nhất) đang khổ.
 - **Định nghĩa rõ "request hợp lệ".** Health-check nội bộ, bot scan, request từ chính monitoring... nên loại khỏi mẫu số, nếu không SLI bị bóp méo.
 
 Ví dụ định nghĩa SLI latency bằng PromQL (tỉ lệ request dưới 300ms trong 5 phút):
@@ -125,11 +126,11 @@ Mỗi số 9 thêm vào làm giảm downtime cho phép gấp ~10 lần, nhưng c
 
 | SLO | Downtime/tháng (30 ngày) | Downtime/năm | Downtime/tuần |
 |---|---|---|---|
-| 99% (2 nines) | 7h 18m | 3.65 ngày | 1h 41m |
-| 99.9% (3 nines) | 43m 50s | 8.76h | 10m 4s |
-| 99.95% | 21m 54s | 4.38h | 5m 2s |
-| 99.99% (4 nines) | 4m 23s | 52.6m | 1m 0s |
-| 99.999% (5 nines) | 26s | 5.26m | 6s |
+| 99% (2 nines) | 7h 12m | 3.65 ngày | 1h 41m |
+| 99.9% (3 nines) | 43m 12s | 8.76h | 10m 4s |
+| 99.95% | 21m 36s | 4.38h | 5m 2s |
+| 99.99% (4 nines) | 4m 19.2s | 52.6m | 1m 0s |
+| 99.999% (5 nines) | 25.92s | 5.26m | 6s |
 
 > Nguyên tắc: SLO tối ưu **không phải là 100%**. 100% nghĩa là bạn không bao giờ được deploy, không bao giờ được bảo trì, và phải trả chi phí dự phòng vô hạn. Mức 99.9% thường là điểm cân bằng tốt; chỉ leo lên 99.99% khi business thực sự trả tiền cho nó.
 
@@ -220,7 +221,7 @@ Nó biến reliability từ cuộc tranh cãi cảm tính ("hệ thống có ổ
 
 ### Ví dụ tính error budget từ SLO 99.9%
 
-Giả sử API xử lý **43,200,000 request / 28 ngày** (tức ~1.08M request/ngày, ~12.5 req/s).
+Giả sử API xử lý **43,200,000 request / 28 ngày** (tức ~1.54M request/ngày, ~17.86 req/s).
 
 ```
 SLO            = 99.9%

@@ -2,41 +2,13 @@
 
 API Gateway là "cửa ngõ" (front door) cho mọi API trong kiến trúc AWS: nó nhận request từ client, xử lý auth/throttling/transform, rồi forward đến backend (Lambda, HTTP endpoint, AWS service). Với developer, đây là service xuất hiện dày đặc trong Domain 1 của DVA-C02 vì gần như mọi serverless API đều đi qua nó.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>API Gateway là cửa ngõ — luồng xử lý request</title>
-  <desc>Request từ client đi vào API Gateway, lần lượt qua authorizer, throttling và usage plan, mapping/validation, cache, rồi forward tới một trong các backend: Lambda, HTTP endpoint, AWS service, hoặc MOCK.</desc>
-  <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">API Gateway — cửa ngõ trước backend</text>
-  <defs>
-    <marker id="gwArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
-  </defs>
-  <rect x="20" y="116" width="96" height="48" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="68" y="145" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Client</text>
-  <line x1="116" y1="140" x2="148" y2="140" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#gwArr)"/>
-  <rect x="152" y="56" width="392" height="168" rx="12" fill="#10b981" fill-opacity="0.10" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="348" y="78" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">API Gateway</text>
-  <g font-size="11" fill="currentColor">
-    <rect x="170" y="92" width="356" height="26" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="348" y="109" text-anchor="middle" fill="currentColor">1 · Authorizer (IAM / Cognito / Lambda)</text>
-    <rect x="170" y="124" width="356" height="26" rx="7" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="348" y="141" text-anchor="middle" fill="currentColor">2 · Throttling + Usage plan / API key</text>
-    <rect x="170" y="156" width="356" height="26" rx="7" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="348" y="173" text-anchor="middle" fill="currentColor">3 · Mapping (VTL) + Request validation</text>
-    <rect x="170" y="188" width="356" height="26" rx="7" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="348" y="205" text-anchor="middle" fill="currentColor">4 · Cache (per-stage)</text>
-  </g>
-  <line x1="544" y1="140" x2="576" y2="140" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#gwArr)"/>
-  <g font-size="10.5" fill="currentColor">
-    <rect x="580" y="64" width="124" height="30" rx="7" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="642" y="83" text-anchor="middle" fill="currentColor">Lambda</text>
-    <rect x="580" y="100" width="124" height="30" rx="7" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="642" y="119" text-anchor="middle" fill="currentColor">HTTP endpoint</text>
-    <rect x="580" y="136" width="124" height="30" rx="7" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="642" y="155" text-anchor="middle" fill="currentColor">AWS service</text>
-    <rect x="580" y="172" width="124" height="30" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="642" y="191" text-anchor="middle" fill="currentColor">MOCK</text>
-  </g>
-  <text x="642" y="222" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">Backend</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 315" role="img" aria-labelledby="fix-api-t fix-api-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="fix-api-t">API Gateway: chọn integration</title><desc id="fix-api-d">Client tới API Gateway, fan-out minh hoạ các lựa chọn integration; không phải thứ tự auth/throttle/cache chung cho mọi API.</desc>
+<defs><marker id="fix-api-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs><use href="#aws-api-gateway" x="192" y="27" width="24" height="24"/>
+<rect x="15" y="20" width="135" height="55" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="82.5" y="52.5" text-anchor="middle" font-size="13" fill="currentColor">Client</text><rect x="185" y="20" width="320" height="55" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="345.0" y="47.5" text-anchor="middle" font-size="13" fill="currentColor">API Gateway</text><text x="345.0" y="67.5" text-anchor="middle" font-size="13" fill="currentColor">REST / HTTP / WebSocket</text><path d="M150 47 H185" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#fix-api-arr)"/><path d="M345 75 V130 H65 V165 M345 130 H195 V165 M345 130 H325 V165 M345 130 H455 V165" fill="none" stroke="currentColor" stroke-width="2"/><rect x="10" y="165" width="110" height="65" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="65.0" y="202.5" text-anchor="middle" font-size="13" fill="currentColor">Lambda</text><rect x="140" y="165" width="110" height="65" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="195.0" y="202.5" text-anchor="middle" font-size="13" fill="currentColor">HTTP</text><rect x="270" y="165" width="110" height="65" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="325.0" y="202.5" text-anchor="middle" font-size="13" fill="currentColor">AWS service</text><rect x="400" y="165" width="110" height="65" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="455.0" y="202.5" text-anchor="middle" font-size="13" fill="currentColor">MOCK</text><text x="260" y="265" text-anchor="middle" font-size="13" fill="currentColor">Chọn integration theo loại API và route/method</text><text x="260" y="290" text-anchor="middle" font-size="13" fill="currentColor">MOCK trả response cấu hình, không gọi backend ngoài</text>
 </svg>
+
+Các khả năng như IAM/Cognito/Lambda authorizer, throttling, usage plan/API key, VTL/request validation và stage cache phụ thuộc loại API và cấu hình (xem bảng dưới). Hình mô tả lựa chọn integration, không mô tả pipeline thực thi cố định.
 
 ## Ba loại API: REST vs HTTP vs WebSocket
 

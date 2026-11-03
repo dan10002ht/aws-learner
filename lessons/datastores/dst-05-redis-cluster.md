@@ -121,7 +121,7 @@ Then chốt: bạn chạy **nhiều Sentinel** (khuyến nghị **>= 3**, số l
 <defs><marker id="sa" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
 </svg>
 
-Vì sao cần số Sentinel lẻ và quorum? Để chống **split-brain** do phân mảnh mạng: chỉ phía **giữ được đa số** Sentinel mới được quyền failover, tránh hai master cùng tồn tại. Lưu ý quorum quyết định *khi nào tuyên bố ODOWN*, còn để *thực hiện* failover cần đa số tuyệt đối Sentinel bầu ra một leader (Raft-lite).
+Vì sao cần số Sentinel lẻ và quorum? Để chống **split-brain** do phân mảnh mạng: chỉ phía **giữ được đa số** Sentinel mới được quyền failover, tránh hai phía cùng được cấp quyền failover. Master cũ vẫn có thể nhận ghi khi partition; cần fencing/giới hạn ghi và xử lý mất write do async replication, không suy strong consistency từ majority Sentinel. Lưu ý quorum quyết định *khi nào tuyên bố ODOWN*, còn để *thực hiện* failover cần đa số tuyệt đối Sentinel bầu ra một leader failover.
 
 ```conf
 # sentinel.conf — mỗi Sentinel một file tương tự
@@ -296,7 +296,7 @@ Quy tắc ngón tay cái: **mặc định dùng Sentinel** (đơn giản, ít c�
 
 ## 3. Tóm tắt
 - **Replication** master-replica là **async**: master ACK trước, stream sau → **scale read** nhưng **có thể mất dữ liệu** khi master chết; `WAIT`/`min-replicas-to-write` giảm nhẹ chứ không cho consistency mạnh.
-- **Sentinel** = giám sát + **auto failover** + **service discovery** cho **HA của một dataset**; chạy **>= 3 Sentinel số lẻ**, cần **quorum** (SDOWN → ODOWN) để chống split-brain. **Không** sharding.
+- **Sentinel** = giám sát + **auto failover** + **service discovery** cho **HA của một dataset**; chạy **>= 3 Sentinel số lẻ**, cần **quorum** (SDOWN → ODOWN) để phối hợp failover; không tự fence master cũ khi partition. **Không** sharding.
 - **Cluster** = sharding **16384 hash slot** cho nhiều master (`slot = CRC16(key) mod 16384`), **HA built-in** (không cần Sentinel), **resharding online**, redirect **MOVED** (cố định) / **ASK** (đang migrate); dùng **smart client** hiểu bản đồ slot.
 - Multi-key/transaction/Lua chỉ chạy khi **cùng slot** → dùng **hash tag** `{...}` để gom key liên quan; coi chừng **hot slot**.
 - **Sentinel khi dataset vừa 1 máy + cần HA**; **Cluster khi cần scale ghi/RAM vượt 1 máy**.

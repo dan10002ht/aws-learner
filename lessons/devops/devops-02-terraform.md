@@ -7,7 +7,7 @@ Bạn đã biết click chuột trên console cloud hoặc gõ `aws ec2 run-inst
 Sau bài này bạn có thể:
 - Giải thích **vì sao cần IaC** và phân biệt **declarative vs imperative**.
 - Viết HCL cơ bản: `provider`, `resource`, `variable`, `output`, `data`.
-- Hiểu **state file** là gì, vì sao phải dùng **remote backend** (S3 + DynamoDB lock).
+- Hiểu **state file** là gì, vì sao phải dùng **remote backend** (S3 + S3 lockfile).
 - Đóng gói hạ tầng thành **module** tái sử dụng.
 - Dùng đúng `plan` / `apply` / `destroy`, nhận diện và xử lý **drift**.
 - Quản lý nhiều môi trường bằng **workspace**, đưa tài nguyên có sẵn vào state bằng `import`.
@@ -206,7 +206,7 @@ State để local có 3 vấn đề chí mạng khi làm việc nhóm:
 2. **Không có lock** — 2 người `apply` cùng lúc → state corrupt.
 3. **Không bền** — mất laptop là mất state.
 
-Giải pháp chuẩn trên AWS: **S3 lưu state + DynamoDB làm lock**.
+Khuyến nghị cho cấu hình mới (Terraform 1.10+): **S3 lưu state + S3 lockfile làm lock**. DynamoDB locking đã deprecated; chỉ giữ khi cần tương thích cấu hình cũ.
 
 ```hcl
 terraform {
@@ -214,13 +214,13 @@ terraform {
     bucket         = "mycompany-tfstate-prod"
     key            = "network/terraform.tfstate"   # đường dẫn trong bucket
     region         = "ap-southeast-1"
-    dynamodb_table = "terraform-locks"              # bảng lock
+    use_lockfile   = true                           # lock trên S3
     encrypt        = true
   }
 }
 ```
 
-DynamoDB table cho lock chỉ cần partition key `LockID` (kiểu String). Khi ai đó đang `apply`, Terraform ghi 1 record lock; người thứ hai sẽ bị chặn với lỗi `Error acquiring the state lock`.
+Với cấu hình DynamoDB cũ, table cho lock cần partition key `LockID` (kiểu String). Khi ai đó đang `apply`, Terraform lấy lock (file `.tflock` trên S3 với cấu hình trên); người thứ hai sẽ bị chặn với lỗi `Error acquiring the state lock`.
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 290" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Remote backend trên S3 và cơ chế lock chống apply đồng thời</title>
@@ -244,7 +244,7 @@ DynamoDB table cho lock chỉ cần partition key `LockID` (kiểu String). Khi 
   <g>
     <rect x="300" y="50" width="180" height="86" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
     <text x="390" y="76" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Lock</text>
-    <text x="390" y="96" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">DynamoDB LockID</text>
+    <text x="390" y="96" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">S3 .tflock</text>
     <text x="390" y="113" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">hoặc S3 lockfile</text>
     <rect x="332" y="120" width="116" height="0" />
   </g>
@@ -271,7 +271,7 @@ DynamoDB table cho lock chỉ cần partition key `LockID` (kiểu String). Khi 
   <text x="250" y="168" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">lock đã bận → block</text>
 </svg>
 
-> Ghi nhớ: Từ khi S3 hỗ trợ **conditional writes** (cuối 2024), Terraform 1.10+ có thể lock state bằng chính S3 với tham số `use_lockfile = true`, **không còn bắt buộc DynamoDB**. Nhưng rất nhiều codebase hiện tại vẫn dùng DynamoDB — bạn cần biết cả hai.
+> Ghi nhớ: Từ khi S3 hỗ trợ **conditional writes** (cuối 2024), Terraform 1.10+ có thể lock state bằng chính S3 với tham số `use_lockfile = true`, **không còn bắt buộc DynamoDB**. DynamoDB locking đã deprecated; codebase cũ vẫn có thể dùng nó trong giai đoạn chuyển đổi.
 
 > Bẫy production: Backend **không nhận biến** (`variable`) — block `backend` phải là giá trị literal. Cần tham số hoá thì dùng `terraform init -backend-config=prod.hcl` với partial configuration.
 
@@ -459,12 +459,12 @@ terraform apply tfplan       # apply CHÍNH XÁC plan đã lưu, không hỏi l�
 
 ```bash
 terraform plan                 # plan tự refresh state, hiện drift dưới dạng diff
-terraform plan -refresh-only   # CHỈ xem drift, không đề xuất đổi gì
+terraform plan -refresh-only   # Đề xuất cập nhật state theo drift, không đổi remote object
 ```
 
 Khi phát hiện drift, có 2 hướng:
 - **Code là chân lý** (khuyến nghị): chạy `apply` để kéo thực tế về đúng code.
-- **Thực tế là đúng**: cập nhật code cho khớp, hoặc `terraform apply -refresh-only` để nạp thay đổi vào state.
+- **Thực tế là đúng**: cập nhật code cho khớp. Có thể dùng `terraform apply -refresh-only` để nạp thay đổi vào state, nhưng lệnh này không sửa HCL; nếu giữ code cũ, lần plan/apply thường sau vẫn có thể kéo thực tế về code cũ.
 
 > Bẫy production: Drift kinh điển — dev sửa tay rule security group trên console để "fix gấp", quên báo. Lần `apply` tiếp theo của người khác sẽ **âm thầm xoá rule đó** (vì code không có). Chính sách: **mọi thay đổi đi qua Terraform**, hoặc bật quy trình phát hiện drift định kỳ.
 
@@ -671,7 +671,7 @@ Terraform là cách phổ biến nhất để dựng và vận hành hạ tầng
 
 | Khái niệm trong bài | Trên AWS |
 |---------------------|----------|
-| Remote backend | **S3** (state) + **DynamoDB** hoặc S3 lockfile (lock) |
+| Remote backend | **S3** (state) + **S3 lockfile** (lock); DynamoDB lock cũ đã deprecated |
 | IaC "thuần AWS" thay thế | **CloudFormation** (declarative, YAML/JSON), **CDK** (code TS/Python sinh CloudFormation), **SAM** (serverless) |
 | Provider credentials | **IAM role** (OIDC từ GitHub Actions → AssumeRole, không lưu access key tĩnh) |
 | Resource ví dụ | VPC, Subnet, IGW, Security Group, EC2 — đúng các service nền tảng |

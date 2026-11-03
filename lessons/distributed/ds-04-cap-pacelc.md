@@ -37,9 +37,9 @@ Cách nói "**pick 2 of 3**" là **sai và gây hiểu lầm**, vì nó ngụ ý
 
 ### 2.3 Vì sao P là thứ BẮT BUỘC PHẢI CHỊU, không phải để chọn
 
-Partition = mạng làm mất hoặc trì hoãn message. Trong bất kỳ hệ nào có **≥ 2 node giao tiếp qua mạng thật**, partition **chắc chắn sẽ xảy ra**: đứt cáp, switch treo, GC pause dài, node quá tải không kịp trả lời... Về mặt quan sát, một node **không phân biệt được** "peer đã chết" với "message tới peer bị mất" (đúng vấn đề *partial failure* ở Bài 1).
+Partition = mạng làm mất hoặc trì hoãn message. Trong bất kỳ hệ nào có **≥ 2 node giao tiếp qua mạng thật**, partition **chắc chắn sẽ xảy ra**: đứt cáp, switch treo; GC pause hay quá tải cũng có thể làm peer quan sát timeout tương tự, dù không nhất thiết là partition mạng... Về mặt quan sát, một node **không phân biệt được** "peer đã chết" với "message tới peer bị mất" (đúng vấn đề *partial failure* ở Bài 1).
 
-Vậy "bỏ P" nghĩa là gì? Nghĩa là **giả định mạng không bao giờ mất message** — điều chỉ đúng khi tất cả chạy trên **một máy duy nhất**. Một hệ "CA" theo nghĩa từ chối P **không phải hệ phân tán**; nó là một RDBMS single-node. Ngay khi bạn có mạng, **P được áp lên bạn**, và câu hỏi duy nhất còn lại là:
+Vậy "bỏ P" nghĩa là gì? Nghĩa là **loại partition khỏi mô hình đảm bảo**. Hệ nhiều node vẫn có thể cung cấp C+A khi mạng không partition; single-node chỉ là một ví dụ không có partition giữa các replica. Nhưng giả định đó không giải quyết cách hệ cư xử khi liên lạc thật sự bị chia cắt. Lúc ấy câu hỏi vẫn là:
 
 > **Khi (không phải "nếu") partition xảy ra, tôi giữ C hay giữ A?** → đó là lựa chọn **CP hay AP**.
 
@@ -186,7 +186,7 @@ Cùng một cluster, cùng dữ liệu — bạn **trượt núm giữa Latency 
 
 | Hiểu lầm phổ biến | Thực tế đúng |
 |-------------------|--------------|
-| "Chọn 2 trong 3 (CA, CP, AP)". | Sai. P bắt buộc chịu; chỉ chọn C hay A **khi có partition**. "CA" = single-node, không phải hệ phân tán. |
+| "Chọn 2 trong 3 (CA, CP, AP)". | Sai. P bắt buộc chịu; chỉ chọn C hay A **khi có partition**. C+A có thể đạt khi không partition; nhãn CA không giải quyết hành vi khi partition. |
 | C trong CAP giống C trong ACID. | Không. CAP-C là **linearizability** (thuộc tính về thứ tự/độ mới của read-write); ACID-C là **ràng buộc toàn vẹn** của giao dịch. Hai thứ khác nhau. |
 | A trong CAP = "uptime cao". | Không. CAP-A là định nghĩa toán học: **mọi request tới node sống đều được trả lời**. Một hệ CP vẫn có thể có uptime 99.99% trong vận hành thật. |
 | "Hệ tôi eventually consistent vì CAP ép". | Không hẳn. Theo PACELC, đó thường là chọn **EL** (latency) khi **không** partition — quyết định chủ động, không phải hệ quả của partition. |

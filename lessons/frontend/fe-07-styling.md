@@ -186,6 +186,7 @@ Dùng trong CSS thuần hoặc trong Tailwind v4 (Tailwind v4 cấu hình theme 
 /* @theme trong Tailwind v4: biến này tạo ra utility tương ứng */
 @theme {
   --color-primary: #2563eb;   /* -> class bg-primary, text-primary... */
+  --color-foreground: var(--color-text); /* -> text-foreground */
   --radius-card: 12px;        /* -> rounded-card */
 }
 ```

@@ -54,16 +54,16 @@ Nhãn CA/CP/AP ở đây là **cách nhớ gần đúng**, không phải phân l
 
 ### 3.1 Multi-AZ vs Read Replica
 
-| | Multi-AZ | Read Replica |
+| | Multi-AZ DB instance | Read Replica |
 |--|----------|---------------|
 | Mục đích | HA failover | Scale read |
 | Replication | **Sync** | **Async** |
 | Standby serve read | **Không** | **Có** |
 | Failover | Auto, 60-120s, DNS update | Manual promote |
-| Cross-AZ | Same region (multi-AZ DB instance: 2 AZ; multi-AZ cluster: 3 AZ) | Same hoặc **cross-region** |
+| Cross-AZ | Same region, 2 AZ (DB cluster 3 AZ xem §3.2) | Same hoặc **cross-region** |
 | Latency tăng write | Có (sync) | Không (async không ảnh hưởng primary) |
 
-**Vì sao hai thứ này không thay được nhau.** Standby của Multi-AZ được sao chép đồng bộ ở tầng đĩa và không mở cho client kết nối; nó chỉ tồn tại để thế chỗ primary. Khi failover, RDS đổi bản ghi DNS của endpoint sang standby, nên ứng dụng giữ nguyên connection string và chỉ cần kết nối lại. Read Replica thì ngược lại: là một instance đầy đủ, có endpoint riêng để đọc, nhưng vì async nên có thể thiếu vài giao dịch cuối, và muốn nó thành primary thì phải **promote bằng tay** rồi sửa endpoint trong ứng dụng. Một primary có tối đa **15** read replica (quota mặc định).
+**Vì sao hai thứ này không thay được nhau.** Standby của Multi-AZ **DB instance** được sao chép đồng bộ ở tầng đĩa và không mở cho client kết nối; nó chỉ tồn tại để thế chỗ primary. Khi failover, RDS đổi bản ghi DNS của endpoint sang standby, nên ứng dụng giữ nguyên connection string và chỉ cần kết nối lại. Read Replica thì ngược lại: là một instance đầy đủ, có endpoint riêng để đọc, nhưng vì async nên có thể thiếu vài giao dịch cuối, và muốn nó thành primary thì phải **promote bằng tay** rồi sửa endpoint trong ứng dụng. Một primary có tối đa **15** read replica (quota mặc định).
 
 > Bẫy thi: *"giảm tải đọc / báo cáo làm chậm production"* → **Read Replica**. *"chịu được mất một AZ, tự failover, không mất dữ liệu"* → **Multi-AZ**. Hai tính năng bật được cùng lúc trên một DB.
 

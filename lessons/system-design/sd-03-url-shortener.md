@@ -295,12 +295,12 @@ Vì không cần join, ghi đơn giản, và phải scale ngang tới 100 TB / 2
 
 | | 301 Moved Permanently | 302 Found (tạm thời) |
 |---|---|---|
-| Browser cache | Cache mạnh, lần sau **không gọi lại server** | Không cache (hoặc yếu), mỗi lần gọi lại server |
-| Tải lên server | Thấp hơn nhiều (giảm read QPS thật) | Cao hơn — mọi click đều chạm hệ thống |
-| Analytics | **Mất click** sau lần đầu (browser đi thẳng) | **Đếm được mọi click** |
-| Đổi đích sau này | Khó (client đã cache cũ) | Dễ — luôn hỏi lại server |
+| Browser cache | Cache mạnh, lần sau **không gọi lại server** | Không cache mặc định; vẫn cache được nếu có chỉ thị freshness |
+| Tải lên server | Thấp hơn nhiều (giảm read QPS thật) | Cao hơn nếu tắt cache; hit CDN không chạm origin |
+| Analytics | **Mất click** sau lần đầu (browser đi thẳng) | Đếm click tới origin; cần edge log cho hit CDN |
+| Đổi đích sau này | Khó (client đã cache cũ) | Dễ hơn nếu không cache hoặc TTL ngắn |
 
-→ Chọn **302** nếu analytics và khả năng đổi đích quan trọng (đa số dịch vụ rút gọn thương mại chọn 302). Chọn **301** nếu muốn giảm tải tối đa và không cần đếm chính xác. Đây là đánh đổi **tải hệ thống ↔ độ chính xác analytics & linh hoạt**.
+→ Chọn **302** kèm chính sách cache phù hợp nếu analytics và khả năng đổi đích quan trọng (đa số dịch vụ rút gọn thương mại chọn 302). Chọn **301** nếu muốn giảm tải tối đa và không cần đếm chính xác. Đây là đánh đổi **tải hệ thống ↔ độ chính xác analytics & linh hoạt**. Muốn mọi redirect tới origin thì dùng `Cache-Control: no-store`; nếu cache ở CDN như kiến trúc dưới đây, cần edge logging để bổ sung click không qua Read service. Chọn 302 tự nó không bảo đảm đếm đủ click.
 
 ---
 
@@ -393,6 +393,7 @@ GET /aXf3Qz
     <g stroke="currentColor" stroke-opacity="0.85" fill="none" marker-end="url(#sd03-med-arch2-a)">
       <path d="M340 144 V165 H120 V190" marker-end="url(#sd03-med-arch2-a)"/>
       <path d="M222 211 H180" marker-end="url(#sd03-med-arch2-a)"/>
+      <path d="M120 232 V300" marker-end="url(#sd03-med-arch2-a)"/>
     </g>
     <g font-size="13" stroke-opacity="1">
       <text x="92" y="180" fill="currentColor" opacity="0.7" text-anchor="middle">WRITE</text>
@@ -430,7 +431,7 @@ GET /aXf3Qz
   </g>
 </svg>
 <step-note data-step="1">CloudFront có thể trả redirect 302 đã cache; miss mới về API Gateway. Cache hit ở edge không chạy qua Read service để phát click event.</step-note>
-<step-note data-step="2">Nhánh WRITE nhận key từ KGS; tách service ghi cho phép scale độc lập với đường redirect.</step-note>
+<step-note data-step="2">Nhánh WRITE nhận key từ KGS và ghi mapping vào DynamoDB; tách service ghi cho phép scale độc lập với đường redirect.</step-note>
 <step-note data-step="3">Nhánh READ hỏi Redis; hit trả mapping về Read service mà không đọc DB.</step-note>
 <step-note data-step="4">Cache miss lấy url_mapping từ DynamoDB, phân mảnh theo short_code để lookup theo key.</step-note>
 <step-note data-step="5">Click event đi bất đồng bộ qua Kinesis, stream processor rồi analytics store để không chặn redirect.</step-note>
@@ -459,50 +460,13 @@ Vì sao ghép vào đây? URL Shortener mở public → bị abuse (spam tạo l
 ### Các thuật toán — trade-off
 
 #### Token Bucket
-Mỗi key có một "xô" chứa token, được nạp đầy với tốc độ cố định (vd 100 token/phút), tối đa = dung lượng xô. Mỗi request tiêu 1 token; hết token → từ chối.
+Mỗi key có một "xô" chứa token, được nạp đầy với tốc độ cố định (vd 60 token/phút = 1 token/giây, dung lượng 5 token như hình), tối đa = dung lượng xô. Mỗi request tiêu 1 token; hết token → từ chối.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Token Bucket cho rate limiter</title>
-  <desc>Một xô có dung lượng cố định được nạp token đều theo thời gian. Mỗi request tiêu 1 token; còn token thì cho qua, xô rỗng thì trả 429. Vì xô có thể đầy tới capacity nên cho phép burst bằng đúng dung lượng.</desc>
-  <defs>
-    <marker id="ah4" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
-    </marker>
-  </defs>
-  <text x="305" y="26" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.75" font-weight="700">nạp đều: refill ~1 token/s</text>
-  <g stroke="currentColor" stroke-opacity="0.55" fill="none" marker-end="url(#ah4)">
-    <path d="M260 34 V64"/>
-    <path d="M310 34 V64"/>
-    <path d="M360 34 V64"/>
-  </g>
-  <rect x="225" y="70" width="160" height="110" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.3"/>
-  <text x="305" y="200" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">xô · capacity = 5 (cho burst)</text>
-  <g fill="#f59e0b" fill-opacity="0.9">
-    <circle cx="258" cy="150" r="11"/>
-    <circle cx="288" cy="150" r="11"/>
-    <circle cx="318" cy="150" r="11"/>
-    <circle cx="273" cy="120" r="11"/>
-    <circle cx="303" cy="120" r="11"/>
-  </g>
-  <g stroke="currentColor" stroke-opacity="0.55" fill="none" marker-end="url(#ah4)">
-    <path d="M120 120 H225"/>
-    <path d="M385 120 H470"/>
-    <path d="M385 120 C470 120 470 200 540 200"/>
-  </g>
-  <g font-size="11" fill="currentColor">
-    <text x="170" y="110" text-anchor="middle" opacity="0.7">request</text>
-    <text x="170" y="135" text-anchor="middle" opacity="0.7">tiêu 1 token</text>
-    <text x="427" y="110" text-anchor="middle" opacity="0.7">còn token</text>
-    <text x="470" y="186" opacity="0.7">xô rỗng</text>
-  </g>
-  <g>
-    <rect x="40" y="102" width="80" height="36" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="80" y="125" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">request</text>
-    <rect x="470" y="102" width="120" height="36" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="530" y="125" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">cho qua</text>
-    <rect x="540" y="182" width="120" height="36" rx="9" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="600" y="205" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">429</text>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 312" role="img" aria-labelledby="fixsd03-bucket-t fixsd03-bucket-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="fixsd03-bucket-t">Token bucket: burst và refill</title>
+<desc id="fixsd03-bucket-d">Năm token bị dùng hết bởi burst; sau một giây có lại một token, không vượt capacity năm.</desc>
+<defs><marker id="fixsd03-bucket-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="currentColor"/></marker></defs>
+<text x="260" y="24" font-size="14" text-anchor="middle" fill="currentColor">Capacity = 5 · refill = 1 token/giây</text><text x="90" y="58" font-size="13" text-anchor="middle" fill="currentColor">Ban đầu</text><path d="M40,76 V210 H140 V76" fill="none" stroke="#3b82f6" stroke-width="2"/><rect x="50" y="185" width="80" height="18" rx="4" fill="#10b981" fill-opacity="0.6"/><rect x="50" y="161" width="80" height="18" rx="4" fill="#10b981" fill-opacity="0.6"/><rect x="50" y="137" width="80" height="18" rx="4" fill="#10b981" fill-opacity="0.6"/><rect x="50" y="113" width="80" height="18" rx="4" fill="#10b981" fill-opacity="0.6"/><rect x="50" y="89" width="80" height="18" rx="4" fill="#10b981" fill-opacity="0.6"/><text x="90" y="235" font-size="13" text-anchor="middle" fill="currentColor">5 token</text><text x="260" y="58" font-size="13" text-anchor="middle" fill="currentColor">Burst tức thời</text><path d="M210,76 V210 H310 V76" fill="none" stroke="#3b82f6" stroke-width="2"/><rect x="220" y="185" width="80" height="18" rx="4" fill="currentColor" fill-opacity="0.06"/><rect x="220" y="161" width="80" height="18" rx="4" fill="currentColor" fill-opacity="0.06"/><rect x="220" y="137" width="80" height="18" rx="4" fill="currentColor" fill-opacity="0.06"/><rect x="220" y="113" width="80" height="18" rx="4" fill="currentColor" fill-opacity="0.06"/><rect x="220" y="89" width="80" height="18" rx="4" fill="currentColor" fill-opacity="0.06"/><text x="260" y="235" font-size="13" text-anchor="middle" fill="currentColor">0 token</text><text x="430" y="58" font-size="13" text-anchor="middle" fill="currentColor">Sau 1 giây</text><path d="M380,76 V210 H480 V76" fill="none" stroke="#3b82f6" stroke-width="2"/><rect x="390" y="185" width="80" height="18" rx="4" fill="#10b981" fill-opacity="0.6"/><rect x="390" y="161" width="80" height="18" rx="4" fill="currentColor" fill-opacity="0.06"/><rect x="390" y="137" width="80" height="18" rx="4" fill="currentColor" fill-opacity="0.06"/><rect x="390" y="113" width="80" height="18" rx="4" fill="currentColor" fill-opacity="0.06"/><rect x="390" y="89" width="80" height="18" rx="4" fill="currentColor" fill-opacity="0.06"/><text x="430" y="235" font-size="13" text-anchor="middle" fill="currentColor">1 token</text><text x="260" y="268" font-size="13" text-anchor="middle" fill="currentColor">Mỗi request tiêu 1 token; xô rỗng → HTTP 429.</text><text x="260" y="291" font-size="13" text-anchor="middle" fill="currentColor">5 request có thể qua ngay; token mới cho request tiếp theo.</text>
 </svg>
 
 - ✓ Cho phép **burst** tới mức capacity (thân thiện traffic thật).
@@ -576,7 +540,7 @@ App-3 ┘     INCR + EXPIRE, hoặc token-bucket
 3. **API tối giản** trước, đừng sa đà.
 4. **Vẽ high-level**, rồi người phỏng vấn sẽ đẩy bạn **deep-dive** một phần — thường là *sinh short code* (counter vs hash vs KGS) hoặc *cache/CDN*. Chuẩn bị sẵn trade-off cho hai chỗ này.
 5. **Chủ động nêu bottleneck** trước khi bị hỏi: "counter tập trung sẽ nghẽn, nên tôi phân block…". Điều này phân biệt Senior với Junior.
-6. **Luôn đóng khung bằng đánh đổi**: "Tôi chọn 302 để có analytics, đổi lại server chịu tải cao hơn — nếu ưu tiên giảm tải thì 301." Đừng nói "cái này tốt hơn"; nói "cái này tốt hơn *cho mục tiêu X*, kém hơn ở *Y*".
+6. **Luôn đóng khung bằng đánh đổi**: "Tôi chọn 302 và kiểm soát cache để có analytics; cache tại CDN thì bổ sung edge log — nếu ưu tiên giảm tải thì 301." Đừng nói "cái này tốt hơn"; nói "cái này tốt hơn *cho mục tiêu X*, kém hơn ở *Y*".
 7. Khi review thiết kế của người khác, hỏi đúng 3 câu vàng: *"State ở đâu? Cái gì nghẽn trước? Khi component này chết thì sao (fail-open/closed)?"*
 
 > **Nguyên tắc cuối**: System Design không phải kể tên công nghệ — mà là **liên kết yêu cầu → con số → lựa chọn → đánh đổi**. Người nghe phải thấy được *vì sao* mỗi box xuất hiện, không chỉ *cái gì* trong box.

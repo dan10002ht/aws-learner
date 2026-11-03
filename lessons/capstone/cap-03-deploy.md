@@ -73,7 +73,7 @@ Trước khi gõ lệnh, vẽ ra sơ đồ. Nếu không vẽ được, bạn ch
 <text x="440" y="548" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.7">ECS → log/metric</text>
 </svg>
 
-ALB đứng ở public subnet vì nó là cửa duy nhất nhận traffic từ internet; task và DB nằm sau nó, ở private subnet. ECR, Secrets Manager và CloudWatch là dịch vụ cấp region, nằm ngoài VPC.
+ALB đứng ở public subnet vì nó là cửa duy nhất nhận traffic từ internet; task và DB nằm sau nó, ở private subnet. ECR, Secrets Manager và CloudWatch là dịch vụ cấp region, nằm ngoài VPC. Với task private `assignPublicIp=DISABLED`, phải có đường ra: private subnet route qua NAT Gateway ở public subnet (NAT có route tới Internet Gateway), hoặc cấu hình VPC endpoints phù hợp: ECR API/DKR, S3 gateway cho image layers, Secrets Manager và CloudWatch Logs; kèm DNS, route, policy và SG cổng 443 phù hợp. Nếu thiếu, task có thể không kéo được image/secret hay gửi log.
 
 Vì sao tách FE (Vercel) và BE (AWS) — đã giải thích ở bài 1: FE là static asset → CDN phục vụ cực nhanh, free, preview deploy mỗi PR; BE là process long-running cần ở gần DB trong VPC. Cái giá phải trả là **CORS** giữa hai origin — ta xử lý ở mục 8.
 
@@ -337,7 +337,7 @@ Pipeline đáng tin = mỗi push lên `main` tự chạy lint + test + build, r�
   <text x="392" y="78" font-size="10" fill="currentColor" opacity="0.78">1 · docker build → push ECR (tag = SHA)</text>
   <text x="392" y="96" font-size="10" fill="currentColor" opacity="0.78">2 · prisma migrate deploy (one-off task)</text>
   <text x="392" y="114" font-size="10" fill="currentColor" opacity="0.78">3 · render taskdef (image mới)</text>
-  <text x="392" y="132" font-size="10" fill="currentColor" opacity="0.78">4 · ECS deploy → chờ stability (auto-rollback)</text>
+  <text x="392" y="132" font-size="10" fill="currentColor" opacity="0.78">4 · ECS deploy → chờ stability; bật circuit breaker</text>
   <rect x="376" y="278" width="328" height="64" rx="11" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="392" y="302" font-size="11.5" font-weight="700" fill="currentColor">job: deploy-web</text>
   <text x="392" y="322" font-size="10.5" fill="currentColor" opacity="0.78">vercel deploy --prod (Vercel prod)</text>
@@ -417,7 +417,7 @@ jobs:
           task-definition: ${{ steps.taskdef.outputs.task-definition }}
           service: ${{ env.ECS_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
-          wait-for-service-stability: true     # rollback ngầm nếu task mới không healthy
+          wait-for-service-stability: true     # chờ ổn định; rollback cần circuit breaker
 
   # ---------- 3. Deploy Frontend lên Vercel ----------
   deploy-web:
@@ -447,7 +447,7 @@ jobs:
 
 > Ghi nhớ: **tag image bằng git SHA**, không bao giờ chỉ `:latest`. SHA cho biết chính xác commit nào đang chạy production → rollback = deploy lại SHA cũ; debug = `git checkout` đúng commit. `:latest` là mơ hồ, không truy vết được, và gây race khi nhiều deploy cùng lúc.
 
-> Bẫy: để job `deploy-api`/`deploy-web` phụ thuộc (`needs: test`) vào job test — nếu không, code lỗi vẫn lên production. `wait-for-service-stability: true` để pipeline *thất bại* khi task mới không healthy (ECS giữ task cũ chạy → tự rollback). Không có dòng này, pipeline báo xanh trong khi production sập.
+> Bẫy: để job `deploy-api`/`deploy-web` phụ thuộc (`needs: test`) vào job test — nếu không, code lỗi vẫn lên production. `wait-for-service-stability: true` để action chờ kết quả deployment và báo lỗi nếu service không đạt ổn định trong thời hạn; tự rollback cần bật ECS deployment circuit breaker với `enable=true, rollback=true` và có deployment COMPLETED trước đó. Không có dòng này, pipeline báo xanh trong khi production sập.
 
 ## 7. Env & secrets
 
@@ -508,7 +508,7 @@ production:  CORS_ORIGIN = https://taskshare.app   (đặt ở task def, mục 4
   <text x="56" y="303" font-size="10" fill="currentColor" opacity="0.8">mỗi PR một subdomain *.vercel.app ≠ taskshare.app → bị chặn nếu chỉ whitelist domain prod.</text>
 </svg>
 
-> Bẫy CORS production hay gặp nhất: **domain Vercel preview** khác với domain production (mỗi PR một subdomain `*.vercel.app`). Nếu chỉ whitelist `taskshare.app`, preview deploy gọi API sẽ bị chặn. Hoặc whitelist một danh sách origin (regex cho `*.vercel.app`), hoặc dùng API riêng cho preview. Và tuyệt đối **không** `origin: "*"` cùng `credentials` — đã cảnh báo từ bài 2.
+> Bẫy CORS production hay gặp nhất: **domain Vercel preview** khác với domain production (mỗi PR một subdomain `*.vercel.app`). Nếu chỉ whitelist `taskshare.app`, preview deploy gọi API sẽ bị chặn. Whitelist danh sách origin preview cụ thể thuộc đúng project (không cho toàn bộ `*.vercel.app`), hoặc dùng API riêng cho preview. CORS chỉ kiểm soát JS đọc phản hồi trong browser; JWT và kiểm quyền backend vẫn bắt buộc, client ngoài browser không bị CORS chặn. Và tuyệt đối **không** `origin: "*"` cùng `credentials` — đã cảnh báo từ bài 2.
 
 ## 9. Custom domain & HTTPS
 

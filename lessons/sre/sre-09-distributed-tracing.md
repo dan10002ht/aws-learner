@@ -7,7 +7,7 @@ Trong một monolith, khi request chậm bạn mở stack trace hoặc profiler 
 - Hiểu **vì sao** metric và log đơn lẻ không đủ để định vị điểm chậm/lỗi trong hệ phân tán, và tracing lấp khoảng trống đó thế nào.
 - Nắm mô hình dữ liệu: **trace = cây span**, mỗi span là gì (operation, thời điểm bắt đầu/độ dài, tag/attribute, parent).
 - Hiểu **context propagation**: trace id + span id được truyền qua HTTP header (chuẩn W3C `traceparent`) và qua message để nối span giữa các service.
-- Phân biệt **head-based sampling** (quyết định lúc đầu, rẻ) vs **tail-based sampling** (quyết định sau khi có full trace, giữ được trace lỗi/chậm).
+- Phân biệt **head-based sampling** (quyết định lúc đầu, rẻ) vs **tail-based sampling** (quyết định sau cửa sổ gom span, giữ được trace lỗi/chậm).
 - Biết vai trò backend Jaeger / Tempo / Zipkin, và cách **liên kết trace với log** (inject trace id) và **metric** (exemplar).
 
 ## 1. Tại sao metric và log không đủ
@@ -195,7 +195,7 @@ with tracer.start_as_current_span("process order", context=ctx,
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" aria-labelledby="sp-t sp-d" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title id="sp-t">Head-based vs tail-based sampling</title>
-  <desc id="sp-d">Head-based quyết định giữ hay bỏ ngay tại root span trước khi biết kết quả, rẻ nhưng có thể bỏ mất trace lỗi. Tail-based buffer toàn bộ span của trace tại collector rồi mới quyết định sau khi thấy full trace, giữ được mọi trace lỗi hoặc chậm nhưng tốn bộ nhớ.</desc>
+  <desc id="sp-d">Head-based quyết định giữ hay bỏ ngay tại root span trước khi biết kết quả, rẻ nhưng có thể bỏ mất trace lỗi. Tail-based gom span tại collector rồi xét policy; khả năng giữ trace lỗi/chậm phụ thuộc span đã nhận, cửa sổ quyết định và dung lượng buffer.</desc>
   <g font-size="11" fill="currentColor" stroke="currentColor">
     <text x="16" y="24" font-size="12.5" font-weight="700" stroke="none">HEAD-BASED — quyết định ngay ở đầu (root span)</text>
     <rect x="24" y="36" width="120" height="34" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke-opacity="0.2"/>
@@ -217,7 +217,7 @@ with tracer.start_as_current_span("process order", context=ctx,
   </defs>
   <line x1="16" y1="92" x2="704" y2="92" stroke="currentColor" stroke-opacity="0.15" stroke-dasharray="5 5"/>
   <g font-size="11" fill="currentColor" stroke="currentColor">
-    <text x="16" y="120" font-size="12.5" font-weight="700" stroke="none">TAIL-BASED — buffer full trace rồi mới quyết định</text>
+    <text x="16" y="120" font-size="12.5" font-weight="700" stroke="none">TAIL-BASED — gom span rồi mới quyết định</text>
     <rect x="24" y="134" width="150" height="70" rx="8" fill="#8b5cf6" fill-opacity="0.13" stroke-opacity="0.2"/>
     <text x="99" y="156" text-anchor="middle" stroke="none" font-size="10">mọi span của trace</text>
     <text x="99" y="172" text-anchor="middle" stroke="none" font-size="10">gửi hết về collector</text>
@@ -230,7 +230,7 @@ with tracer.start_as_current_span("process order", context=ctx,
     <line x1="374" y1="163" x2="418" y2="150" stroke-opacity="0.55" marker-end="url(#spah)"/>
     <line x1="374" y1="176" x2="418" y2="196" stroke-opacity="0.55" marker-end="url(#spah)"/>
     <rect x="420" y="132" width="180" height="34" rx="7" fill="#f43f5e" fill-opacity="0.15" stroke-opacity="0.25"/>
-    <text x="510" y="153" text-anchor="middle" stroke="none" font-size="10" font-weight="700">GIỮ 100% trace lỗi/chậm</text>
+    <text x="510" y="153" text-anchor="middle" stroke="none" font-size="10" font-weight="700">Ưu tiên trace lỗi/chậm</text>
     <rect x="420" y="180" width="180" height="34" rx="7" fill="#10b981" fill-opacity="0.14" stroke-opacity="0.2"/>
     <text x="510" y="201" text-anchor="middle" stroke="none" font-size="10">giữ ~1% trace bình thường</text>
     <text x="612" y="180" stroke="none" font-size="10" opacity="0.75">tốn RAM,</text>
@@ -245,17 +245,17 @@ with tracer.start_as_current_span("process order", context=ctx,
 - Ưu: cực rẻ, không cần buffer, phi tập trung. Là mặc định của hầu hết setup.
 - Nhược chí mạng: quyết định *mù* — bạn roll bỏ 99% *trước khi* biết request nào sẽ lỗi. Kết quả: đúng những trace lỗi/chậm hiếm gặp — thứ bạn cần nhất — lại thường bị vứt.
 
-**Tail-based sampling** — quyết định *sau khi đã thu đủ toàn bộ span của trace*:
+**Tail-based sampling** — quyết định *sau một khoảng chờ gom span*:
 
 - Cơ chế: mọi span được gửi về collector và **buffer** cho tới khi trace "đủ" (hết span hoặc timeout), rồi mới áp luật: `error=true` → giữ; `duration > 1s` → giữ; còn lại giữ theo tỉ lệ nhỏ.
-- Ưu: giữ được **100% trace lỗi và chậm** — đúng thứ đáng điều tra — mà tổng lưu trữ vẫn thấp.
+- Ưu: ưu tiên giữ **trace lỗi và chậm đã nhận đủ span** — đúng thứ đáng điều tra — mà tổng lưu trữ vẫn thấp.
 - Nhược: collector phải buffer toàn bộ span của mọi trace đang mở trong RAM → tốn bộ nhớ và cần *mọi span của một trace tới cùng một collector instance* (đòi hỏi load-balancing theo trace-id). Phức tạp và đắt hơn nhiều.
 
 | | Head-based | Tail-based |
 |---|---|---|
-| Thời điểm quyết định | Ngay ở root, trước khi biết kết quả | Sau khi có full trace |
+| Thời điểm quyết định | Ngay ở root, trước khi biết kết quả | Sau cửa sổ gom span |
 | Chi phí | Rẻ, không buffer | Đắt: buffer RAM + LB theo trace-id |
-| Giữ được trace lỗi/chậm | Chỉ theo may rủi | Có, gần như 100% |
+| Giữ được trace lỗi/chậm | Chỉ theo may rủi | Theo policy, trong tập span đã nhận |
 | Nơi thực thi | SDK ở mỗi service | Collector tập trung |
 
 Cấu hình tail-based bằng OpenTelemetry Collector:
@@ -277,7 +277,7 @@ processors:
         probabilistic: { sampling_percentage: 1 } # 1% phần còn lại
 ```
 
-> Ghi nhớ: chiến lược thực dụng phổ biến là **kết hợp** — head-based ở SDK giữ một tỉ lệ vừa phải để giảm tải mạng, rồi tail-based ở collector chắt lọc giữ 100% lỗi/chậm. Đừng để head-based 1% "mù" là dây chuyền duy nhất, nếu không bạn sẽ mất đúng những trace cần khi sự cố xảy ra.
+> Ghi nhớ: có thể **kết hợp** head-based ở SDK để giảm tải và tail-based ở collector, nhưng tail sampler chỉ xét tập trace đã qua head sampler, không khôi phục trace đã bị bỏ. Muốn ưu tiên mọi lỗi/chậm của toàn traffic, cần gửi đầy đủ span từ SDK tới collector và sizing đủ buffer; `decision_wait`, `num_traces`, span đến muộn và mất dữ liệu vẫn giới hạn độ đầy đủ. Đừng để head-based 1% "mù" là dây chuyền duy nhất, nếu không bạn sẽ mất đúng những trace cần khi sự cố xảy ra.
 
 ## 5. Backend: Jaeger, Tempo, Zipkin
 
@@ -366,7 +366,7 @@ http_request_duration_seconds_bucket{le="2.5"} 12345 # {trace_id="4bf92f35..."} 
 - Trong microservices, **metric phát hiện, trace định vị, log giải thích** — tracing lấp đúng khoảng trống "chặng nào chậm/lỗi".
 - **Trace = cây span**. Mỗi span có operation name, trace-id/span-id/parent-id, start+duration, tag và status. Waterfall là công cụ đọc mạnh nhất.
 - **Context propagation** nối span cross-service: bên gửi `inject()` `traceparent` (W3C) vào HTTP header hoặc message; bên nhận `extract()` để tạo span con cùng trace-id. Propagation hỏng = trace gãy.
-- **Sampling**: head-based quyết định ngay ở root (rẻ, nhưng mù, dễ mất trace lỗi); tail-based buffer full trace rồi mới giữ 100% trace lỗi/chậm (đắt hơn, cần LB theo trace-id). Kết hợp cả hai là thực dụng nhất.
+- **Sampling**: head-based quyết định ngay ở root (rẻ, nhưng mù, dễ mất trace lỗi); tail-based gom span rồi xét policy giữ lỗi/chậm trong tập đã nhận (đắt hơn, cần LB theo trace-id và đủ buffer). Ghép head + tail giảm tải nhưng mất khả năng xét trace đã bị head sampler bỏ.
 - Backend: **Jaeger** (UI điều tra mạnh), **Tempo** (rẻ, lưu trên object storage), **Zipkin** (nhẹ). OpenTelemetry cho phép instrument một lần, đổi backend tuỳ ý.
 - Giá trị bùng nổ khi **liên kết ba trụ**: inject trace id vào log, dùng exemplar nối metric ↔ trace — một trace id khép kín vòng phát hiện/định vị/giải thích.
 

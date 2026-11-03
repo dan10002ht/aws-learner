@@ -452,7 +452,7 @@ Trong hệ 128 node, **luôn có node đang chết**. Đây không phải ngoạ
 
 ### 4.1 Phát hiện lỗi — gossip protocol
 
-Cách ngây thơ thứ nhất: mỗi node ping mọi node khác. Với 128 node là 16,256 kết nối, traffic **O(n²)** — chính heartbeat sẽ giết cluster khi n lớn.
+Cách ngây thơ thứ nhất: mỗi node ping mọi node khác. Với 128 node là 16.256 lượt ping có hướng mỗi vòng (8.128 cặp hai chiều), traffic **O(n²)** — chính heartbeat sẽ giết cluster khi n lớn.
 
 Cách ngây thơ thứ hai: tin lời một node báo "n3 chết rồi". Không tin được — có thể chỉ **mạng giữa hai node đó** hỏng, còn n3 vẫn phục vụ tốt cho phần còn lại. Kết luận vội dẫn tới **false positive**: đá một node khoẻ ra, kích hoạt rebalance hàng TB vô ích.
 
@@ -481,10 +481,11 @@ Vòng lặp mỗi node (vd mỗi 1 giây):
   4. Nhận bảng của người khác → với mỗi node, GIỮ heartbeat lớn hơn.
 
   → Tin lan như tin đồn: sau ~log(n) vòng cả cluster đều biết.
-    128 node ≈ 7 vòng ≈ 7 giây.
+    log₂(128) = 7 chỉ minh hoạ tốc độ lan theo cấp số nhân;
+    gossip ngẫu nhiên không bảo đảm hội tụ đúng 7 vòng hay 7 giây.
 ```
 
-Vì sao đúng hơn: **traffic O(n) mỗi node**; **không có điểm tập trung** (không có monitoring server chết là mù); và **chống false positive bằng nhiều nguồn** — node chỉ bị đánh dấu offline khi heartbeat không tăng theo quan sát lan truyền của nhiều node. Cassandra còn dùng **Phi Accrual Failure Detector**: thay vì ngưỡng cứng "quá 10s là chết", nó tính *xác suất* node đã chết dựa trên phân bố khoảng cách heartbeat trong quá khứ, nên mạng chậm ổn định thì ngưỡng tự nới ra.
+Vì sao đúng hơn: **fanout cố định: O(1) message gửi/node/vòng; gửi cả bảng là O(n) byte/message, O(n²) tổng byte/vòng**; **không có điểm tập trung** (không có monitoring server chết là mù); và **chống false positive bằng nhiều nguồn** — node chỉ bị đánh dấu offline khi heartbeat không tăng theo quan sát lan truyền của nhiều node. Cassandra còn dùng **Phi Accrual Failure Detector**: thay vì ngưỡng cứng "quá 10s là chết", nó tính *xác suất* node đã chết dựa trên phân bố khoảng cách heartbeat trong quá khứ, nên mạng chậm ổn định thì ngưỡng tự nới ra.
 
 > **Bẫy vận hành**: Đặt failure detector quá nhạy trong môi trường có **GC pause dài** (JVM stop-the-world 10–20 giây) → node khoẻ liên tục bị đánh dấu chết rồi sống lại (*flapping*), mỗi lần lại rebalance. Triệu chứng: cluster "rung" liên tục, latency tăng vọt mà không node nào thật sự hỏng.
 
@@ -818,7 +819,7 @@ SSTable là **bất biến**. Sửa một key = ghi bản mới ở SSTable mớ
 | Đọc/ghi HA | **Data replication** | N bản sao trên N node khác nhau, trải qua nhiều AZ |
 | Tính nhất quán điều chỉnh được | **Quorum consensus** | N/W/R, `W+R>N` ⇒ strong consistency |
 | Giải quyết bất đồng giữa bản sao | **Versioning** | Vector clock (hoặc LWW/CRDT tuỳ nghiệp vụ) |
-| Phát hiện node chết | **Gossip protocol** | Heartbeat lan truyền ngẫu nhiên, O(n) mỗi node, cần nhiều nguồn xác nhận |
+| Phát hiện node chết | **Gossip protocol** | Heartbeat lan truyền ngẫu nhiên; fanout O(1) message/node/vòng, bảng đầy đủ O(n) byte/message; cần nhiều nguồn xác nhận |
 | Chịu lỗi tạm thời | **Sloppy quorum + hinted handoff** | Ghi vào node khoẻ kế tiếp, trả lại khi node gốc sống |
 | Chịu lỗi vĩnh viễn | **Anti-entropy** | Merkle tree — so hash O(log n), chỉ truyền phần lệch |
 | Chịu mất datacenter | **Cross-DC replication** | Replica trải qua nhiều AZ/region |

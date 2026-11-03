@@ -225,7 +225,7 @@ Mempool công khai truyền thống để lộ giao dịch **trước khi** lên
 <ab-note>Các bên trả giá quyền thực thi. Một phần MEV có thể được hoàn về user/ví; OFA nội hoá giá trị qua đấu giá thay vì bị lấy lén.</ab-note>
 </ab-toggle>
 
-Trong OFA, ví/ứng dụng gửi order flow tới một **auction** thay vì mempool công khai. Các bên (solver/builder) **trả giá** cho quyền được thực thi — và phần thắng thầu (chính là phần MEV) được **hoàn (rebate)** về cho user hoặc ví. Đây là bước tiến của tư duy **PBS** (Proposer-Builder Separation, MEV-Boost) từ Bài 45: thay vì để MEV bị bòn rút, ta **đấu giá nó một cách minh bạch** rồi trả lại giá trị cho nguồn tạo ra nó (user).
+Trong OFA, ví/ứng dụng gửi order flow tới một **auction** thay vì mempool công khai. Các bên (solver/builder) **trả giá** cho quyền được thực thi — và một phần giá trị có thể được **hoàn (rebate)** về cho user hoặc ví. Khoản bid/rebate không mặc nhiên bằng toàn bộ MEV; tỷ lệ và bên nhận tuỳ cơ chế. Đây là bước tiến của tư duy **PBS** (Proposer-Builder Separation, MEV-Boost) từ Bài 45: thay vì để MEV bị bòn rút, ta **đấu giá nó một cách minh bạch** rồi trả lại giá trị cho nguồn tạo ra nó (user).
 
 ---
 

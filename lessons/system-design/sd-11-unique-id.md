@@ -456,7 +456,7 @@ Trùng khoá chính. Tuỳ hệ thống, đây là lỗi 500 (may mắn), hoặc
 
 NTP có hai chế độ hiệu chỉnh: **step** nhảy thẳng đồng hồ tới giá trị đúng (nhanh, và có thể **nhảy lùi**); **slew** điều chỉnh *tốc độ trôi* của đồng hồ cho tới khi khớp, nên đồng hồ **không bao giờ lùi**, chỉ tiến chậm lại.
 
-Cấu hình `chrony`/`ntpd` ở chế độ **slew-only** (`ntpd -x`, hoặc `maxslewrate` với chrony) trên các node sinh ID. Đánh đổi: hội tụ chậm hơn nhiều (slew tối đa ~0.5 ms/s, nên lệch 1 giây mất ~30 phút để chỉnh xong) — cái giá hoàn toàn xứng đáng.
+Cấu hình đồng bộ giờ để tránh step sau khi bắt đầu sinh ID (`ntpd -x`, hoặc chrony không cho `makestep` trong giai đoạn này). `maxslewrate` chỉ giới hạn tốc độ slew, không tự tắt step. Tốc độ phụ thuộc hệ điều hành và cấu hình: ở 500 ppm = 0,5 ms/s, lệch 1 giây cần khoảng 33 phút; đây không phải trần chung của chrony.
 
 ### Phòng tuyến 2 — Dùng monotonic clock cho phần trôi
 
@@ -468,7 +468,7 @@ Trong process, đừng gọi `Date.now()` (wall clock) cho mỗi lần sinh. M�
 2. Mỗi lần sinh ID: now = baseWall + (monoNow - baseMono)
 ```
 
-Monotonic clock **theo định nghĩa không bao giờ lùi** (nó đếm từ lúc boot, không bị NTP đụng vào). Bạn vẫn cần đọc lại wall clock định kỳ để không trôi quá xa so với thời gian thật, nhưng bạn miễn nhiễm với những cú nhảy đột ngột.
+Monotonic clock **theo định nghĩa không bao giờ lùi** (nó đếm từ lúc boot, không bị NTP đụng vào). Bạn vẫn cần đọc lại wall clock định kỳ để không trôi quá xa so với thời gian thật, nhưng mọi lần rebase phải giữ logical timestamp không giảm và bảo toàn sequence khi timestamp bằng lần trước.
 
 ### Phòng tuyến 3 — Xử lý khi vẫn phát hiện lùi
 
@@ -477,7 +477,7 @@ Khi `now < lastMs` xảy ra bất chấp hai phòng tuyến trên, có bốn chi
 | Chiến lược | Cách làm | Trade-off |
 |---|---|---|
 | **Từ chối (fail fast)** | Ném exception, để caller retry / để healthcheck loại node ra khỏi LB | **An toàn tuyệt đối** về uniqueness. Mất availability trong thời gian lùi. Đây là mặc định đúng |
-| **Chờ (block)** | Busy-wait/sleep cho tới khi `now >= lastMs` | Chỉ dùng được khi lùi **rất nhỏ** (< vài chục ms). Lùi 5 giây thì bạn treo API 5 giây |
+| **Chờ (block)** | Chờ `now > lastMs` rồi reset sequence; nếu cho phép bằng thì phải tiếp tục sequence cũ | Chỉ dùng được khi lùi **rất nhỏ** (< vài chục ms). Lùi 5 giây thì bạn treo API 5 giây |
 | **Mượn bit dự phòng** | Thêm/dùng lại một vài bit làm **generation counter**, tăng lên mỗi khi phát hiện lùi | Không mất availability, không trùng. Tốn bit, và ID mới có thể **nhỏ hơn** ID cũ (vỡ thứ tự) |
 | **Dùng logical clock** | Node tự giữ một `lastMs` và **không bao giờ để nó giảm** — nếu wall clock lùi thì cứ dùng `lastMs` cũ và tiêu sequence | Không trùng, không mất availability. Rủi ro: nếu lùi lâu, 4,096 slot/ms cạn → phải chặn. Đây là cách **Sonyflake** và một số biến thể làm |
 
@@ -486,7 +486,7 @@ Thực tế phổ biến nhất trong production là **kết hợp**: lùi < 10 
 ```
 if (now < lastMs) {
   const drift = lastMs - now;
-  if (drift <= TOLERANCE_MS) { waitUntil(lastMs); }     // lùi nhỏ: chờ
+  if (drift <= TOLERANCE_MS) { now = waitUntil(lastMs + 1); }     // lùi nhỏ: chờ
   else { markUnhealthy(); throw new ClockBackwardsError(drift); }  // lùi lớn: bỏ cuộc
 }
 ```

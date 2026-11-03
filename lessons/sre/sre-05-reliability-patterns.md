@@ -32,7 +32,7 @@ Ví dụ cụ thể: service cần 12 instance để xử lý peak 30k RPS. Tri�
 |---|---|---|---|---|
 | Không headroom | 4 | 12 | 8 | ✗ thiếu 33% |
 | N+ mỗi AZ chịu lỗi | 6 | 18 | 12 | ✓ vừa khít |
-| An toàn (buffer 20%) | 8 | 24 | 16 | ✓ dư 33% |
+| An toàn (dư 33,3% so với peak sau mất AZ) | 8 | 24 | 16 | ✓ dư 33% |
 
 Chi phí của cột thứ 3 cao hơn, nhưng đó là cái giá của việc survive một AZ outage mà không degrade.
 
@@ -71,7 +71,7 @@ Chi phí của cột thứ 3 cao hơn, nhưng đó là cái giá của việc su
     <text x="135" y="331" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">còn 12 → vừa khít ✓</text>
   </g>
   <g>
-    <text x="540" y="232" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Buffer 20% · 8/AZ</text>
+    <text x="540" y="232" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Dư 33% · 8/AZ</text>
     <rect x="435" y="242" width="62" height="60" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="466" y="278" font-size="16" font-weight="700" text-anchor="middle" fill="currentColor">8</text>
     <rect x="509" y="242" width="62" height="60" rx="7" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>

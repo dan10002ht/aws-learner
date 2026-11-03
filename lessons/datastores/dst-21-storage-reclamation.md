@@ -8,7 +8,7 @@ Sau bài này bạn có thể:
 - Tune **autovacuum** và biết vì sao nó **tụt hậu** ở bảng write-nặng.
 - Hiểu **TXID wraparound** — vì sao nó có thể **dừng cả DB** và vì sao phải vacuum kịp.
 - Nắm **LSM-tree**: memtable → SSTable → **compaction**; ba loại amplification; chiến lược STCS/LCS/TWCS và đánh đổi.
-- So sánh bản chất **B-tree (update tại chỗ)** vs **LSM (append + compact)**.
+- So sánh bản chất **B-tree (sửa page, có MVCC)** vs **LSM (append + compact)**.
 
 ---
 
@@ -176,9 +176,11 @@ LIMIT 10;
 
 ## 6. LSM-tree — mô hình lưu trữ khác hẳn
 
-B-tree (Postgres/MySQL InnoDB) **update tại chỗ**: tìm đúng page, sửa ngay tại đó. Điều này gây **random write** — tốn với ổ đĩa và ghi khuếch đại WAL. **LSM-tree (Log-Structured Merge-tree)** — dùng bởi Cassandra, RocksDB, LevelDB, ScyllaDB, HBase — chọn cách ngược lại: **chỉ ghi nối tiếp (append), không bao giờ sửa tại chỗ**, rồi dọn dẹp sau bằng **compaction**.
+B-tree sửa các **page** theo vị trí key; không có nghĩa mọi engine ghi đè row cũ. PostgreSQL tạo tuple MVCC mới, còn InnoDB giữ phiên bản qua undo. Điều này gây **random write** — tốn với ổ đĩa và ghi khuếch đại WAL. **LSM-tree (Log-Structured Merge-tree)** — dùng bởi Cassandra, RocksDB, LevelDB, ScyllaDB, HBase — chọn cách ngược lại: **chỉ ghi nối tiếp (append), không bao giờ sửa tại chỗ**, rồi dọn dẹp sau bằng **compaction**.
 
 ### 6.1 Đường đi của một write trong LSM
+
+Hình L0/L1 dưới đây minh họa **leveled compaction**; STCS/TWCS có cách chọn và tổ chức SSTable khác (mục 7).
 
 <svg viewBox="0 0 660 320" role="img" aria-labelledby="lsm-t lsm-d" style="width:100%;max-width:640px;height:auto;display:block;margin:1.25rem auto">
 <title id="lsm-t">Kiến trúc LSM-tree: memtable, WAL, SSTable theo tầng và compaction</title>
@@ -285,24 +287,14 @@ opt.setTableFormatConfig(tbl);
 
 ## 8. B-tree vs LSM — chọn theo bản chất
 
-<svg viewBox="0 0 660 210" role="img" aria-labelledby="cmp-t cmp-d" style="width:100%;max-width:620px;height:auto;display:block;margin:1.25rem auto">
-<title id="cmp-t">So sánh B-tree update tại chỗ và LSM append cộng compaction</title>
-<desc id="cmp-d">B-tree sửa page tại chỗ gây random write, LSM chỉ append tuần tự rồi dọn bằng compaction nền</desc>
-<rect x="30" y="30" width="290" height="150" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="175" y="55" text-anchor="middle" font-size="13" fill="currentColor">B-tree (update tại chỗ)</text>
-<text x="175" y="82" text-anchor="middle" font-size="11" fill="currentColor">Tìm page → sửa ngay tại đó</text>
-<text x="175" y="104" text-anchor="middle" font-size="11" fill="currentColor">→ random write, cần WAL</text>
-<text x="175" y="126" text-anchor="middle" font-size="11" fill="currentColor">Read nhanh, ổn định</text>
-<text x="175" y="148" text-anchor="middle" font-size="11" fill="currentColor">Reclaim: VACUUM (dead tuple)</text>
-<text x="175" y="170" text-anchor="middle" font-size="10" fill="currentColor">Postgres, MySQL InnoDB</text>
-<rect x="340" y="30" width="290" height="150" rx="10" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="485" y="55" text-anchor="middle" font-size="13" fill="currentColor">LSM (append + compact)</text>
-<text x="485" y="82" text-anchor="middle" font-size="11" fill="currentColor">Chỉ append tuần tự (SSTable)</text>
-<text x="485" y="104" text-anchor="middle" font-size="11" fill="currentColor">→ write throughput cao</text>
-<text x="485" y="126" text-anchor="middle" font-size="11" fill="currentColor">Read phải merge nhiều file</text>
-<text x="485" y="148" text-anchor="middle" font-size="11" fill="currentColor">Reclaim: COMPACTION (nền)</text>
-<text x="485" y="170" text-anchor="middle" font-size="10" fill="currentColor">Cassandra, RocksDB, HBase</text>
+<svg viewBox="0 0 520 280" role="img" aria-labelledby="dst21fix-compare-t dst21fix-compare-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="dst21fix-compare-t">B-tree ghi page và LSM flush/compaction</title>
+<desc id="dst21fix-compare-d">B-tree ghi page và LSM flush/compaction</desc>
+<text x="125" y="25" font-size="14" text-anchor="middle" fill="currentColor">B-tree / MVCC</text><text x="390" y="25" font-size="14" text-anchor="middle" fill="currentColor">LSM append + compact</text><rect x="20" y="80" width="64" height="38" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="52" y="104" font-size="13" text-anchor="middle" fill="currentColor">p0</text><rect x="92" y="80" width="64" height="38" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="124" y="104" font-size="13" text-anchor="middle" fill="currentColor">p1</text><rect x="164" y="80" width="64" height="38" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="196" y="104" font-size="13" text-anchor="middle" fill="currentColor">p2</text><rect x="20" y="135" width="64" height="38" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="52" y="159" font-size="13" text-anchor="middle" fill="currentColor">p3</text><rect x="92" y="135" width="64" height="38" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="124" y="159" font-size="13" text-anchor="middle" fill="currentColor">p4</text><rect x="164" y="135" width="64" height="38" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="196" y="159" font-size="13" text-anchor="middle" fill="currentColor">p5</text><text x="125" y="57" font-size="13" text-anchor="middle" fill="currentColor">key → page</text><path d="M125 61 L52 80" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dst21fix-compare-arrow)"/><path d="M125 61 L196 135" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dst21fix-compare-arrow)"/><text x="125" y="218" font-size="13" text-anchor="middle" fill="currentColor">Random page writes</text><text x="125" y="244" font-size="13" text-anchor="middle" fill="currentColor">Postgres: tuple MVCC mới</text><rect x="290" y="50" width="200" height="30" rx="6" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="390" y="70" font-size="13" text-anchor="middle" fill="currentColor">Memtable</text><path d="M390 80 L390 104" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dst21fix-compare-arrow)"/><text x="450" y="99" font-size="13" text-anchor="middle" fill="currentColor">flush</text><rect x="275" y="108" width="110" height="38" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="330" y="132" font-size="13" text-anchor="middle" fill="currentColor">SSTable 1</text><rect x="395" y="108" width="110" height="38" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="450" y="132" font-size="13" text-anchor="middle" fill="currentColor">SSTable 2</text><path d="M330 146 L390 186" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dst21fix-compare-arrow)"/><path d="M450 146 L390 186" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dst21fix-compare-arrow)"/><rect x="305" y="188" width="170" height="35" rx="6" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="390" y="211" font-size="13" text-anchor="middle" fill="currentColor">SSTable gộp</text><text x="390" y="251" font-size="13" text-anchor="middle" fill="currentColor">Compaction nền</text>
+<defs><marker id="dst21fix-compare-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 Z" fill="currentColor"/></marker></defs>
 </svg>
+
+B-tree thường thuận lợi cho read/space, có random write và WAL; PostgreSQL dùng VACUUM dọn tuple. LSM dùng memtable/SSTable, thuận lợi cho write nhưng read có thể qua nhiều file và compaction sinh amplification. Ví dụ engine: Postgres/MySQL InnoDB và Cassandra/RocksDB/HBase.
 
 **Điểm chung sâu xa:** cả hai đều **không xoá tại chỗ** — B-tree để lại dead tuple, LSM để lại bản cũ + tombstone. Cả hai đều cần một **tiến trình dọn nền** để thu hồi đĩa và giữ hiệu năng: **VACUUM** cho B-tree, **compaction** cho LSM. Khác biệt là B-tree tối ưu read/space, LSM tối ưu write — và cái giá của LSM là amplification do compaction gây ra.
 
@@ -317,6 +309,6 @@ Chọn B-tree khi: query đa dạng, cần read latency ổn định, transactio
 - **TXID wraparound** là mối nguy chết người: XID 32-bit quay vòng, chạm giới hạn → **DB dừng nhận write**. **Không bao giờ tắt autovacuum**; alert theo `age(relfrozenxid)`.
 - **LSM-tree**: write append vào memtable → flush SSTable bất biến → **compaction** gộp file, dọn bản cũ/tombstone. Cân bằng **write/read/space amplification**.
 - **Strategy**: STCS (write-nặng), LCS (read-nặng), TWCS (time-series/TTL). Coi chừng **tombstone chất đống** khi dùng LSM như queue.
-- Bản chất chung: B-tree (update tại chỗ, dọn bằng VACUUM) vs LSM (append + compact) — cả hai đều cần **tiến trình dọn nền** để thu hồi đĩa.
+- Bản chất chung: B-tree (sửa page; PostgreSQL dọn MVCC bằng VACUUM) vs LSM (append + compact) — cả hai đều cần **tiến trình dọn nền** để thu hồi đĩa.
 
 > **Bài tiếp theo:** đi sâu vào **backup, PITR & disaster recovery** — WAL archiving, snapshot, RPO/RTO và cách khôi phục về đúng một thời điểm.

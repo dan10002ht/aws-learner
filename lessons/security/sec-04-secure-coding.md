@@ -355,11 +355,16 @@ requests.get(url)   # verify=True là mặc định — đừng tắt
 ```python
 # Envelope encryption ở tầng app cho 1 field nhạy cảm (vd. số bảo hiểm)
 # DEK (data key) do KMS cấp; chỉ lưu ciphertext của DEK kèm dữ liệu.
-from cryptography.fernet import Fernet   # AEAD: mã hoá + xác thực toàn vẹn
+import base64
+from cryptography.fernet import Fernet   # AES-CBC + HMAC; không có associated data
 
-plaintext_dek = get_data_key_from_kms()              # KMS sinh & bọc key
-token = Fernet(plaintext_dek).encrypt(ssn.encode())  # lưu `token` vào DB
-# Khi đọc: xin KMS giải mã wrapped DEK → giải mã field.
+# kms là client đã cấu hình; kms_key_id trỏ tới KMS key được cấp quyền.
+key = kms.generate_data_key(KeyId=kms_key_id, KeySpec="AES_256")
+fernet_key = base64.urlsafe_b64encode(key["Plaintext"])  # 32 byte → dạng Fernet yêu cầu
+token = Fernet(fernet_key).encrypt(ssn.encode())
+wrapped_dek = key["CiphertextBlob"]
+# Lưu token + wrapped_dek vào DB; không lưu/log key plaintext.
+# Khi đọc: KMS Decrypt wrapped_dek → base64 như trên → Fernet decrypt token.
 ```
 
 Envelope encryption tách *key* khỏi *dữ liệu*: KMS giữ key gốc, DEK chỉ tồn tại dạng plaintext trong RAM lúc dùng, còn trên đĩa luôn nằm ở dạng đã bọc cạnh ciphertext:

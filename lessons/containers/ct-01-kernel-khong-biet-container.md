@@ -139,7 +139,7 @@ Hai số khác nhau, nên khác namespace. Bây giờ ngược lại: **nếu ha
 
 Đáp án ⏸#1 là **(c)**, và đáp án ⏸#2 là **(b)**. Hai đáp án này là cùng một ý.
 
-Trong kernel, process tồn tại như một cấu trúc. Nó **không mang một con số PID duy nhất**; nó mang một ánh xạ: với mỗi pid namespace mà nó nhìn thấy được, nó có một số. `ps` không đọc "PID của process" — `ps` đọc `/proc`, và `/proc` trả lời theo pid namespace của **người đang hỏi**. Bạn hỏi từ pid ns của container, câu trả lời là 1. Bạn hỏi từ pid ns gốc, câu trả lời là 4827.
+Trong kernel, process tồn tại như một cấu trúc. Nó **không mang một con số PID duy nhất**; nó mang một ánh xạ: với pid namespace của nó và từng namespace tổ tiên, nó có một số. `ps` đọc `/proc`, và view PID của procfs gắn với **pid namespace của process đã mount procfs đó**. Với `/proc` được mount cho pid ns của container, process này hiện là 1; với procfs của pid ns gốc, nó hiện là 4827. Chỉ chuyển caller sang namespace khác không tự đổi view của procfs đã mount (bài 2).
 
 Con số 1 xuất hiện không phải vì kernel mới boot. Nó xuất hiện vì `unshare(2)` quy định rõ: process gọi **không** bị chuyển vào pid ns mới, và **con đầu tiên** của nó mới là process ID 1 trong ns đó. Đó là lý do runtime phải `fork` sau khi tạo pid namespace — và là lý do `unshare -p` trên dòng lệnh cần thêm `-f` (bài 2 mổ kỹ).
 
@@ -169,9 +169,9 @@ Lưu ý luôn một cái bẫy version, vì nó sẽ theo bạn suốt course: b
 
 <svg viewBox="0 0 720 300" role="img" aria-labelledby="ct1-a-t ct1-a-d" style="width:100%;height:auto">
 <title id="ct1-a-t">Một process, hai con số PID tuỳ khung nhìn</title>
-<desc id="ct1-a-d">Cùng một process trong kernel được nhìn từ hai pid namespace: từ namespace gốc trên host nó là PID 4827 dưới cây process của shim, còn từ pid namespace con nó là PID 1 và là cha của PID 14. Con số PID là câu trả lời phụ thuộc người hỏi, không phải thuộc tính của process.</desc>
+<desc id="ct1-a-d">Cùng một process trong kernel được nhìn từ hai pid namespace: từ namespace gốc trên host nó là PID 4827 dưới cây process của shim, còn từ pid namespace con nó là PID 1 và là cha của PID 14. View PID của procfs gắn với pid namespace của process thực hiện mount; đổi caller namespace không tự đổi view.</desc>
 <rect x="18" y="26" width="318" height="140" rx="10" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.28"/>
-<text x="34" y="48" font-size="12" font-weight="bold" fill="currentColor">Hỏi từ pid ns GỐC (ps trên host)</text>
+<text x="34" y="48" font-size="12" font-weight="bold" fill="currentColor">/proc mount cho pid ns GỐC (host)</text>
 <text x="40" y="72" font-size="11" fill="currentColor">PID 1 systemd</text>
 <text x="60" y="92" font-size="11" fill="currentColor">PID 4102 containerd-shim</text>
 <rect x="72" y="100" width="242" height="24" rx="5" fill="#f59e0b" fill-opacity="0.30"/>
@@ -179,7 +179,7 @@ Lưu ý luôn một cái bẫy version, vì nó sẽ theo bạn suốt course: b
 <text x="100" y="142" font-size="11" fill="currentColor">PID 4901 node (worker)</text>
 <text x="34" y="160" font-size="10" fill="currentColor" opacity="0.7">thấy cả 200+ process của máy</text>
 <rect x="384" y="26" width="318" height="140" rx="10" fill="#84cc16" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.28"/>
-<text x="400" y="48" font-size="12" font-weight="bold" fill="currentColor">Hỏi từ pid ns CON (ps trong container)</text>
+<text x="400" y="48" font-size="12" font-weight="bold" fill="currentColor">/proc mount cho pid ns CON (container)</text>
 <rect x="410" y="74" width="242" height="24" rx="5" fill="#f59e0b" fill-opacity="0.30"/>
 <text x="420" y="91" font-size="11" font-weight="bold" fill="currentColor">PID 1 node /app/server.js</text>
 <text x="438" y="118" font-size="11" fill="currentColor">PID 14 node (worker)</text>
@@ -190,7 +190,7 @@ Lưu ý luôn một cái bẫy version, vì nó sẽ theo bạn suốt course: b
 <text x="361" y="247" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.8">một task, một RSS, một cổng đang nghe</text>
 <line x1="230" y1="206" x2="180" y2="168" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5" stroke-dasharray="4 3"/>
 <line x1="492" y1="206" x2="542" y2="168" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5" stroke-dasharray="4 3"/>
-<text x="361" y="282" font-size="11" font-style="italic" text-anchor="middle" fill="currentColor">PID là câu trả lời của /proc cho một người hỏi cụ thể</text>
+<text x="361" y="282" font-size="11" font-style="italic" text-anchor="middle" fill="currentColor">PID trong /proc theo namespace gắn với mount procfs</text>
 </svg>
 
 ### 3.4 Bản sai thứ hai: "container cô lập process"

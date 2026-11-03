@@ -66,10 +66,11 @@ x · y = k   (k là hằng số, chỉ đổi khi có người thêm/rút thanh 
 </svg>
 </auto-anim>
 
-**Giá spot** (giá tức thời của X tính theo Y) không phải `y/x` chung chung — nó là **độ dốc tiếp tuyến** của đường cong tại điểm hiện tại. Với `x·y=k`, đạo hàm cho:
+**Giá spot** (giá tức thời của X tính theo Y) không phải `y/x` chung chung — nó là **độ lớn của độ dốc tiếp tuyến** của đường cong tại điểm hiện tại. Với `x·y=k`, đạo hàm cho:
 
 ```
-P_spot(X tính theo Y) = y / x
+dy/dx = -y / x
+P_spot(X tính theo Y) = |dy/dx| = y / x
 ```
 
 Ví dụ pool có `x = 100 ETH`, `y = 300,000 USDC` → `k = 30,000,000`. Giá spot 1 ETH = `300000/100 = 3000 USDC`. Nhưng đây chỉ là giá cho **một lượng vô cùng nhỏ**. Mua thật sự thì bạn trượt dọc đường cong → **giá trung bình luôn xấu hơn giá spot**. Đó là **price impact**.

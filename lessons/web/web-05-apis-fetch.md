@@ -135,7 +135,7 @@ layNguoiDung();
   <text x="140" y="256" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">→ có data, dùng được</text>
 </svg>
 
-> Ghi nhớ: `await` chỉ dùng được **bên trong** hàm có `async`. Có hai chỗ cần `await` khi gọi API: một cho `fetch()` (chờ server trả lời), một cho `.json()` (chờ đọc xong dữ liệu).
+> Ghi nhớ: `await` dùng được bên trong hàm `async`, hoặc ở top-level của ES module (không phải script thường). Có hai chỗ cần `await` khi gọi API: một cho `fetch()` (chờ server trả lời), một cho `.json()` (chờ đọc xong dữ liệu).
 
 ## Đọc response: status và dữ liệu
 
@@ -301,9 +301,9 @@ Access to fetch at '...' from origin '...' has been blocked by CORS policy
 
 CORS (Cross-Origin Resource Sharing — chia sẻ tài nguyên giữa các nguồn khác nhau) là một **cơ chế bảo mật của trình duyệt**. Hiểu đơn giản:
 
-> Trình duyệt **không cho** trang web của bạn (ví dụ ở `my-site.com`) tự do lấy dữ liệu từ một server khác (`api-khac.com`), **trừ khi server đó cho phép** một cách rõ ràng.
+> Trình duyệt **không cho** trang web của bạn (ví dụ ở `my-site.com`) tự do đọc phản hồi từ một server khác (`api-khac.com`), **trừ khi server đó cho phép** một cách rõ ràng.
 
-Analogy: bạn (trang web) muốn vào nhà hàng xóm (server khác) lấy đồ. Bảo vệ (trình duyệt) chặn lại: "Chủ nhà kia có ghi tên anh vào danh sách khách mời không?". Nếu server không "ghi tên" trang của bạn vào danh sách cho phép, trình duyệt sẽ chặn.
+Analogy: bạn (trang web) muốn vào nhà hàng xóm (server khác) lấy đồ. Bảo vệ (trình duyệt) chặn lại: "Chủ nhà kia có ghi tên anh vào danh sách khách mời không?". Nếu server không "ghi tên" trang của bạn vào danh sách cho phép, trình duyệt sẽ chặn JS đọc phản hồi. Simple request vẫn có thể đã tới server; request cần preflight chỉ được gửi sau khi preflight được phép. CORS không thay thế authentication/authorization và không chặn client ngoài browser.
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>CORS như người gác cổng giữa trang web, trình duyệt và server khác</title>
@@ -343,7 +343,7 @@ Analogy: bạn (trang web) muốn vào nhà hàng xóm (server khác) lấy đ�
   <text x="360" y="224" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">→ trình duyệt cho qua, JS có data</text>
   <rect x="250" y="246" width="220" height="46" rx="8" fill="#ef4444" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
   <text x="360" y="264" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">KHÔNG có header cho phép</text>
-  <text x="360" y="280" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">→ trình duyệt CHẶN (blocked by CORS)</text>
+  <text x="360" y="280" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">→ chặn JS đọc response (CORS)</text>
   <text x="16" y="318" font-size="10.5" fill="currentColor" opacity="0.7">Do server kia quyết định cho phép — JavaScript phía bạn không tắt được CORS.</text>
 </svg>
 

@@ -160,7 +160,7 @@ User đổi avatar (ghi LSN 500 vào master), rồi ngay lập tức load lại 
 
 ### 4.1 Các cách xử lý (từ đơn giản đến chuẩn xác)
 
-**(A) Sticky đọc master sau khi ghi** — đơn giản, hiệu quả cho phần lớn app. Sau một ghi, ghim các đọc của user đó vào master trong một cửa sổ ngắn (ví dụ vài giây, đủ dài hơn lag p99):
+**(A) Sticky đọc master sau khi ghi** — đơn giản, hiệu quả cho phần lớn app. Sau một ghi, ghim các đọc của user đó vào master trong một cửa sổ ngắn (ví dụ vài giây, dài hơn lag p99 để giảm lỗi thực tế; p99 không phải bound nên chưa bảo đảm mọi request):
 
 ```python
 WRITE_STICKY_WINDOW = 5  # giây, nên > lag p99
@@ -185,16 +185,21 @@ SELECT pg_current_wal_lsn();     -- ví dụ '0/16B3E80'  → trả về client 
 ```
 
 ```python
+import time
+
 def read_with_token(conn_replica, required_lsn, timeout_ms=500):
-    # Chờ replica bắt kịp tới LSN yêu cầu (không quá timeout)
-    r = conn_replica.execute(
-        "SELECT pg_wal_lsn_diff(pg_last_wal_replay_lsn(), %s) >= 0",
-        (required_lsn,)
-    ).scalar()
-    if r:
-        return conn_replica          # đã bắt kịp → đọc replica an toàn
-    # chưa kịp trong ngân sách thời gian → fallback đọc master
-    return MASTER
+    # Connection probe dùng autocommit; query timeout không vượt ngân sách còn lại.
+    # Sau khi probe đạt LSN, mở snapshot đọc mới trên chính replica này.
+    deadline = time.monotonic() + timeout_ms / 1000
+    while time.monotonic() < deadline:
+        r = conn_replica.execute(
+            "SELECT pg_wal_lsn_diff(pg_last_wal_replay_lsn(), %s) >= 0",
+            (required_lsn,)
+        ).scalar()
+        if r:
+            return conn_replica
+        time.sleep(min(0.01, max(0, deadline - time.monotonic())))
+    return MASTER  # hết ngân sách: đọc primary, không trả dữ liệu cũ
 ```
 
 MySQL có cơ chế tương đương: `WAIT_FOR_EXECUTED_GTID_SET(gtid, timeout)` — chờ replica áp xong đúng GTID của transaction vừa ghi:
@@ -215,7 +220,7 @@ def pick_replica(replicas, max_lag_s=1.0):
 
 | Cách | Độ mới đảm bảo | Chi phí | Khi dùng |
 |---|---|---|---|
-| Sticky master | Read-your-writes cho chính user | Cache nhỏ, tăng tải master sau ghi | Mặc định tốt cho web app |
+| Sticky master | Trong cửa sổ đọc primary; sau đó cần replica bắt kịp | Cache nhỏ, tăng tải master sau ghi | Mặc định tốt cho web app |
 | Critical đọc master | Tuyệt đối | Bỏ lợi ích scale đọc trên path đó | Ví, thanh toán, đơn hàng |
 | Wait-for-LSN token | Chính xác theo từng ghi | Phức tạp, cần truyền token | Cần đúng mà vẫn muốn scale đọc |
 | Bounded staleness | "Cũ ≤ X giây" | Đơn giản, không tuyệt đối | Feed, dashboard, list |
@@ -238,10 +243,10 @@ FROM pg_stat_replication;
 - `sent_lsn` / `write_lsn` / `flush_lsn` / `replay_lsn`: WAL đã gửi / ghi / fsync / **replay** trên standby. Query đọc chỉ thấy tới `replay_lsn`.
 - `replay_lag`: **cái bạn thật sự quan tâm** — thời gian từ lúc commit trên master đến lúc replay xong trên standby.
 
-Trên **standby**, đo lag theo thời gian ngay cả khi không có traffic ghi:
+Trên **standby**, quan sát tuổi transaction cuối được replay; primary idle cũng làm số này tăng, chưa replay transaction thì có thể `NULL`. Đối chiếu LSN/heartbeat trước khi coi là lag:
 
 ```sql
-SELECT now() - pg_last_xact_replay_timestamp() AS replica_lag;
+SELECT now() - pg_last_xact_replay_timestamp() AS time_since_last_replayed_xact;
 ```
 
 ### 5.2 MySQL: `Seconds_Behind_Master` — cẩn thận cạm bẫy

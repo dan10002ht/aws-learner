@@ -242,7 +242,7 @@ Loss 5 % mỗi chiều nghĩa là một vòng đi-về thành công với xác s
 
 Chiều thứ nhất — **thundering herd giả**. 4.000 bot connect trong 0,4 giây là **10.000 kết nối/giây**. Production ở 4.000 CCU với phiên trung bình 8 phút có tỉ lệ vào là `4.000 / 480 = ` **8,33 người/giây** — chênh **1.200 lần**. Bạn sẽ thấy accept queue tràn và kết luận "node chỉ chịu được 4.000", trong khi cái gãy là một sự kiện không tồn tại. Cách rải: khởi động theo Poisson với `λ = CCU / độ_dài_phiên`, và cho bot **tự rời và vào lại** theo đúng phân bố đó — churn là tải thật, và nó sinh keyframe mà mục 3.3 vừa nói bot đứng im không bao giờ sinh.
 
-Chiều thứ hai tinh vi hơn — **đồng pha**. Bot khởi động cùng lúc thì `time.Tick` của chúng lệch nhau vài trăm micro giây. 4.000 bot × 60 Hz là **240 gói/ms** nếu rải đều, nhưng nếu đồng pha thì **4.000 gói dồn vào 1 ms** rồi 15,67 ms im lặng: đỉnh gấp **16,67 lần** trung bình, đúng bằng chu kỳ tick `1000 / 60 = 16,67 ms`. Server bị đo bằng một hình dạng lưu lượng không có thật.
+Chiều thứ hai tinh vi hơn — **đồng pha**. Bot khởi động cùng lúc thì `time.Tick` của chúng lệch nhau vài trăm micro giây. 4.000 bot × 60 Hz là trung bình kỳ vọng **240 gói/ms** nếu pha được rải ngẫu nhiên (mỗi ms vẫn dao động), nhưng nếu đồng pha thì **4.000 gói dồn vào 1 ms** rồi 15,67 ms im lặng: đỉnh gấp **16,67 lần** trung bình, đúng bằng chu kỳ tick `1000 / 60 = 16,67 ms`. Server bị đo bằng một hình dạng lưu lượng không có thật.
 
 <ab-toggle data-labels="Đồng pha|Rải pha">
 <svg viewBox="0 0 520 280" role="img" aria-labelledby="gs39-vis-0-t gs39-vis-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">

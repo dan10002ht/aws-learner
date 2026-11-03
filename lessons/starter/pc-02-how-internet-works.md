@@ -275,7 +275,7 @@ Trình duyệt (Chrome, Safari...) nhận nguyên liệu và **dựng** thành t
 
 **Toàn bộ 5 bước này thường diễn ra trong chưa đầy 1 giây** — kể cả khi server nằm ở bên kia Trái Đất. Dữ liệu di chuyển gần bằng tốc độ ánh sáng qua cáp quang!
 
-> **Ghi nhớ**: Gõ URL → tra DNS lấy IP → gửi request → server xử lý → nhận response → trình duyệt vẽ trang. Sáu chữ: **Tra – Gửi – Xử – Nhận – Vẽ – Xem**.
+> **Ghi nhớ**: Gõ URL → tra DNS lấy IP → gửi request → server xử lý → nhận response → trình duyệt vẽ trang. Năm bước sau khi gõ URL: **Tra – Gửi – Xử – Nhận – Vẽ**.
 
 ---
 

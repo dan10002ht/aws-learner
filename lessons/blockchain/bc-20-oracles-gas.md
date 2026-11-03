@@ -241,12 +241,12 @@ contract Good {
 }
 ```
 
-Mỗi slot ghi lần đầu tốn ~20.000 gas, nên gộp 3 slot xuống 2 tiết kiệm **~20.000 gas** khi khởi tạo. Áp dụng nhiều nhất trong `struct`:
+Một lần `SSTORE` đổi slot từ 0 sang khác 0 có chi phí cơ sở ~20.000 gas. Gộp 3 slot xuống 2 **có thể** tránh một lần ghi như vậy; mức tiết kiệm thực tế còn phụ thuộc giá trị, cold/warm access và read-modify-write của compiler. Áp dụng nhiều nhất trong `struct`:
 
 ```solidity
 // Gói 1 slot: uint128 + uint64 + uint32 + bool = 16+8+4+1 = 29/32 byte
 struct Position {
-    uint128 amount;      // đủ cho token 18 decimals
+    uint128 amount;      // tối đa (2^128 - 1) đơn vị nhỏ nhất; kiểm tra giới hạn ứng dụng
     uint64  unlockTime;  // timestamp tới năm ~584 tỷ, thừa sức
     uint32  tier;
     bool    active;

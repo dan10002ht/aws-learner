@@ -315,54 +315,20 @@ ListNode* reverseList(ListNode* head) {
 
 ## Fast–slow pointer: phát hiện chu trình
 
-Kỹ thuật "hai con trỏ chạy khác tốc độ" (thuật toán **Floyd / tortoise–hare**). Con trỏ `slow` đi 1 bước, `fast` đi 2 bước. Nếu list có **chu trình (cycle)**, sớm muộn `fast` sẽ "đuổi kịp" `slow` và hai con trỏ gặp nhau. Nếu không có chu trình, `fast` sẽ chạm `null` rồi dừng.
+Kỹ thuật "hai con trỏ chạy khác tốc độ" (thuật toán **Floyd / tortoise–hare**). Con trỏ `slow` đi 1 bước, `fast` đi 2 bước. Nếu list có **chu trình (cycle)**, sớm muộn `fast` sẽ "đuổi kịp" `slow` và hai con trỏ gặp nhau. Nếu không có chu trình, vòng lặp dừng khi `fast` hoặc `fast.next` là `null`.
 
-Cùng kỹ thuật này còn dùng để tìm **node giữa** (khi `fast` tới cuối thì `slow` đang ở giữa) và tìm **node thứ k từ cuối**.
+Biến thể tốc độ 1/2 còn dùng để tìm **node giữa** (khi `fast` tới cuối thì `slow` ở giữa). Tìm **node thứ k từ cuối** dùng hai con trỏ cách nhau k node rồi tiến cùng tốc độ, không dùng quy tắc 1/2 của Floyd.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 420" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Fast–slow pointer: phát hiện chu trình và tìm node giữa</title>
-  <desc>Con trỏ slow đi 1 bước, fast đi 2 bước. Trên list có chu trình hai con trỏ sẽ gặp nhau; trên list thẳng khi fast tới cuối thì slow đang ở node giữa.</desc>
-  <defs>
-    <marker id="fsArr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker>
-  </defs>
-  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">slow đi 1 bước · fast đi 2 bước</text>
-  <text x="16" y="56" font-size="12.5" font-weight="700" fill="currentColor">1) Có chu trình → fast đuổi kịp slow (gặp nhau)</text>
-  <g font-size="12" font-weight="700">
-    <rect x="40" y="78" width="40" height="32" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="60" y="99" text-anchor="middle" fill="currentColor">A</text>
-    <rect x="130" y="78" width="40" height="32" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="150" y="99" text-anchor="middle" fill="currentColor">B</text>
-    <rect x="220" y="78" width="40" height="32" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="240" y="99" text-anchor="middle" fill="currentColor">C</text>
-    <rect x="350" y="78" width="40" height="32" rx="8" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.5"/><text x="370" y="99" text-anchor="middle" fill="currentColor">D</text>
-    <rect x="350" y="150" width="40" height="32" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="370" y="171" text-anchor="middle" fill="currentColor">E</text>
-    <rect x="220" y="150" width="40" height="32" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="240" y="171" text-anchor="middle" fill="currentColor">F</text>
-  </g>
-  <g stroke="currentColor" fill="none" marker-end="url(#fsArr)">
-    <path d="M80 94 H126"/><path d="M170 94 H216"/><path d="M260 94 H346"/>
-    <path d="M370 110 V146"/><path d="M350 166 H264"/><path d="M240 150 V112"/>
-  </g>
-  <text x="404" y="98" font-size="11" fill="currentColor" opacity="0.7">chu trình</text>
-  <text x="370" y="138" font-size="10.5" text-anchor="middle" fill="#f59e0b">gặp nhau</text>
-  <text x="370" y="68" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">slow = fast → có cycle</text>
-  <text x="16" y="232" font-size="12.5" font-weight="700" fill="currentColor">2) List thẳng → fast tới cuối, slow ở node giữa</text>
-  <g font-size="12" font-weight="700">
-    <rect x="40" y="256" width="44" height="32" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="62" y="277" text-anchor="middle" fill="currentColor">1</text>
-    <rect x="148" y="256" width="44" height="32" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="170" y="277" text-anchor="middle" fill="currentColor">2</text>
-    <rect x="256" y="256" width="44" height="32" rx="8" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.5"/><text x="278" y="277" text-anchor="middle" fill="currentColor">3</text>
-    <rect x="364" y="256" width="44" height="32" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="386" y="277" text-anchor="middle" fill="currentColor">4</text>
-    <rect x="472" y="256" width="44" height="32" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="494" y="277" text-anchor="middle" fill="currentColor">5</text>
-  </g>
-  <g stroke="currentColor" fill="none" marker-end="url(#fsArr)"><path d="M84 272 H144"/><path d="M192 272 H252"/><path d="M300 272 H360"/><path d="M408 272 H468"/></g>
-  <text x="540" y="276" font-size="11" fill="currentColor" opacity="0.7">→ null</text>
-  <text x="278" y="246" font-size="10.5" text-anchor="middle" fill="#10b981">slow (giữa)</text>
-  <g font-size="10.5" fill="currentColor" opacity="0.8">
-    <text x="62" y="312" text-anchor="middle">start</text>
-    <text x="170" y="312" text-anchor="middle">slow +1</text>
-    <text x="278" y="312" text-anchor="middle">slow +1</text>
-    <text x="386" y="312" text-anchor="middle">fast +2</text>
-    <text x="494" y="312" text-anchor="middle">fast cuối</text>
-  </g>
-  <text x="16" y="360" font-size="11" fill="currentColor" opacity="0.85">Khi fast (đi gấp đôi) chạm cuối list, slow mới đi được nửa quãng → đứng ngay giữa.</text>
-  <text x="16" y="382" font-size="11" fill="currentColor" opacity="0.85">Không có chu trình thì fast gặp null và vòng lặp dừng (không bao giờ gặp slow).</text>
+<auto-anim data-dur="10">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 526" role="img" aria-labelledby="fix-dsa05-floyd-t fix-dsa05-floyd-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif,system-ui,sans-serif">
+<title id="fix-dsa05-floyd-t">Floyd gặp lần đầu tại E; list thẳng năm node dừng ở fast.next null</title>
+<desc id="fix-dsa05-floyd-d">Floyd gặp lần đầu tại E; list thẳng năm node dừng ở fast.next null</desc>
+<defs><marker id="fix-dsa05-floyd-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<text x="16" y="24" font-size="15" text-anchor="start" fill="currentColor">Floyd: slow +1, fast +2; bắt đầu cùng tại A</text><path d="M59 85 H103" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#fix-dsa05-floyd-a)"/><path d="M144 85 H188" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#fix-dsa05-floyd-a)"/><path d="M229 85 H313" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#fix-dsa05-floyd-a)"/><path d="M335 104 V168" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#fix-dsa05-floyd-a)"/><path d="M316 190 H232" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#fix-dsa05-floyd-a)"/><path d="M210 171 V107" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#fix-dsa05-floyd-a)"/><rect x="21" y="66" width="38" height="38" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="40" y="90" font-size="14" text-anchor="middle" fill="currentColor">A</text><rect x="106" y="66" width="38" height="38" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="125" y="90" font-size="14" text-anchor="middle" fill="currentColor">B</text><rect x="191" y="66" width="38" height="38" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="210" y="90" font-size="14" text-anchor="middle" fill="currentColor">C</text><rect x="316" y="66" width="38" height="38" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="335" y="90" font-size="14" text-anchor="middle" fill="currentColor">D</text><rect x="316" y="171" width="38" height="38" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="335" y="195" font-size="14" text-anchor="middle" fill="currentColor">E</text><rect x="191" y="171" width="38" height="38" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="210" y="195" font-size="14" text-anchor="middle" fill="currentColor">F</text><text x="400" y="91" font-size="13" text-anchor="start" fill="currentColor">F → C</text><text x="400" y="113" font-size="13" text-anchor="start" fill="currentColor">khép cycle</text><circle cx="40" cy="57" r="7" fill="#10b981"><animate attributeName="cx" values="40;125;210;335;335;335" keyTimes="0;0.2;0.4;0.6;0.8;1" dur="10s" repeatCount="indefinite" calcMode="discrete"/><animate attributeName="cy" values="57;57;57;57;162;162" keyTimes="0;0.2;0.4;0.6;0.8;1" dur="10s" repeatCount="indefinite" calcMode="discrete"/></circle><circle cx="34" cy="255" r="6" fill="#10b981"/><text x="48" y="260" font-size="13" text-anchor="start" fill="currentColor">slow</text><circle cx="40" cy="113" r="7" fill="#f59e0b"><animate attributeName="cx" values="40;210;335;210;335;335" keyTimes="0;0.2;0.4;0.6;0.8;1" dur="10s" repeatCount="indefinite" calcMode="discrete"/><animate attributeName="cy" values="113;113;218;113;218;218" keyTimes="0;0.2;0.4;0.6;0.8;1" dur="10s" repeatCount="indefinite" calcMode="discrete"/></circle><circle cx="138" cy="255" r="6" fill="#f59e0b"/><text x="152" y="260" font-size="13" text-anchor="start" fill="currentColor">fast</text><text x="16" y="289" font-size="13" text-anchor="start" fill="currentColor">(A,A) → (B,C) → (C,E) → (D,C) → (E,E)</text><text x="16" y="312" font-size="13" text-anchor="start" fill="currentColor">Vòng 4 gặp E: thuật toán dừng (hình lặp lại).</text><path d="M40 330 H440" stroke="currentColor" fill="none"/>
+<text x="40" y="351" text-anchor="middle" font-size="13" fill="currentColor">0</text><text x="140" y="351" text-anchor="middle" font-size="13" fill="currentColor">1</text><text x="240" y="351" text-anchor="middle" font-size="13" fill="currentColor">2</text><text x="340" y="351" text-anchor="middle" font-size="13" fill="currentColor">3</text><text x="440" y="351" text-anchor="middle" font-size="13" fill="currentColor">4</text><circle cx="40" cy="330" r="5" fill="#8b5cf6"><animate attributeName="cx" values="40;140;240;340;440;440" keyTimes="0;0.2;0.4;0.6;0.8;1" dur="10s" repeatCount="indefinite" calcMode="discrete"/></circle>
+<text x="16" y="382" font-size="15" text-anchor="start" fill="currentColor">List thẳng: sau 2 vòng, slow=3, fast=5</text><rect x="21" y="413" width="38" height="38" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="40" y="437" font-size="14" text-anchor="middle" fill="currentColor">1</text><path d="M59 432 H113" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#fix-dsa05-floyd-a)"/><rect x="116" y="413" width="38" height="38" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="135" y="437" font-size="14" text-anchor="middle" fill="currentColor">2</text><path d="M154 432 H208" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#fix-dsa05-floyd-a)"/><rect x="211" y="413" width="38" height="38" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="230" y="437" font-size="14" text-anchor="middle" fill="currentColor">3</text><path d="M249 432 H303" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#fix-dsa05-floyd-a)"/><rect x="306" y="413" width="38" height="38" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="325" y="437" font-size="14" text-anchor="middle" fill="currentColor">4</text><path d="M344 432 H398" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#fix-dsa05-floyd-a)"/><rect x="401" y="413" width="38" height="38" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="420" y="437" font-size="14" text-anchor="middle" fill="currentColor">5</text><text x="230" y="478" font-size="13" text-anchor="middle" fill="currentColor">slow</text><text x="420" y="478" font-size="13" text-anchor="middle" fill="currentColor">fast</text><text x="16" y="509" font-size="13" text-anchor="start" fill="currentColor">fast.next = null → dừng; slow là node giữa.</text>
 </svg>
+</auto-anim>
 
 ```python
 def has_cycle(head):
@@ -466,7 +432,7 @@ ListNode* middleNode(ListNode* head) {
 
 Thời gian `O(n)`, bộ nhớ `O(1)` — vượt trội so với cách dùng `set` lưu các node đã thăm (tốn `O(n)` bộ nhớ).
 
-> Ghi nhớ: thấy yêu cầu **tìm giữa / phát hiện vòng lặp / node thứ k từ cuối** trên linked list mà cấm dùng bộ nhớ phụ — phản xạ ngay là **fast–slow pointer**.
+> Ghi nhớ: thấy yêu cầu **tìm giữa / phát hiện vòng lặp / node thứ k từ cuối** trên linked list mà cấm dùng bộ nhớ phụ — nghĩ tới **hai con trỏ**: tốc độ 1/2 cho tìm giữa/chu trình; cách nhau k node và cùng tốc độ cho node thứ k từ cuối.
 
 ## Binary Tree (cây nhị phân)
 

@@ -183,18 +183,18 @@ createCounter(document.querySelector("#app"));
 
 ## Virtual DOM — ý tưởng
 
-Render lại toàn bộ thì đơn giản nhưng tốn kém. Thao tác DOM thật là **chậm** so với chạy JS thuần. Giải pháp của React: dùng **Virtual DOM**.
+Render lại toàn bộ thì đơn giản nhưng tốn kém. Cập nhật DOM có thể kéo theo layout/paint tốn kém; chi phí phụ thuộc loại thay đổi. Virtual DOM cũng có chi phí tính diff, không bảo đảm luôn nhanh hơn cập nhật DOM trực tiếp. Giải pháp của React: dùng **Virtual DOM**.
 
 Virtual DOM là **bản mô tả UI bằng object JS** (nhẹ, nhanh), không phải DOM thật. Quy trình:
 
 1. State đổi → tạo cây Virtual DOM **mới** (chỉ là object JS).
 2. **So sánh** (diffing) cây mới với cây cũ.
-3. Tính ra **danh sách thay đổi tối thiểu** cần áp dụng.
+3. Tính ra **danh sách thay đổi theo heuristic** cần áp dụng.
 4. Chỉ chạm vào những **node DOM thật** thực sự đổi (patch).
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 250" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Quy trình Virtual DOM: tạo cây mới, diff, patch tối thiểu</title>
-  <desc>State đổi tạo cây VDOM mới (object JS), so sánh diff với cây cũ, tính patch tối thiểu, chỉ chạm node DOM thật thay đổi. Ví như vẽ nháp trên giấy nháp rồi chỉ sửa đúng chỗ trên giấy thật.</desc>
+  <title>Quy trình Virtual DOM: tạo cây mới, diff, patch theo diff</title>
+  <desc>State đổi tạo cây VDOM mới (object JS), so sánh diff với cây cũ, tính patch theo diff, chỉ chạm node DOM thật thay đổi. Ví như vẽ nháp trên giấy nháp rồi chỉ sửa đúng chỗ trên giấy thật.</desc>
   <text x="360" y="26" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Vẽ lại trên "giấy nháp" (object JS) → chỉ sửa đúng chỗ trên "giấy thật" (DOM)</text>
   <g>
     <rect x="14" y="56" width="150" height="90" rx="10" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
@@ -211,9 +211,9 @@ Virtual DOM là **bản mô tả UI bằng object JS** (nhẹ, nhanh), không ph
   </g>
   <g>
     <rect x="386" y="56" width="150" height="90" rx="10" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="461" y="92" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">patch tối thiểu</text>
+    <text x="461" y="92" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">patch theo diff</text>
     <text x="461" y="112" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">danh sách thay</text>
-    <text x="461" y="127" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">đổi nhỏ nhất</text>
+    <text x="461" y="127" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">đổi theo diff</text>
   </g>
   <g>
     <rect x="572" y="56" width="134" height="90" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
@@ -252,9 +252,9 @@ const vnode = {
 // Framework so sánh object cũ vs mới -> chỉ sửa phần khác biệt trên DOM thật
 ```
 
-Nhờ đó bạn vẫn viết kiểu declarative "vẽ lại tất cả", nhưng framework chỉ cập nhật phần tối thiểu — vừa dễ viết vừa nhanh.
+Nhờ đó bạn vẫn viết kiểu declarative "vẽ lại tất cả", nhưng framework áp dụng các cập nhật DOM theo kết quả reconciliation; không bảo đảm số thao tác ít nhất có thể.
 
-> Ghi nhớ: Virtual DOM = "vẽ lại trên giấy nháp (object JS) rồi chỉ sửa đúng chỗ khác biệt trên giấy thật (DOM)". Bạn được sự đơn giản của declarative mà không trả giá hiệu năng.
+> Ghi nhớ: Virtual DOM = "vẽ lại trên giấy nháp (object JS) rồi chỉ sửa đúng chỗ khác biệt trên giấy thật (DOM)". Bạn được cách viết declarative; hiệu năng vẫn phụ thuộc chi phí render, diff và cập nhật DOM.
 
 ## SPA vs MPA
 
@@ -465,7 +465,7 @@ Hãy đặt cạnh nhau để thấy React chỉ **tự động hoá** những g
 | Khai báo state | `let state = {...}` | `useState(0)` |
 | Đổi state | Tự viết `setState` | `setCount(...)` |
 | Render lại khi state đổi | Tự gọi `render()` | Tự động |
-| Cập nhật DOM tối thiểu | Tự tay (hoặc không) | Virtual DOM lo |
+| Cập nhật DOM theo diff | Tự tay (hoặc không) | Virtual DOM lo |
 | Gắn sự kiện | Tự `onclick` sau mỗi render | `onClick` trong JSX |
 
 Điểm mấu chốt: **tư duy hoàn toàn giống nhau** — `UI = f(state)`, đổi state thì UI tự khớp. React chỉ xoá đi phần lặp đi lặp lại và xử lý hiệu năng. Một khi bạn "thấm" mẫu hình này bằng vanilla, học React/Vue chỉ còn là học cú pháp.

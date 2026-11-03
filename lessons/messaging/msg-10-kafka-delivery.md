@@ -61,30 +61,17 @@ Kafka giải bài toán trên bằng **idempotent producer**. Khi bật `enable.
 Broker **ghi nhớ sequence number cuối cùng** nó đã chấp nhận cho từng `(PID, partition)`. Khi một batch tới:
 - Nếu sequence **đúng bằng cái broker mong đợi** (last + 1) → ghi.
 - Nếu sequence **nhỏ hơn hoặc bằng** cái đã ghi → đây là **retry của message đã ghi** → broker **âm thầm bỏ qua** và vẫn trả `ack` thành công. Producer yên tâm, log **không có bản trùng**.
-- Nếu sequence **nhảy cóc** (lớn hơn mong đợi + 1) → có message bị mất giữa chừng → broker trả lỗi `OutOfOrderSequenceException` (để lộ vấn đề thay vì âm thầm sai).
+- Nếu sequence **nhảy cóc** (lớn hơn mong đợi, tức lớn hơn last + 1) → có message bị mất giữa chừng → broker trả lỗi `OutOfOrderSequenceException` (để lộ vấn đề thay vì âm thầm sai).
 
-<svg viewBox="0 0 660 230" role="img" aria-labelledby="idm-t idm-d" style="width:100%;max-width:640px;height:auto;display:block;margin:1.25rem auto">
-<title id="idm-t">Idempotent producer dùng PID và sequence number để loại retry trùng</title>
-<desc id="idm-d">Broker ghi nhớ sequence đã nhận; một retry mang sequence cũ bị nhận diện và bỏ qua nên log không có bản trùng</desc>
-<rect x="20" y="40" width="90" height="140" rx="6" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="65" y="62" text-anchor="middle" font-size="11" fill="currentColor">Producer</text>
-<text x="65" y="80" text-anchor="middle" font-size="9" fill="currentColor">PID=7</text>
-<text x="130" y="78" font-size="9" fill="currentColor">seq=5 (msg mới)</text>
-<line x1="110" y1="85" x2="400" y2="85" stroke="currentColor" stroke-width="1" marker-end="url(#ai)"/>
-<text x="130" y="128" font-size="9" fill="currentColor">ack mất → gửi LẠI seq=5</text>
-<line x1="110" y1="135" x2="400" y2="135" stroke="currentColor" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#ai)"/>
-<rect x="405" y="40" width="235" height="150" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="522" y="62" text-anchor="middle" font-size="11" fill="currentColor">Broker (leader của partition)</text>
-<text x="522" y="84" text-anchor="middle" font-size="9" fill="currentColor">nhớ: (PID=7) → last seq = 5</text>
-<text x="522" y="108" text-anchor="middle" font-size="9" fill="currentColor">seq=5 lần 1: = mong đợi → GHI</text>
-<text x="522" y="130" text-anchor="middle" font-size="9" fill="currentColor">seq=5 lần 2: ≤ đã ghi → BỎ QUA</text>
-<text x="522" y="152" text-anchor="middle" font-size="9" fill="currentColor">vẫn trả ack OK</text>
-<text x="522" y="176" text-anchor="middle" font-size="10" fill="currentColor">→ log chỉ có MỘT bản, không trùng</text>
-<text x="330" y="216" text-anchor="middle" font-size="10" fill="currentColor">Idempotence = "gửi lại bao nhiêu lần cũng chỉ ghi một lần" (per producer session)</text>
-<defs><marker id="ai" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
-</svg>
+<step-flow>
+<svg font-family="ui-sans-serif, system-ui, sans-serif" viewBox="0 0 660 320" role="img" aria-labelledby="fixmsg10-t fixmsg10-d" style="width:100%;max-width:660px;height:auto;display:block;margin:1.25rem auto"><title id="fixmsg10-t">Retry seq=5 được khử trùng trong cùng phiên producer</title><desc id="fixmsg10-d">Retry seq=5 được khử trùng trong cùng phiên producer</desc><defs><marker id="fixmsg10-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs><rect x="20" y="45" width="125" height="210" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="82" y="70" font-size="13" text-anchor="middle" fill="currentColor">Producer</text><text x="82" y="94" font-size="13" text-anchor="middle" fill="currentColor">PID = 7</text><rect x="410" y="45" width="230" height="210" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="525" y="70" font-size="13" text-anchor="middle" fill="currentColor">Broker · leader</text><text x="525" y="94" font-size="13" text-anchor="middle" fill="currentColor">ban đầu last = 4</text><g data-step="1"><path d="M145 125 L410 125" stroke="currentColor" fill="none" stroke-width="2" marker-end="url(#fixmsg10-a)"/><text x="275" y="113" font-size="13" text-anchor="middle" fill="currentColor">seq=5 mới: đúng next</text></g><g data-step="2"><rect x="455" y="153" width="140" height="35" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="525" y="176" font-size="13" text-anchor="middle" fill="currentColor">log: [seq=5]</text><text x="525" y="215" font-size="13" text-anchor="middle" fill="currentColor">last = 5</text></g><g data-step="3"><path d="M410 145 L150 145" stroke="#f43f5e" fill="none" stroke-width="2" stroke-dasharray="5 4"/><text x="275" y="169" font-size="13" text-anchor="middle" fill="#f43f5e">ack bị mất</text><path d="M145 222 L410 222" stroke="currentColor" fill="none" stroke-width="2" marker-end="url(#fixmsg10-a)"/><text x="275" y="209" font-size="13" text-anchor="middle" fill="currentColor">retry cùng seq=5</text></g><g data-step="4"><path d="M410 270 L145 270" stroke="currentColor" fill="none" stroke-width="2" marker-end="url(#fixmsg10-a)"/><text x="275" y="294" font-size="14" text-anchor="middle" fill="currentColor">ack OK · không append lần hai</text></g></svg>
+<step-note data-step="1">Broker chờ next=last+1=5. Sequence lớn hơn 5 là nhảy cóc, không phải lớn hơn 6.</step-note>
+<step-note data-step="2">Batch hợp lệ được ghi; last tiến lên 5, log chỉ có một bản.</step-note>
+<step-note data-step="3">Ack mất nên producer retry batch seq=5 trong cùng phiên và partition.</step-note>
+<step-note data-step="4">Broker nhận diện batch đã ghi và trả ack. Kiểm sequence cùng retry của producer giữ thứ tự; broker không sắp lại batch tuỳ ý.</step-note>
+</step-flow>
 
-Idempotent producer còn giữ **thứ tự khi có retry** ngay cả khi `max.in.flight.requests.per.connection` tới 5 — broker dùng sequence để sắp lại đúng trình tự trước khi ghi. (Không bật idempotence mà cho in-flight > 1 + retries > 0 thì một batch fail-retry có thể bị ghi **sau** batch kế → **đảo thứ tự**.)
+Idempotent producer còn giữ **thứ tự khi có retry** ngay cả khi `max.in.flight.requests.per.connection` tới 5 — broker kiểm sequence và từ chối batch sai thứ tự; producer phối hợp retry để giữ thứ tự, broker không buffer rồi sắp xếp lại các batch tuỳ ý. (Không bật idempotence mà cho in-flight > 1 + retries > 0 thì một batch fail-retry có thể bị ghi **sau** batch kế → **đảo thứ tự**.)
 
 **Giới hạn quan trọng:** idempotence chỉ đảm bảo **không trùng trong phạm vi MỘT partition và MỘT phiên producer**. Nó **không** chống trùng khi: (a) producer restart (PID mới) rồi gửi lại cùng dữ liệu ứng dụng; (b) bạn ghi cùng logic ra **nhiều partition** và cần "tất cả cùng thành công hoặc cùng không". Cho (b) ta cần **transactions**.
 

@@ -158,7 +158,7 @@ Caller B chạy:
 aws sts assume-role \
   --role-arn arn:aws:iam::A:role/XAccessor \
   --role-session-name "alice@$(date +%s)" \
-  --external-id "secret-shared-string"
+  --external-id "customer-unique-id"
 ```
 
 → Nhận temp credential (1h default, max 12h — chi tiết ở §2.10).
@@ -181,23 +181,23 @@ aws sts assume-role \
 
 #### Pattern C — ExternalId (chống "confused deputy")
 
-**Bài toán**: Bạn (account A) thuê 3rd-party SaaS (account X) monitor AWS bills của bạn. Bạn tạo Role trust X. Nhưng X cũng monitor cho 1000 customer khác. Nếu X bị compromise + attacker biết ARN role bạn → assume được, **vì trust = `Principal: X-account`**.
+**Bài toán**: Bạn (account A) thuê 3rd-party SaaS (account X) monitor AWS bills của bạn. Bạn tạo Role trust X. Nhưng X cũng monitor cho 1000 customer khác. Nếu một customer khác đưa ARN role của bạn cho X và X không phân biệt customer khi assume → X có thể bị lừa truy cập account bạn (**confused deputy**).
 
-**Fix**: bắt buộc `ExternalId` (chỉ X và bạn biết):
+**Fix**: yêu cầu `ExternalId` do X cấp duy nhất cho từng customer và kiểm tra trong trust policy. ExternalId **không phải secret**:
 ```json
 {
   "Effect": "Allow",
   "Principal": { "AWS": "arn:aws:iam::X:root" },
   "Action": "sts:AssumeRole",
   "Condition": {
-    "StringEquals": { "sts:ExternalId": "RandomSecret-Acme-2026" }
+    "StringEquals": { "sts:ExternalId": "customer-unique-id" }
   }
 }
 ```
 
-Attacker không có ExternalId → không assume được.
+X phải dùng ExternalId của customer đang yêu cầu; ID đó không khớp role của bạn thì STS từ chối. Cơ chế này không bảo vệ khỏi chính principal X đã bị chiếm quyền.
 
-→ **Rule**: mọi 3rd-party role **bắt buộc** ExternalId. Tự nội bộ không cần.
+→ **Rule**: role cho bên thứ ba phục vụ nhiều customer nên yêu cầu ExternalId để chống confused deputy. Đây không phải điều kiện bắt buộc chung của API AssumeRole.
 
 ### 2.4 Permission Boundary — delegation an toàn
 
@@ -689,7 +689,7 @@ Tự vẽ flowchart 6 step (SCP → resource → identity → boundary → sessi
    <details><summary>Đáp án</summary>**Bucket policy ở B allow Lambda execution role của A** (resource-based), cộng với identity policy của execution role cho `s3:GetObject` lên bucket đó — cross-account luôn cần cả 2 bên (§2.1). Không cần AssumeRole, không cần thay đổi code Lambda.</details>
 
 3. 3rd-party SaaS X (account ID 999) yêu cầu role trong account bạn để monitor bills. Tạo trust policy thế nào?
-   <details><summary>Đáp án</summary>Trust `Principal: arn:aws:iam::999:root` + **bắt buộc ExternalId** (random secret X cung cấp) + Condition `sts:ExternalId`. Không có ExternalId → confused deputy risk.</details>
+   <details><summary>Đáp án</summary>Trust `Principal: arn:aws:iam::999:root` + **bắt buộc ExternalId** (ID duy nhất cho customer do X cung cấp, không phải secret) + Condition `sts:ExternalId`. Không có ExternalId → confused deputy risk.</details>
 
 4. User có Permission Boundary chỉ `s3:Get*`. Identity policy allow `s3:*`. Bucket policy allow `s3:PutObject`. Gọi `s3:PutObject`?
    <details><summary>Đáp án</summary>Đáp án đề thi mong đợi: **DENY** — boundary là trần của user, `s3:PutObject` nằm ngoài `s3:Get*`. Điều này đúng khi bucket ở **account khác**, hoặc bucket policy cấp cho cả account (`:root`) hay cho một role: lượt đánh giá phía user vẫn phải qua boundary. Ngoại lệ theo docs (xem ghi chú cuối §2.1): nếu bucket **cùng account** và bucket policy ghi đích danh **ARN của IAM user đó** làm `Principal`, thì implicit deny của boundary không cắt được quyền này và kết quả là ALLOW. Muốn chặn chắc chắn thì boundary phải có **explicit Deny**.</details>

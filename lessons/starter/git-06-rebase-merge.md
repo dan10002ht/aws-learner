@@ -60,7 +60,7 @@ git merge feature
 ```
 
 ```text
-Merge made by the 'recursive' strategy.
+Merge made by the 'ort' strategy.
  src/app.js | 12 ++++++++++++
  1 file changed, 12 insertions(+)
 ```
@@ -96,7 +96,7 @@ Successfully rebased and updated refs/heads/feature.
 
 Chú ý `A'`, `B'`, `C'` có dấu phẩy — đây là **commit MỚI** (khác hash) dù nội dung giống `A`, `B`, `C`. Rebase **viết lại lịch sử**: mỗi commit được tái tạo với cha mới nên SHA đổi hoàn toàn.
 
-> Bẫy: Vì rebase tạo commit mới, nếu bạn rebase rồi push, commit cũ và commit mới **cùng tồn tại** trên remote nếu push không đúng cách. Đây là gốc rễ của golden rule ở cuối bài.
+> Bẫy: Vì rebase tạo commit mới, sau khi rebase lịch sử đã push, push thường bị từ chối vì không fast-forward. Nếu pull rồi merge lịch sử cũ vào nhánh đã rebase, cả commit cũ và bản viết lại có thể cùng nằm trong lịch sử được push. Đây là gốc rễ của golden rule ở cuối bài.
 
 ### Quy trình thực chiến: cập nhật feature theo main
 

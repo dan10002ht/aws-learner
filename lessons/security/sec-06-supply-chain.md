@@ -70,57 +70,28 @@ enable-pre-post-scripts=false
 
 Khác typosquat: đây là package _đúng_ tên nhưng bị chiếm. Các vector thật:
 - **Maintainer account bị takeover** (npm token leak, không bật 2FA) → push version mới có malware (vụ `ua-parser-js`, `coa`, `rc` năm 2021).
-- **Dependency confusion**: bạn có private package `@acme/utils`; attacker publish `@acme/utils` lên public registry với version cao hơn. Resolver mặc định ưu tiên public → kéo về bản độc.
+- **Dependency confusion**: package nội bộ bị thay bằng package cùng tên từ public. npm gắn mỗi scope với một registry, không mặc định so version giữa hai registry. Ví dụ `@acme/utils` nội bộ 1.2.0 có thể bị thay bằng bản public 9.9.9 nếu proxy gộp nguồn và ưu tiên version cao hơn (với dải version cho phép), hoặc cấu hình nhầm scope ra public; đây là điều kiện cấu hình, không phải mặc định npm.
 - **Protestware / sabotage** (`node-ipc`, `colors`, `faker` tự phá năm 2022).
 
 **Phòng dependency confusion — khóa scope về registry nội bộ:**
 
 ```ini
-# .npmrc — mọi package @acme PHẢI lấy từ registry nội bộ, không bao giờ đi public
+# .npmrc — trỏ scope vào nội bộ; proxy cũng phải cấm fallback public cho scope này
 @acme:registry=https://npm.internal.acme.com/
 //npm.internal.acme.com/:_authToken=${NPM_INTERNAL_TOKEN}
 ```
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Dependency confusion — resolver bị lừa kéo bản public version cao hơn</title>
-  <desc>Cùng tên @acme/utils tồn tại ở registry nội bộ (1.2.0) và public registry do attacker publish (9.9.9). Resolver mặc định so version chọn 9.9.9 độc hại. Khóa scope về registry nội bộ chặn việc đi ra public.</desc>
-  <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Dependency confusion</text>
-  <g>
-    <rect x="280" y="40" width="160" height="56" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="360" y="64" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">resolver (npm install)</text>
-    <text x="360" y="82" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">cần @acme/utils</text>
-  </g>
-  <g>
-    <rect x="16" y="170" width="300" height="92" rx="10" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="32" y="194" font-size="12" font-weight="700" fill="currentColor">Registry nội bộ</text>
-    <text x="32" y="214" font-size="10.5" fill="currentColor" opacity="0.7">npm.internal.acme.com</text>
-    <text x="32" y="236" font-size="11.5" font-weight="700" fill="currentColor">@acme/utils 1.2.0</text>
-    <text x="32" y="253" font-size="10.5" fill="currentColor" opacity="0.62">bản thật, private</text>
-  </g>
-  <g>
-    <rect x="404" y="170" width="300" height="92" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="420" y="194" font-size="12" font-weight="700" fill="currentColor">Public registry</text>
-    <text x="420" y="214" font-size="10.5" fill="currentColor" opacity="0.7">registry.npmjs.org</text>
-    <text x="420" y="236" font-size="11.5" font-weight="700" fill="currentColor">@acme/utils 9.9.9</text>
-    <text x="420" y="253" font-size="10.5" fill="currentColor" opacity="0.62">attacker publish, version cao hơn</text>
-  </g>
-  <g stroke="currentColor" stroke-opacity="0.4" fill="none" stroke-width="1.5" stroke-dasharray="5 4">
-    <path d="M320 96 L200 164" marker-end="url(#dch)"/>
-  </g>
-  <g stroke="#f59e0b" fill="none" stroke-width="2.2">
-    <path d="M400 96 L516 161" marker-end="url(#dchr)"/>
-  </g>
-  <text x="232" y="138" font-size="10.5" fill="currentColor" opacity="0.7" transform="rotate(-29 232 138)">1.2.0</text>
-  <text x="442" y="108" font-size="11" font-weight="700" fill="#f59e0b" transform="rotate(29 442 108)">chọn 9.9.9 (cao hơn)</text>
-  <rect x="404" y="276" width="300" height="34" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/>
-  <text x="554" y="297" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">kéo về bản độc hại</text>
-  <rect x="16" y="276" width="300" height="34" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.18"/>
-  <text x="166" y="297" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">Chặn: khóa scope @acme về nội bộ</text>
-  <defs>
-    <marker id="dch" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="currentColor" fill-opacity="0.5"/></marker>
-    <marker id="dchr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#f59e0b"/></marker>
-  </defs>
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 490" role="img" aria-labelledby="fix-sec06-conf-t fix-sec06-conf-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif,system-ui,sans-serif">
+<title id="fix-sec06-conf-t">Dependency confusion khi proxy gộp public và chọn version cao hơn</title>
+<desc id="fix-sec06-conf-d">Dependency confusion khi proxy gộp public và chọn version cao hơn</desc>
+<defs><marker id="fix-sec06-conf-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<text x="16" y="24" font-size="15" text-anchor="start" fill="currentColor">Ví dụ proxy gộp nguồn cấu hình không an toàn</text><rect x="158" y="42" width="204" height="48" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="260" y="63" font-size="13" text-anchor="middle" fill="currentColor">npm install @acme/utils</text><text x="260" y="82" font-size="13" text-anchor="middle" fill="currentColor">dải version chấp nhận 9.9.9</text><rect x="158" y="132" width="204" height="58" rx="7" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/><text x="260" y="155" font-size="13" text-anchor="middle" fill="currentColor">Proxy / registry nội bộ</text><text x="260" y="176" font-size="13" text-anchor="middle" fill="currentColor">đang cho gộp public</text><rect x="16" y="272" width="224" height="84" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="28" y="294" font-size="13" text-anchor="start" fill="currentColor">Kho nội bộ</text><text x="28" y="315" font-size="13" text-anchor="start" fill="currentColor">@acme/utils 1.2.0</text><text x="28" y="338" font-size="13" text-anchor="start" fill="currentColor">npm.internal.acme.com</text><rect x="280" y="272" width="224" height="84" rx="7" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="292" y="294" font-size="13" text-anchor="start" fill="currentColor">Public registry</text><text x="292" y="315" font-size="13" text-anchor="start" fill="currentColor">@acme/utils 9.9.9 (độc)</text><text x="292" y="338" font-size="13" text-anchor="start" fill="currentColor">registry.npmjs.org</text><g data-step="1"><path d="M260 90 V128" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#fix-sec06-conf-a)"/></g><g data-step="2"><path d="M190 190 L126 266" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#fix-sec06-conf-a)"/><path d="M330 190 L392 266" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#fix-sec06-conf-a)"/><text x="16" y="225" font-size="13" text-anchor="start" fill="currentColor">1.2.0 nội bộ</text><text x="316" y="225" font-size="13" text-anchor="start" fill="currentColor">9.9.9 do attacker publish</text></g><g data-step="3"><path d="M392 356 V390 H260 V194" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#fix-sec06-conf-a)"/><text x="16" y="417" font-size="13" text-anchor="start" fill="currentColor">Proxy chọn bản public 9.9.9 → trả package độc.</text></g><text x="16" y="449" font-size="13" text-anchor="start" fill="currentColor">Chặn: trỏ scope đúng registry; proxy cấm public</text><text x="16" y="471" font-size="13" text-anchor="start" fill="currentColor">cho scope nội bộ, không chỉ sửa .npmrc ở client.</text>
 </svg>
+<step-note data-step="1">npm chỉ gọi registry được cấu hình cho scope. Ví dụ này giả định đó là proxy nội bộ, không phải npm tự so hai registry.</step-note>
+<step-note data-step="2">Proxy được giả định gộp cả nguồn public cho scope nội bộ; attacker đã publish cùng tên lên public và dải version cho phép 9.9.9.</step-note>
+<step-note data-step="3">Chính sách chọn version cao hơn của proxy khiến bản độc được trả về. Trỏ scope vào registry nội bộ và tắt public fallback/merge cho scope đó.</step-note>
+</step-flow>
 
 ---
 

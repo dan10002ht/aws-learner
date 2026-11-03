@@ -204,11 +204,11 @@ Thêm E:  ──●D──────────●E────────�
          chỉ đoạn (D, E] phải copy từ C sang E
 ```
 
-Hệ quả quan trọng: **chỉ đúng một node (`C`) bị ảnh hưởng**, và nó chỉ phải nhường đi một phần dữ liệu của mình. Mọi node khác không mất một byte nào, không một client nào phải đổi ánh xạ cho key của các node đó.
+Trong mô hình một điểm/node, không replication hay vnode: **chỉ một node nguồn (`C`) bị ảnh hưởng**, và nó chỉ phải nhường đi một phần dữ liệu của mình. Mọi node khác không mất một byte nào, không một client nào phải đổi ánh xạ cho key của các node đó.
 
 ### Bớt node (hoặc node chết)
 
-Node `B` biến mất. Cung mà `B` sở hữu, tức `(A, B]`, được **node kế tiếp theo chiều kim đồng hồ** (`C`) tiếp quản. Lại chỉ một node bị ảnh hưởng.
+Node `B` biến mất. Cung mà `B` sở hữu, tức `(A, B]`, được **node kế tiếp theo chiều kim đồng hồ** (`C`) tiếp quản. Trong mô hình đơn giản này, chỉ một node còn sống nhận thêm key; vnode/replication có thể làm nhiều node tham gia.
 
 ```
 Trước:   ──●A─────────●B─────────────●C──
@@ -220,12 +220,12 @@ Mất B:   ──●A───────────────────�
 
 ### Con số
 
-Với `N` node phân bố đều, mỗi node sở hữu ~`1/N` không gian khoá. Thêm hoặc bớt một node ⇒ **~1/N số key phải chuyển chỗ**, so với `~(N−1)/N` của modulo. Quay lại ví dụ 100 node × 64 GB = 6.4 TB:
+Với `N` node phân bố đều, mỗi node sở hữu ~`1/N` không gian khoá. Thêm một node ⇒ kỳ vọng **1/(N+1)** số key chuyển chỗ; bớt một node ⇒ **1/N**, với hash và tải đều. Modulo tương ứng chuyển **N/(N+1)** khi tăng N → N+1 và **(N−1)/N** khi giảm N → N−1. Quay lại ví dụ 100 node × 64 GB = 6.4 TB:
 
 | Sơ đồ | Dữ liệu di chuyển khi thêm 1 node | Thời gian copy ở 1 Gbps |
 |---|---|---|
 | `hash % N` | ~6.34 TB | ~14 giờ (và cache hit gần như về 0 ngay lập tức) |
-| Consistent hashing | ~64 GB | ~9 phút, chỉ 1 node nguồn bị ảnh hưởng |
+| Consistent hashing | ~63,4 GB | ~8,5 phút, một nguồn nếu không dùng vnode/replication |
 
 > Nguyên tắc: Consistent hashing biến chi phí thay đổi topology từ **O(toàn bộ dữ liệu)** thành **O(dữ liệu của một node)**. Đó là điều biến việc scale từ "sự kiện có kế hoạch, có downtime" thành "thao tác thường ngày, tự động".
 

@@ -92,10 +92,10 @@ Vì không phân biệt được, và vì đã chọn "không mất", broker **b
 
 ### 2.4 Ack, redelivery & visibility timeout
 
-Cơ chế đằng sau redelivery: khi consumer nhận một message, broker **không xóa** nó mà chỉ *ẩn tạm* (SQS gọi là **visibility timeout**; RabbitMQ giữ ở trạng thái *unacked*). Trong cửa sổ đó:
+Cơ chế đằng sau redelivery: khi consumer nhận một message, broker **không xóa** nó ngay. SQS dùng **visibility timeout**; RabbitMQ giữ message *unacked* trên channel. Hai cơ chế redelivery khác nhau:
 
-- Consumer **ack** → broker xóa hẳn message. Xong.
-- Hết timeout mà **chưa ack** → broker cho rằng consumer đã chết/treo → **hiện lại** message cho consumer khác lấy → redelivery.
+- **SQS:** `DeleteMessage` xóa message; hết visibility timeout mà chưa xóa thì message hiện lại, dù consumer cũ vẫn đang chạy.
+- **RabbitMQ:** `basic.ack` hoàn tất delivery; đóng/mất channel hoặc connection khiến message unacked được requeue. Consumer acknowledgement timeout cũng có thể đóng channel; đây không phải lease gia hạn cho từng message.
 
 <ab-toggle data-labels="Song song|Tuần tự">
 <svg viewBox="0 0 520 300" role="img" aria-labelledby="msg02-order0-t msg02-order0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
@@ -114,7 +114,7 @@ Cơ chế đằng sau redelivery: khi consumer nhận một message, broker **kh
 <ab-note>Cùng key phải vào cùng partition/FIFO group, và được xử lý tuần tự để giữ thứ tự.</ab-note>
 </ab-toggle>
 
-**Bẫy kinh điển:** nếu xử lý *lâu hơn* visibility timeout (vd job nặng 40s nhưng timeout 30s), broker sẽ *hiện lại* message *trong khi bạn vẫn đang xử lý* → **hai consumer chạy cùng một message song song**. Cách chữa: đặt timeout > thời gian xử lý p99, hoặc *gia hạn* timeout định kỳ (SQS `ChangeMessageVisibility`, RabbitMQ heartbeat + prefetch hợp lý).
+**Bẫy kinh điển:** nếu xử lý *lâu hơn* visibility timeout (vd job nặng 40s nhưng timeout 30s), broker sẽ *hiện lại* message *trong khi bạn vẫn đang xử lý* → **hai consumer chạy cùng một message song song**. Với SQS, đặt timeout > thời gian xử lý p99 hoặc gia hạn bằng `ChangeMessageVisibility`. Với RabbitMQ, cấu hình acknowledgement timeout phù hợp; heartbeat phát hiện kết nối chết, prefetch giới hạn số message unacked — cả hai **không gia hạn visibility**.
 
 ### 2.5 Exactly-once = at-least-once + idempotent consumer
 
@@ -126,18 +126,21 @@ Cách làm chuẩn — mỗi message mang một **idempotency key** (message id 
 -- Khử trùng bằng chính DB nghiệp vụ, trong MỘT transaction:
 BEGIN;
   -- Chèn dấu vết; nếu message_id đã tồn tại → xung đột → đã xử lý rồi
-  INSERT INTO processed_messages (message_id, processed_at)
-  VALUES ('msg-9f3a...', now())
-  ON CONFLICT (message_id) DO NOTHING;
+  WITH inserted AS (
+    INSERT INTO processed_messages (message_id, processed_at)
+    VALUES ('msg-9f3a...', now())
+    ON CONFLICT (message_id) DO NOTHING
+    RETURNING message_id
+  )
 
   -- Chỉ áp dụng hiệu ứng khi dòng trên thực sự chèn được (chưa từng xử lý)
   UPDATE orders SET status = 'PAID', paid_at = now()
   WHERE id = 'order-123'
-    AND EXISTS (SELECT 1 FROM processed_messages WHERE message_id = 'msg-9f3a...');
+    AND EXISTS (SELECT 1 FROM inserted);
 COMMIT;
 ```
 
-Điểm cốt lõi: **dấu vết idempotency và hiệu ứng nghiệp vụ được commit trong CÙNG một transaction**. Nhờ vậy dù message tới lần thứ hai, `INSERT ... ON CONFLICT DO NOTHING` chặn lại, `UPDATE` không chạy lại → tiền chỉ bị trừ một lần. Ack có thể gửi *sau* commit; nếu ack lạc và message quay lại, transaction lần hai là **no-op an toàn**.
+Điểm cốt lõi: **dấu vết idempotency và hiệu ứng nghiệp vụ được commit trong CÙNG một transaction**. Nhờ vậy dù message tới lần thứ hai, `INSERT ... ON CONFLICT DO NOTHING` không trả dòng nào qua `RETURNING`, nên `UPDATE` không chạy lại → hiệu ứng chỉ áp dụng một lần. Ack có thể gửi *sau* commit; nếu ack lạc và message quay lại, transaction lần hai là **no-op an toàn**.
 
 > Với thao tác *tự nhiên idempotent* (SET giá trị tuyệt đối, `PUT` một key) thì không cần bảng dedup. Chỉ thao tác *tích lũy* (cộng dồn, `INCR`, gửi email, charge tiền) mới cần khử trùng tường minh. Bài về idempotency (Chương 6) sẽ đào sâu.
 
@@ -199,7 +202,7 @@ producer.send(new ProducerRecord<>("orders",
         toJson(event)));             // value
 ```
 
-> Nếu **không đặt key** (key = null), Kafka rải message *xoay vòng* khắp partition → **không có đảm bảo thứ tự** giữa chúng. Đây là lỗi phổ biến khi "sao event cứ ra lộn xộn".
+> Nếu **không đặt key** (key = null), producer Kafka hiện đại mặc định dùng *sticky partitioning* (gom batch vào một partition rồi đổi partition), thay vì xoay vòng từng message → **không có đảm bảo thứ tự** giữa chúng. Đây là lỗi phổ biến khi "sao event cứ ra lộn xộn".
 
 ---
 
@@ -303,9 +306,9 @@ Một DLQ *đầy im lặng* là quả bom: dữ liệu đang mất mà không a
 ## 5. Tóm tắt
 - Ba semantic sinh ra từ câu hỏi **ack trước hay xử lý trước**: **at-most-once** (ack trước → có thể mất), **at-least-once** (xử lý trước → có thể trùng), **exactly-once** (= at-least-once **+ idempotent consumer**).
 - **Trùng lặp là bản chất**, không phải bug: broker không phân biệt được "chưa xử lý" với "đã xử lý nhưng ack lạc" nên **buộc gửi lại**. Consumer *phải* chịu được trùng.
-- **Redelivery** vận hành qua **visibility timeout / unacked**: chưa ack trong cửa sổ → hiện lại. Đặt timeout > thời gian xử lý p99 để tránh xử lý song song trùng.
+- **Redelivery**: SQS hiện lại khi hết visibility timeout; RabbitMQ requeue unacked khi channel/connection đóng. Heartbeat và prefetch không phải gia hạn message lease.
 - **Khử trùng** bằng **idempotency key** commit *cùng transaction* với hiệu ứng nghiệp vụ → exactly-once *effect*.
 - **Ordering** chỉ tồn tại trong *một làn*; vỡ khi có nhiều partition / consumer song song / redelivery. Giữ thứ tự *per-key* bằng **partition key** (Kafka) hoặc **MessageGroupId** (SQS FIFO) — đánh đổi với thông lượng.
 - **Poison message** gây retry vô tận → dùng **retry có backoff (+jitter)** cho lỗi *tạm thời*, và **Dead Letter Queue** (kèm `maxReceiveCount`) để cách ly lỗi *vĩnh viễn*. **Giám sát DLQ**, sửa, rồi **replay** an toàn nhờ idempotency.
 
-> **Bài tiếp theo (Bài 3):** đi sâu vào **Kafka** — log, partition, offset, consumer group — để thấy các khái niệm delivery/ordering ở bài này được hiện thực ra sao trong một broker thật.
+> **Bài tiếp theo (Bài 3):** học **Messaging patterns** — work queue, pub/sub và request-reply — để chọn topology phù hợp cho từng luồng công việc.

@@ -287,68 +287,36 @@ EB luu lai **application versions** (cac ban source bundle da upload, luu trong 
 
 Khi tao EB environment, ban co the cho EB **tao luon mot RDS instance ben trong environment**. **Tien luc dau nhung nguy hiem cho prod**:
 
-- RDS do **gan vong doi voi environment**. Khi ban **terminate environment** -> **RDS bi xoa theo** -> **mat du lieu**.
+- RDS do **gan vong doi voi environment**. Khi **terminate environment**, deletion policy quyet dinh: **Delete** xoa DB, **Snapshot** chup snapshot roi xoa DB, **Retain** giu DB hoat dong doc lap.
 - Khong chia se duoc DB giua nhieu environment (blue/green khong dung chung data).
 
 **Best practice cho production**: tao RDS **rieng** (ngoai EB), roi truyen connection string cho EB qua **environment variable** / Secrets Manager. Nho vay:
 
 | | RDS trong EB environment | RDS rieng (decoupled) |
 |---|---|---|
-| Lifecycle | Chet theo environment | Doc lap, ben vung |
+| Lifecycle | Theo deletion policy: Delete / Snapshot / Retain | Doc lap, ben vung |
 | Blue/Green | Moi env 1 DB rieng, kho | Dung chung 1 DB de |
 | Production | **Khong nen** | **Nen** |
 | Tien khoi tao | Nhanh (1 cu click) | Phai tu tao + noi day |
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 330" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>RDS coupling — RDS trong environment vs RDS riêng (decoupled)</title>
-  <desc>Bên trái: RDS tạo bên trong EB environment, chung vòng đời với environment nên terminate environment sẽ xóa luôn RDS và mất dữ liệu. Bên phải: RDS tạo riêng bên ngoài, EB nối qua biến môi trường, khi terminate environment thì RDS vẫn sống còn nguyên dữ liệu.</desc>
-  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">RDS coupling: bên trong environment vs decoupled</text>
-  <defs>
-    <marker id="rdsArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
-  </defs>
-  <text x="16" y="50" font-size="12" font-weight="700" fill="#f59e0b">RDS trong EB environment — nguy hiểm</text>
-  <rect x="16" y="60" width="320" height="150" rx="11" fill="#f59e0b" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="5 4"/>
-  <text x="30" y="80" font-size="10.5" font-weight="700" fill="currentColor">EB environment (1 vòng đời)</text>
-  <g>
-    <rect x="32" y="92" width="130" height="44" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.28"/>
-    <text x="97" y="114" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">EC2 + ELB</text>
-    <text x="97" y="128" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">app</text>
-  </g>
-  <g>
-    <rect x="190" y="92" width="130" height="44" rx="9" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.28"/>
-    <text x="255" y="114" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">RDS (bên trong)</text>
-    <text x="255" y="128" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">gắn vòng đời</text>
-  </g>
-  <line x1="162" y1="114" x2="186" y2="114" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#rdsArr)"/>
-  <rect x="32" y="160" width="288" height="38" rx="8" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/>
-  <text x="46" y="178" font-size="10.5" font-weight="700" fill="currentColor">Terminate environment</text>
-  <text x="46" y="192" font-size="9.5" fill="currentColor" opacity="0.8">-> xóa luôn RDS -> MẤT DỮ LIỆU</text>
-  <text x="384" y="50" font-size="12" font-weight="700" fill="#10b981">RDS riêng (decoupled) — production</text>
-  <rect x="384" y="60" width="200" height="100" rx="11" fill="#3b82f6" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="5 4"/>
-  <text x="398" y="80" font-size="10.5" font-weight="700" fill="currentColor">EB environment</text>
-  <g>
-    <rect x="398" y="92" width="172" height="44" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.28"/>
-    <text x="484" y="114" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">EC2 + ELB</text>
-    <text x="484" y="128" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">app</text>
-  </g>
-  <g>
-    <rect x="600" y="82" width="96" height="64" rx="10" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.32"/>
-    <text x="648" y="108" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">RDS riêng</text>
-    <text x="648" y="124" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.75">tạo bên ngoài</text>
-    <text x="648" y="138" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.75">độc lập</text>
-  </g>
-  <line x1="570" y1="114" x2="596" y2="114" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#rdsArr)"/>
-  <text x="583" y="108" font-size="8.5" text-anchor="middle" fill="currentColor" opacity="0.75">env var</text>
-  <rect x="384" y="170" width="320" height="38" rx="8" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
-  <text x="398" y="188" font-size="10.5" font-weight="700" fill="currentColor">Terminate environment</text>
-  <text x="398" y="202" font-size="9.5" fill="currentColor" opacity="0.8">-> RDS VẪN SỐNG, dữ liệu còn nguyên</text>
-  <line x1="16" y1="228" x2="704" y2="228" stroke="currentColor" stroke-opacity="0.15"/>
-  <text x="16" y="252" font-size="10.5" fill="currentColor" opacity="0.85">Best practice prod: tạo RDS riêng, nối qua biến môi trường / Secrets Manager — tách vòng đời khỏi environment.</text>
+<ab-toggle data-labels="Coupled|Decoupled">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 430" role="img" aria-labelledby="fix-eb-0-t fix-eb-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="fix-eb-0-t">RDS coupled</title><desc id="fix-eb-0-d">Vị trí RDS trong hoặc ngoài ranh giới environment quyết định lifecycle; coupled vẫn phụ thuộc deletion policy.</desc>
+<defs><marker id="fix-eb-0-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs><use href="#aws-rds" x="315" y="121" width="24" height="24"/>
+<text x="260" y="24" text-anchor="middle" font-size="15" fill="currentColor">Terminate environment: xem ranh giới lifecycle</text><rect x="20" y="55" width="480" height="200" rx="10" fill="none" stroke="currentColor" stroke-dasharray="5 4"/><text x="125" y="78" text-anchor="middle" font-size="13" fill="currentColor">EB environment</text><rect x="40" y="115" width="170" height="65" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="125.0" y="147.5" text-anchor="middle" font-size="13" fill="currentColor">EC2 + ELB</text><text x="125.0" y="167.5" text-anchor="middle" font-size="13" fill="currentColor">app</text><rect x="310" y="115" width="170" height="65" rx="8" fill="#8b5cf6" fill-opacity="0.13" stroke="#8b5cf6"/><text x="409" y="147.5" text-anchor="middle" font-size="13" fill="currentColor">RDS</text><text x="395.0" y="167.5" text-anchor="middle" font-size="13" fill="currentColor">coupled</text><path d="M210 147 H310" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#fix-eb-0-arr)"/><text x="260" y="135" text-anchor="middle" font-size="13" fill="#3b82f6">connection</text><path d="M40 215 H210" fill="none" stroke="#f43f5e" stroke-width="2" marker-end="url(#fix-eb-0-arr)"/><text x="125" y="239" text-anchor="middle" font-size="13" fill="#f43f5e">terminate</text><path d="M395 180 V305" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#fix-eb-0-arr)"/><text x="447" y="280" text-anchor="middle" font-size="13" fill="#f59e0b">deletion policy</text><text x="260" y="331" text-anchor="middle" font-size="13" fill="currentColor">Delete: xoá DB · Snapshot: chụp rồi xoá DB</text><text x="260" y="355" text-anchor="middle" font-size="13" fill="currentColor">Retain: DB vẫn hoạt động ngoài environment</text><text x="260" y="405" text-anchor="middle" font-size="13" fill="currentColor">Prod: tạo riêng hoặc decouple với policy Retain</text>
 </svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 430" role="img" aria-labelledby="fix-eb-1-t fix-eb-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="fix-eb-1-t">RDS decoupled</title><desc id="fix-eb-1-d">Vị trí RDS trong hoặc ngoài ranh giới environment quyết định lifecycle; coupled vẫn phụ thuộc deletion policy.</desc>
+<defs><marker id="fix-eb-1-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs><use href="#aws-rds" x="315" y="121" width="24" height="24"/>
+<text x="260" y="24" text-anchor="middle" font-size="15" fill="currentColor">Terminate environment: xem ranh giới lifecycle</text><rect x="20" y="55" width="210" height="200" rx="10" fill="none" stroke="currentColor" stroke-dasharray="5 4"/><text x="125" y="78" text-anchor="middle" font-size="13" fill="currentColor">EB environment</text><rect x="40" y="115" width="170" height="65" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="125.0" y="147.5" text-anchor="middle" font-size="13" fill="currentColor">EC2 + ELB</text><text x="125.0" y="167.5" text-anchor="middle" font-size="13" fill="currentColor">app</text><rect x="310" y="115" width="170" height="65" rx="8" fill="#8b5cf6" fill-opacity="0.13" stroke="#8b5cf6"/><text x="409" y="147.5" text-anchor="middle" font-size="13" fill="currentColor">RDS</text><text x="395.0" y="167.5" text-anchor="middle" font-size="13" fill="currentColor">độc lập</text><path d="M210 147 H310" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#fix-eb-1-arr)"/><text x="260" y="135" text-anchor="middle" font-size="13" fill="#3b82f6">connection</text><path d="M40 215 H210" fill="none" stroke="#f43f5e" stroke-width="2" marker-end="url(#fix-eb-1-arr)"/><text x="125" y="239" text-anchor="middle" font-size="13" fill="#f43f5e">terminate</text><path d="M395 180 V305" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#fix-eb-1-arr)"/><rect x="310" y="305" width="170" height="65" rx="8" fill="#10b981" fill-opacity="0.13" stroke="#10b981"/><text x="395.0" y="337.5" text-anchor="middle" font-size="13" fill="currentColor">RDS còn chạy</text><text x="395.0" y="357.5" text-anchor="middle" font-size="13" fill="currentColor">data được giữ</text><text x="260" y="405" text-anchor="middle" font-size="13" fill="currentColor">Prod: tạo riêng hoặc decouple với policy Retain</text>
+</svg>
+<ab-note>DB còn coupled chịu deletion policy khi terminate; không mặc định luôn mất dữ liệu.</ab-note>
+<ab-note>DB ở ngoài boundary lifecycle vẫn chạy. Chỉ đổi connection string chưa decouple resource.</ab-note>
+</ab-toggle>
 
-Neu lo da tao RDS trong environment va muon "go" no ra ma khong mat data: bat **deletion protection**, tao snapshot, va decouple bang cach tro environment sang RDS ngoai qua env var truoc khi terminate.
+Neu da tao RDS trong environment: sao luu, dat deletion policy **Retain** va **Apply** cho luu xong, sau do chon **Decouple database** va Apply. Kiem tra DB da doc lap, cap nhat connection settings/secrets neu can truoc khi terminate. Chi doi env var khong tach lifecycle; deletion protection cung khong thay cho Retain/decouple.
 
-> Bay: Cau hoi rat hay ra — "Terminate EB environment xong mat sach database". Nguyen nhan: **RDS duoc provision ben trong environment**. Fix: **decouple RDS** (tao rieng, noi qua env var).
+> Bay: Cau hoi rat hay ra — "Terminate EB environment xong mat sach database". Nguyen nhan: **RDS con coupled va deletion policy la Delete** (Snapshot thi co ban khoi phuc). Fix: **decouple RDS** (tao rieng, noi qua env var).
 
 ## Tom tat nhanh truoc khi thi
 
@@ -360,4 +328,4 @@ Neu lo da tao RDS trong environment va muon "go" no ra ma khong mat data: bat **
 - **`.ebextensions/*.config`**: `container_commands` + `leader_only` de migrate DB mot lan.
 - **Secret** -> Secrets Manager / SSM, KHONG nhet vao env var EB.
 - **Saved Configurations** de nhan ban environment; **lifecycle policy** de don application version cu.
-- **RDS coupling**: dung de EB tao RDS trong environment cho prod -> terminate la mat data. **Decouple** ra ngoai.
+- **RDS coupling**: dung de EB tao RDS trong environment cho prod -> terminate xu ly theo deletion policy. **Decouple** ra ngoai.

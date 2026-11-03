@@ -163,7 +163,7 @@ Câu hỏi trung tâm khi thiết kế giao tiếp: **một message được x�
 Gửi một lần, **không retry**. Nếu mất thì mất. Kết quả: message được xử lý **0 hoặc 1 lần**, không bao giờ lặp. Phù hợp khi mất mát chấp nhận được và tốc độ là ưu tiên: **metrics, log, telemetry, streaming vị trí GPS** (mất một điểm không sao, có điểm mới ngay). Rẻ, đơn giản, độ trễ thấp.
 
 ### 3.2 At-least-once — "retry tới khi chắc"
-Gửi rồi **chờ ACK**; không thấy ACK thì **retry**. Đảm bảo message **không bao giờ mất** — nhưng cái giá là có thể xử lý **1 hoặc nhiều lần** (vì ACK có thể mất khiến ta retry một message đã tới). Đây là **mặc định thực dụng** của hầu hết message queue (Kafka, RabbitMQ, SQS). Bù lại, **phía consumer phải chịu được duplicate**.
+Gửi rồi **chờ ACK**; không thấy ACK thì **retry**. Message cuối cùng được giao **nếu được lưu bền, retry đủ lâu và mạng/phía nhận phục hồi** — nhưng cái giá là có thể xử lý **1 hoặc nhiều lần** (vì ACK có thể mất khiến ta retry một message đã tới). Đây là **mặc định thực dụng** của hầu hết message queue (Kafka, RabbitMQ, SQS). Bù lại, **phía consumer phải chịu được duplicate**.
 
 ### 3.3 Exactly-once — "đúng một lần" (có dấu sao)
 Mọi người muốn cái này, và nó là **nguồn hiểu lầm lớn nhất**. Sự thật kỹ thuật:
@@ -200,8 +200,8 @@ Bảng chốt để chọn:
 | Semantics | Có thể mất? | Có thể lặp? | Yêu cầu phía nhận | Dùng khi |
 |-----------|-------------|-------------|-------------------|----------|
 | **at-most-once** | Có | Không | Không cần gì | Metrics, log, telemetry chịu mất |
-| **at-least-once** | Không | Có | Chịu được duplicate | Mặc định của mọi queue nghiêm túc |
-| **exactly-once (effect)** | Không | Không (về hiệu ứng) | **Idempotent + dedup** | Thanh toán, trừ kho, tính tiền |
+| **at-least-once** | Không, nếu đủ điều kiện lưu bền/retry/phục hồi | Có | Chịu được duplicate | Mặc định của mọi queue nghiêm túc |
+| **exactly-once (effect)** | Theo điều kiện delivery ở trên | Không (về hiệu ứng) | **Idempotent + dedup** | Thanh toán, trừ kho, tính tiền |
 
 ---
 
@@ -276,6 +276,6 @@ Bài học từ sơ đồ: **client đúng khi retry** (nó buộc phải, vì k
 - Bốn **message anomalies** luôn phải giả định: **loss, duplication, reordering, arbitrary delay**. TCP chỉ che chúng *trong một connection sống* — ở tầng nghiệp vụ chúng luôn quay lại.
 - **Network partition** chia cụm thành các nhóm không liên lạc; nếu có leader thì sinh **split-brain** (hai leader, dữ liệu phân kỳ). Thuốc chữa là **quorum majority**.
 - Câu cốt lõi: **timeout không phân biệt được node chết / node chậm / reply mất** → mọi retry đều có nguy cơ **duplication** → phía nhận **buộc phải idempotent**.
-- **Delivery semantics:** at-most-once (có thể mất, không lặp), at-least-once (không mất, có thể lặp — mặc định thực dụng), exactly-once là **exactly-once *effect*** đạt được bằng **idempotency + deduplication**, không phải phép truyền một lần qua mạng.
+- **Delivery semantics:** at-most-once (có thể mất, không lặp), at-least-once (không mất khi đủ điều kiện lưu bền/retry/phục hồi, có thể lặp), exactly-once là **exactly-once *effect*** đạt được bằng **idempotency + deduplication**, không phải phép truyền một lần qua mạng.
 
 > **Bài tiếp theo (Bài 4):** đo và sắp thứ tự thời gian trong hệ phân tán — vì sao **physical clock** không đáng tin, và **logical clock / vector clock** cho ta khái niệm "xảy ra trước" (happens-before) chặt chẽ để lý luận về nhân quả.

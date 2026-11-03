@@ -62,31 +62,48 @@ def get_user(uid):
 <defs><marker id="se" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
 </svg>
 
-**Fix 1 — Single-flight / mutex lock:** chỉ cho **một** request được phép recompute, những request khác chờ hoặc trả giá trị cũ. Dùng `SET NX` làm lock phân tán:
+**Fix 1 — Single-flight / mutex lock:** trong thời hạn lease, chỉ cho **một** request được phép recompute, những request khác chờ hoặc trả giá trị cũ. Dùng `SET NX` làm lease, token riêng và compare-and-delete; caller thua chờ có giới hạn, không fallback hàng loạt xuống DB. Ví dụ dùng Redis đơn; nếu Cluster thì lock/data key phải cùng hash slot để chạy Lua. DB timeout phải ngắn hơn lease hoặc cần gia hạn có kiểm token:
 
 ```python
-import time
+import time, uuid
 
-def get_with_lock(uid):
-    key = f"user:{uid}"
-    val = redis.get(key)
-    if val is not None:
-        return deserialize(val)
+UNLOCK = """
+if redis.call('GET', KEYS[1]) == ARGV[1] then
+    return redis.call('DEL', KEYS[1])
+end
+return 0
+"""
+# Chỉ publish nếu lease vẫn thuộc caller; SET + kiểm token là nguyên tử.
+PUBLISH_IF_OWNER = """
+if redis.call('GET', KEYS[1]) == ARGV[1] then
+    redis.call('SET', KEYS[2], ARGV[2], 'EX', ARGV[3])
+    return 1
+end
+return 0
+"""
 
-    lock_key = f"lock:{key}"
-    # chỉ 1 request giành được lock (NX = set nếu chưa tồn tại), TTL 5s chống deadlock
-    if redis.set(lock_key, "1", nx=True, ex=5):
-        try:
-            row = db.query_user(uid)               # duy nhất request này chạm DB
-            redis.set(key, serialize(row), ex=3600)
-            return row
-        finally:
-            redis.delete(lock_key)
-    else:
-        # thua lock: chờ ngắn rồi đọc lại cache (đã được request thắng ghi)
-        time.sleep(0.05)
+def get_with_lock(uid, wait_s=0.5):
+    key, lock_key = f"user:{uid}", f"lock:user:{uid}"
+    deadline = time.monotonic() + wait_s
+    while time.monotonic() < deadline:
         val = redis.get(key)
-        return deserialize(val) if val else db.query_user(uid)  # fallback an toàn
+        if val is not None:
+            return deserialize(val)
+        token = uuid.uuid4().hex
+        if redis.set(lock_key, token, nx=True, ex=5):
+            try:
+                val = redis.get(key)  # caller trước có thể vừa nạp xong
+                if val is not None:
+                    return deserialize(val)
+                row = db.query_user(uid)
+                if redis.eval(PUBLISH_IF_OWNER, 2, lock_key, key,
+                              token, serialize(row), 3600):
+                    return row
+                # Lease hết: không ghi đè cache của owner mới.
+            finally:
+                redis.eval(UNLOCK, 1, lock_key, token)
+        time.sleep(min(0.05, max(0, deadline - time.monotonic())))
+    raise TimeoutError("cache rebuild đang bận; retry với backoff")
 ```
 
 Trong Go, thư viện `golang.org/x/sync/singleflight` làm việc này ở **mức process** cực gọn — nhiều goroutine cùng gọi 1 key thì chỉ 1 lần thực thi thật, các caller khác share kết quả:
@@ -104,7 +121,7 @@ func GetUser(uid string) (*User, error) {
 
 > **Lưu ý:** singleflight gộp trong **một process**. Với nhiều pod/instance, cần lock phân tán (Redis `SET NX`) để gộp toàn cụm — hoặc chấp nhận "mỗi pod tối đa 1 query", vốn đã giảm tải rất nhiều so với N.
 
-**Fix 2 — Logical (early) recompute:** thay vì để key **thật sự** hết hạn (khoảnh khắc trống nguy hiểm), lưu kèm một **timestamp hết hạn logic** *bên trong* value và đặt TTL vật lý **dài hơn**. Khi đọc thấy đã quá hạn logic, request **vẫn trả về data cũ** ngay lập tức và kích một tác vụ nền recompute. Cache không bao giờ thật sự trống → không có cửa sổ stampede:
+**Fix 2 — Logical (early) recompute:** thay vì để key **thật sự** hết hạn (khoảnh khắc trống nguy hiểm), lưu kèm một **timestamp hết hạn logic** *bên trong* value và đặt TTL vật lý **dài hơn**. Khi đọc thấy đã quá hạn logic, request **vẫn trả về data cũ** ngay lập tức và kích một tác vụ nền recompute. Giảm cửa sổ stampede khi còn value cũ; cold miss, eviction hay TTL vật lý hết vẫn cần single-flight và giới hạn tải:
 
 ```python
 import json, threading, time
@@ -113,26 +130,43 @@ def get_early_recompute(uid):
     key = f"user:{uid}"
     raw = redis.get(key)
     if raw is None:                       # miss thật (hiếm) -> nạp đồng bộ
-        return load_and_store(uid)
+        return load_and_store_locked(uid)
 
     obj = json.loads(raw)
     if obj["logical_exp"] > time.time():  # còn "tươi" logic -> trả ngay
         return obj["data"]
 
     # đã quá hạn logic: trả data CŨ ngay, refresh nền (chỉ 1 request giành lock)
-    if redis.set(f"lock:{key}", "1", nx=True, ex=5):
-        threading.Thread(target=load_and_store, args=(uid,)).start()
+    token = uuid.uuid4().hex
+    lock_key = f"lock:{key}"
+    if redis.set(lock_key, token, nx=True, ex=5):
+        try:
+            threading.Thread(target=load_and_store_locked,
+                             args=(uid, token), daemon=True).start()
+        except Exception:
+            redis.eval(UNLOCK, 1, lock_key, token)
+            raise
     return obj["data"]                    # các request còn lại vẫn có data, DB không bị dội
 
-def load_and_store(uid, ttl=3600):
-    key = f"user:{uid}"
-    row = db.query_user(uid)
-    payload = {"data": row, "logical_exp": time.time() + ttl}
-    redis.set(key, json.dumps(payload), ex=ttl * 2)  # TTL vật lý gấp đôi hạn logic
-    return row
+def load_and_store_locked(uid, token=None, ttl=3600):
+    key, lock_key = f"user:{uid}", f"lock:user:{uid}"
+    if token is None:
+        token = uuid.uuid4().hex
+        if not redis.set(lock_key, token, nx=True, ex=5):
+            raise TimeoutError("cache rebuild đang bận")
+    try:
+        # DB timeout < lease; nếu lease hết có thể có worker mới.
+        row = db.query_user(uid)
+        payload = {"data": row, "logical_exp": time.time() + ttl}
+        if not redis.eval(PUBLISH_IF_OWNER, 2, lock_key, key,
+                          token, json.dumps(payload), ttl * 2):
+            raise TimeoutError("lease rebuild đã hết")
+        return row
+    finally:
+        redis.eval(UNLOCK, 1, lock_key, token)
 ```
 
-**Fix 3 — Probabilistic early expiration (XFetch):** một kỹ thuật thanh lịch cho key hot: mỗi request **tự tính xác suất** tự nguyện recompute *sớm hơn* thời điểm hết hạn, xác suất tăng dần khi càng gần hạn. Nhờ đó chỉ **một vài** request lẻ tẻ recompute trước khi key chết, không bao giờ có cú dội đồng loạt:
+**Fix 3 — Probabilistic early expiration (XFetch):** một kỹ thuật thanh lịch cho key hot: mỗi request **tự tính xác suất** tự nguyện recompute *sớm hơn* thời điểm hết hạn, xác suất tăng dần khi càng gần hạn. Nhờ đó xác suất recompute được rải sớm, giảm spike; **không phải mutual exclusion**: nhiều caller vẫn có thể recompute cùng lúc, nhất là cold miss. Cần lock/single-flight hoặc rate limit nếu muốn chặn tải đồng thời:
 
 ```python
 import random, math, time
@@ -158,7 +192,7 @@ def xfetch(uid, beta=1.0):
     return row
 ```
 
-Giá trị `beta` càng lớn thì càng "hăng" recompute sớm. Đây là cách các hệ CDN/cache lớn tránh stampede mà không cần lock.
+Giá trị `beta` càng lớn thì càng "hăng" recompute sớm. Đây là cách các hệ CDN/cache lớn giảm nguy cơ stampede bằng xác suất; không bảo đảm chỉ có một worker nếu thiếu lock.
 
 ### 2.2 Cache penetration (xuyên thủng cache)
 
@@ -334,7 +368,7 @@ def update_user_double_delete(uid, data):
 
 ## 4. Tóm tắt
 - Bốn pitfall đều là câu chuyện **request dội xuống DB khi cache không đỡ được** — chỉ khác *vì sao* cache trượt.
-- **Stampede** (1 key hot hết hạn): gộp recompute bằng **single-flight/lock**, hoặc **early recompute**/**probabilistic expiry** để cache không bao giờ trống.
+- **Stampede** (1 key hot hết hạn): gộp recompute bằng **single-flight/lock**, hoặc **early recompute**/**probabilistic expiry** để giảm cửa sổ cache trống (không phải bảo đảm tuyệt đối).
 - **Penetration** (key ma): **cache null** với TTL ngắn cho case thường, **bloom filter** cho tấn công diện rộng.
 - **Avalanche** (nhiều key chết cùng lúc): **jitter TTL** để rải hạn; thêm circuit breaker + multi-level cache + HA cho case mất cả cụm.
 - **Hot key / big key** là vấn đề **phân bố**: nhân bản/local cache cho hot; chia nhỏ + UNLINK/SCAN cho big.

@@ -114,15 +114,15 @@ Vậy CAP thực chất chỉ là lựa chọn giữa **CP** và **AP**.
 | Service | Loại | Lý do |
 |---------|------|-------|
 | **DynamoDB** (default eventually consistent reads) | **AP** | Khi partition giữa các replica, vẫn nhận read/write; consistency hội tụ sau |
-| **DynamoDB** (strongly consistent reads) | Nghiêng **CP** | Phải đọc từ leader partition; nếu leader unreachable → fail |
-| **DynamoDB Global Tables** | **AP** | Multi-region active-active, last-writer-wins → có thể conflict |
-| **S3** (sau 2020) | Strong read-after-write, nhưng vẫn nghiêng **AP** trong region | Sacrifices linearizability across all operations |
+| **DynamoDB** (strongly consistent reads) | Nghiêng **CP** | Cần đọc phiên bản mới nhất; khi không thể đáp ứng bảo đảm có thể fail |
+| **DynamoDB Global Tables** | Theo mode | **MREC**: eventual + LWW; **MRSC**: strong read xuyên các region được hỗ trợ, đánh đổi latency/availability |
+| **S3** (sau 2020) | Strong cho object read/write và LIST | Không suy nhãn CAP cho toàn service từ một API; CRR vẫn bất đồng bộ |
 | **RDS Single-AZ** | Không phân tán → CAP không áp dụng trực tiếp | Một node, sập là sập |
 | **RDS Multi-AZ** | **CP** | Standby chỉ phục vụ sau failover; trong lúc failover (60-120s) → unavailable |
 | **Aurora** | **CP-leaning** | 6 copies / 3 AZ, write quorum 4/6, read quorum 3/6; ưu tiên consistency |
 | **ElastiCache Redis Cluster** | **AP** hoặc **CP** tùy config | Async replication mặc định = AP |
 | **MemoryDB** | **CP** | Synchronous Multi-AZ transaction log |
-| **Kafka / MSK** | **CP** (mặc định `acks=all`) | Producer chờ ISR ack; nếu mất quorum → reject write |
+| **Kafka / MSK** | Phụ thuộc cấu hình | `acks=all` chờ ISR; `min.insync.replicas` đặt ngưỡng chấp nhận ghi, không phải majority cố định |
 | **Cassandra / Keyspaces** | **AP** (tunable) | Quorum có thể chỉnh; mặc định ưu tiên availability |
 
 ### Quy tắc nhanh khi đi thi SAA
@@ -202,7 +202,7 @@ CAP/PACELC dẫn tới các "mức độ" consistency mà AWS hay nhắc:
 
 - **Strong consistency** — đọc ra giá trị mới nhất ngay sau write. (DynamoDB strongly consistent read, S3 read-after-write, Aurora primary read)
 - **Eventual consistency** — sau "một lúc", mọi replica hội tụ. (DynamoDB default, S3 cross-region, Route53)
-- **Read-your-writes** — bạn luôn đọc được write của chính mình, nhưng user khác có thể chưa thấy. (DynamoDB session consistency, RDS read replica với sticky session)
+- **Read-your-writes** — bạn luôn đọc được write của chính mình, nhưng user khác có thể chưa thấy. (DynamoDB strong read sau write; RDS đọc primary hoặc replica đã replay write)
 - **Monotonic reads** — đọc lần sau không "lùi" so với lần trước.
 
 Chi tiết sẽ ở bài [[foundations-02-consistency-models]].
@@ -230,10 +230,10 @@ Chi tiết sẽ ở bài [[foundations-02-consistency-models]].
 
 ## 7. Cạm bẫy đề thi (SAA)
 
-1. "Multi-Region active-active với strong consistency" — **không tồn tại** trên DynamoDB Global Tables. Đáp án thường là *eventual* + conflict resolution.
+1. "Multi-Region active-active với strong consistency" — Global Tables **MRSC** hỗ trợ; **MREC** mới là eventual + LWW. Phải đọc đúng mode và các region/tính năng hỗ trợ.
 2. "Aurora Global Database cho write từ region phụ" — không, **chỉ region chính write**, region phụ read-only (trừ Aurora Global Write Forwarding, nhưng latency cao). Đó là lựa chọn CP.
 3. "S3 strong read-after-write" — đúng cho **PUT/GET cùng key**, nhưng **không** đảm bảo cross-region.
-4. "RDS Multi-AZ có tăng read throughput không?" — **Không**. Standby không phục vụ read. Muốn scale read → Read Replica (eventually consistent).
+4. "RDS Multi-AZ có tăng read throughput không?" — **Không với Multi-AZ DB instance**: standby không phục vụ read. Multi-AZ DB cluster có hai reader. Muốn scale read → Read Replica (eventually consistent).
 
 ---
 
@@ -249,7 +249,7 @@ Chi tiết sẽ ở bài [[foundations-02-consistency-models]].
 2. Tại sao DynamoDB strongly consistent read **tốn gấp đôi RCU** so với eventually consistent?
 3. Aurora có 6 copies. Vì sao write quorum là 4/6 chứ không phải 6/6?
 4. Một hệ thống claim "CA, không P" — đánh giá claim này.
-5. Vì sao Kafka mặc định `acks=all` được xếp vào CP, dù producer vẫn có thể retry?
+5. Với Kafka `acks=all`, `min.insync.replicas=2`, RF=3, khi nào ghi bị từ chối? Vì sao ISR không phải majority cố định?
 
 (Đáp án ở 01-cap-theorem-answers — sẽ viết sau.)
 

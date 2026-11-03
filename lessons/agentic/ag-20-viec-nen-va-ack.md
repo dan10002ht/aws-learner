@@ -78,7 +78,7 @@ Bảng dưới đứng sau phần giải thích vì nó chỉ là tổng kết. 
 |---|---|---|---|
 | Đã nhận? | "đã gửi" không lỗi | gửi phím không có mã trả về | thấy **nguyên văn** message ở vùng hội thoại (không phải ô nhập) + spinner đang chạy |
 | Còn chạy? | tên cửa sổ, `pgrep -x` | tên đổi không có nghĩa TUI còn sống; `pgrep` khớp trùng tên | CPU > 0 **và** working tree có thay đổi so với baseline |
-| Đã kết thúc? | file report **xuất hiện** | report vòng trước vẫn còn | report mang **nonce của vòng này**, hoặc sự kiện kết thúc lượt của công cụ (mục 3.3) |
+| Đã kết thúc? | file report **xuất hiện** | report vòng trước vẫn còn | report hoàn chỉnh publish nguyên tử mang **nonce của vòng này**, hoặc sự kiện kết thúc lượt của công cụ (mục 3.3) |
 | Đúng không? | report tự viết, `exit 0` | agent có thể báo lại việc cũ như vừa làm | đếm lại ở nguồn chuẩn, `git diff`, gate có thể đỏ |
 
 Luật này có chiều ngược, và chiều ngược cũng đã gây sai: **đừng kết luận agent bịa chỉ vì mtime cũ**. Trong một case thực tế, grep ra 0 kết quả cộng mtime file cũ hơn lúc giao việc đã dẫn tới kết luận "agent báo cáo việc nó không làm", trong khi lane vẫn đang chạy dở và kết luận đó phải rút lại. Câu hỏi đúng vẫn là "đã kết thúc lượt chưa", không phải "file đã đổi chưa".
@@ -173,12 +173,12 @@ Hệ quả thực tế: **gõ phím vào TUI là kênh nghèo nhất**. Nếu vi
 
 ### 3.4 Nonce: ack mang theo nội dung
 
-**Nonce** là một giá trị dùng đúng một lần, ở đây là một mã vòng như `r-1791954336-97061`. Đặt nó vào dòng đầu brief, và yêu cầu worker chép lại vào dòng đầu report.
+**Nonce** là một giá trị dùng đúng một lần, ở đây là một mã vòng như `r-1791954336-97061`. Đặt nó vào dòng đầu brief, và yêu cầu worker chép lại vào dòng đầu report. **Quy ước publish bắt buộc:** worker ghi toàn bộ report vào file tạm cùng thư mục, đóng file rồi rename nguyên tử sang đường dẫn report cuối. Không ghi dần vào đường dẫn cuối. Khi đó nonce đúng ở file cuối mới là tín hiệu hoàn tất report; nonce riêng lẻ chỉ xác nhận vòng, không chứng minh việc đã xong hay verdict PASS.
 
 Vì sao nonce mạnh hơn mtime:
 
 - Report cũ **không thể** mang nonce mới, nên lỗi "đọc report vòng 1 tưởng vòng 2" bị chặn bằng cấu trúc, không bằng sự chú ý.
-- Report mang đúng nonce chứng minh luôn câu hỏi 1 (worker đã đọc **đúng** brief này). Một worker nhận nửa câu thì không có nonce để chép.
+- Report hoàn chỉnh được publish nguyên tử mang đúng nonce cho thấy câu hỏi 1 (worker đã đọc **đúng** brief này). Một worker nhận nửa câu thì không có nonce để chép.
 - Không phụ thuộc độ phân giải đồng hồ hay việc chụp baseline đúng lúc.
 
 ```bash
@@ -191,7 +191,7 @@ done
 echo "UNKNOWN (hết ${limit}s, report chưa mang nonce $nonce)"; exit 3
 ```
 
-Đã chạy thử: report cũ mang `round: r-old`, worker giả ghi nonce mới sau 2 giây → `DONE (r-1791954336-97061)`, exit 0; hỏi một nonce không tồn tại → `UNKNOWN`, exit 3 sau đúng 2 giây.
+Đã chạy thử: report cũ mang `round: r-old`, worker giả publish report hoàn chỉnh mang nonce mới sau 2 giây → `DONE (r-1791954336-97061)`, exit 0; hỏi một nonce không tồn tại → `UNKNOWN`, exit 3 sau đúng 2 giây.
 
 Chi phí của vòng chờ này, tính thử. Số giây mỗi lần kiểm là giả định minh hoạ, không phải số đo:
 
@@ -208,7 +208,7 @@ So với việc bắt main agent "nhìn màn hình pane" mỗi lần kiểm: m�
 <step-flow>
 <svg viewBox="0 0 520 415" role="img" aria-labelledby="ag20v-t ag20v-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
 <title id="ag20v-t">Nonce nối brief với report của đúng vòng</title>
-<desc id="ag20v-d">Ba lifeline cố định. Brief đi tới worker, worker ghi report, coordinator đọc lại và so nonce.</desc>
+<desc id="ag20v-d">Ba lifeline cố định. Brief đi tới worker, worker publish report hoàn chỉnh bằng rename nguyên tử, coordinator đọc lại và so nonce.</desc>
 <rect x="10" y="15" width="120" height="40" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
 <text x="70" y="41" text-anchor="middle" font-size="14" fill="currentColor">Coordinator</text>
 <path d="M70 55 L70 330" fill="none" stroke="currentColor" stroke-dasharray="4 4" stroke-opacity="0.4"/>
@@ -224,7 +224,7 @@ So với việc bắt main agent "nhìn màn hình pane" mỗi lần kiểm: m�
 <path d="M70 100 L260 100" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#ag20v-arrow)"/>
 </g>
 <g data-step="2">
-<text x="355.0" y="163" text-anchor="middle" font-size="13" fill="currentColor">Ghi round: r-new</text>
+<text x="355.0" y="163" text-anchor="middle" font-size="13" fill="currentColor">Publish: r-new</text>
 <path d="M260 175 L450 175" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#ag20v-arrow)"/>
 </g>
 <g data-step="3">
@@ -239,7 +239,7 @@ So với việc bắt main agent "nhìn màn hình pane" mỗi lần kiểm: m�
 </g>
 </svg>
 <step-note data-step="1">Mỗi vòng sinh mã mới để report còn sót từ vòng trước không được nhận nhầm.</step-note>
-<step-note data-step="2">Worker phải đọc đúng brief mới có mã để chép lại; chỉ thấy tiến trình kết thúc chưa đủ.</step-note>
+<step-note data-step="2">Worker ghi report hoàn chỉnh vào file tạm rồi rename nguyên tử sang file cuối; nonce riêng lẻ không chứng minh hoàn tất.</step-note>
 <step-note data-step="3">Script đọc nội dung report, thay vì suy ra hoàn thành từ thời gian sửa file.</step-note>
 <step-note data-step="4">Chỉ mã khớp mới được nhận. Hết deadline mà vẫn lệch hoặc thiếu report thì trả UNKNOWN.</step-note>
 </step-flow>
@@ -405,7 +405,7 @@ cat > worker-gia.sh <<'EOF'
 brief=$1; report=$2
 nonce=$(sed -n 's/^round: //p' "$brief" | head -n1)
 case ${MODE:-ok} in
-  ok)   sleep 3; printf 'round: %s\nverdict: PASS\n' "$nonce" > "$report" ;;
+  ok)   sleep 3; printf 'round: %s\nverdict: PASS\n' "$nonce" > "$report.tmp" && mv "$report.tmp" "$report" ;;
   treo) sleep 3600 ;;                       # sống nhưng không làm gì
   chet) sleep 1; exit 7 ;;                  # chết giữa chừng, không viết report
 esac
@@ -510,7 +510,7 @@ Lane làm một nửa yêu cầu, hoặc không làm gì mà vẫn trông bận.
 
 ### Vòng chờ chỉ có một lối ra là "thành công"
 
-Main agent hoặc script "đang chờ" hàng chục phút cho một việc chưa từng bắt đầu. Hoặc chờ được, nhưng report nói PASS mà không nhắc gì tới lỗi vừa giao: "file tồn tại" không phân biệt được vòng, và report cũ vẫn còn đó. Mọi vòng chờ cần ba lối ra `DONE` / `DEAD` / `UNKNOWN` với exit code riêng, và chỉ chấp nhận report có đúng nonce ở dòng đầu (mục 3.4), nên không cần nhớ xoá report cũ. Claude Code tự áp deadline cho lệnh nền trong phiên không người trông và cho Monitor (mục 3.3); script của bạn cũng phải có.
+Main agent hoặc script "đang chờ" hàng chục phút cho một việc chưa từng bắt đầu. Hoặc chờ được, nhưng report nói PASS mà không nhắc gì tới lỗi vừa giao: "file tồn tại" không phân biệt được vòng, và report cũ vẫn còn đó. Mọi vòng chờ cần ba lối ra `DONE` / `DEAD` / `UNKNOWN` với exit code riêng, và chỉ chấp nhận report hoàn chỉnh được publish nguyên tử, có đúng nonce ở dòng đầu (mục 3.4), nên không cần nhớ xoá report cũ. Claude Code tự áp deadline cho lệnh nền trong phiên không người trông và cho Monitor (mục 3.3); script của bạn cũng phải có.
 
 ### Chạy lại lệnh ghi sau timeout
 

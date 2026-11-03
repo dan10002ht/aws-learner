@@ -361,14 +361,14 @@ Quy tắc: **luôn ghi block trước, commit metadata sau**. Metadata commit ch
 
 ```
 1. Client cắt block, hash, hỏi missing_blocks
-2. Client PUT block còn thiếu lên object store        ← chưa ai thấy gì
-3. Client POST metadata → row status = 'pending'      ← vẫn chưa ai thấy
-4. Server xác minh mọi block trong block_list tồn tại (HEAD, hoặc event từ S3)
+2. Client POST metadata → row status = 'pending', nhận missing_blocks ← vẫn chưa ai thấy
+3. Client PUT block còn thiếu lên object store        ← chưa ai thấy gì
+4. Client POST commit; server xác minh mọi block trong block_list tồn tại (HEAD, hoặc event từ S3)
 5. status = 'uploaded'                                ← ĐIỂM COMMIT
 6. Publish change event → notification service
 ```
 
-Chỉ file `uploaded` mới xuất hiện trong `GET /files` và mới sinh notification; `pending` quá 24 giờ bị dọn. Đây là **two-phase commit phiên bản nghèo**, đủ đúng vì bước 4 kiểm chứng lại được — block bất biến nên kiểm tra tồn tại là idempotent.
+Chỉ file `uploaded` mới xuất hiện trong `GET /files` và mới sinh notification; `pending` quá 24 giờ bị dọn. Đây là **quy trình prepare/upload rồi commit ứng dụng**, không phải giao thức 2PC; bước 4 kiểm chứng lại được — block bất biến nên kiểm tra tồn tại là idempotent.
 
 ---
 
@@ -393,6 +393,25 @@ Chỉ file `uploaded` mới xuất hiện trong `GET /files` và mới sinh noti
      │                    │              ├──── 4 MB ──────────────────▶│
 (10) │                    │              │             │  ghép block, ghi local
 ```
+
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 690" role="img" aria-labelledby="fixsd20-sync-t fixsd20-sync-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="fixsd20-sync-t">Từ Ctrl-S tới thiết bị khác</title>
+<desc id="fixsd20-sync-d">Năm lifeline cố định; pending trước upload, commit sau xác minh. Chỉ file uploaded phát notification.</desc>
+<defs><marker id="fixsd20-sync-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="currentColor"/></marker></defs>
+<rect x="7" y="12" width="106" height="38" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="60.0" y="36.0" font-size="13" text-anchor="middle" fill="currentColor">Client A</text><path d="M60 50 V670" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/><rect x="167" y="12" width="106" height="38" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="220.0" y="36.0" font-size="13" text-anchor="middle" fill="currentColor">API</text><path d="M220 50 V670" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/><rect x="337" y="12" width="106" height="38" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="390.0" y="36.0" font-size="13" text-anchor="middle" fill="currentColor">Object store</text><path d="M390 50 V670" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/><rect x="487" y="12" width="106" height="38" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="540.0" y="36.0" font-size="13" text-anchor="middle" fill="currentColor">Notify</text><path d="M540 50 V670" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/><rect x="637" y="12" width="106" height="38" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="690.0" y="36.0" font-size="13" text-anchor="middle" fill="currentColor">Client B</text><path d="M690 50 V670" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/><g data-step="1"><text x="60" y="70" font-size="13" text-anchor="middle" fill="currentColor">1. FS watcher</text><circle cx="60" cy="80" r="5" fill="#10b981"/></g><g data-step="2"><text x="60" y="128" font-size="13" text-anchor="middle" fill="currentColor">2. cắt + hash</text><circle cx="60" cy="138" r="5" fill="#10b981"/></g><g data-step="3"><text x="140.0" y="186" font-size="13" text-anchor="middle" fill="currentColor">3. POST /files → pending</text><path d="M60 196 H220" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#fixsd20-sync-a)"/><path d="M220 218 H60" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#fixsd20-sync-a)"/><text x="140" y="214" font-size="13" text-anchor="middle" fill="currentColor">missing_blocks</text></g><g data-step="4"><text x="225.0" y="244" font-size="13" text-anchor="middle" fill="currentColor">4. PUT block còn thiếu</text><path d="M60 254 H390" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#fixsd20-sync-a)"/></g><g data-step="5"><text x="140.0" y="302" font-size="13" text-anchor="middle" fill="currentColor">5. POST commit + HEAD</text><path d="M60 312 H220" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#fixsd20-sync-a)"/><path d="M220 334 H390" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#fixsd20-sync-a)"/><text x="305" y="330" font-size="13" text-anchor="middle" fill="currentColor">HEAD → uploaded</text></g><g data-step="6"><text x="380.0" y="360" font-size="13" text-anchor="middle" fill="currentColor">6. publish change</text><path d="M220 370 H540" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#fixsd20-sync-a)"/></g><g data-step="7"><text x="615.0" y="418" font-size="13" text-anchor="middle" fill="currentColor">7. trả long-poll</text><path d="M540 428 H690" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#fixsd20-sync-a)"/></g><g data-step="8"><text x="455.0" y="476" font-size="13" text-anchor="middle" fill="currentColor">8. GET delta metadata</text><path d="M690 486 H220" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#fixsd20-sync-a)"/><path d="M220 508 H690" fill="none" stroke="currentColor" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#fixsd20-sync-a)"/><text x="455" y="504" font-size="13" text-anchor="middle" fill="currentColor">delta metadata</text></g><g data-step="9"><text x="540.0" y="534" font-size="13" text-anchor="middle" fill="currentColor">9. GET block qua CDN</text><path d="M690 544 H390" fill="none" stroke="currentColor" stroke-width="1.6" marker-end="url(#fixsd20-sync-a)"/></g><g data-step="10"><text x="690" y="592" font-size="13" text-anchor="middle" fill="currentColor">10. ghép + ghi local</text><circle cx="690" cy="602" r="5" fill="#10b981"/></g>
+</svg>
+<step-note data-step="1">Watcher nhận thay đổi file.</step-note>
+<step-note data-step="2">Client cắt block và tính hash.</step-note>
+<step-note data-step="3">API tạo pending và trả missing_blocks; file chưa hiển thị.</step-note>
+<step-note data-step="4">Upload block còn thiếu trực tiếp tới object store; có thể nén và mã hoá.</step-note>
+<step-note data-step="5">POST commit: API HEAD xác minh block, chuyển v42 uploaded và trả 200.</step-note>
+<step-note data-step="6">Chỉ sau commit mới publish namespace/file/version.</step-note>
+<step-note data-step="7">Notify trả long-poll; tín hiệu có thể lặp hoặc mất.</step-note>
+<step-note data-step="8">Client B kéo delta theo since_cursor và nhận metadata.</step-note>
+<step-note data-step="9">Client B GET block bất biến qua CDN.</step-note>
+<step-note data-step="10">Client B ghép block và ghi file local.</step-note>
+</step-flow>
 
 **Notification chỉ mang tín hiệu, không mang dữ liệu.** Payload là *"namespace N có thay đổi, cursor mới là X"* — vài chục byte. Client nhận xong mới **chủ động kéo** metadata (bước 8). Vì sao không nhét luôn nội dung vào notification? Vì (a) phải fan-out cùng payload tới hàng triệu kết nối, tốn băng thông vô ích; (b) notification có thể **mất hoặc lặp** — mà một tín hiệu "có gì đó đổi" thì mất-lặp đều vô hại, cứ pull là ra đúng trạng thái. Nếu nó mang dữ liệu thì mất một cái = mất một thay đổi vĩnh viễn. **Tín hiệu thì idempotent; dữ liệu thì không.**
 

@@ -166,7 +166,7 @@ Giải nghĩa: `HEAD` là "vị trí hiện tại" (commit mới nhất bạn đ
 
 ### Tình huống
 
-Bạn đang sửa dở tính năng A (code còn ngổn ngang, chưa muốn commit) thì sếp nhắn: "Sửa gấp lỗi B trên nhánh khác!". Git không cho chuyển nhánh khi bàn làm việc bừa bộn. Làm sao?
+Bạn đang sửa dở tính năng A (code còn ngổn ngang, chưa muốn commit) thì sếp nhắn: "Sửa gấp lỗi B trên nhánh khác!". Git từ chối chuyển nhánh nếu thao tác đó sẽ ghi đè thay đổi chưa commit (hoặc file untracked) của bạn; nếu không đụng các thay đổi ấy thì vẫn chuyển được. Làm sao?
 
 `stash` nghĩa là "giấu/cất tạm". Hãy tưởng tượng nó là **ngăn kéo bí mật**: bạn quét hết đồ trên bàn vào ngăn kéo, bàn sạch sẽ để làm việc khác, xong quay lại mở ngăn kéo lấy đồ ra bày tiếp.
 

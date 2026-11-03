@@ -523,9 +523,9 @@ p = 1%   → 9,6 bit/phần tử → 12 GB, k = 7
 p = 0,1% → 14,4 bit        → 18 GB, k = 10
 ```
 
-Bloom filter **không bao giờ âm tính giả** — nói "chưa thấy" thì chắc chắn chưa. Nó chỉ sai một chiều, và trong crawler hệ quả là **một URL chưa từng crawl bị bỏ qua vĩnh viễn**: **mất độ phủ**, không phải mất tính đúng đắn. Với `p = 1%` trên 10 tỉ URL là ~100 triệu URL bị sót — nghe to nhưng nhẹ hơn vẻ ngoài, vì phần lớn URL trên web là rác (phân trang, tham số sắp xếp, calendar) và một trang có giá trị hầu như luôn được nhiều trang khác trỏ tới nên thường vào được qua một biến thể URL khác. Không chấp nhận được thì hạ `p` xuống 0,1%, chỉ tốn thêm 6 GB.
+Bloom filter chuẩn, không xoá bit và được cập nhật đầy đủ **không có âm tính giả**. Dương tính chỉ nghĩa là “có lẽ đã thấy”: nếu bỏ URL ngay thì có thể mất độ phủ. `p = 1%` là xác suất dương tính giả khi tra URL **chưa có**, không phải 1% của 10 tỉ URL đã thêm; số URL mới bị bỏ phụ thuộc lượng truy vấn và trạng thái filter.
 
-Quan trọng hơn: nếu chọn cấu trúc có thể **âm tính giả**, hậu quả là **crawl lại vô hạn** — vòng lặp chết. Hướng sai của Bloom filter đúng là hướng bài toán này chịu được. *Đó* mới là lý do nó phù hợp, không phải vì "tiết kiệm bộ nhớ".
+Trong thiết kế này, kết quả dương tính được **xác nhận bằng URL storage (§7.3)** trước khi bỏ; âm tính đi vào thao tác check-and-add nguyên tử. Vì vậy dương tính giả chỉ tốn thêm lookup, không làm mất URL. Nếu bỏ bước xác nhận để giảm I/O thì phải chấp nhận mất độ phủ. Âm tính giả trong cấu trúc khác có thể gây crawl lặp, nhưng mức độ còn phụ thuộc frontier, lịch và giới hạn vòng lặp.
 
 > **Bẫy 1 — không xoá được.** Bloom filter chuẩn không hỗ trợ xoá (xoá một bit phá các phần tử dùng chung bit đó). Nhưng crawler *cần* crawl lại URL cũ. Nghĩa là nó chỉ trả lời "có nên đưa vào frontier lần đầu không"; **lịch recrawl phải nằm ở cấu trúc khác** (bảng URL storage có `last_crawled_at`). Ai gộp hai vai trò này sẽ không bao giờ crawl lại được gì. Cần xoá thật thì dùng **Counting Bloom filter** (counter 4 bit, tốn gấp 4) hoặc **Cuckoo filter**.
 
@@ -537,7 +537,7 @@ Quan trọng hơn: nếu chọn cấu trúc có thể **âm tính giả**, hậu
 
 ### 7.3 URL storage — vẫn cần một bảng thật
 
-Bloom filter là bộ lọc, không phải cơ sở dữ liệu. Song song phải có bảng bền vững `url_hash → {url, host, first_seen, last_crawled_at, last_status, content_hash, etag, next_recrawl_at, priority, error_count}`, phục vụ ba việc Bloom filter không làm được: **lập lịch recrawl**, **xác nhận lại dương tính giả**, và **dựng lại Bloom filter** sau sự cố hoặc khi đổi kích thước. Nó nằm ngoài đường đi nóng nên có thể là kho trên đĩa rẻ tiền.
+Bloom filter là bộ lọc, không phải cơ sở dữ liệu. Song song phải có bảng bền vững `url_hash → {url, host, first_seen, last_crawled_at, last_status, content_hash, etag, next_recrawl_at, priority, error_count}`, phục vụ ba việc Bloom filter không làm được: **lập lịch recrawl**, **xác nhận lại dương tính giả**, và **dựng lại Bloom filter** sau sự cố hoặc khi đổi kích thước. Bảng có thể nằm trên đĩa, nhưng lookup xác nhận dương tính thuộc đường URL-seen; cần cache/batch và tính ngân sách I/O.
 
 ---
 

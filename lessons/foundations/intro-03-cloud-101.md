@@ -26,7 +26,7 @@ Vấn đề cốt lõi: **tài nguyên tính toán bị mua theo kiểu "tài s�
 
 ### Cloud ra đời từ nhu cầu gì?
 
-Các công ty khổng lồ (Amazon là điển hình) xây hạ tầng cực lớn để phục vụ mùa cao điểm (Black Friday), nhưng phần lớn thời gian trong năm máy móc... ngồi chơi. Họ nảy ra ý tưởng: **cho người khác thuê phần dư đó, tính tiền theo giờ**. Năm 2006, Amazon Web Services ra mắt — và mô hình "thuê tài nguyên qua Internet, trả theo mức dùng" trở thành **cloud computing**.
+Amazon phát triển kinh nghiệm vận hành hạ tầng lớn và cung cấp năng lực đó qua dịch vụ theo nhu cầu. Năm 2006, AWS ra mắt S3 rồi EC2, giúp người dùng thuê storage/compute qua API và trả theo mức dùng. Không nên giải thích lịch sử AWS chỉ bằng việc bán capacity dư mùa thấp điểm.
 
 > Ghi nhớ: Cloud computing = **thuê tài nguyên tính toán (máy chủ, lưu trữ, mạng, phần mềm) qua Internet, theo nhu cầu (on-demand), trả tiền theo mức sử dụng (pay-as-you-go)** — thay vì mua và tự vận hành phần cứng.
 
@@ -258,7 +258,7 @@ Hai thuật ngữ tài chính bạn sẽ gặp trong mọi tài liệu cloud:
 Cloud chuyển chi phí hạ tầng từ **CapEx sang OpEx**: không cần vốn lớn ban đầu, startup 2 người cũng có hạ tầng ngang tập đoàn — chỉ trả vài đô la khi còn ít người dùng. Đi kèm là các lợi ích kinh tế khác:
 
 - **Economies of scale**: nhà cung cấp mua phần cứng số lượng khổng lồ → giá rẻ hơn bạn tự mua.
-- **Không trả tiền cho công suất nhàn rỗi**: tắt máy là ngừng tính tiền (với hầu hết dịch vụ).
+- **Giảm tiền compute nhàn rỗi**: dừng instance có thể ngừng phí compute theo cơ chế dịch vụ; storage, snapshot, IP và tài nguyên giữ lại hoặc cam kết mua vẫn có thể tính phí.
 - **Thử nghiệm rẻ**: dựng môi trường test trong 10 phút, xóa sau 1 giờ, tốn vài nghìn đồng.
 
 > Ghi nhớ: Pay-as-you-go biến hạ tầng từ **tài sản phải mua** thành **dịch vụ tiện ích như điện, nước** — dùng bao nhiêu trả bấy nhiêu.

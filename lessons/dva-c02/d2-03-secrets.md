@@ -92,65 +92,13 @@ Cơ chế: một Lambda rotation function chạy qua 4 bước (steps):
 | `testSecret` | Kết nối thử bằng credential mới |
 | `finishSecret` | Chuyển label `AWSCURRENT` sang version mới |
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Vòng đời rotation 4 bước của Secrets Manager và sự di chuyển staging label</title>
-  <desc>Bốn bước tuần tự: createSecret tạo password mới gắn label AWSPENDING, setSecret cập nhật database, testSecret kết nối thử bằng credential mới, finishSecret chuyển AWSCURRENT sang version mới và version cũ thành AWSPREVIOUS. Hàng dưới minh hoạ label di chuyển giữa version cũ và version mới.</desc>
-  <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Vòng đời rotation — 4 bước Lambda chạy tuần tự</text>
-  <defs>
-    <marker id="rotArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
-  </defs>
-  <g>
-    <rect x="16" y="42" width="160" height="62" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="28" y="62" font-size="12.5" font-weight="700" fill="currentColor">createSecret</text>
-    <text x="28" y="80" font-size="10.5" fill="currentColor" opacity="0.72">Tạo password mới</text>
-    <rect x="28" y="86" width="92" height="14" rx="7" fill="#f59e0b" fill-opacity="0.95"/>
-    <text x="74" y="96" font-size="9.5" font-weight="700" text-anchor="middle" fill="#fff">AWSPENDING</text>
-  </g>
-  <line x1="176" y1="73" x2="204" y2="73" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#rotArr)"/>
-  <g>
-    <rect x="206" y="42" width="160" height="62" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="218" y="62" font-size="12.5" font-weight="700" fill="currentColor">setSecret</text>
-    <text x="218" y="80" font-size="10.5" fill="currentColor" opacity="0.72">Cập nhật credential</text>
-    <text x="218" y="96" font-size="10.5" fill="currentColor" opacity="0.72">mới vào database</text>
-  </g>
-  <line x1="366" y1="73" x2="394" y2="73" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#rotArr)"/>
-  <g>
-    <rect x="396" y="42" width="160" height="62" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="408" y="62" font-size="12.5" font-weight="700" fill="currentColor">testSecret</text>
-    <text x="408" y="80" font-size="10.5" fill="currentColor" opacity="0.72">Kết nối thử bằng</text>
-    <text x="408" y="96" font-size="10.5" fill="currentColor" opacity="0.72">credential mới</text>
-  </g>
-  <line x1="556" y1="73" x2="584" y2="73" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#rotArr)"/>
-  <g>
-    <rect x="544" y="120" width="160" height="62" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="556" y="140" font-size="12.5" font-weight="700" fill="currentColor">finishSecret</text>
-    <text x="556" y="158" font-size="10.5" fill="currentColor" opacity="0.72">Chuyển AWSCURRENT</text>
-    <text x="556" y="174" font-size="10.5" fill="currentColor" opacity="0.72">sang version mới</text>
-  </g>
-  <path d="M624 104 v8 h0 v8" stroke="currentColor" stroke-opacity="0.5" fill="none" marker-end="url(#rotArr)"/>
-  <text x="16" y="222" font-size="12" font-weight="700" fill="currentColor">Label di chuyển khi finishSecret hoàn tất:</text>
-  <g>
-    <rect x="16" y="238" width="200" height="78" rx="9" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="28" y="260" font-size="12" font-weight="700" fill="currentColor">Version CŨ</text>
-    <rect x="28" y="270" width="100" height="16" rx="8" fill="currentColor" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="78" y="282" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.55">AWSCURRENT</text>
-    <rect x="28" y="292" width="100" height="16" rx="8" fill="#8b5cf6" fill-opacity="0.9"/>
-    <text x="78" y="304" font-size="9.5" font-weight="700" text-anchor="middle" fill="#fff">AWSPREVIOUS</text>
-  </g>
-  <line x1="216" y1="277" x2="318" y2="277" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#rotArr)"/>
-  <text x="267" y="270" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">đổi nhãn</text>
-  <g>
-    <rect x="320" y="238" width="200" height="78" rx="9" fill="#10b981" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="332" y="260" font-size="12" font-weight="700" fill="currentColor">Version MỚI</text>
-    <rect x="332" y="270" width="104" height="16" rx="8" fill="#f59e0b" fill-opacity="0.25" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="384" y="282" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.55">AWSPENDING</text>
-    <rect x="332" y="292" width="104" height="16" rx="8" fill="#10b981" fill-opacity="0.95"/>
-    <text x="384" y="304" font-size="9.5" font-weight="700" text-anchor="middle" fill="#fff">AWSCURRENT</text>
-  </g>
-  <text x="536" y="277" font-size="10.5" fill="currentColor" opacity="0.72">App đọc AWSCURRENT</text>
-  <text x="536" y="294" font-size="10.5" fill="currentColor" opacity="0.72">→ tự nhận password</text>
-  <text x="536" y="311" font-size="10.5" fill="currentColor" opacity="0.72">mới, không downtime</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 440" role="img" aria-labelledby="fix-rotation-t fix-rotation-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="fix-rotation-t">Secrets rotation: thời gian và version label</title><desc id="fix-rotation-d">Bốn thao tác theo thời gian. create tạo AWSPENDING, set đổi DB, test kiểm credential, finish chuyển AWSCURRENT và AWSPREVIOUS. Không cam kết zero downtime.</desc>
+<defs><marker id="fix-rotation-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs><use href="#aws-secrets-manager" x="10" y="30" width="24" height="24"/>
+<text x="260" y="22" text-anchor="middle" font-size="16" fill="currentColor">Rotation: thay credential rồi chuyển label</text><text x="90" y="65" text-anchor="middle" font-size="13" fill="currentColor">createSecret</text><line x1="90" y1="80" x2="90" y2="340" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="4 4"/><text x="215" y="65" text-anchor="middle" font-size="13" fill="currentColor">setSecret</text><line x1="215" y1="80" x2="215" y2="340" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="4 4"/><text x="335" y="65" text-anchor="middle" font-size="13" fill="currentColor">testSecret</text><line x1="335" y1="80" x2="335" y2="340" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="4 4"/><text x="455" y="65" text-anchor="middle" font-size="13" fill="currentColor">finishSecret</text><line x1="455" y1="80" x2="455" y2="340" stroke="currentColor" stroke-opacity="0.2" stroke-dasharray="4 4"/><path d="M45 90 H495" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#fix-rotation-arr)"/><text x="260" y="110" text-anchor="middle" font-size="13" fill="#3b82f6">thời gian →</text><text x="10" y="158" text-anchor="start" font-size="13" fill="currentColor">Cũ</text><text x="10" y="258" text-anchor="start" font-size="13" fill="currentColor">Mới</text><rect x="50" y="130" width="340" height="45" rx="8" fill="#10b981" fill-opacity="0.16"/><text x="220" y="158" text-anchor="middle" font-size="13" fill="currentColor">AWSCURRENT</text><rect x="395" y="130" width="115" height="45" rx="8" fill="#8b5cf6" fill-opacity="0.16"/><text x="452" y="158" text-anchor="middle" font-size="13" fill="currentColor">AWSPREVIOUS</text><rect x="90" y="230" width="300" height="45" rx="8" fill="#f59e0b" fill-opacity="0.16"/><text x="235" y="258" text-anchor="middle" font-size="13" fill="currentColor">AWSPENDING</text><rect x="395" y="230" width="115" height="45" rx="8" fill="#10b981" fill-opacity="0.16"/><text x="452" y="258" text-anchor="middle" font-size="13" fill="currentColor">AWSCURRENT</text><path d="M215 275 V320 H335 V275" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#fix-rotation-arr)"/><text x="275" y="352" text-anchor="middle" font-size="13" fill="#3b82f6">DB đổi → kiểm tra login</text><text x="260" y="395" text-anchor="middle" font-size="13" fill="currentColor">App phải đọc lại secret/cache và reconnect/retry</text><text x="260" y="419" text-anchor="middle" font-size="13" fill="currentColor">Single-user có cửa sổ lệch DB / AWSCURRENT</text>
 </svg>
+
+**Điều kiện tránh gián đoạn:** single-user rotation có khoảng ngắn password trong DB đã đổi nhưng `AWSCURRENT` chưa đổi, nên kết nối mới có thể lỗi xác thực. Alternating-users giữ hai bộ credential hợp lệ, phù hợp HA hơn; ứng dụng vẫn cần refresh cache secret, reconnect và retry. Đọc `AWSCURRENT` không tự bảo đảm zero downtime.
 
 ```bash
 aws secretsmanager rotate-secret \

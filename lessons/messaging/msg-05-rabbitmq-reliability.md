@@ -131,31 +131,13 @@ Requeue thẳng (`requeue=True`) có một cạm bẫy: message quay lại **nga
 
 **Dead Letter Exchange (DLX)** là exchange mà một message bị "chết" sẽ được tự động chuyển tới. Message dead-letter khi: bị `nack`/`reject` với `requeue=False`, hoặc **hết TTL**, hoặc queue đầy (max-length). Ghép DLX với TTL tạo ra **hàng đợi chờ**: message nằm trong queue chờ đúng N giây rồi tự động bật ngược về queue chính để thử lại.
 
-<svg viewBox="0 0 660 260" role="img" aria-labelledby="dlx-t dlx-d" style="width:100%;max-width:620px;height:auto;display:block;margin:1.25rem auto">
-<title id="dlx-t">Vòng retry có delay bằng DLX và TTL</title>
-<desc id="dlx-d">Message fail chuyển sang retry queue chờ hết TTL rồi dead-letter ngược về queue chính; quá số lần thì vào parking lot</desc>
-<rect x="30" y="30" width="130" height="50" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="95" y="52" text-anchor="middle" font-size="11" fill="currentColor">orders.new</text>
-<text x="95" y="68" text-anchor="middle" font-size="9" fill="currentColor">(queue chính)</text>
-<rect x="30" y="150" width="130" height="50" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="95" y="172" text-anchor="middle" font-size="11" fill="currentColor">consumer</text>
-<text x="95" y="188" text-anchor="middle" font-size="9" fill="currentColor">xử lý</text>
-<rect x="380" y="150" width="150" height="56" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="455" y="172" text-anchor="middle" font-size="11" fill="currentColor">orders.retry</text>
-<text x="455" y="188" text-anchor="middle" font-size="9" fill="currentColor">TTL=30s, DLX→orders</text>
-<text x="455" y="200" text-anchor="middle" font-size="9" fill="currentColor">(hàng đợi chờ)</text>
-<rect x="380" y="30" width="150" height="50" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="455" y="52" text-anchor="middle" font-size="11" fill="currentColor">orders.parking</text>
-<text x="455" y="68" text-anchor="middle" font-size="9" fill="currentColor">(quá số lần retry)</text>
-<line x1="95" y1="80" x2="95" y2="148" stroke="currentColor" stroke-width="1.5" marker-end="url(#da)"/>
-<line x1="160" y1="175" x2="378" y2="175" stroke="currentColor" stroke-width="1.5" marker-end="url(#da)"/>
-<text x="269" y="167" text-anchor="middle" font-size="9" fill="currentColor">nack requeue=false</text>
-<path d="M455 150 Q455 110 200 70" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#da)"/>
-<text x="300" y="104" text-anchor="middle" font-size="9" fill="currentColor">hết TTL → dead-letter về</text>
-<line x1="455" y1="150" x2="455" y2="82" stroke="currentColor" stroke-width="1.5" marker-end="url(#da)"/>
-<text x="530" y="118" text-anchor="middle" font-size="9" fill="currentColor">quá 5 lần</text>
-<defs><marker id="da" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
-</svg>
+<step-flow>
+<svg font-family="ui-sans-serif, system-ui, sans-serif" viewBox="0 0 580 345" role="img" aria-labelledby="fixmsg05-t fixmsg05-d" style="width:100%;max-width:580px;height:auto;display:block;margin:1.25rem auto"><title id="fixmsg05-t">Retry TTL và nhánh parking do consumer publish</title><desc id="fixmsg05-d">Retry TTL và nhánh parking do consumer publish</desc><defs><marker id="fixmsg05-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs><rect x="25" y="30" width="155" height="60" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="102" y="55" font-size="13" text-anchor="middle" fill="currentColor">orders.new</text><text x="102" y="75" font-size="13" text-anchor="middle" fill="currentColor">queue chính</text><rect x="25" y="210" width="155" height="60" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="102" y="235" font-size="13" text-anchor="middle" fill="currentColor">consumer</text><text x="102" y="255" font-size="13" text-anchor="middle" fill="currentColor">xử lý</text><rect x="385" y="210" width="170" height="60" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="470" y="235" font-size="13" text-anchor="middle" fill="currentColor">orders.retry</text><text x="470" y="255" font-size="13" text-anchor="middle" fill="currentColor">TTL = 30s</text><rect x="385" y="30" width="170" height="60" rx="5" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/><text x="470" y="55" font-size="13" text-anchor="middle" fill="currentColor">orders.parking</text><text x="470" y="75" font-size="13" text-anchor="middle" fill="currentColor">lần 5 vẫn fail</text><g data-step="1"><path d="M102 90 L102 210" stroke="currentColor" fill="none" stroke-width="2" marker-end="url(#fixmsg05-a)"/><text x="140" y="153" font-size="13" text-anchor="start" fill="currentColor">deliver</text></g><g data-step="2"><path d="M180 240 L385 240" stroke="currentColor" fill="none" stroke-width="2" marker-end="url(#fixmsg05-a)"/><text x="283" y="215" font-size="13" text-anchor="middle" fill="currentColor">fail: attempt &lt; 5</text><text x="283" y="267" font-size="13" text-anchor="middle" fill="currentColor">nack → orders.dlx</text></g><g data-step="3"><path d="M555 240 H570 V10 H205 V60 H180" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#fixmsg05-a)"/><text x="295" y="28" font-size="13" text-anchor="middle" fill="currentColor">TTL → DLX orders/new</text></g><g data-step="4"><path d="M180 210 L385 90" stroke="currentColor" fill="none" stroke-width="2" marker-end="url(#fixmsg05-a)"/><text x="300" y="180" font-size="13" text-anchor="middle" fill="currentColor">attempt = 5: publish</text><path d="M50 210 L50 90" stroke="currentColor" fill="none" stroke-width="2" marker-end="url(#fixmsg05-a)"/><text x="58" y="145" font-size="13" text-anchor="start" fill="currentColor">ack</text><text x="290" y="298" font-size="13" text-anchor="middle" fill="currentColor">Ack gốc chỉ sau publisher confirm từ parking</text></g><text x="290" y="323" font-size="13" text-anchor="middle" fill="currentColor">attempt = rejected count tại orders.new + 1</text></svg>
+<step-note data-step="1">Consumer nhận message từ queue chính; hiệu ứng nghiệp vụ phải chịu được redelivery.</step-note>
+<step-note data-step="2">Trước ngưỡng, nack không requeue để DLX định tuyến sang retry queue. Không cộng count expired của retry queue vào số lần xử lý.</step-note>
+<step-note data-step="3">Retry queue giữ message 30s rồi dead-letter về exchange orders với key new.</step-note>
+<step-note data-step="4">Nếu lần thứ 5 vẫn fail, publish persistent sang parking với mandatory và confirm; chỉ ack gốc sau confirm. Crash giữa confirm và ack vẫn có thể tạo bản trùng.</step-note>
+</step-flow>
 
 Khai báo qua `arguments` lúc declare queue (dùng lệnh `rabbitmqadmin` hoặc trong code):
 
@@ -181,7 +163,7 @@ ch.queue_bind("orders.retry", "orders.dlx", routing_key="new")   # giữ nguyên
 ch.queue_declare(queue="orders.parking", durable=True)
 ```
 
-**Đếm số lần retry:** RabbitMQ ghi lịch sử dead-letter vào header `x-death` (một mảng, tăng dần theo mỗi lần chết). Consumer đọc tổng `count` trong `x-death`; nếu vượt ngưỡng (vd 5) thì `nack` sang **parking lot** thay vì retry queue — tránh message độc quay vòng vô tận.
+**Đếm số lần retry:** RabbitMQ ghi lịch sử dead-letter vào header `x-death` (mảng được gom theo cặp queue/reason, với `count` cho từng cặp). Consumer chỉ lấy `count` của entry có `queue=orders.new`, `reason=rejected`; không cộng entry `expired` của retry queue. Ở lần xử lý hiện tại, `attempt = count + 1`. Nếu lần thứ 5 vẫn fail, consumer **publish** vào `orders.parking` qua default exchange (`exchange=""`, `routing_key="orders.parking"`), với message persistent, `mandatory=True` và publisher confirm; chỉ **ack bản gốc sau confirm**. Nếu publish thất bại thì nack requeue hoặc đóng channel để redelivery, không ack gốc. Trước ngưỡng, `nack(requeue=False)` vẫn đi theo DLX sang retry queue; `nack` không tự chọn được queue đích. Crash sau confirm trước ack có thể tạo bản trùng ở parking, nên giữ message id để khử trùng.
 
 > Cần **delay theo cấp số nhân** (30s → 2m → 10m)? Tạo nhiều retry queue với TTL khác nhau, hoặc dùng plugin **`rabbitmq_delayed_message_exchange`** để đặt delay theo từng message.
 
@@ -252,7 +234,7 @@ Không hiếm hệ thống dùng **cả hai**: Kafka làm xương sống event s
 - **Confirm** cho biết broker đã nhận; **mandatory** chống nuốt message không route được; production dùng confirm **bất đồng bộ** để nhanh.
 - Cần **cả** durable queue **và** persistent message mới sống qua restart; khe "chưa fsync đã crash" chỉ đóng hẳn bằng **quorum queue**.
 - Consumer phải **manual ack sau khi xử lý xong**, đặt **prefetch** hợp lý, và **idempotent** vì at-least-once.
-- **DLX + TTL** tạo **retry có delay** và **parking lot**; đếm `x-death` (hoặc `x-delivery-limit` của quorum queue) để chặn poison message quay vòng.
+- **DLX + TTL** tạo **retry có delay**; lọc `x-death` theo queue/reason và chủ động publish-confirm sang **parking lot** khi hết lượt. Quorum delivery limit là bộ đếm redelivery riêng, không thay thế routing parking này.
 - **Quorum queue (Raft)** thay classic mirrored queue: an toàn, không split-brain, chịu 1 node chết trên cụm 3.
 - **RabbitMQ** cho task queue/routing/per-message ack; **Kafka** cho streaming/replay/throughput lớn — chọn theo bản chất luồng.
 

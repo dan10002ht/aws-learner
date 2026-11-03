@@ -84,7 +84,7 @@ Tính nhanh số octal: **r=4, w=2, x=1**, cộng lại.
 | `755` | rwxr-xr-x | Script, thư mục public |
 | `644` | rw-r--r-- | File config, file thường |
 | `600` | rw------- | File chứa secret, credentials |
-| `400` | r-------- | **SSH private key (.pem)** — bắt buộc |
+| `400` | r-------- | **SSH private key (.pem)** — chỉ owner đọc; `600` cũng hợp lệ |
 
 ```bash
 chmod +x deploy.sh            # thêm quyền execute
@@ -173,12 +173,12 @@ Sau khi tạo/sửa unit file: `sudo systemctl daemon-reload`.
 
 ## 6. SSH — key-based auth, ssh-agent, scp
 
-SSH dùng cặp khoá: **private key** giữ ở máy bạn, **public key** nằm trong `~/.ssh/authorized_keys` trên server. Không bao giờ private key rời khỏi laptop — server chỉ ra một "đố" (challenge), client ký bằng private key, server kiểm chữ ký bằng public key tương ứng.
+SSH dùng cặp khoá: **private key** giữ ở máy bạn, **public key** nằm trong `~/.ssh/authorized_keys` trên server. Không bao giờ private key rời khỏi laptop — client ký dữ liệu xác thực gắn với session identifier bằng private key, server kiểm chữ ký bằng public key tương ứng.
 
 <step-flow>
 <svg viewBox="0 0 720 452" role="img" aria-labelledby="e01s-t e01s-d" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-<title id="e01s-t">Xác thực SSH bằng cặp khoá: challenge và chữ ký</title>
-<desc id="e01s-d">Laptop giữ private key ~/.ssh/id_ed25519, EC2 giữ public key trong ~/.ssh/authorized_keys. Bốn bước: client xin vào và nêu key muốn dùng, server gửi challenge là số ngẫu nhiên, client ký challenge bằng private key ngay trên laptop rồi gửi chữ ký, server kiểm chữ ký bằng public key và cho vào. Private key không bao giờ rời laptop, chỉ chữ ký đi qua mạng. Quyền file key phải là 400.</desc>
+<title id="e01s-t">Xác thực SSH bằng cặp khoá: session và chữ ký</title>
+<desc id="e01s-d">Laptop giữ private key ~/.ssh/id_ed25519, EC2 giữ public key trong ~/.ssh/authorized_keys. Bốn bước: client xin vào và nêu key muốn dùng, server xác nhận key được phép (bước thăm dò tuỳ chọn), client ký dữ liệu gắn với phiên bằng private key ngay trên laptop rồi gửi chữ ký, server kiểm chữ ký bằng public key và cho vào. Private key không bao giờ rời laptop, chỉ chữ ký đi qua mạng. Quyền file key có thể là 400 hoặc 600.</desc>
 <defs>
 <marker id="e01s-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker>
 </defs>
@@ -200,14 +200,14 @@ SSH dùng cặp khoá: **private key** giữ ở máy bạn, **public key** nằ
 <line x1="160" y1="164" x2="556" y2="164" stroke="currentColor" stroke-opacity="0.6" stroke-width="2" marker-end="url(#e01s-arrow)"/>
 </g>
 <g data-step="2">
-<text x="360" y="201" text-anchor="middle" font-size="13" fill="currentColor">2  Challenge (số ngẫu nhiên)</text>
+<text x="360" y="201" text-anchor="middle" font-size="13" fill="currentColor">2  Key được phép (bước thăm dò)</text>
 <line x1="560" y1="210" x2="164" y2="210" stroke="currentColor" stroke-opacity="0.6" stroke-width="2" marker-end="url(#e01s-arrow)"/>
 </g>
 <g data-step="3">
 <text x="360" y="283" text-anchor="middle" font-size="13" fill="currentColor">3  Gửi CHỮ KÝ (không gửi key)</text>
 <line x1="160" y1="292" x2="556" y2="292" stroke="#10b981" stroke-width="2" marker-end="url(#e01s-arrow)"/>
 <rect x="40" y="226" width="240" height="30" rx="7" fill="#10b981" fill-opacity="0.16" stroke="#10b981" stroke-opacity="0.6"/>
-<text x="160" y="246" text-anchor="middle" font-size="13" fill="currentColor">ký challenge bằng private key</text>
+<text x="160" y="246" text-anchor="middle" font-size="13" fill="currentColor">ký dữ liệu gắn với phiên</text>
 </g>
 <g data-step="4">
 <text x="360" y="355" text-anchor="middle" font-size="13" fill="currentColor">4  Chữ ký khớp → cho vào shell</text>
@@ -217,12 +217,12 @@ SSH dùng cặp khoá: **private key** giữ ở máy bạn, **public key** nằ
 </g>
 <rect x="20" y="386" width="680" height="54" rx="8" fill="#f43f5e" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
 <text x="360" y="408" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Private key KHÔNG BAO GIỜ rời laptop: chỉ chữ ký đi qua mạng.</text>
-<text x="360" y="429" font-size="13" text-anchor="middle" fill="currentColor">Quyền file key phải là 400 (chmod 400).</text>
+<text x="360" y="429" font-size="13" text-anchor="middle" fill="currentColor">Quyền file key có thể là 400 hoặc 600 (chmod 400).</text>
 </svg>
 <step-note data-step="1">Client nêu public key định dùng; server tra <code>~/.ssh/authorized_keys</code> xem key đó có được phép không. Chưa có gì bí mật đi qua mạng.</step-note>
-<step-note data-step="2">Challenge là số ngẫu nhiên mới cho mỗi lần đăng nhập, nên một chữ ký nghe lén từ lần trước không dùng lại được.</step-note>
-<step-note data-step="3">Việc ký diễn ra ngay trên laptop; thứ rời máy chỉ là chữ ký của đúng challenge này. Private key nằm yên trong <code>~/.ssh/id_ed25519</code>.</step-note>
-<step-note data-step="4">Chỉ private key ghép cặp mới tạo được chữ ký mà public key kiểm ra là đúng, nên server không cần giữ bí mật nào. Ngược lại, ai có file private key là vào được: vì vậy quyền file phải là <code>400</code>.</step-note>
+<step-note data-step="2">Server có thể xác nhận public key được phép trước khi client ký. Đây không phải gói challenge ngẫu nhiên riêng: chữ ký SSH bao gồm session identifier và nội dung request xác thực (RFC 4252 §7).</step-note>
+<step-note data-step="3">Việc ký diễn ra ngay trên laptop; thứ rời máy chỉ là chữ ký gắn với đúng phiên này. Private key nằm yên trong <code>~/.ssh/id_ed25519</code>.</step-note>
+<step-note data-step="4">Chỉ private key ghép cặp mới tạo được chữ ký mà public key kiểm ra là đúng, nên server không cần giữ private key của client. Ngược lại, lộ file private key có thể dẫn tới truy cập trái phép: vì vậy quyền file nên là <code>400</code> hoặc <code>600</code>.</step-note>
 </step-flow>
 
 ```bash
@@ -253,7 +253,7 @@ Host web1
 
 Sau đó chỉ cần `ssh web1`, `scp app.tar.gz web1:~/`.
 
-> Lỗi thường gặp: `Permission denied (publickey)` thường do (1) sai user (`ec2-user` vs `ubuntu`), (2) sai key, (3) quyền key chưa phải 400. Thêm `-v` để SSH in ra nó đang thử key nào.
+> Lỗi thường gặp: `Permission denied (publickey)` thường do (1) sai user (`ec2-user` vs `ubuntu`), (2) sai key, (3) quyền key cho phép group/other truy cập. Thêm `-v` để SSH in ra nó đang thử key nào.
 
 ## 7. Package manager — dnf / apt
 

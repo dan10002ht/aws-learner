@@ -10,11 +10,11 @@ Không có sơ đồ "đúng tuyệt đối". Mọi quyết định ở tầng n
 
 Một startup khởi đầu với 1 account, mọi thứ chung nhau. Nó hoạt động — cho tới khi không. Ba áp lực đẩy bạn tách account:
 
-**Blast radius (bán kính sát thương).** Một IAM key bị lộ, một `terraform destroy` nhầm, một service bị compromise — trong single account, "tới đâu" là *toàn bộ*. Account là ranh giới cô lập mạnh nhất AWS cung cấp: mạnh hơn IAM policy, mạnh hơn VPC, mạnh hơn tag.
+**Blast radius (bán kính sát thương).** Một IAM key bị lộ, một `terraform destroy` nhầm, một service bị compromise — trong single account, mức lan phụ thuộc quyền và network; quyền quá rộng có thể ảnh hưởng *toàn bộ*. Account là ranh giới cô lập mạnh nhất AWS cung cấp: mạnh hơn IAM policy, mạnh hơn VPC, mạnh hơn tag.
 
-**Isolation (cô lập môi trường & team).** Prod và Dev chung account nghĩa là một query test có thể đập vào RDS prod, một service quota (vd. số Lambda concurrent) bị Dev ăn hết làm Prod nghẹn. Tách account = quota riêng, limit riêng, IAM riêng.
+**Isolation (cô lập môi trường & team).** Prod và Dev chung account, nếu quyền và network cho phép, thì một query test có thể đập vào RDS prod, một service quota (vd. số Lambda concurrent) bị Dev ăn hết làm Prod nghẹn. Tách account = quota riêng, limit riêng, IAM riêng; vẫn cần siết quyền và kết nối cross-account.
 
-**Billing & ownership.** Đây là lý do bị xem nhẹ nhưng quan trọng nhất với người ra quyết định. Một account = một đường kẻ chi phí rõ ràng. Muốn biết team Search tốn bao nhiêu? Cho họ account riêng, đọc bill. Không cần tag chuẩn chỉnh, không cần cost allocation phức tạp.
+**Billing & ownership.** Đây là lý do bị xem nhẹ nhưng quan trọng nhất với người ra quyết định. Một account = một đường kẻ chi phí rõ ràng. Muốn biết team Search tốn bao nhiêu? Cho họ account riêng, đọc bill. Đủ cho phân bổ ở mức account; chi phí dùng chung hoặc nhiều team trong một account vẫn cần tag và quy tắc cost allocation.
 
 <ab-toggle data-labels="Một account|Nhiều account">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 320" role="img" aria-labelledby="vsdb070-t vsdb070-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="sans-serif">

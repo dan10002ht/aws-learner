@@ -40,28 +40,28 @@ Quyền vào máy trở thành **quyền IAM** (`ssm:StartSession` theo instance
 
 1. **SSM Agent** đang chạy (có sẵn trên Amazon Linux 2/2023, Ubuntu AMI Canonical, Windows Server AMI; AMI custom phải cài tay).
 2. **Instance profile** gắn role có managed policy **`AmazonSSMManagedInstanceCore`** — lỗi số một trong đề.
-3. **Đường ra tới endpoint**: NAT/IGW, hoặc — với **private subnet không NAT** — ba **interface VPC endpoint (PrivateLink)** `com.amazonaws.<region>.ssm`, `.ssmmessages`, `.ec2messages`.
+3. **Đường ra tới endpoint**: NAT/IGW, hoặc — với **private subnet không NAT** — các **interface VPC endpoint (PrivateLink)** `com.amazonaws.<region>.ssm` và `.ssmmessages` cho agent hiện đại. `.ec2messages` chỉ cần cho agent/region cũ khi dùng kênh đó.
 4. **Security group của endpoint** mở 443 từ dải subnet, bật **private DNS**.
 
-Một **interface VPC endpoint** là một card mạng (ENI) có IP private mà AWS đặt vào subnet của bạn; gói tin gửi tới IP đó đi thẳng vào dịch vụ AWS trên mạng nội bộ của AWS (công nghệ này tên là PrivateLink), không ra internet. **Private DNS** làm cho tên miền công khai `ssm.<region>.amazonaws.com` phân giải ra IP private đó khi hỏi từ trong VPC, nên agent không phải cấu hình gì thêm. Mỗi dịch vụ cần một endpoint riêng, vì vậy mới có tới ba cái:
+Một **interface VPC endpoint** là một card mạng (ENI) có IP private mà AWS đặt vào subnet của bạn; gói tin gửi tới IP đó đi thẳng vào dịch vụ AWS trên mạng nội bộ của AWS (công nghệ này tên là PrivateLink), không ra internet. **Private DNS** làm cho tên miền công khai `ssm.<region>.amazonaws.com` phân giải ra IP private đó khi hỏi từ trong VPC, nên agent không phải cấu hình gì thêm. Mỗi dịch vụ cần một endpoint riêng, bảng sau phân biệt kênh hiện đại và kênh cũ:
 
 | Endpoint | Dùng cho |
 |---|---|
 | `ssm` | API điều khiển: đăng ký node, nhận document, báo trạng thái |
-| `ssmmessages` | Kênh dữ liệu của **Session Manager** (shell, port forwarding) |
-| `ec2messages` | Kênh agent nhận **Run Command** / job từ service |
+| `ssmmessages` | Kênh điều khiển/dữ liệu của agent hiện đại, gồm **Session Manager** và Run Command |
+| `ec2messages` | Kênh cũ, không bắt buộc chung: agent từ 3.3.40.0 ưu tiên `ssmmessages`; region ra mắt từ 2024 không hỗ trợ kênh này |
 
 Thêm tuỳ tính năng: gateway endpoint **`s3`** (session log / Run Command output, Patch Manager lấy patch), **`kms`** (mã hoá session), **`logs`** (CloudWatch Logs).
 
 **Tính thử tiền endpoint** (us-east-1, ~$0,01/giờ cho mỗi endpoint ở mỗi AZ, ~$0,01/GB đi qua), với fleet trải trên 2 AZ:
 
 ```
-3 endpoint × 2 AZ × $0,01/giờ × 730 giờ   ≈ $43,80/tháng  (+ $0,01 mỗi GB)
+2 endpoint × 2 AZ × $0,01/giờ × 730 giờ   ≈ $29,20/tháng  (+ $0,01 mỗi GB)
 1 NAT Gateway:  $0,045/giờ × 730 giờ      ≈ $32,85/tháng  (+ $0,045 mỗi GB)
 2 NAT Gateway (mỗi AZ một cái cho HA)     ≈ $65,70/tháng  (+ $0,045 mỗi GB)
 ```
 
-Tức là endpoint **không hẳn rẻ hơn** một NAT Gateway đơn lẻ. Lý do đề chọn endpoint là bảo mật: instance chỉ tới được đúng mấy dịch vụ AWS đó chứ không ra được internet, đúng với yêu cầu "no internet access".
+Nếu cần thêm `ec2messages` cho agent cũ thì ba endpoint × hai AZ ≈ $43,80/tháng. Endpoint **không mặc nhiên rẻ hơn** NAT trong mọi cấu hình. Lý do đề chọn endpoint là bảo mật: instance chỉ tới được đúng mấy dịch vụ AWS đó chứ không ra được internet, đúng với yêu cầu "no internet access".
 
 ### 3.3 Session Manager vs bastion vs Instance Connect
 
@@ -69,7 +69,7 @@ Có ba cách để lấy được một shell trên EC2. **Bastion host** là m�
 
 | Cách vào | Khi nào chọn | Bẫy |
 |---|---|---|
-| **Session Manager** | Mặc định cho mọi fleet EC2; đề nói "không mở inbound port", "không quản lý SSH key", "audit ai vào máy nào" | Quên 1 trong 3 endpoint hoặc quên `AmazonSSMManagedInstanceCore`; session log **không tự bật** |
+| **Session Manager** | Mặc định cho mọi fleet EC2; đề nói "không mở inbound port", "không quản lý SSH key", "audit ai vào máy nào" | Thiếu endpoint cần cho phiên bản agent hoặc quên `AmazonSSMManagedInstanceCore`; session log **không tự bật** |
 | **Bastion host** | Chỉ khi công cụ bên thứ ba bắt buộc SSH trực tiếp | SPOF, phải patch, phải quản key, mở 22 ra internet |
 | **EC2 Instance Connect** | Đẩy key SSH tạm hiệu lực ngắn qua API | Vẫn là SSH → vẫn cần đường mạng và security group |
 
@@ -79,41 +79,10 @@ Session Manager còn làm **port forwarding** (`AWS-StartPortForwardingSessionTo
 
 ## 4. Sơ đồ — một phiên Session Manager trong private subnet
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 386" role="img" fill="currentColor" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Luồng Session Manager tới EC2 trong private subnet không có NAT</title>
-  <desc>Admin gọi API ssm StartSession qua IAM. Service Systems Manager giữ kênh. SSM Agent trong private subnet mở kết nối outbound 443 tới ba interface VPC endpoint ssm, ssmmessages, ec2messages. Không có inbound rule nào trên security group của instance. Log phiên ghi xuống S3 và CloudWatch Logs.</desc>
-  <defs>
-    <marker id="smArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" stroke="none" fill-opacity="0.55"/></marker>
-  </defs>
-  <text x="16" y="22" font-size="14" font-weight="700">Session Manager — mọi kết nối đều là outbound từ agent</text>
-  <rect x="16" y="40" width="150" height="66" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
-  <text x="28" y="62" font-size="12.5" font-weight="700">Admin / CLI</text>
-  <text x="28" y="80" font-size="10" opacity="0.7">ssm:StartSession</text>
-  <text x="28" y="94" font-size="10" opacity="0.7">xác thực bằng IAM</text>
-  <line x1="166" y1="73" x2="212" y2="73" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#smArr)"/>
-  <rect x="216" y="40" width="182" height="66" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
-  <text x="228" y="62" font-size="12.5" font-weight="700">Systems Manager</text>
-  <text x="228" y="80" font-size="10" opacity="0.7">giữ kênh của agent,</text>
-  <text x="228" y="94" font-size="10" opacity="0.7">đẩy lệnh xuống</text>
-  <line x1="307" y1="106" x2="307" y2="148" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#smArr)"/>
-  <text x="315" y="132" font-size="10" opacity="0.7">kênh sẵn có</text>
-  <rect x="16" y="152" width="688" height="196" rx="12" fill="none" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="5 4"/>
-  <text x="30" y="174" font-size="11.5" font-weight="700" opacity="0.75">VPC — private subnet, KHÔNG NAT, KHÔNG IGW</text>
-  <rect x="36" y="188" width="300" height="60" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
-  <text x="48" y="210" font-size="12" font-weight="700">3 interface endpoint (PrivateLink)</text>
-  <text x="48" y="228" font-size="10" opacity="0.75">ssm · ssmmessages · ec2messages</text>
-  <text x="48" y="241" font-size="10" opacity="0.6">SG endpoint mở 443 từ subnet · private DNS ON</text>
-  <line x1="336" y1="218" x2="386" y2="218" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#smArr)"/>
-  <text x="338" y="210" font-size="9.5" opacity="0.6">443 outbound</text>
-  <rect x="390" y="188" width="300" height="60" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
-  <text x="402" y="210" font-size="12" font-weight="700">EC2 — SSM Agent</text>
-  <text x="402" y="228" font-size="10" opacity="0.75">instance profile: AmazonSSMManagedInstanceCore</text>
-  <text x="402" y="241" font-size="10" opacity="0.6">inbound SG: rỗng · không public IP</text>
-  <rect x="36" y="266" width="654" height="64" rx="9" fill="#3b82f6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.18"/>
-  <text x="48" y="288" font-size="12" font-weight="700">Ghi log phiên (phải bật thủ công)</text>
-  <text x="48" y="306" font-size="10" opacity="0.75">S3 bucket (cần gateway endpoint s3) · CloudWatch Logs (cần endpoint logs) · mã hoá KMS (cần endpoint kms)</text>
-  <text x="48" y="321" font-size="10" opacity="0.6">CloudTrail ghi StartSession / TerminateSession — biết ai vào instance nào, lúc nào</text>
-  <text x="16" y="374" font-size="11" opacity="0.7">Thiếu bất kỳ mảnh nào ở trên → instance không xuất hiện trong danh sách managed node.</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 540" role="img" aria-labelledby="fix-ssm-t fix-ssm-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="fix-ssm-t">Session Manager: agent chủ động kết nối outbound</title><desc id="fix-ssm-d">Agent kết nối 443 tới ssm và ssmmessages qua PrivateLink. ec2messages tùy phiên bản/region. Logging và KMS không phải điều kiện chung để node đăng ký.</desc>
+<defs><marker id="fix-ssm-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs><use href="#aws-ec2" x="35" y="212" width="24" height="24"/>
+<rect x="10" y="30" width="160" height="60" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="90.0" y="60.0" text-anchor="middle" font-size="13" fill="currentColor">Admin / CLI</text><text x="90.0" y="80.0" text-anchor="middle" font-size="13" fill="currentColor">IAM StartSession</text><rect x="310" y="30" width="200" height="60" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="410.0" y="60.0" text-anchor="middle" font-size="13" fill="currentColor">Systems Manager</text><text x="410.0" y="80.0" text-anchor="middle" font-size="13" fill="currentColor">giữ kênh agent</text><path d="M170 60 H310" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#fix-ssm-arr)"/><rect x="10" y="145" width="500" height="190" rx="10" fill="none" stroke="currentColor" stroke-dasharray="5 4"/><text x="260" y="167" text-anchor="middle" font-size="13" fill="currentColor">Private subnet: không NAT, không inbound SSH</text><rect x="30" y="205" width="150" height="75" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="118" y="242.5" text-anchor="middle" font-size="13" fill="currentColor">EC2</text><text x="105.0" y="262.5" text-anchor="middle" font-size="13" fill="currentColor">SSM Agent</text><rect x="300" y="205" width="190" height="75" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="395.0" y="242.5" text-anchor="middle" font-size="13" fill="currentColor">VPC endpoints</text><text x="395.0" y="262.5" text-anchor="middle" font-size="13" fill="currentColor">ssm / ssmmessages</text><path d="M180 242 H300" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#fix-ssm-arr)"/><text x="240" y="230" text-anchor="middle" font-size="13" fill="#3b82f6">443 outbound</text><path d="M410 205 V90" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#fix-ssm-arr)"/><text x="453" y="126" text-anchor="middle" font-size="13" fill="#3b82f6">PrivateLink</text><text x="260" y="308" text-anchor="middle" font-size="13" fill="currentColor">Endpoint SG: cho 443 từ agent; private DNS bật</text><rect x="30" y="395" width="460" height="70" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="260.0" y="430.0" text-anchor="middle" font-size="13" fill="currentColor">S3 / CloudWatch Logs / KMS</text><text x="260.0" y="450.0" text-anchor="middle" font-size="13" fill="currentColor">Tuỳ cấu hình: log phiên, mã hoá</text><path d="M105 280 V395" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#fix-ssm-arr)"/><text x="153" y="365" text-anchor="middle" font-size="13" fill="#8b5cf6">log / encrypt</text><text x="260" y="495" text-anchor="middle" font-size="13" fill="currentColor">CloudTrail: audit lời gọi API; không phải session transcript</text><text x="260" y="519" text-anchor="middle" font-size="13" fill="currentColor">Agent cũ: có thể cần thêm ec2messages</text>
 </svg>
 
 ---
@@ -585,7 +554,7 @@ Gần như mọi dịch vụ trong bài đều "miễn phí" ở lớp điều k
 
 | Thành phần | Mô hình tính tiền | Điều cần nhớ |
 |---|---|---|
-| **Systems Manager** vs **endpoint/NAT** | Session Manager, Run Command, State Manager, Patch Manager, Inventory không tính phí thêm trên EC2. Interface endpoint ~$0,01/giờ mỗi endpoint mỗi AZ + ~$0,01/GB; NAT Gateway ~$0,045/giờ + ~$0,045/GB | Ba endpoint × 2 AZ ≈ $44/tháng, một NAT Gateway ≈ $33/tháng (phép tính ở §3.2). Chọn endpoint vì instance không cần ra internet, không phải vì rẻ hơn. Session log lưu ở S3/CloudWatch Logs tính tiền riêng |
+| **Systems Manager** vs **endpoint/NAT** | Session Manager, Run Command, State Manager, Patch Manager, Inventory không tính phí thêm trên EC2. Interface endpoint ~$0,01/giờ mỗi endpoint mỗi AZ + ~$0,01/GB; NAT Gateway ~$0,045/giờ + ~$0,045/GB | Hai endpoint × 2 AZ ≈ $29/tháng; thêm kênh cũ thành ≈ $44/tháng, một NAT Gateway ≈ $33/tháng (phép tính ở §3.2). Chọn endpoint vì instance không cần ra internet, không phải vì rẻ hơn. Session log lưu ở S3/CloudWatch Logs tính tiền riêng |
 | **Parameter Store / Secrets Manager** | Standard miễn phí; Advanced ~$0,05/parameter/tháng; Secrets Manager ~$0,40/secret/tháng + ~$0,05 mỗi 10.000 API call | Hàng nghìn config → Standard. 5.000 key trong Secrets Manager ≈ $2.000/tháng. App nên cache giá trị thay vì gọi API mỗi request |
 | **CloudFormation / Beanstalk / DLM** | Không tính phí dịch vụ | Immutable và blue/green **nhân đôi số instance** trong lúc deploy (20 → 40 máy ở §8.1). Retention snapshot dài thì hoá đơn lưu trữ dài theo |
 | **AWS Backup** | Theo GB lưu mỗi tháng (warm đắt hơn cold), theo GB restore, và phí truyền dữ liệu khi copy cross-Region | Cold storage phải nằm **tối thiểu 90 ngày**, nên retention phải dài hơn mốc chuyển cold ít nhất 90 ngày (§10.2). Backup có vòng đời vài tuần không dùng cold được; cold dành cho backup giữ nhiều tháng tới nhiều năm |
@@ -595,7 +564,7 @@ Gần như mọi dịch vụ trong bài đều "miễn phí" ở lớp điều k
 ## 12. Bẫy thi thường gặp
 
 1. **"Session Manager phải mở port 22"** → Sai, không cần inbound rule nào; tất cả là outbound 443 từ agent.
-2. **"Private subnet không NAT thì không dùng được"** → Sai, dùng ba interface endpoint. **"Chỉ cần endpoint `ssm`"** cũng sai: thiếu `ssmmessages` là không mở được session, thiếu `ec2messages` là Run Command không tới.
+2. **"Private subnet không NAT thì không dùng được"** → Sai, dùng `ssm` và `ssmmessages` với agent hiện đại. **"Chỉ cần endpoint `ssm`"** cũng sai: thiếu `ssmmessages` là không mở được session, `ec2messages` chỉ cần khi agent/region dùng kênh cũ.
 3. **"Có SSM Agent là instance tự hiện trong managed node"** → Sai nếu thiếu `AmazonSSMManagedInstanceCore`. **"Session Manager tự lưu log phiên"** → Sai, phải chỉ định đích.
 4. **"Parameter Store tự rotate mật khẩu RDS"** → Sai, rotation native là của Secrets Manager; ngược lại Secrets Manager cho 5.000 key không nhạy cảm là sai về cost.
 5. **"Template phải có Parameters và Outputs"** → Sai, chỉ `Resources` bắt buộc. **"Drift detection tự sửa drift"** → Sai, nó chỉ phát hiện. **"Xoá stack là mất hết dữ liệu"** → Không, nếu `DeletionPolicy: Retain`/`Snapshot`.
@@ -611,7 +580,7 @@ Gần như mọi dịch vụ trong bài đều "miễn phí" ở lớp điều k
 
 ## 13. Tóm tắt 1 dòng
 
-> **Vận hành** = Systems Manager: Session Manager thay bastion (agent + `AmazonSSMManagedInstanceCore` + 3 endpoint), Run Command một lần / State Manager lặp lại, Patch Manager theo baseline + maintenance window, Automation ở tầng API, Inventory để biết mình có gì, Parameter Store rẻ còn Secrets Manager rotate. **Dựng lại** = CloudFormation (chỉ `Resources` bắt buộc, change set trước update, DeletionPolicy trước xoá, StackSet phủ nhiều account), Beanstalk cho app web, Service Catalog để phát hành có kiểm soát, Launch Template thay Launch Configuration. **Giữ lại** = DLM cho EBS, AWS Backup cho phần còn lại (Vault Lock compliance = bất khả xoá).
+> **Vận hành** = Systems Manager: Session Manager thay bastion (agent + `AmazonSSMManagedInstanceCore` + `ssm`/`ssmmessages`, thêm `ec2messages` nếu agent cũ cần), Run Command một lần / State Manager lặp lại, Patch Manager theo baseline + maintenance window, Automation ở tầng API, Inventory để biết mình có gì, Parameter Store rẻ còn Secrets Manager rotate. **Dựng lại** = CloudFormation (chỉ `Resources` bắt buộc, change set trước update, DeletionPolicy trước xoá, StackSet phủ nhiều account), Beanstalk cho app web, Service Catalog để phát hành có kiểm soát, Launch Template thay Launch Configuration. **Giữ lại** = DLM cho EBS, AWS Backup cho phần còn lại (Vault Lock compliance = bất khả xoá).
 
 ---
 

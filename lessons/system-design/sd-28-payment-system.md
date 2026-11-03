@@ -245,30 +245,31 @@ POST /webhooks/psp/{psp_name}          # PSP gọi vào, không phải ta gọi 
 <path d="M445,240 L445,273" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd28a-arr)"/>
 <rect x="10" y="40" width="150" height="44" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45"/><text x="85.0" y="67" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Browser / App</text>
 <path d="M160,62 L313,62" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd28a-arr)"/>
-<text x="232" y="54" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">6. redirect tới HPP</text>
+<text x="232" y="54" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">7. mở HPP</text>
 <path d="M80,84 L80,118" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd28a-arr)"/>
 <text x="88" y="106" font-size="13" text-anchor="start" fill="currentColor" opacity="0.85">1. checkout</text>
 <rect x="10" y="120" width="150" height="40" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45"/><text x="85.0" y="145" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">API Gateway + WAF</text>
 <path d="M80,160 L80,193" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd28a-arr)"/>
 <rect x="10" y="195" width="270" height="110" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45"/><text x="20" y="221" font-size="13" font-weight="700" text-anchor="start" fill="currentColor">Payment Service</text><text x="20" y="238" font-size="13" text-anchor="start" fill="currentColor">- nhận payment event</text><text x="20" y="255" font-size="13" text-anchor="start" fill="currentColor">- kiểm tra idempotency</text><text x="20" y="272" font-size="13" text-anchor="start" fill="currentColor">- risk check (AML/fraud)</text><text x="20" y="289" font-size="13" text-anchor="start" fill="currentColor">- điều phối, KHÔNG gọi PSP</text>
 <path d="M315,165 L315,230 L282,230" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd28a-arr)"/>
-<text x="296" y="184" font-size="13" text-anchor="end" fill="currentColor" opacity="0.85">9. webhook</text>
+<text x="296" y="184" font-size="13" text-anchor="end" fill="currentColor" opacity="0.85">11. webhook</text>
 <path d="M60,305 L60,343" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd28a-arr)"/>
 <text x="68" y="329" font-size="13" text-anchor="start" fill="currentColor" opacity="0.85">2. ghi</text>
 <path d="M230,305 L230,343" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd28a-arr)"/>
-<text x="238" y="321" font-size="13" text-anchor="start" fill="currentColor" opacity="0.85">4. publish</text>
+<text x="238" y="321" font-size="13" text-anchor="start" fill="currentColor" opacity="0.85">3. publish</text>
 <text x="238" y="337" font-size="13" text-anchor="start" fill="currentColor" opacity="0.85">(outbox)</text>
 <rect x="10" y="345" width="105" height="56" rx="8" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45"/><text x="62.5" y="370" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Payment DB</text><text x="62.5" y="386" font-size="13" text-anchor="middle" fill="currentColor">(Aurora)</text>
 <rect x="130" y="345" width="200" height="56" rx="8" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45"/><text x="230.0" y="370" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Message Queue</text><text x="230.0" y="386" font-size="13" text-anchor="middle" fill="currentColor">FIFO theo payment_order_id</text>
 <path d="M230,401 L230,443" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd28a-arr)"/>
-<rect x="130" y="445" width="230" height="70" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45"/><text x="245.0" y="468" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Payment Executor</text><text x="245.0" y="485" font-size="13" text-anchor="middle" fill="currentColor">1 order = 1 lần gọi</text><text x="245.0" y="502" font-size="13" text-anchor="middle" fill="currentColor">retry + backoff + DLQ</text>
+<text x="220" y="426" font-size="13" text-anchor="end" fill="currentColor">4. nhận</text>
+<rect x="130" y="445" width="230" height="70" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45"/><text x="245.0" y="468" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Payment Executor</text><text x="245.0" y="485" font-size="13" text-anchor="middle" fill="currentColor">1 order, nhiều thao tác</text><text x="245.0" y="502" font-size="13" text-anchor="middle" fill="currentColor">retry + backoff + DLQ</text>
 <path d="M345,445 L345,152" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd28a-arr)"/>
-<text x="352" y="362" font-size="13" text-anchor="start" fill="currentColor" opacity="0.85">3. register</text>
-<text x="352" y="380" font-size="13" text-anchor="start" fill="currentColor" opacity="0.85">8. capture</text>
+<text x="352" y="362" font-size="13" text-anchor="start" fill="currentColor" opacity="0.85">5. register</text>
+<text x="352" y="380" font-size="13" text-anchor="start" fill="currentColor" opacity="0.85">capture sau auth</text>
 <text x="370" y="474" font-size="13" text-anchor="start" fill="currentColor" opacity="0.85">gọi PSP kèm</text>
 <text x="370" y="491" font-size="13" text-anchor="start" fill="currentColor" opacity="0.85">idempotency key</text>
 <path d="M260,515 L260,690" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5"/>
-<text x="268" y="545" font-size="13" text-anchor="start" fill="currentColor" opacity="0.85">10. kết quả (event bus)</text>
+<text x="268" y="545" font-size="13" text-anchor="start" fill="currentColor" opacity="0.85">12. kết quả (event bus)</text>
 <path d="M260,600 L247,600" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd28a-arr)"/>
 <path d="M260,600 L273,600" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd28a-arr)"/>
 <path d="M260,690 L247,690" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd28a-arr)"/>
@@ -442,25 +443,28 @@ Chênh lệch giữa SAQ A và SAQ D không phải "khó hơn một chút" — n
 ### 5.3 Luồng hosted payment page
 
 ```
- Browser            Payment Service          PSP
-   │ 1. POST /checkout    │                   │
-   ├─────────────────────►│ 2. ghi payment_event + order (CREATED)
-   │                      │ 3. POST /payment_sessions
-   │                      │    {amount, order_id, idem_key = order_id,
-   │                      │     return_url, webhook_url}
-   │                      ├──────────────────►│
-   │                      │◄──────────────────┤ 4. {session_token, hosted_url}
-   │ 6. {hosted_url}      │ 5. lưu token (PENDING)
-   │◄─────────────────────┤                   │
-   │ 7. user nhập thẻ TRÊN DOMAIN CỦA PSP     │
-   ├─────────────────────────────────────────►│ 8. auth qua acquirer →
-   │ 9. redirect về return_url?token=…&result=│    network → issuer
-   │◄─────────────────────────────────────────┤
-   │10. GET /payments/{id}│◄──────────────────┤ 11. WEBHOOK (async)
-   │    hiển thị trạng thái│                  │     payment.authorized
-   │                      │ 12. verify chữ ký → cập nhật trạng thái →
-   │                      │     ghi ledger → cộng wallet
+ Browser          Payment Service       Payment Executor          PSP
+   │ 1. checkout        │                       │                  │
+   ├───────────────────▶│ 2. ghi event/order + outbox (CREATED)      │
+   │                    ├─3. queue / 4. nhận────▶│                  │
+   │                    │                       ├─5. register──────▶│
+   │                    │                       │ amount, order_id,│
+   │                    │                       │ idem_key, return_url,
+   │                    │                       │ webhook_url      │
+   │                    │◀─lưu token/hosted_url──┤◀─session_token────┤
+   │◀─6. hosted_url──────┤ (PENDING)             │                  │
+   ├─7. nhập thẻ TRÊN DOMAIN PSP───────────────────────────────────▶│
+   │                    │                       │ 8. auth qua acquirer
+   │                    │                       │    → network → issuer
+   │◀─9. redirect return_url?token=…&result=─────────────────────────┤
+   ├─10. GET /payments──▶│                       │                  │
+   │                    │◀─11. WEBHOOK (async)──────────────────────┤
+   │                    │ 12. verify chữ ký → cập nhật trạng thái;  │
+   │                    │ ledger/wallet theo CAPTURED/SETTLED,      │
+   │                    │ không cộng tiền chỉ vì AUTHORIZED.       │
 ```
+
+Các số ở §4.1 dùng cùng luồng này: bước 5 là register qua Executor, bước 7 là nhập thẻ tại PSP. Webhook có thể đến trước hoặc sau redirect; capture là thao tác riêng sau authorization, cũng qua Executor.
 
 Hai điều tinh tế quyết định bạn có phải người từng làm thật hay không:
 
@@ -732,7 +736,7 @@ Cám dỗ lớn nhất là dùng vài cột boolean: `is_paid`, `is_captured`, `
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 695" role="img" aria-labelledby="sd28b-t sd28b-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
 <title id="sd28b-t">State machine của một payment order</title>
-<desc id="sd28b-d">CREATED sang PENDING; từ PENDING: risk hold hoặc 3DS chờ thì sang REQUIRES_ACTION, approved thì sang AUTHORIZED, PSP từ chối thì sang FAILED (cuối, thử lại là order mới); AUTHORIZED void thì sang CANCELED (cuối, hold được thả); REQUIRES_ACTION và AUTHORIZED đi tiếp bằng capture sang CAPTURED; settlement file xác nhận thì sang SETTLED; từ SETTLED: refund sang REFUNDED hoặc PARTIALLY_REFUNDED, khách khiếu nại lên ngân hàng sang DISPUTED; nộp bằng chứng rồi thành DISPUTE_WON hoặc CHARGED_BACK (mất tiền và phí phạt).</desc>
+<desc id="sd28b-d">CREATED sang PENDING; từ PENDING: risk hold hoặc 3DS chờ thì sang REQUIRES_ACTION, approved thì sang AUTHORIZED, PSP từ chối thì sang FAILED (cuối, thử lại là order mới); AUTHORIZED void thì sang CANCELED (cuối, hold được thả); REQUIRES_ACTION chỉ sang AUTHORIZED sau xác thực và auth thành công; AUTHORIZED capture sang CAPTURED; settlement file xác nhận thì sang SETTLED; từ CAPTURED hoặc SETTLED: refund sang REFUNDED hoặc PARTIALLY_REFUNDED, khách khiếu nại lên ngân hàng sang DISPUTED; nộp bằng chứng rồi thành DISPUTE_WON hoặc CHARGED_BACK (mất tiền và phí phạt).</desc>
 <defs><marker id="sd28b-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor" fill-opacity="0.75"/></marker></defs>
 <rect x="195" y="10" width="130" height="40" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45"/><text x="260.0" y="35" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">CREATED</text>
 <text x="335" y="35" font-size="13" text-anchor="start" fill="currentColor" opacity="0.85">ghi DB, chưa gọi ai</text>
@@ -755,11 +759,13 @@ Cám dỗ lớn nhất là dùng vài cột boolean: `is_paid`, `is_captured`, `
 <text x="366" y="272" font-size="13" text-anchor="start" fill="currentColor" opacity="0.85">void</text>
 <rect x="395" y="290" width="115" height="40" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45"/><text x="452.5" y="315" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">CANCELED</text>
 <text x="510" y="350" font-size="13" text-anchor="end" fill="currentColor" opacity="0.85">CUỐI (hold được thả)</text>
-<path d="M80,240 L80,265 L240,265" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5"/>
+<path d="M150,220 H193" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd28b-arr)"/>
 <path d="M240,240 L240,318" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd28b-arr)"/>
 <text x="232" y="290" font-size="13" text-anchor="end" fill="currentColor" opacity="0.85">capture</text>
 <rect x="195" y="320" width="130" height="40" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45"/><text x="260.0" y="345" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">CAPTURED</text>
 <text x="187" y="345" font-size="13" text-anchor="end" fill="currentColor" opacity="0.85">tiền đang trên đường</text>
+<path d="M195,355 H4 V545 H8" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd28b-arr)"/>
+<path d="M325,355 H518 V540 H477" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd28b-arr)"/>
 <path d="M260,360 L260,408" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd28b-arr)"/>
 <text x="268" y="389" font-size="13" text-anchor="start" fill="currentColor" opacity="0.85">settlement file xác nhận</text>
 <rect x="195" y="410" width="130" height="40" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45"/><text x="260.0" y="435" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">SETTLED</text>
@@ -779,6 +785,8 @@ Cám dỗ lớn nhất là dùng vài cột boolean: `is_paid`, `is_captured`, `
 <rect x="392" y="625" width="124" height="40" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45"/><text x="454.0" y="650" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">CHARGED_BACK</text>
 <text x="515" y="685" font-size="13" text-anchor="end" fill="currentColor" opacity="0.85">mất tiền + phí phạt</text>
 </svg>
+
+Các nhánh ngoài cùng cho phép refund/dispute từ `CAPTURED` trước settlement nếu PSP hỗ trợ; không cần chờ `SETTLED`. Mũi tên `REQUIRES_ACTION → AUTHORIZED` chỉ xảy ra khi xác thực và authorization đều thành công; thất bại đi `FAILED`, không capture. Partial refund/dispute thực tế nên được lưu như các vòng đời riêng để vẫn theo dõi settlement của phần tiền còn lại.
 
 Ba điều lộ ra ngay mà mô hình boolean không cho thấy:
 

@@ -487,7 +487,7 @@ Fallback thường gặp: dữ liệu cũ từ cache, giá trị mặc định, 
    <details><summary>Đáp án</summary>**Backup & Restore** cross-region với AWS Backup hourly snapshot. Rẻ nhất, RTO 4h acceptable cho restore.</details>
 
 2. RPO < 1 giây, RTO < 1 phút, app global. Strategy?
-   <details><summary>Đáp án</summary>**Multi-Site Active/Active** với **Aurora Global** (RPO ~1s, RTO < 1 phút theo số đề thi) + DDB Global Tables + Route 53 latency + GA.</details>
+   <details><summary>Đáp án</summary>Tầng ứng dụng có thể **Multi-Site Active/Active** với Route 53/GA. Nếu dùng **Aurora Global**, database chỉ có một primary region nhận ghi; secondary là DR/read, không phải multi-writer active-active. Replication thường dưới 1 giây, recovery thường dưới 1 phút nhưng phải đo để xác nhận mục tiêu RPO/RTO; nếu cần ghi ở nhiều region, cân nhắc **DynamoDB Global Tables** theo yêu cầu consistency.</details>
 
 3. Aurora Global vs RDS Read Replica cross-region cho DR?
    <details><summary>Đáp án</summary>**Aurora Global** managed failover < 1 phút, RPO 1s, dedicated replication infra. **RDS Read Replica** manual promote, lag biến động. Aurora Global tốt hơn nếu engine support.</details>

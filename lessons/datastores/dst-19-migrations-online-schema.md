@@ -41,7 +41,7 @@ Một `ALTER TABLE` hay `CREATE INDEX` nhìn thì một dòng, nhưng bên dư�
 
 ## 3. Migration lan tới replica thế nào? (câu hỏi cốt lõi)
 
-**Có — cuối cùng replica bắt buộc phải có cùng schema với master.** Nhưng *cách* lan tới và *hậu quả* khác nhau tuỳ loại replication, và đây chính là chỗ gây đau:
+**Tùy cơ chế — physical tự replay schema, MySQL binlog thường truyền DDL; PG logical không tự truyền DDL và chỉ cần schema tương thích.** Nhưng *cách* lan tới và *hậu quả* khác nhau tuỳ loại replication, và đây chính là chỗ gây đau:
 
 <svg viewBox="0 0 660 260" role="img" aria-labelledby="rl-t rl-d" style="width:100%;max-width:620px;height:auto;display:block;margin:1.25rem auto">
 <title id="rl-t">Migration trên master gây replication lag trên replica</title>
@@ -70,11 +70,12 @@ Một `ALTER TABLE` hay `CREATE INDEX` nhìn thì một dòng, nhưng bên dư�
 - Replay WAL trên standby là **một luồng tuần tự** → DDL/backfill lớn làm **lag tăng vọt**.
 - Gotcha đặc trưng Postgres: khi replay một thao tác cần ACCESS EXCLUSIVE, nó **đụng với query đọc đang chạy trên replica** → hoặc hoãn replay (lag tăng), hoặc **huỷ query** (`ERROR: canceling statement due to conflict with recovery`, điều chỉnh bằng `max_standby_streaming_delay`).
 
-**Logical replication (MySQL binlog, PG logical):**
-- DDL đi vào binlog dạng **statement**, replica **chạy LẠI câu `ALTER` đó** một lần nữa trên chính nó. Trên replication đơn luồng, việc này **chặn luồng apply** → slave lag nặng suốt thời gian ALTER chạy (có thể hàng giờ với bảng lớn).
-- Đây chính là lý do **gh-ost / pt-online-schema-change** tồn tại: chúng migrate theo cách kiểm soát được lag của replica.
+**Logical replication — phải tách MySQL binlog và PG logical:**
+- Với **MySQL**, DDL đi vào binlog dạng **statement**,  replica **chạy LẠI câu `ALTER` đó** một lần nữa trên chính nó. Trên replication đơn luồng, việc này **chặn luồng apply** → slave lag nặng suốt thời gian ALTER chạy (có thể hàng giờ với bảng lớn).
+- Với **PG logical**, schema/DDL **không được replicate**; phải triển khai schema tương thích trên subscriber (thường thêm cột trước), nếu không apply có thể lỗi.
+- Đây chính là lý do **gh-ost / pt-online-schema-change** của MySQL tồn tại: chúng migrate theo cách kiểm soát được lag của replica.
 
-> **Chốt cho câu ba hỏi:** master migrate → slave **chắc chắn cũng đổi schema**, nhưng nó không "miễn phí": slave phải replay/chạy lại chính công việc nặng đó, nên **replication lag phình ra**, read replica trả dữ liệu cũ và (với Postgres) có thể **huỷ query đọc**. Vì thế migration lớn phải **throttle theo lag** và làm giờ thấp điểm.
+> **Chốt cho câu ba hỏi:** master migrate → physical/MySQL replica thường **cũng đổi schema**, còn PG logical cần đồng bộ schema riêng, nhưng nó không "miễn phí": slave phải replay/chạy lại chính công việc nặng đó, nên **replication lag phình ra**, read replica trả dữ liệu cũ và (với Postgres) có thể **huỷ query đọc**. Vì thế migration lớn phải **throttle theo lag** và làm giờ thấp điểm.
 
 ---
 
@@ -87,8 +88,8 @@ Quét bảng 2 lần, không chặn ghi. Đổi lại: chậm hơn, **không ch�
 -- KHÔNG chặn INSERT/UPDATE trong lúc build
 CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders (user_id);
 
--- Nếu lỡ fail: dọn index hỏng rồi thử lại
-DROP INDEX CONCURRENTLY IF EXISTS idx_orders_user_id;
+-- Chỉ nếu build thất bại và đã xác nhận index INVALID mới dọn rồi thử lại:
+-- DROP INDEX CONCURRENTLY IF EXISTS idx_orders_user_id;
 ```
 
 ### 4.2 Online DDL (MySQL 8)
@@ -121,29 +122,31 @@ gh-ost \
 
 ## 5. Pattern expand–migrate–contract (đổi cột an toàn)
 
-Không bao giờ "đổi tại chỗ" một cột đang được code dùng. Tách thành các bước độc lập, **mỗi bước tương thích ngược**:
+Không bao giờ "đổi tại chỗ" một cột đang được code dùng. Tách thành các bước độc lập, **expand/migrate giữ tương thích ngược**. Contract chỉ chạy sau khi mọi reader/writer đã chuyển và hết cửa sổ rollback; drop cột cũ mất dữ liệu, không thể rollback bằng cách chỉ deploy lại code:
 
-<svg viewBox="0 0 660 150" role="img" aria-labelledby="ex-t ex-d" style="width:100%;max-width:620px;height:auto;display:block;margin:1.25rem auto">
-<title id="ex-t">Vòng đời expand - backfill - migrate - contract</title>
-<desc id="ex-d">Bốn giai đoạn tuần tự theo thời gian, mỗi giai đoạn tương thích ngược</desc>
-<rect x="20" y="45" width="140" height="55" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="90" y="68" text-anchor="middle" font-size="12" fill="currentColor">1. Expand</text>
-<text x="90" y="86" text-anchor="middle" font-size="10" fill="currentColor">thêm cột mới + dual-write</text>
-<rect x="180" y="45" width="140" height="55" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="250" y="68" text-anchor="middle" font-size="12" fill="currentColor">2. Backfill</text>
-<text x="250" y="86" text-anchor="middle" font-size="10" fill="currentColor">copy dữ liệu cũ theo batch</text>
-<rect x="340" y="45" width="140" height="55" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="410" y="68" text-anchor="middle" font-size="12" fill="currentColor">3. Migrate</text>
-<text x="410" y="86" text-anchor="middle" font-size="10" fill="currentColor">code đọc/ghi cột mới</text>
-<rect x="500" y="45" width="140" height="55" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="570" y="68" text-anchor="middle" font-size="12" fill="currentColor">4. Contract</text>
-<text x="570" y="86" text-anchor="middle" font-size="10" fill="currentColor">xoá cột cũ (release sau)</text>
-<line x1="160" y1="72" x2="178" y2="72" stroke="currentColor" stroke-width="1.5" marker-end="url(#ax)"/>
-<line x1="320" y1="72" x2="338" y2="72" stroke="currentColor" stroke-width="1.5" marker-end="url(#ax)"/>
-<line x1="480" y1="72" x2="498" y2="72" stroke="currentColor" stroke-width="1.5" marker-end="url(#ax)"/>
-<text x="330" y="130" text-anchor="middle" font-size="11" fill="currentColor">Mỗi bước deploy riêng, rollback được — không có "big bang"</text>
-<defs><marker id="ax" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<step-flow>
+<svg viewBox="0 0 650 375" role="img" aria-labelledby="dst19fix-schema-t dst19fix-schema-d" style="width:100%;max-width:650px;height:auto;display:block;margin:1.25rem auto">
+<title id="dst19fix-schema-t">Dữ liệu và đường truy cập khi expand–contract</title>
+<desc id="dst19fix-schema-d">Dữ liệu và đường truy cập khi expand–contract</desc>
+<text x="210" y="30" font-size="13" text-anchor="middle" fill="currentColor">Cột cũ</text><text x="430" y="30" font-size="13" text-anchor="middle" fill="currentColor">Cột mới</text><rect x="150" y="45" width="120" height="165" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><rect x="165" y="65" width="90" height="25" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><rect x="165" y="100" width="90" height="25" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><rect x="165" y="135" width="90" height="25" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><rect x="165" y="170" width="90" height="25" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><rect x="20" y="95" width="95" height="40" rx="6" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/><text x="67" y="120" font-size="13" text-anchor="middle" fill="currentColor">Writer</text><g data-step="1">
+<rect x="370" y="45" width="120" height="165" rx="6" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><path d="M115 103 L150 80" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dst19fix-schema-arrow)"/><path d="M115 125 L370 80" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dst19fix-schema-arrow)"/><text x="310" y="65" font-size="13" text-anchor="middle" fill="currentColor">dual-write</text>
+</g>
+<g data-step="2">
+<rect x="385" y="65" width="90" height="25" rx="6" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><path d="M270 77 L370 77" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dst19fix-schema-arrow)"/><rect x="385" y="100" width="90" height="25" rx="6" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><path d="M270 112 L370 112" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dst19fix-schema-arrow)"/><rect x="385" y="135" width="90" height="25" rx="6" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><path d="M270 147 L370 147" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dst19fix-schema-arrow)"/><rect x="385" y="170" width="90" height="25" rx="6" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><path d="M270 182 L370 182" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dst19fix-schema-arrow)"/><text x="310" y="235" font-size="13" text-anchor="middle" fill="currentColor">Backfill theo batch</text>
+</g>
+<rect x="260" y="280" width="120" height="38" rx="6" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/><text x="320" y="304" font-size="13" text-anchor="middle" fill="currentColor">Reader mới</text><g data-step="3">
+<path d="M380 299 L430 210" fill="none" stroke="#10b981" stroke-width="1.5" marker-end="url(#dst19fix-schema-arrow)"/><text x="480" y="265" font-size="13" text-anchor="middle" fill="currentColor">đổi route</text>
+</g>
+<g data-step="4">
+<path d="M145 42 L275 215 M275 42 L145 215" stroke="#f43f5e" stroke-width="3"/><text x="260" y="352" font-size="13" text-anchor="middle" fill="currentColor">Contract: hết cửa sổ rollback mới drop</text>
+</g>
+<defs><marker id="dst19fix-schema-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 Z" fill="currentColor"/></marker></defs>
 </svg>
+<step-note data-step="1">Thêm cột mới, giữ cột cũ và dual-write; release cũ còn hoạt động.</step-note>
+<step-note data-step="2">Các mũi tên ngang là dữ liệu backfill theo batch, có throttle theo lag.</step-note>
+<step-note data-step="3">Chuyển reader/writer khi dữ liệu đã bắt kịp và đã kiểm chứng.</step-note>
+<step-note data-step="4">Drop cột cũ là ranh giới mất tương thích; quay lại code cũ cần phục hồi dữ liệu/schema.</step-note>
+</step-flow>
 
 Backfill đúng cách — **theo batch, throttle theo lag**, không phải một `UPDATE` khổng lồ (một UPDATE 500M dòng khoá & sinh WAL kinh khủng, làm replica lag hàng giờ):
 
@@ -174,7 +177,7 @@ WHERE status IS NULL
 ## 7. Tóm tắt
 - Migration làm **căng IO** vì đụng đồng thời **IOPS, buffer cache (evict dữ liệu nóng), và WAL** — nó làm chậm **cả hệ**, không chỉ chính nó.
 - **Lock level** quyết định downtime: `CREATE INDEX` thường chặn ghi; `ALTER TYPE` rewrite chặn tất cả; dùng `CONCURRENTLY`/online DDL để né. Luôn đặt `lock_timeout`.
-- **Master migrate → replica cũng đổi schema**, nhưng replica phải **replay/chạy lại** công việc nặng đó ⇒ **replication lag** phình, stale read, và (Postgres) **huỷ query đọc** trên standby.
+- **DDL trên replica tùy cơ chế: physical/MySQL tự truyền, PG logical triển khai riêng**, nhưng replica phải **replay/chạy lại** công việc nặng đó ⇒ **replication lag** phình, stale read, và (Postgres) **huỷ query đọc** trên standby.
 - **gh-ost/pt-osc** migrate qua bảng bóng + copy batch + **tự throttle theo lag** → không downtime cho bảng khổng lồ.
 - Đổi cột theo **expand–migrate–contract**, backfill **theo batch có throttle**, không "big bang".
 

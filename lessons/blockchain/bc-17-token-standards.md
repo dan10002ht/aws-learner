@@ -141,7 +141,7 @@ Bài toán: bạn gửi USDC vào một vault sinh lời (Aave, Yearn). Vault tr
 | `redeem(shares, receiver, owner)` | Đốt shares, nhận asset tương ứng |
 | `convertToShares` / `convertToAssets` | Tỷ giá quy đổi asset ↔ share |
 
-Cơ chế sinh lời: **tỷ giá share/asset tăng dần**. Bạn gửi 100 USDC nhận 100 shares; vault kiếm lãi, tổng asset thành 110; giờ 100 shares của bạn `redeem` được 110 USDC. Vì 4626 **kế thừa ERC-20**, share token có thể được chuyển, dùng làm collateral, ghép vào DeFi khác — tính **composability** (lego tài chính) là điểm mạnh.
+Cơ chế sinh lời: **tỷ giá assets/share tăng khi vault kiếm lãi**. Bạn gửi 100 USDC nhận 100 shares; vault kiếm lãi, tổng asset thành 110; giờ 100 shares của bạn `redeem` được 110 USDC. Vì 4626 **kế thừa ERC-20**, share token có thể được chuyển, dùng làm collateral, ghép vào DeFi khác — tính **composability** (lego tài chính) là điểm mạnh.
 
 > Cảnh báo bảo mật kinh điển của 4626: **inflation / donation attack** — kẻ tấn công là người deposit đầu tiên với 1 wei rồi "donate" token trực tiếp để bóp méo tỷ giá, làm nạn nhân deposit sau nhận 0 share (bị làm tròn xuống). Vault chuẩn phải chống bằng "virtual shares/assets offset" (OpenZeppelin 4626 đã tích hợp).
 

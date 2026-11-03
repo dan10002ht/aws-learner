@@ -90,15 +90,15 @@ T1 (Alice): thấy Bob vẫn on-call → "còn người, mình off được" →
 T2 (Bob):   thấy Alice vẫn on-call → "còn người, mình off được" → Bob=off
 ```
 
-Dưới **snapshot isolation**, cả T1 và T2 đọc *snapshot cùng thời điểm* (thấy đủ 2 người), mỗi cái ghi một hàng khác nhau (Alice vs Bob) nên **không xung đột ghi** → cả hai commit → **0 bác sĩ on-call**. Invariant bị phá dù mỗi transaction nhìn riêng đều "hợp lệ". Chỉ **serializable** mới bắt được.
+Dưới **snapshot isolation**, cả T1 và T2 đọc *snapshot cùng thời điểm* (thấy đủ 2 người), mỗi cái ghi một hàng khác nhau (Alice vs Bob) nên **không xung đột ghi** → cả hai commit → **0 bác sĩ on-call**. Invariant bị phá dù mỗi transaction nhìn riêng đều "hợp lệ". **Serializable** ngăn anomaly này; khóa tường minh đúng phạm vi cũng có thể bảo vệ invariant.
 
 ### 2.5 Snapshot Isolation (SI) — cái level ai cũng dùng mà hay hiểu sai
 
-Đa số DB hiện đại (Postgres "Repeatable Read", Oracle "Serializable" (!), MySQL InnoDB "Repeatable Read", SQL Server SNAPSHOT) mặc định hoặc thực chất chạy **Snapshot Isolation** bằng **MVCC** (Multi-Version Concurrency Control): mỗi transaction đọc từ một **snapshot đông cứng** tại thời điểm nó bắt đầu, không thấy thay đổi của transaction khác commit sau đó.
+Postgres **Repeatable Read**, Oracle **Serializable** và SQL Server **SNAPSHOT** cung cấp isolation dựa trên snapshot bằng **MVCC** (Multi-Version Concurrency Control). Snapshot được cố định theo quy tắc của từng engine (Postgres: lúc câu lệnh đầu tiên cần snapshot). Đây không phải cùng một mặc định: Postgres mặc định **Read Committed**. MySQL InnoDB **Repeatable Read** có consistent read theo snapshot nhưng locking/current read khác; không thể suy mọi bảo đảm của SI chuẩn chỉ từ tên level.
 
-SI mạnh hơn Read Committed rất nhiều — nó **loại được** dirty read, non-repeatable read, phantom, và **lost update** (nhờ cơ chế first-committer-wins / abort khi phát hiện ghi chồng). **Nhưng SI KHÔNG chống được write skew.** Đây là điểm bẫy quan trọng nhất của bài:
+SI chuẩn **loại được** dirty read, non-repeatable read và phantom trong các lần đọc cùng snapshot; xung đột cập nhật cùng hàng bị chặn/abort (như Postgres Repeatable Read). Không áp bảo đảm lost update này cho mọi engine mang tên Repeatable Read, nhất là read-modify-write với giá trị tính ở ứng dụng trên InnoDB. **Nhưng SI KHÔNG chống được write skew.** Đây là điểm bẫy quan trọng nhất của bài:
 
-> Nhiều engineer nghĩ "tôi để Repeatable Read/Snapshot là an toàn tuyệt đối". Sai. SI vẫn cho **write skew** và một biến thể **phantom liên quan predicate**. Nếu logic của bạn dựa trên *"đọc để kiểm tra một điều kiện rồi ghi dựa vào điều kiện đó"* trên hàng khác, bạn **cần serializable** hoặc phải **khóa tường minh** (`SELECT ... FOR UPDATE`).
+> Nhiều engineer nghĩ "tôi để Repeatable Read/Snapshot là an toàn tuyệt đối". Sai. SI vẫn cho **write skew / serialization anomaly liên quan predicate**; đây không phải phantom do tập kết quả thay đổi giữa hai lần đọc cùng snapshot. Nếu logic của bạn dựa trên *"đọc để kiểm tra một điều kiện rồi ghi dựa vào điều kiện đó"* trên hàng khác, bạn **cần serializable** hoặc phải **khóa tường minh** đủ các hàng/range bảo vệ invariant (`SELECT ... FOR UPDATE` trên riêng hàng mình ghi là chưa đủ; điều kiện về hàng chưa tồn tại cần cơ chế khóa phù hợp hoặc serializable).
 
 <step-flow>
 <svg viewBox="0 0 700 300" role="img" aria-labelledby="ds06med-ws-t ds06med-ws-d" style="width:100%;max-width:640px;height:auto;display:block;margin:1.25rem auto">

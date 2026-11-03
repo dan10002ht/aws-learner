@@ -69,7 +69,7 @@ Vấn đề cốt lõi: HTTP là client-hỏi-server-trả. Chat cần server **
 | **SSE (Server-Sent Events)** | Server đẩy 1 chiều qua HTTP | Thấp | Nhẹ | Khi chỉ cần **nhận** (feed, notification) |
 | **WebSocket** | Kết nối 2 chiều, full-duplex, persistent | Thấp nhất | Nhẹ khi idle, nhưng **stateful** | Chat thực thụ |
 
-**Kết luận:** dùng **WebSocket** làm chính, **long polling làm fallback** (mạng doanh nghiệp / proxy đôi khi chặn WS). SSE không đủ vì chat cần gửi 2 chiều.
+**Kết luận:** dùng **WebSocket** làm chính, **long polling làm fallback** (mạng doanh nghiệp / proxy đôi khi chặn WS). SSE chỉ đẩy chiều server → client, nhưng có thể kết hợp HTTP POST để gửi tin; ở đây chọn WS để gom hai chiều trên một kết nối.
 
 <ab-toggle data-labels="Long polling|WebSocket">
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 470" role="img" aria-labelledby="sd05-med-lp-t sd05-med-lp-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
@@ -223,15 +223,15 @@ Luồng gửi một tin 1-1 (A → B):
 
 ## 6. Deep dive
 
-### 6.1. Connection layer: sticky vs stateless + pub/sub
+### 6.1. Connection layer: sticky vs gateway + registry/pub/sub
 
 Vì WS stateful, một tin gửi cho B phải tới **đúng node đang giữ B**. Hai trường phái:
 
-| | **Sticky (session affinity)** | **Stateless gateway + pub/sub** |
+| | **Sticky (session affinity)** | **Gateway + registry/pub/sub** |
 |---|---|---|
-| Cơ chế | LB ghim user vào 1 node; node biết user nào của mình | Gateway chỉ giữ WS; routing qua registry + pub/sub |
+| Cơ chế | LB ghim user vào 1 node; node biết user nào của mình | Gateway giữ socket state; business/session state ở ngoài, routing qua registry + pub/sub |
 | Tìm node của B | Cần **registry** (`userId -> nodeId` trong Redis) | Như trên — registry là bắt buộc |
-| Node chết | Mọi connection trên node đó **rớt**, client reconnect | Tương tự, nhưng tin đang bay đã nằm trong queue/store |
+| Node chết | Mọi connection trên node đó **rớt**, client reconnect | Tương tự; chỉ phục hồi tin nếu đã lưu bền, có ACK và replay khi reconnect |
 | Mở rộng | Khó rebalance khi thêm node | Dễ hơn, gateway "ngu" và đồng nhất |
 | Độ phức tạp | Thấp lúc đầu, đau khi scale | Cao hơn lúc đầu, bền khi scale |
 

@@ -39,7 +39,7 @@ Bài này dùng khá nhiều từ của dân network. Mỗi từ dưới đây c
 | **On-premises (on-prem)** | Hạ tầng bạn tự vận hành ngoài AWS: datacenter, văn phòng, chi nhánh. |
 | **CIDR / prefix** | Một dải IP viết gọn, ví dụ `10.1.0.0/16`. Số sau dấu `/` càng lớn thì dải càng hẹp và càng "cụ thể": `/24` có 256 địa chỉ, `/16` có 65.536. |
 | **Route / route table** | Một dòng luật "gói tới dải X thì gửi cho Y". Router tra bảng này cho từng gói. |
-| **IPsec tunnel** | Đường hầm mã hoá giữa hai router: gói tin gốc được mã hoá rồi bọc trong một gói khác để đi qua internet. VPN của AWS dùng IPsec. |
+| **IPsec tunnel** | Đường hầm mã hoá giữa hai router: gói tin gốc được mã hoá rồi bọc trong một gói khác để đi qua internet. AWS Site-to-Site VPN dùng IPsec; Client VPN dùng OpenVPN/TLS. |
 | **Customer gateway (CGW)** | Router hoặc firewall **phía bạn**, đầu on-prem của VPN. Trong AWS nó chỉ là một bản ghi chứa public IP của thiết bị đó. |
 | **Virtual private gateway (VGW)** | "Cổng sau" của **đúng một VPC**: thứ bạn gắn vào VPC để VPN hoặc DX có chỗ cắm vào. Internet gateway là cổng ra internet, VGW là cổng về on-prem. |
 | **Transit Gateway (TGW)** | Một router do AWS quản lý, đứng giữa làm trung tâm (hub). Nhiều VPC, VPN và DX cùng cắm vào nó, mỗi lần cắm là một **attachment**. |
@@ -59,55 +59,10 @@ Với bộ từ đó, mọi câu hỏi hybrid trong SAA đều rơi vào giao c�
 
 Sơ đồ dưới đặt các mảnh đó vào đúng chỗ: bên trái là phía bạn, ở giữa là đường đi, bên phải là điểm cuối trong AWS.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 400" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Bức tranh hybrid connectivity — từ on-premises và người dùng tới AWS</title>
-  <desc>Datacenter on-premises có hai đường lên AWS: Site-to-Site VPN đi qua internet với hai tunnel IPsec, và Direct Connect đi qua location DX bằng circuit riêng. Người dùng cá nhân dùng Client VPN. Cả ba đổ vào điểm cuối AWS: Virtual Private Gateway gắn vào một VPC, hoặc Transit Gateway làm hub nối nhiều VPC. Direct Connect qua Direct Connect Gateway có thể tới VGW bằng private VIF hoặc tới Transit Gateway bằng transit VIF, còn public VIF đi thẳng tới các public endpoint như S3.</desc>
-  <defs>
-    <marker id="hcArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
-  </defs>
-  <text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">Hybrid connectivity — ai nối vào đâu</text>
-  <rect x="16" y="52" width="150" height="70" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="91" y="78" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">On-premises DC</text>
-  <text x="91" y="96" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">router + BGP ASN</text>
-  <text x="91" y="112" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">10.1.0.0/16</text>
-  <rect x="16" y="300" width="150" height="62" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="91" y="324" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Laptop / remote</text>
-  <text x="91" y="342" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">OpenVPN client</text>
-  <rect x="216" y="44" width="150" height="54" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="291" y="66" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Internet</text>
-  <text x="291" y="84" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">2 tunnel IPsec</text>
-  <rect x="216" y="128" width="150" height="54" rx="10" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="291" y="150" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">DX location</text>
-  <text x="291" y="168" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">cross-connect + LAG</text>
-  <line x1="166" y1="72" x2="210" y2="72" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#hcArr)"/>
-  <line x1="166" y1="100" x2="210" y2="150" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#hcArr)"/>
-  <line x1="166" y1="326" x2="210" y2="90" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 3" marker-end="url(#hcArr)"/>
-  <rect x="402" y="128" width="140" height="54" rx="10" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="472" y="150" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">DX Gateway</text>
-  <text x="472" y="168" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">global, cross-region</text>
-  <line x1="366" y1="155" x2="396" y2="155" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#hcArr)"/>
-  <text x="381" y="146" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">VIF</text>
-  <rect x="402" y="44" width="140" height="54" rx="10" fill="#8b5cf6" fill-opacity="0.1" stroke="currentColor" stroke-opacity="0.2"/>
-  <text x="472" y="66" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">public VIF</text>
-  <text x="472" y="84" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">S3, DynamoDB public</text>
-  <line x1="366" y1="140" x2="398" y2="92" stroke="currentColor" stroke-opacity="0.4" stroke-dasharray="4 3" marker-end="url(#hcArr)"/>
-  <rect x="578" y="200" width="126" height="56" rx="10" fill="#3b82f6" fill-opacity="0.85"/>
-  <text x="641" y="224" font-size="11.5" font-weight="700" text-anchor="middle" fill="#fff">Transit GW</text>
-  <text x="641" y="242" font-size="9.5" text-anchor="middle" fill="#fff" opacity="0.9">hub nhiều VPC</text>
-  <rect x="402" y="252" width="140" height="52" rx="10" fill="#10b981" fill-opacity="0.85"/>
-  <text x="472" y="274" font-size="11.5" font-weight="700" text-anchor="middle" fill="#fff">VGW</text>
-  <text x="472" y="292" font-size="9.5" text-anchor="middle" fill="#fff" opacity="0.9">gắn đúng 1 VPC</text>
-  <line x1="472" y1="182" x2="472" y2="246" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#hcArr)"/>
-  <text x="486" y="216" font-size="9" fill="currentColor" opacity="0.7">private VIF</text>
-  <line x1="542" y1="155" x2="600" y2="196" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#hcArr)"/>
-  <text x="586" y="170" font-size="9" fill="currentColor" opacity="0.7">transit VIF</text>
-  <line x1="366" y1="70" x2="576" y2="206" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3"/>
-  <rect x="560" y="284" width="144" height="78" rx="10" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="632" y="306" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">VPC A · VPC B · VPC C</text>
-  <text x="632" y="324" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">nhiều account, nhiều region</text>
-  <text x="632" y="344" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.75">attachment qua RAM share</text>
-  <line x1="641" y1="256" x2="641" y2="278" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#hcArr)"/>
-  <text x="16" y="386" font-size="10" fill="currentColor" opacity="0.8">Nét liền = đường dữ liệu chính · nét đứt = đường thay thế / tạm thời</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 625" role="img" aria-labelledby="fix-hybrid-t fix-hybrid-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="fix-hybrid-t">Hybrid connectivity: Site-to-Site, Direct Connect, Client VPN</title><desc id="fix-hybrid-d">Site-to-Site dùng IPsec tới VGW/TGW. DX public VIF tới public API, private/transit VIF qua DXGW tới VGW/TGW. Client VPN minh hoạ subnet association, tách khỏi hai tunnel IPsec.</desc>
+<defs><marker id="fix-hybrid-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs><use href="#aws-vpc" x="153" y="405" width="24" height="24"/>
+<text x="260" y="22" text-anchor="middle" font-size="16" fill="currentColor">Hybrid: tách đường site và đường client</text><rect x="8" y="58" width="128" height="65" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="72.0" y="90.5" text-anchor="middle" font-size="13" fill="currentColor">On-prem DC</text><text x="72.0" y="110.5" text-anchor="middle" font-size="13" fill="currentColor">10.1.0.0/16</text><rect x="180" y="58" width="155" height="65" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="257.5" y="90.5" text-anchor="middle" font-size="13" fill="currentColor">Site-to-Site VPN</text><text x="257.5" y="110.5" text-anchor="middle" font-size="13" fill="currentColor">2 tunnel IPsec</text><rect x="380" y="58" width="130" height="65" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="445.0" y="90.5" text-anchor="middle" font-size="13" fill="currentColor">VGW / TGW</text><text x="445.0" y="110.5" text-anchor="middle" font-size="13" fill="currentColor">VPC / hub</text><path d="M136 90 H180" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#fix-hybrid-arr)"/><text x="157" y="47" text-anchor="middle" font-size="13" fill="#3b82f6">Internet</text><path d="M335 90 H380" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#fix-hybrid-arr)"/><rect x="8" y="180" width="128" height="65" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="72.0" y="212.5" text-anchor="middle" font-size="13" fill="currentColor">Router + BGP</text><text x="72.0" y="232.5" text-anchor="middle" font-size="13" fill="currentColor">ASN on-prem</text><rect x="180" y="180" width="155" height="65" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="257.5" y="212.5" text-anchor="middle" font-size="13" fill="currentColor">DX location</text><text x="257.5" y="232.5" text-anchor="middle" font-size="13" fill="currentColor">circuit riêng</text><rect x="380" y="180" width="130" height="65" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="445.0" y="212.5" text-anchor="middle" font-size="13" fill="currentColor">DXGW</text><text x="445.0" y="232.5" text-anchor="middle" font-size="13" fill="currentColor">global</text><path d="M136 212 H180" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#fix-hybrid-arr)"/><text x="365" y="165" text-anchor="middle" font-size="13" fill="currentColor">private / transit VIF</text><path d="M335 212 H380" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#fix-hybrid-arr)"/><rect x="180" y="300" width="155" height="65" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="257.5" y="332.5" text-anchor="middle" font-size="13" fill="currentColor">AWS public API</text><text x="257.5" y="352.5" text-anchor="middle" font-size="13" fill="currentColor">S3 / DynamoDB</text><rect x="380" y="300" width="130" height="65" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="445.0" y="332.5" text-anchor="middle" font-size="13" fill="currentColor">VGW / TGW</text><text x="445.0" y="352.5" text-anchor="middle" font-size="13" fill="currentColor">1 VPC / hub</text><path d="M257 245 V300" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#fix-hybrid-arr)"/><text x="238" y="279" text-anchor="middle" font-size="13" fill="#10b981">public VIF</text><path d="M445 245 V300" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#fix-hybrid-arr)"/><text x="466" y="279" text-anchor="middle" font-size="13" fill="#10b981">association</text><rect x="150" y="400" width="360" height="155" rx="10" fill="none" stroke="currentColor" stroke-dasharray="5 4"/><text x="330" y="421" text-anchor="middle" font-size="13" fill="currentColor">VPC: subnet association minh hoạ</text><rect x="8" y="450" width="128" height="65" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="72.0" y="482.5" text-anchor="middle" font-size="13" fill="currentColor">Laptop</text><text x="72.0" y="502.5" text-anchor="middle" font-size="13" fill="currentColor">OpenVPN/TLS</text><rect x="170" y="450" width="155" height="65" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="247.5" y="482.5" text-anchor="middle" font-size="13" fill="currentColor">Client VPN</text><text x="247.5" y="502.5" text-anchor="middle" font-size="13" fill="currentColor">endpoint</text><rect x="365" y="450" width="130" height="65" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="430.0" y="482.5" text-anchor="middle" font-size="13" fill="currentColor">Subnet</text><text x="430.0" y="502.5" text-anchor="middle" font-size="13" fill="currentColor">resources</text><path d="M136 482 H170" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#fix-hybrid-arr)"/><text x="152" y="439" text-anchor="middle" font-size="13" fill="#3b82f6">Internet</text><path d="M325 482 H365" fill="none" stroke="#3b82f6" stroke-width="2" marker-end="url(#fix-hybrid-arr)"/><text x="260" y="580" text-anchor="middle" font-size="13" fill="currentColor">DX: cross-connect; LAG cho dedicated connection</text><text x="260" y="602" text-anchor="middle" font-size="13" fill="currentColor">TGW: nhiều VPC/account qua attachment và RAM</text>
 </svg>
 
 ### 2.1 Bảng quyết định gốc — chọn đường nào
@@ -344,7 +299,7 @@ Bật accelerated VPN thì tunnel không kết thúc ở region nữa mà ở **
 
 Site-to-Site nối hai **mạng** qua hai router. Client VPN nối **từng người** vào VPC: nhân viên làm ở nhà không có router doanh nghiệp nào cả, chỉ có một cái laptop.
 
-Client VPN là dịch vụ **client-based** dựa trên OpenVPN (một giao thức VPN mã nguồn mở, chạy trên TLS). Luồng hoạt động:
+Sơ đồ minh hoạ mô hình Client VPN associate subnet như dưới đây; AWS còn hỗ trợ TGW association theo loại endpoint/cấu hình. Client VPN là dịch vụ **client-based** dựa trên OpenVPN (một giao thức VPN mã nguồn mở, chạy trên TLS). Luồng hoạt động:
 
 1. Bạn tạo một **Client VPN endpoint** và **associate** nó vào một hoặc vài subnet của VPC. Mỗi subnet được associate là một "cửa vào" VPC.
 2. User cài phần mềm client, kết nối và **authenticate** theo một trong ba cách: tài khoản Active Directory, **SAML** (chuẩn đăng nhập một lần, tức là đăng nhập bằng tài khoản công ty qua IAM Identity Center, Okta…), hoặc certificate cài sẵn trên máy (mutual authentication).

@@ -509,45 +509,10 @@ Về hiệu năng, endpoint bớt được một chặng trung gian và không c
 
 Áp vào bài tập 2 cuối bài: hoá đơn NAT $5.000/tháng mà 90% là đọc S3 thì thêm một S3 gateway endpoint sẽ cắt được khoảng 0,9 × $5.000 = **$4.500** phần phí theo GB, không phải sửa dòng code nào.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Truy cập S3/DynamoDB: Gateway endpoint so với đi qua NAT Gateway</title>
-  <desc>So sánh hai đường tới S3 hoặc DynamoDB. Đường trên qua NAT Gateway rồi Internet Gateway ra internet, tính phí data và đi qua mạng công cộng. Đường dưới qua VPC Gateway endpoint đi thẳng trên mạng riêng AWS, miễn phí và bảo mật hơn.</desc>
-  <defs>
-    <marker id="ge1" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
-  </defs>
-  <text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">EC2 (private subnet) → S3 / DynamoDB: hai đường</text>
-  <rect x="14" y="38" width="80" height="56" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="54" y="62" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">EC2</text>
-  <text x="54" y="79" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.62">private</text>
-  <rect x="690" y="120" width="16" height="0" fill="none"/>
-  <rect x="600" y="118" width="104" height="56" rx="10" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="652" y="142" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">S3 / DynamoDB</text>
-  <text x="652" y="159" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.62">AWS service</text>
-  <text x="16" y="46" font-size="10.5" fill="#f59e0b" opacity="0.95" font-weight="700">CÁCH CŨ</text>
-  <rect x="150" y="40" width="120" height="46" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="210" y="60" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">NAT Gateway</text>
-  <text x="210" y="76" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.65">$/h + $/GB</text>
-  <rect x="320" y="40" width="120" height="46" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="380" y="60" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Internet GW</text>
-  <text x="380" y="76" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.65">ra public internet</text>
-  <rect x="478" y="40" width="120" height="46" rx="9" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 3"/>
-  <text x="538" y="60" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Internet</text>
-  <text x="538" y="76" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.65">mạng công cộng</text>
-  <line x1="94" y1="58" x2="146" y2="60" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#ge1)"/>
-  <line x1="270" y1="63" x2="316" y2="63" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#ge1)"/>
-  <line x1="440" y1="63" x2="474" y2="63" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#ge1)"/>
-  <path d="M598 60 C 640 60 652 90 652 116" fill="none" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#ge1)"/>
-  <text x="300" y="104" font-size="10" fill="#f59e0b" opacity="0.95">tính phí data · đi qua internet</text>
-  <text x="16" y="200" font-size="10.5" fill="#10b981" opacity="0.95" font-weight="700">CÁCH ĐÚNG</text>
-  <rect x="240" y="194" width="220" height="50" rx="10" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
-  <rect x="252" y="206" width="120" height="22" rx="11" fill="#10b981" fill-opacity="0.92"/>
-  <text x="312" y="221" font-size="10.5" font-weight="700" text-anchor="middle" fill="#fff">Gateway endpoint</text>
-  <text x="386" y="222" font-size="10.5" font-weight="700" fill="currentColor">FREE</text>
-  <text x="350" y="240" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.62">route table → endpoint, không cần NAT</text>
-  <path d="M70 94 C 70 220 130 219 236 219" fill="none" stroke="#10b981" stroke-opacity="0.65" marker-end="url(#ge1)"/>
-  <path d="M460 219 C 560 219 600 200 642 176" fill="none" stroke="#10b981" stroke-opacity="0.65" marker-end="url(#ge1)"/>
-  <text x="250" y="270" font-size="10" fill="#10b981" opacity="0.95">private AWS network · miễn phí · không qua internet</text>
-  <text x="250" y="286" font-size="9.5" fill="currentColor" opacity="0.6">(data through endpoint $0.01/GB; gateway endpoint không tính phí endpoint)</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 375" role="img" aria-labelledby="fix-nat-t fix-nat-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="fix-nat-t">S3/DynamoDB: NAT hay Gateway endpoint</title><desc id="fix-nat-d">Hai đường từ cùng EC2 tới cùng dịch vụ; gateway endpoint miễn phí, interface endpoint là loại khác có tính phí.</desc>
+<defs><marker id="fix-nat-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs><use href="#aws-nat-gateway" x="176" y="53" width="24" height="24"/>
+<rect x="10" y="130" width="115" height="64" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="67.5" y="162.0" text-anchor="middle" font-size="13" fill="currentColor">EC2</text><text x="67.5" y="182.0" text-anchor="middle" font-size="13" fill="currentColor">private subnet</text><rect x="395" y="130" width="115" height="64" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6"/><text x="452.5" y="162.0" text-anchor="middle" font-size="13" fill="currentColor">S3 / DDB</text><text x="452.5" y="182.0" text-anchor="middle" font-size="13" fill="currentColor">same region</text><rect x="170" y="45" width="180" height="60" rx="8" fill="#f59e0b" fill-opacity="0.13" stroke="#f59e0b"/><text x="276" y="75.0" text-anchor="middle" font-size="13" fill="currentColor">NAT Gateway</text><text x="260.0" y="95.0" text-anchor="middle" font-size="13" fill="currentColor">public subnet</text><rect x="170" y="245" width="180" height="60" rx="8" fill="#10b981" fill-opacity="0.13" stroke="#10b981"/><text x="260.0" y="275.0" text-anchor="middle" font-size="13" fill="currentColor">Gateway endpoint</text><text x="260.0" y="295.0" text-anchor="middle" font-size="13" fill="currentColor">route table</text><path d="M68 130 V75 H170" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#fix-nat-arr)"/><path d="M350 75 H453 V130" fill="none" stroke="#f59e0b" stroke-width="2" marker-end="url(#fix-nat-arr)"/><text x="405" y="35" text-anchor="middle" font-size="13" fill="#f59e0b">IGW / public endpoint</text><path d="M68 194 V275 H170" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#fix-nat-arr)"/><path d="M350 275 H453 V194" fill="none" stroke="#10b981" stroke-width="2" marker-end="url(#fix-nat-arr)"/><text x="260" y="125" text-anchor="middle" font-size="13" fill="#f59e0b">NAT: $0.045/giờ + $0.045/GB</text><text x="260" y="330" text-anchor="middle" font-size="13" fill="#10b981">Gateway endpoint: không phí endpoint/data processing</text><text x="260" y="353" text-anchor="middle" font-size="13" fill="currentColor">Không cần NAT; đường private trên mạng AWS</text>
 </svg>
 
 ### 7.3 Enhanced Networking
@@ -728,7 +693,8 @@ Khi một tập đoàn có hàng chục VPC ở nhiều region cùng nhiều vă
 | Cross-region (cross-continent) | $0.02-0.09/GB |
 | Cross-AZ trong region | $0.01/GB each way |
 | Same-AZ private IP | Free |
-| To/from VPC endpoint | Free (data through endpoint $0.01/GB) |
+| S3/DynamoDB gateway endpoint | Không tính phí endpoint hay data processing |
+| Interface endpoint (PrivateLink) | Phí mỗi endpoint/AZ/giờ + data processing, thường $0.01/GB ở bậc đầu; thêm data transfer nếu áp dụng |
 
 > Egress là **cost trap** lớn nhất. Đưa 1 GB từ AWS ra internet (~$0,09) đắt gấp khoảng 4 lần tiền lưu chính GB đó trên S3 Standard suốt một tháng (~$0,023), và lần nào tải cũng bị tính lại. Trước khi mở một luồng egress lớn, tính tiền.
 

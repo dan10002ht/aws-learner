@@ -48,9 +48,9 @@ CPU không biết "biến", "vòng lặp", "object". Nó chỉ biết: nạp, c�
 
 ### Register — túi áo của đầu bếp
 
-**Register** (thanh ghi) là những ô nhớ tí hon **nằm ngay bên trong CPU**. Một CPU 64-bit thường chỉ có khoảng 16–32 thanh ghi cho mục đích chung, mỗi cái chứa đúng 8 byte. Đây là chỗ *duy nhất* CPU có thể trực tiếp tính toán.
+**Register** (thanh ghi) là những ô nhớ tí hon **nằm ngay bên trong CPU**. Một CPU 64-bit thường chỉ có khoảng 16–32 thanh ghi cho mục đích chung, mỗi cái chứa đúng 8 byte. Đây là nơi chứa toán hạng của phép tính trong mô hình load/store bên dưới.
 
-Giống cái túi áo của đầu bếp: lấy ra/bỏ vào tức thì, nhưng chỉ nhét được vài thứ. Mọi phép tính `ADD`, `SUB`, `CMP` đều thao tác trên register. Muốn cộng hai số đang nằm trong RAM, CPU **bắt buộc** phải `LOAD` chúng vào register trước.
+Giống cái túi áo của đầu bếp: lấy ra/bỏ vào tức thì, nhưng chỉ nhét được vài thứ. Trong mô hình load/store của ví dụ, các phép tính thao tác trên register nên phải `LOAD` dữ liệu trước. ISA khác có thể cho phép toán hạng bộ nhớ (ví dụ một số lệnh x86); không phải CPU nào cũng cần lệnh LOAD tách riêng.
 
 ### RAM — siêu thị ngoài phố
 
@@ -226,20 +226,20 @@ Cache không lấy từng byte một. Khi CPU cần một byte không có trong 
   <g>
     <!-- ô trước (không lấy) -->
     <rect x="80" y="62" width="44" height="34" rx="4" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="102" y="84" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.5">...960</text>
+    <text x="102" y="84" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.5">...959</text>
     <!-- cache line 64 byte = khối được kéo -->
     <rect x="128" y="58" width="360" height="42" rx="6" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.4" stroke-width="1.5"/>
-    <text x="170" y="84" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">992</text>
+    <text x="170" y="84" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">960</text>
     <!-- byte được xin -->
     <rect x="200" y="64" width="40" height="30" rx="4" fill="#f59e0b" fill-opacity="0.9"/>
     <text x="220" y="84" font-size="10" font-weight="700" text-anchor="middle" fill="#fff">1000</text>
     <text x="300" y="84" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">...byte liền kề...</text>
-    <text x="455" y="84" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">1055</text>
+    <text x="455" y="84" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">1023</text>
     <!-- ô sau (không lấy) -->
     <rect x="492" y="62" width="44" height="34" rx="4" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="514" y="84" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.5">1056...</text>
+    <text x="514" y="84" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.5">1024...</text>
   </g>
-  <text x="308" y="118" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">cache line = 64 byte liền kề (992 → 1055)</text>
+  <text x="308" y="118" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">cache line = 64 byte liền kề (960 → 1023)</text>
   <!-- mũi tên kéo lên cache -->
   <g stroke="currentColor" stroke-width="1.6" fill="currentColor">
     <line x1="308" y1="128" x2="308" y2="160"/>
@@ -287,7 +287,7 @@ arr: [ 0  1  2  ... 15 ][ 16 17 ... 31 ][ ... ]
 arr[1..15] → HIT hết (đã có sẵn). 1 miss cho 16 lần đọc.
 ```
 
-**Duyệt ngẫu nhiên** (index random, hoặc nhảy bước lớn):
+**Duyệt ngẫu nhiên** (index random, hoặc nhảy bước lớn): ví dụ dưới giả định working set lớn hơn cache, các line ít được dùng lại; số miss thực tế phụ thuộc kích thước dữ liệu, cache và pattern.
 
 ```
 Đọc arr[8123] → MISS, kéo line lên.
@@ -298,8 +298,8 @@ Gần như MỌI lần đọc đều miss → mỗi lần ~100 ns.
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Duyệt mảng tuần tự so với ngẫu nhiên: hit và miss theo cache line</title>
-  <desc>Mảng chia thành cache line 16 phần tử. Duyệt tuần tự: 1 miss đầu line rồi 15 hit. Duyệt ngẫu nhiên: gần như mỗi lần đọc là 1 miss vì nhảy giữa các line.</desc>
-  <text x="360" y="24" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Tuần tự (1 miss + 15 hit) vs Ngẫu nhiên (toàn miss)</text>
+  <desc>Mảng chia thành cache line 16 phần tử. Duyệt tuần tự: 1 miss đầu line rồi 15 hit. Duyệt ngẫu nhiên trong working set lớn hơn cache, ít tái sử dụng line: minh hoạ nhiều miss.</desc>
+  <text x="360" y="24" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Tuần tự (1 miss + 15 hit) vs Ngẫu nhiên (ví dụ nhiều miss)</text>
   <!-- legend -->
   <rect x="190" y="36" width="16" height="14" rx="3" fill="#10b981" fill-opacity="0.85"/>
   <text x="212" y="48" font-size="11" fill="currentColor">HIT (đã có trong cache)</text>
@@ -381,7 +381,7 @@ Giờ ghép với data structure — đây là chỗ kiến thức này "ăn ti�
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Array so với Linked list trong bộ nhớ</title>
-  <desc>Array là các ô liền kề trong RAM nên locality tốt. Linked list có các node rải rác khắp heap, con trỏ next nhảy lung tung, mỗi bước gần như một cache miss.</desc>
+  <desc>Array là các ô liền kề trong RAM nên locality tốt. Linked list có node rải xa và working set lớn hơn cache nên con trỏ next dễ gây miss; đây là điều kiện của ví dụ, không phải mọi linked list.</desc>
   <text x="360" y="24" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Array (liền mạch) vs Linked list (rải rác)</text>
   <!-- ARRAY -->
   <text x="30" y="76" font-size="12.5" font-weight="700" fill="currentColor">Array</text>
@@ -416,10 +416,10 @@ Giờ ghép với data structure — đây là chỗ kiến thức này "ăn ti�
   <defs>
     <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#ef4444" fill-opacity="0.8"/></marker>
   </defs>
-  <text x="360" y="306" font-size="11" font-weight="600" text-anchor="middle" fill="#ef4444">node->next = cú nhảy địa chỉ random → gần như mỗi bước 1 MISS</text>
+  <text x="360" y="306" font-size="11" font-weight="600" text-anchor="middle" fill="#ef4444">node->next rải xa + working set lớn → dễ MISS</text>
 </svg>
 
-Trên giấy cả hai duyệt `O(N)`. Trên CPU thật, array thường nhanh **vài lần** vì linked list bắt CPU "chạy ra siêu thị" gần như mỗi bước. Đây là lý do `std::vector` / `ArrayList` thường thắng `std::list` / `LinkedList` ngay cả ở các thao tác mà linked list "đáng lẽ" tốt hơn.
+Trên giấy cả hai duyệt `O(N)`. Trên CPU thật, khi node rải xa và working set lớn hơn cache, array thường nhanh **vài lần** vì linked list có thể bắt CPU "chạy ra siêu thị" gần như mỗi bước. Đây là lý do `std::vector` / `ArrayList` thường thắng `std::list` / `LinkedList` ngay cả ở các thao tác mà linked list "đáng lẽ" tốt hơn.
 
 Cùng nguyên lý:
 - **Array of Structs vs Struct of Arrays**: nếu chỉ cần 1 field, gom field đó thành mảng riêng (SoA) → mỗi cache line chứa toàn dữ liệu bạn cần, không phí.

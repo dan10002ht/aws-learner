@@ -13,18 +13,18 @@ Sau bài này bạn có thể:
 
 ## 2. Flash loan — vay không thế chấp nhờ atomicity
 
-### 2.1 Analogy — mượn tiền "trong tích tắc" có người bảo chứng tuyệt đối
+### 2.1 Analogy — mượn tiền "trong tích tắc" trả trong cùng giao dịch
 
-Tưởng tượng bạn xin ngân hàng mượn 10 triệu USD **không thế chấp**, với điều kiện: bạn phải trả lại **trước khi rời khỏi quầy** — và nếu chưa trả đủ thì **toàn bộ mọi việc bạn vừa làm bị xoá sạch như chưa từng xảy ra**. Ngân hàng chẳng mất gì để cho vay, vì rủi ro vỡ nợ bằng **0**.
+Tưởng tượng bạn xin ngân hàng mượn 10 triệu USD **không thế chấp**, với điều kiện: bạn phải trả lại **trước khi rời khỏi quầy** — và nếu chưa trả đủ thì **toàn bộ mọi việc bạn vừa làm bị xoá sạch như chưa từng xảy ra**. Điều kiện hoàn trả nguyên tử chặn việc giữ khoản vay mà không trả, nếu cơ chế kiểm tra được triển khai đúng.
 
-Trong blockchain, "quầy" đó là **một transaction**. EVM có tính chất **atomicity**: một tx hoặc **thành công toàn bộ**, hoặc **revert toàn bộ** (mọi thay đổi state bị rollback). Flash loan khai thác chính điều này:
+Trong blockchain, "quầy" đó là **một transaction**. EVM có tính chất **atomicity**: một tx hoặc **thành công toàn bộ**, hoặc **revert toàn bộ** (thay đổi state của việc thực thi bị rollback; gas đã dùng vẫn mất và nonce của tx đã được đưa lên chain vẫn tăng). Flash loan khai thác chính điều này:
 
 1. Protocol chuyển tiền cho bạn (trong tx).
 2. Contract của bạn làm gì đó với tiền (arbitrage, swap, refinance…).
 3. Trước khi tx kết thúc, bạn phải hoàn trả **gốc + phí**.
 4. Nếu bước 3 thất bại → `revert` → **coi như protocol chưa từng cho vay**.
 
-Vì mọi thứ nằm gọn trong một tx, người cho vay **không bao giờ mất tiền** — đó là lý do flash loan **không cần thế chấp** và mở ra cho **bất kỳ ai**, không cần credit score.
+Vì mọi thứ nằm gọn trong một tx, protocol **có thể buộc trả đủ hoặc rollback** khi contract kiểm đúng; lỗi triển khai vẫn có thể gây mất tiền — đó là lý do flash loan **không cần thế chấp** và mở ra cho **bất kỳ ai**, không cần credit score.
 
 <step-flow>
 <svg viewBox="0 0 720 345" role="img" aria-labelledby="bc26-med-t bc26-med-d" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto">
@@ -281,7 +281,7 @@ Checklist tối thiểu trước khi bỏ tiền vào một protocol:
 ---
 
 ## 7. Tóm tắt
-- **Flash loan** = vay không thế chấp nhờ **atomicity** của tx: trả đủ gốc + phí trong cùng tx, nếu không toàn bộ **revert** → pool không bao giờ mất tiền.
+- **Flash loan** = vay không thế chấp nhờ **atomicity** của tx: trả đủ gốc + phí trong cùng tx, nếu không toàn bộ **revert** → rollback khoản vay và thao tác liên quan nếu kiểm tra được triển khai đúng; vẫn mất gas và có rủi ro lỗi protocol.
 - Ứng dụng hợp pháp: **arbitrage, collateral swap, self-liquidation, refinance**. Mặt tối: **oracle manipulation** — gốc rễ là oracle tồi, chống bằng Chainlink/TWAP.
 - Contract Aave V3 xoay quanh callback **`executeOperation`** với hai `require` bảo mật và `approve(amount + premium)` để pool thu nợ.
 - **APY ≠ APR** (khác nhau ở compounding); farm khoe APY; APY cao bất thường = **cờ đỏ**; nhớ trừ **impermanent loss**.

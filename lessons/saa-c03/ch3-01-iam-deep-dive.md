@@ -247,7 +247,7 @@ Con số "15 phút tới 12 giờ" mà đề thi hay nhắc chính là khoảng 
 
 1. Principal A (user/role) gọi `sts:AssumeRole` với **Role ARN** của Role R, kèm một tên phiên (*role session name*) tự đặt.
 2. Role R có **Trust Policy** quyết định ai được assume. STS đọc policy đó để xem A có trong danh sách không.
-3. Nếu trust policy allow A + A có `sts:AssumeRole` permission → STS trả credential tạm.
+3. Nếu trust policy và quyền caller thoả điều kiện cùng/cross-account ở dưới → STS trả credential tạm (vẫn chịu explicit deny và các policy giới hạn).
 4. A dùng credential này gọi AWS API. Trong suốt phiên, A **có quyền của R và chỉ của R**; quyền gốc của A tạm gác lại cho tới khi A quay về dùng credential của chính mình.
 
 <step-flow>
@@ -295,7 +295,7 @@ Con số "15 phút tới 12 giờ" mà đề thi hay nhắc chính là khoảng 
 <step-note data-step="4">A ký request bằng credential mới nên API đánh giá quyền của phiên role R, thay vì cộng thêm quyền gốc của A.</step-note>
 </step-flow>
 
-Bước 3 có hai điều kiện, và nó chính là luật ở §3 áp vào trường hợp này, vì trust policy là một resource-based policy gắn trên role:
+Điều kiện ở bước 3 phụ thuộc account, vì trust policy là một resource-based policy gắn trên role:
 
 - **A và R khác account:** cần **cả hai**. Trust policy của R phải nêu account A (hoặc principal cụ thể của A), và identity policy của A phải Allow `sts:AssumeRole` trên ARN của R.
 - **A và R cùng account:** trust policy nêu đích danh A là đủ. Nếu trust policy chỉ nêu account (`:root`) thì A cần thêm identity policy Allow `sts:AssumeRole`.

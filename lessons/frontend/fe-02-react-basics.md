@@ -179,7 +179,7 @@ Lần đầu component xuất hiện gọi là **render** (mount). React gọi s
 
 1. **State của component thay đổi** (qua `setState`), hoặc
 2. **Component cha re-render** (kéo theo con render lại), hoặc
-3. **Props thay đổi**.
+3. **Context component đang đọc thay đổi**. Props mới thường đến khi cha render lại; `memo` có thể bỏ qua render con khi props không đổi.
 
 Mỗi lần re-render, React gọi **lại** hàm component từ đầu, tạo virtual DOM mới, so sánh (diff) với cây cũ, rồi chỉ vá phần khác biệt vào DOM thật. Đây là lý do bạn cảm thấy "vẽ lại tất cả" nhưng performance vẫn ổn.
 
@@ -195,7 +195,7 @@ Mỗi lần re-render, React gọi **lại** hàm component từ đầu, tạo v
   <g>
     <rect x="20" y="60" width="150" height="58" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="95" y="84" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">State đổi</text>
-    <text x="95" y="103" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">setCount(...) / props mới</text>
+    <text x="95" y="103" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.62">setCount(...)</text>
   </g>
   <g>
     <rect x="200" y="60" width="150" height="58" rx="10" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>

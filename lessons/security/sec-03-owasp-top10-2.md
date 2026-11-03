@@ -329,11 +329,11 @@ Attacker nhập:
 ```
 http://169.254.169.254/latest/meta-data/iam/security-credentials/<role>
 ```
-Server (trong cloud) gọi tới **metadata endpoint** và trả về credential tạm thời của IAM role — attacker chiếm quyền hệ thống. Họ cũng có thể quét cổng nội bộ (`http://10.0.0.5:6379/`), gọi admin API nội bộ, hay đọc file qua `file://`.
+Nếu metadata cho phép IMDSv1 và instance có IAM role, server có thể lấy credential tạm thời. Attacker chỉ đọc được credential nếu `save_avatar` lưu nguyên phản hồi và cho đọc lại nội dung; ví dụ giả định đường đọc này tồn tại. Họ cũng có thể dò dịch vụ HTTP nội bộ. Đọc file qua `file://` chỉ áp dụng với client hỗ trợ scheme đó; Requests mặc định không hỗ trợ.
 
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title>Luồng tấn công SSRF đánh cắp credential qua metadata endpoint và các lớp phòng thủ</title>
-  <desc>Attacker gửi URL trỏ tới 169.254.169.254 vào endpoint fetch-from-URL; server trong VPC gọi metadata endpoint thay attacker và trả credential IAM tạm về cho attacker. Bốn lớp chặn: allowlist scheme và domain, kiểm tra IP sau khi resolve DNS, cấm redirect, bắt buộc IMDSv2.</desc>
+  <desc>Attacker gửi URL trỏ tới 169.254.169.254 vào endpoint fetch-from-URL; server trong VPC gọi metadata endpoint thay attacker; credential chỉ lọt ra nếu nội dung lưu có thể đọc lại. Bốn lớp chặn: allowlist scheme và domain, kiểm tra IP sau khi resolve DNS, cấm redirect, bắt buộc IMDSv2.</desc>
   <defs>
     <marker id="ssrfArrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
@@ -371,7 +371,7 @@ Server (trong cloud) gọi tới **metadata endpoint** và trả về credential
     <path d="M283 100 H168" marker-end="url(#ssrfArrowRed)"/>
   </g>
   <text x="505" y="115" font-size="9.5" text-anchor="middle" fill="#f59e0b">(3) credential</text>
-  <text x="224" y="115" font-size="9.5" text-anchor="middle" fill="#f59e0b">(4) credential lọt ra ngoài</text>
+  <text x="224" y="115" font-size="9.5" text-anchor="middle" fill="#f59e0b">(4) đọc lại nội dung đã lưu</text>
   <text x="16" y="168" font-size="13" font-weight="700" fill="currentColor">Các lớp chặn (defense in depth)</text>
   <g>
     <rect x="16" y="182" width="334" height="52" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
@@ -398,6 +398,8 @@ Server (trong cloud) gọi tới **metadata endpoint** và trả về credential
 
 ### Phòng chống nhiều lớp
 
+Đoạn dưới chỉ minh hoạ kiểm URL, **chưa phải fetcher an toàn để dùng production**: Requests có thể resolve DNS lần nữa sau bước kiểm, tạo khe DNS rebinding/TOCTOU. Fetcher thực tế phải kiểm mọi địa chỉ A/AAAA và pin kết nối vào IP đã duyệt, giữ đúng Host/SNI và xác minh TLS; kết hợp allowlist đích, chặn egress mạng nội bộ/metadata và giới hạn kích thước phản hồi.
+
 ```python
 import ipaddress, socket
 from urllib.parse import urlparse
@@ -408,7 +410,7 @@ def is_safe_url(url: str) -> bool:
     p = urlparse(url)
     if p.scheme not in ALLOWED_SCHEMES:      # chặn file://, gopher://...
         return False
-    # Resolve DNS rồi kiểm tra IP đích (chống DNS rebinding một phần)
+    # Kiểm sơ bộ IPv4; chưa pin kết nối và chưa kiểm IPv6
     try:
         ip = ipaddress.ip_address(socket.gethostbyname(p.hostname))
     except Exception:

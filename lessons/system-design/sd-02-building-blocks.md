@@ -321,51 +321,24 @@ Replication giải quyết *read scaling* nhưng **không** giải quyết *writ
 
 ### Consistent hashing — vì sao quan trọng
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Vòng consistent hashing và việc thêm node D</title>
-  <desc>Key và node được map lên một vòng tròn; mỗi key đi theo chiều kim đồng hồ tới node đầu tiên. Thêm node D chỉ cướp cung của hàng xóm nên chỉ dời khoảng một phần N số key. Bên phải minh hoạ virtual node.</desc>
-  <text x="16" y="26" font-size="15" font-weight="700" fill="currentColor">Consistent hashing — thêm node chỉ dời ~1/N key</text>
-  <g>
-    <circle cx="200" cy="190" r="110" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-width="2"/>
-    <text x="200" y="194" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.55">vòng băm</text>
-    <text x="200" y="208" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.45">(theo chiều kim đồng hồ)</text>
-    <g fill="#3b82f6" fill-opacity="0.9">
-      <circle cx="200" cy="80" r="9"/>
-      <circle cx="295" cy="245" r="9"/>
-      <circle cx="105" cy="245" r="9"/>
-    </g>
-    <text x="200" y="64" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">node A</text>
-    <text x="320" y="258" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">node B</text>
-    <text x="78" y="258" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">node C</text>
-    <g fill="#10b981" fill-opacity="0.95">
-      <circle cx="285" cy="130" r="6"/>
-      <circle cx="160" cy="295" r="6"/>
-      <circle cx="92" cy="120" r="6"/>
-    </g>
-    <text x="300" y="123" font-size="10.5" fill="currentColor" opacity="0.8">k1</text>
-    <text x="160" y="316" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">k2</text>
-    <text x="74" y="113" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.8">k3</text>
-    <g fill="#f59e0b" fill-opacity="0.95">
-      <circle cx="310" cy="190" r="9"/>
-    </g>
-    <text x="328" y="194" font-size="11.5" font-weight="700" fill="currentColor">+ node D</text>
-    <path d="M289 173 A30 30 0 0 1 305 181" fill="none" stroke="#f59e0b" stroke-opacity="0.8" stroke-width="2" stroke-dasharray="3 2"/>
-    <text x="200" y="338" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.65">D chỉ "cướp" cung B→D: dời mỗi key trong cung đó</text>
-  </g>
-  <g stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"><line x1="430" y1="60" x2="430" y2="320"/></g>
-  <text x="460" y="74" font-size="12.5" font-weight="700" fill="currentColor">hash % N (so sánh)</text>
-  <text x="460" y="94" font-size="11" fill="currentColor" opacity="0.7">đổi N → gần như MỌI key đổi chỗ</text>
-  <text x="460" y="111" font-size="11" fill="currentColor" opacity="0.7">→ đại di trú dữ liệu, cache cháy</text>
-  <text x="460" y="150" font-size="12.5" font-weight="700" fill="currentColor">consistent hashing</text>
-  <text x="460" y="170" font-size="11" fill="currentColor" opacity="0.7">thêm/bớt node → chỉ ~1/N key dời</text>
-  <text x="460" y="208" font-size="12.5" font-weight="700" fill="currentColor">virtual node</text>
-  <text x="460" y="228" font-size="11" fill="currentColor" opacity="0.7">mỗi node vật lý = nhiều điểm trên vòng</text>
-  <g fill="#3b82f6" fill-opacity="0.85">
-    <circle cx="468" cy="252" r="5"/><circle cx="500" cy="252" r="5"/><circle cx="532" cy="252" r="5"/>
-    <circle cx="564" cy="252" r="5"/><circle cx="596" cy="252" r="5"/><circle cx="628" cy="252" r="5"/>
-  </g>
-  <text x="460" y="284" font-size="11" fill="currentColor" opacity="0.7">→ cân tải đều hơn, thêm node "mượt" hơn</text>
+<ab-toggle data-labels="Trước thêm D|Sau thêm D">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 340" role="img" aria-labelledby="fixsd02-ring0-t fixsd02-ring0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="fixsd02-ring0-t">Thêm D vào hash ring</title>
+<desc id="fixsd02-ring0-d">Chỉ k1 đổi chủ từ B sang D; k2 thuộc C, k3 thuộc A.</desc>
+<defs><marker id="fixsd02-ring0-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="currentColor"/></marker></defs>
+<text x="260" y="25" font-size="14" text-anchor="middle" fill="currentColor">Đi theo chiều kim đồng hồ tới node đầu tiên</text><circle cx="260" cy="180" r="102" fill="none" stroke="currentColor" stroke-opacity="0.35"/><path d="M260 78 A102 102 0 0 1 311.0 268.33" fill="none" stroke="#f59e0b" stroke-width="1.6" marker-end="url(#fixsd02-ring0-a)"/><circle cx="260.0" cy="78.0" r="8" fill="#3b82f6"/><text x="260.0" y="62.0" font-size="14" text-anchor="middle" fill="currentColor">A</text><circle cx="311.0" cy="268.33" r="8" fill="#3b82f6"/><text x="333.0" y="273.33" font-size="14" text-anchor="middle" fill="currentColor">B</text><circle cx="171.67" cy="231.0" r="8" fill="#3b82f6"/><text x="149.67" y="236.0" font-size="14" text-anchor="middle" fill="currentColor">C</text><circle cx="338.14" cy="114.44" r="5" fill="#10b981"/><text x="356.14" y="102.44" font-size="13" text-anchor="start" fill="currentColor">k1 → B</text><circle cx="225.11" cy="275.85" r="5" fill="#10b981"/><text x="207.11" y="263.85" font-size="13" text-anchor="end" fill="currentColor">k2 → C</text><circle cx="171.67" cy="129.0" r="5" fill="#10b981"/><text x="153.67" y="117.0" font-size="13" text-anchor="end" fill="currentColor">k3 → A</text><text x="260" y="180" font-size="14" text-anchor="middle" fill="currentColor">vòng băm</text><text x="260" y="202" font-size="13" text-anchor="middle" fill="currentColor">A → B → C → A</text><text x="260" y="315" font-size="14" text-anchor="middle" fill="currentColor">Cung (A, B] thuộc B</text>
 </svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 340" role="img" aria-labelledby="fixsd02-ring1-t fixsd02-ring1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="fixsd02-ring1-t">Thêm D vào hash ring</title>
+<desc id="fixsd02-ring1-d">Chỉ k1 đổi chủ từ B sang D; k2 thuộc C, k3 thuộc A.</desc>
+<defs><marker id="fixsd02-ring1-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="currentColor"/></marker></defs>
+<text x="260" y="25" font-size="14" text-anchor="middle" fill="currentColor">Đi theo chiều kim đồng hồ tới node đầu tiên</text><circle cx="260" cy="180" r="102" fill="none" stroke="currentColor" stroke-opacity="0.35"/><path d="M260 78 A102 102 0 0 1 362.0 180.0" fill="none" stroke="#f59e0b" stroke-width="1.6" marker-end="url(#fixsd02-ring1-a)"/><circle cx="260.0" cy="78.0" r="8" fill="#3b82f6"/><text x="260.0" y="62.0" font-size="14" text-anchor="middle" fill="currentColor">A</text><circle cx="311.0" cy="268.33" r="8" fill="#3b82f6"/><text x="333.0" y="273.33" font-size="14" text-anchor="middle" fill="currentColor">B</text><circle cx="171.67" cy="231.0" r="8" fill="#3b82f6"/><text x="149.67" y="236.0" font-size="14" text-anchor="middle" fill="currentColor">C</text><circle cx="362.0" cy="180.0" r="8" fill="#f59e0b"/><text x="384.0" y="185.0" font-size="14" text-anchor="middle" fill="currentColor">D</text><circle cx="338.14" cy="114.44" r="5" fill="#10b981"/><text x="356.14" y="102.44" font-size="13" text-anchor="start" fill="currentColor">k1 → D</text><circle cx="225.11" cy="275.85" r="5" fill="#10b981"/><text x="207.11" y="263.85" font-size="13" text-anchor="end" fill="currentColor">k2 → C</text><circle cx="171.67" cy="129.0" r="5" fill="#10b981"/><text x="153.67" y="117.0" font-size="13" text-anchor="end" fill="currentColor">k3 → A</text><text x="260" y="180" font-size="14" text-anchor="middle" fill="currentColor">vòng băm</text><text x="260" y="202" font-size="13" text-anchor="middle" fill="currentColor">A → D → B → C → A</text><text x="260" y="315" font-size="14" text-anchor="middle" fill="currentColor">Cung (A, D] chuyển từ B sang D</text>
+</svg>
+<ab-note>Chưa có D: k1 gặp B đầu tiên theo chiều kim đồng hồ.</ab-note>
+<ab-note>D nhận cung (A,D], trước đây thuộc B; k2 và k3 không đổi chủ.</ab-note>
+</ab-toggle>
+
+So với modulo đổi gần hết ánh xạ khi N lớn, ring chỉ chuyển phần cung mới (kỳ vọng 1/(N+1) khi thêm node với hash đều). Virtual node đặt mỗi máy tại nhiều điểm trên vòng để cân tải và chia việc di chuyển cho nhiều nguồn.
 
 ```
         node A

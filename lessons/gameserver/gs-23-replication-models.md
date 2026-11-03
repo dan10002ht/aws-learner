@@ -74,7 +74,7 @@ Ba câu trả lời, ba mô hình:
 | Mô hình | Gói mang gì | Thông tin lặp lại ở đâu | Mất một gói → sai bao lâu |
 |---|---|---|---|
 | **Full snapshot** | toàn bộ state nhìn thấy được | **trong mọi gói sau** | 1 tick = **50 ms** |
-| **Delta** | phần đổi so với một mốc | trong mốc kế tiếp | tới **mốc mới** |
+| **Delta** | phần đổi so với một mốc | tuỳ baseline | Chuỗi delta phụ thuộc gói mất: chờ mốc mới; baseline đã ack: delta sau có thể tự phục hồi |
 | **Event** | chuyện vừa xảy ra | **không ở đâu cả** | **vĩnh viễn** |
 
 <ab-toggle data-labels="Snapshot|Delta|Event">

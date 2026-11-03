@@ -106,44 +106,79 @@ Bước này dành cho resource server **không** tải lại khi gặp `kid` l�
 
 Với xoay **theo lịch**, TTL cache JWKS không nằm trong phép tính của bước 3: key cũ còn sót trong cache sau khi bị disable chỉ verify được token đã hết hạn. Với thu hồi **khẩn cấp** (private key bị lộ) thì ngược lại: lần đo thứ hai ở trên cho thấy Spring không refetch vì `kid` cũ vẫn quen, nên token giả ký bằng key lộ còn qua thêm tối đa một TTL (5 phút Spring, 10 phút gateway ở mục 5) sau khi disable. Muốn cắt ngay phải restart hoặc xoá cache phía resource server.
 
-<svg viewBox="0 0 700 300" role="img" aria-labelledby="kc29-a-t kc29-a-d" style="width:100%;height:auto">
-<title id="kc29-a-t">Dòng thời gian xoay key RS256 không gây 401</title>
-<desc id="kc29-a-d">Trục thời gian từ 09:50 đến 10:10: key K2 công bố passive lúc 09:50, active lúc 10:00, key K1 disable lúc 10:05; token T1 ký bằng K1 sống tới 10:04:30; bản sai xoá K1 lúc 10:00 làm T1 bị 401 trong khoảng 10:00 đến 10:04:30.</desc>
-<defs><marker id="kc29-a-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
-<text x="20" y="54" font-size="11" fill="currentColor">JWKS</text>
-<rect x="100" y="40" width="40" height="22" rx="4" fill="#64748b" fill-opacity="0.25"/>
-<text x="120" y="55" text-anchor="middle" font-size="11" fill="currentColor">K1</text>
-<rect x="140" y="40" width="260" height="22" rx="4" fill="#84cc16" fill-opacity="0.25"/>
-<text x="270" y="55" text-anchor="middle" font-size="11" fill="currentColor">K1 + K2 (đã công bố)</text>
-<rect x="400" y="40" width="200" height="22" rx="4" fill="#3b82f6" fill-opacity="0.25"/>
-<text x="500" y="55" text-anchor="middle" font-size="11" fill="currentColor">K2</text>
-<text x="20" y="94" font-size="11" fill="currentColor">Key ký AT</text>
-<rect x="100" y="80" width="200" height="22" rx="4" fill="#64748b" fill-opacity="0.25"/>
-<text x="200" y="95" text-anchor="middle" font-size="11" fill="currentColor">K1 ký</text>
-<rect x="300" y="80" width="300" height="22" rx="4" fill="#3b82f6" fill-opacity="0.25"/>
-<text x="450" y="95" text-anchor="middle" font-size="11" fill="currentColor">K2 ký</text>
-<text x="20" y="134" font-size="11" fill="currentColor">Token T1</text>
-<rect x="290" y="120" width="100" height="22" rx="4" fill="#8b5cf6" fill-opacity="0.25"/>
-<text x="340" y="135" text-anchor="middle" font-size="11" fill="currentColor">T1 (K1), 300 s</text>
-<text x="20" y="174" font-size="11" fill="currentColor">Bản sai</text>
-<rect x="300" y="160" width="90" height="22" rx="4" fill="#ef4444" fill-opacity="0.25"/>
-<text x="345" y="175" text-anchor="middle" font-size="11" fill="currentColor">T1 bị 401</text>
-<text x="410" y="175" font-size="11" fill="currentColor">xoá K1 lúc 10:00</text>
-<text x="20" y="214" font-size="11" fill="currentColor">HS512 cũ</text>
-<rect x="300" y="200" width="300" height="22" rx="4" fill="#f59e0b" fill-opacity="0.25"/>
-<text x="450" y="215" text-anchor="middle" font-size="11" fill="currentColor">giữ passive tới hết Offline Idle</text>
-<line x1="600" y1="211" x2="650" y2="211" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5" marker-end="url(#kc29-a-arrow)"/>
-<text x="630" y="196" text-anchor="middle" font-size="11" fill="currentColor">30 ngày</text>
-<line x1="100" y1="250" x2="620" y2="250" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5" marker-end="url(#kc29-a-arrow)"/>
-<line x1="100" y1="245" x2="100" y2="255" stroke="currentColor" stroke-opacity="0.5"/>
-<line x1="300" y1="245" x2="300" y2="255" stroke="currentColor" stroke-opacity="0.5"/>
-<line x1="400" y1="245" x2="400" y2="255" stroke="currentColor" stroke-opacity="0.5"/>
-<line x1="500" y1="245" x2="500" y2="255" stroke="currentColor" stroke-opacity="0.5"/>
-<text x="100" y="270" text-anchor="middle" font-size="11" fill="currentColor">09:50 K2 passive</text>
-<text x="300" y="270" text-anchor="middle" font-size="11" fill="currentColor">10:00 K2 active</text>
-<text x="400" y="288" text-anchor="middle" font-size="11" fill="currentColor">10:05 disable K1</text>
-<text x="500" y="270" text-anchor="middle" font-size="11" fill="currentColor">10:10</text>
+<ab-toggle data-labels="Giữ K1 đủ hạn|Bỏ K1 sớm">
+<svg viewBox="0 0 520 475" role="img" aria-labelledby="kc29-fix-0-t kc29-fix-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="kc29-fix-0-t">Xoay key RS256: thời hạn token và cache JWKS</title>
+<desc id="kc29-fix-0-d">Cùng trục tỷ lệ 21 đơn vị mỗi phút từ 09:50 tới 10:10. T1 sống 300 giây. 401 trước exp phụ thuộc verifier đã mất K1; dải HS512 30 ngày có tỷ lệ riêng.</desc>
+<text x="260" y="24" font-size="15" fill="currentColor" text-anchor="middle">Xoay có chồng lấn khóa</text>
+<text x="20" y="54" font-size="13" fill="currentColor" text-anchor="start">JWKS: K2 công bố passive từ 09:50</text>
+<rect x="70" y="65" width="315" height="22" rx="4" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="175" y="81" font-size="13" fill="currentColor" text-anchor="middle">K1 + K2</text>
+<rect x="385" y="65" width="105" height="22" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="435" y="81" font-size="13" fill="currentColor" text-anchor="middle">K2</text>
+<text x="20" y="112" font-size="13" fill="currentColor" text-anchor="start">Khóa ký access token</text>
+<rect x="70" y="123" width="210" height="22" rx="4" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="175" y="139" font-size="13" fill="currentColor" text-anchor="middle">K1 ký</text>
+<rect x="280" y="123" width="210" height="22" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="385" y="139" font-size="13" fill="currentColor" text-anchor="middle">K2 ký</text>
+<text x="20" y="171" font-size="13" fill="currentColor" text-anchor="start">T1 ký K1: 09:59:30 → 10:04:30 (300 s)</text>
+<rect x="269.5" y="182" width="105" height="22" rx="4" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="20" y="232" font-size="14" fill="currentColor" text-anchor="start">K1 chỉ bị disable sau khi T1 hết hạn</text>
+<line x1="385" y1="60" x2="385" y2="252" stroke="#10b981" stroke-dasharray="4 3"/>
+<text x="260" y="260" font-size="13" fill="currentColor" text-anchor="middle">T1 còn hạn vẫn verify được bằng K1</text>
+<line x1="70" y1="330" x2="490" y2="330" stroke="currentColor"/>
+<line x1="70" y1="325" x2="70" y2="335" stroke="currentColor"/>
+<text x="70" y="354" font-size="13" fill="currentColor" text-anchor="middle">09:50</text>
+<line x1="280" y1="325" x2="280" y2="335" stroke="currentColor"/>
+<text x="280" y="354" font-size="13" fill="currentColor" text-anchor="middle">10:00</text>
+<line x1="385" y1="325" x2="385" y2="335" stroke="currentColor"/>
+<text x="385" y="354" font-size="13" fill="currentColor" text-anchor="middle">10:05</text>
+<line x1="490" y1="325" x2="490" y2="335" stroke="currentColor"/>
+<text x="490" y="354" font-size="13" fill="currentColor" text-anchor="middle">10:10</text>
+<text x="260" y="378" font-size="13" fill="currentColor" text-anchor="middle">10:00 K2 active; 10:05 disable K1</text>
+<text x="20" y="412" font-size="13" fill="currentColor" text-anchor="start">HS512 cũ: giữ passive tới hết Offline Idle</text>
+<line x1="70" y1="433" x2="480" y2="433" stroke="#f59e0b"/>
+<path d="M470 428 L480 433 L470 438" fill="none" stroke="#f59e0b"/>
+<text x="260" y="456" font-size="13" fill="currentColor" text-anchor="middle">30 ngày → ngoài tỷ lệ trục phút phía trên</text>
 </svg>
+<svg viewBox="0 0 520 475" role="img" aria-labelledby="kc29-fix-1-t kc29-fix-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="kc29-fix-1-t">Xoay key RS256: thời hạn token và cache JWKS</title>
+<desc id="kc29-fix-1-d">Cùng trục tỷ lệ 21 đơn vị mỗi phút từ 09:50 tới 10:10. T1 sống 300 giây. 401 trước exp phụ thuộc verifier đã mất K1; dải HS512 30 ngày có tỷ lệ riêng.</desc>
+<text x="260" y="24" font-size="15" fill="currentColor" text-anchor="middle">Bỏ K1 quá sớm</text>
+<text x="20" y="54" font-size="13" fill="currentColor" text-anchor="start">JWKS: K2 công bố passive từ 09:50</text>
+<rect x="70" y="65" width="210" height="22" rx="4" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="175" y="81" font-size="13" fill="currentColor" text-anchor="middle">K1 + K2</text>
+<rect x="280" y="65" width="210" height="22" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="435" y="81" font-size="13" fill="currentColor" text-anchor="middle">K2</text>
+<text x="20" y="112" font-size="13" fill="currentColor" text-anchor="start">Khóa ký access token</text>
+<rect x="70" y="123" width="210" height="22" rx="4" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="175" y="139" font-size="13" fill="currentColor" text-anchor="middle">K1 ký</text>
+<rect x="280" y="123" width="210" height="22" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="385" y="139" font-size="13" fill="currentColor" text-anchor="middle">K2 ký</text>
+<text x="20" y="171" font-size="13" fill="currentColor" text-anchor="start">T1 ký K1: 09:59:30 → 10:04:30 (300 s)</text>
+<rect x="269.5" y="182" width="105" height="22" rx="4" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="20" y="232" font-size="14" fill="currentColor" text-anchor="start">K1 bị bỏ khỏi JWKS lúc 10:00</text>
+<rect x="280" y="242" width="94.5" height="18" rx="4" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/>
+<text x="260" y="282" font-size="13" fill="currentColor" text-anchor="middle">Dải đỏ: 401 nếu verifier đã làm mới JWKS</text>
+<text x="260" y="304" font-size="13" fill="currentColor" text-anchor="middle">Cache còn K1: có thể vẫn 200 cho tới refetch</text>
+<line x1="70" y1="330" x2="490" y2="330" stroke="currentColor"/>
+<line x1="70" y1="325" x2="70" y2="335" stroke="currentColor"/>
+<text x="70" y="354" font-size="13" fill="currentColor" text-anchor="middle">09:50</text>
+<line x1="280" y1="325" x2="280" y2="335" stroke="currentColor"/>
+<text x="280" y="354" font-size="13" fill="currentColor" text-anchor="middle">10:00</text>
+<line x1="385" y1="325" x2="385" y2="335" stroke="currentColor"/>
+<text x="385" y="354" font-size="13" fill="currentColor" text-anchor="middle">10:05</text>
+<line x1="490" y1="325" x2="490" y2="335" stroke="currentColor"/>
+<text x="490" y="354" font-size="13" fill="currentColor" text-anchor="middle">10:10</text>
+<text x="260" y="378" font-size="13" fill="currentColor" text-anchor="middle">Minh họa verifier refetch lúc 10:00</text>
+<text x="20" y="412" font-size="13" fill="currentColor" text-anchor="start">HS512 cũ: giữ passive tới hết Offline Idle</text>
+<line x1="70" y1="433" x2="480" y2="433" stroke="#f59e0b"/>
+<path d="M470 428 L480 433 L470 438" fill="none" stroke="#f59e0b"/>
+<text x="260" y="456" font-size="13" fill="currentColor" text-anchor="middle">30 ngày → ngoài tỷ lệ trục phút phía trên</text>
+</svg>
+<ab-note>K2 active 10:00; giữ K1 tới 10:05 (T1 hết 10:04:30).</ab-note>
+<ab-note>Dải 401 giả định đã refetch JWKS. Cache K1 có thể giữ 200 tới refetch do kid lạ/TTL.</ab-note>
+</ab-toggle>
 
 > **Nguồn.** Docs không có lịch xoay tự động: Keycloak không tự rotate realm key, admin làm tay. Khuyến nghị nhịp: *"Consider creating new keys every three to six months and deleting old keys one to two months after you create the new keys."* ([server_admin](https://www.keycloak.org/docs/latest/server_admin/index.html)). Access token lifespan 300 s và implicit 900 s: [Constants.java 26.8.1](https://github.com/keycloak/keycloak/blob/26.8.1/server-spi-private/src/main/java/org/keycloak/models/Constants.java#L59).
 

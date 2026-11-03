@@ -220,7 +220,7 @@ return legacyCheckoutFlow(cart);
 
 ## 5. Graceful shutdown — SIGTERM và nghệ thuật chết tử tế
 
-Đây là phần lý thuyết-thì-ai-cũng-gật, làm-thì-đa-số-sai. Chuỗi sự kiện khi orchestrator tắt một instance:
+Đây là phần lý thuyết-thì-ai-cũng-gật, làm-thì-đa-số-sai. Chuỗi dưới minh hoạ ECS service gắn ALB khi tắt một task; Kubernetes có endpoint removal và hook chạy đồng thời, nên không dùng chung một đồng hồ drain:
 
 ```text
 1. Orchestrator quyết định tắt instance (deploy mới / scale-in / node drain).
@@ -234,10 +234,14 @@ App phải hợp tác ở bước 3-4:
 
 ```typescript
 const server = app.listen(PORT);
+const shutdownPropagationMs = Number(process.env.SHUTDOWN_PROPAGATION_MS ?? 0);
 
 process.on("SIGTERM", async () => {
   log.info("SIGTERM received, draining...");
   healthz.setReady(false);          // 1. Báo readiness = fail → LB ngừng gửi request
+  // K8s: chờ endpoint/LB cập nhật trước khi close; tính vào grace budget.
+  // ECS + ALB: deregistration đã hoàn tất trước SIGTERM, thường đặt 0.
+  await new Promise(resolve => setTimeout(resolve, shutdownPropagationMs));
   server.close(async () => {        // 2. Ngừng nhận connection MỚI,
     await jobQueue.drain();         //    chờ request/job đang chạy xong
     await db.end();                 // 3. Đóng pool, connection sạch sẽ
@@ -249,10 +253,10 @@ process.on("SIGTERM", async () => {
 <step-flow>
 <svg viewBox="0 0 760 640" role="img" aria-labelledby="be06c-t be06c-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
 <title id="be06c-t">Graceful shutdown theo timeline: orchestrator, load balancer và app</title>
-<desc id="be06c-d">Sequence diagram ba cột, thời gian đi xuống. Orchestrator quyết định tắt instance, deregister khỏi load balancer (deregistration delay mặc định 300s, API thường 30-60s), gửi SIGTERM và bắt đầu đếm grace period (ECS stopTimeout mặc định 30s, tối đa 120s trên Fargate). App đặt readiness false, đợi 5-10s, drain request đang chạy, đóng connection pool rồi exit 0 trước hạn để orchestrator thay instance. Nếu quá grace period mà app chưa thoát thì SIGKILL, request dở dang đứt.</desc>
+<desc id="be06c-d">Sequence diagram ba cột, thời gian đi xuống. Orchestrator quyết định tắt instance, deregister khỏi load balancer (deregistration delay mặc định 300s, API thường 30-60s), gửi SIGTERM và bắt đầu đếm grace period (ECS stopTimeout mặc định 30s, tối đa 120s trên Fargate). Với ECS + ALB, deregistration hoàn tất trước SIGTERM. App đặt readiness false, drain request đang chạy, đóng connection pool rồi exit 0 trước hạn để orchestrator thay instance. Nếu quá grace period mà app chưa thoát thì SIGKILL, request dở dang đứt.</desc>
 <defs><marker id="be06c-arrow" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
 <text x="170" y="26" font-size="14" text-anchor="middle" fill="currentColor" font-weight="700">Orchestrator</text>
-<text x="170" y="44" font-size="12" text-anchor="middle" fill="currentColor" opacity="0.7">ECS / K8s</text>
+<text x="170" y="44" font-size="12" text-anchor="middle" fill="currentColor" opacity="0.7">ECS + ALB</text>
 <text x="400" y="26" font-size="14" text-anchor="middle" fill="currentColor" font-weight="700">Load Balancer</text>
 <text x="630" y="26" font-size="14" text-anchor="middle" fill="currentColor" font-weight="700">App (process)</text>
 <line x1="170" y1="54" x2="170" y2="626" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 4"/>
@@ -287,9 +291,7 @@ process.on("SIGTERM", async () => {
 <g data-step="4">
 <rect x="515" y="262" width="230" height="48" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
 <text x="630" y="282" font-size="13" text-anchor="middle" fill="currentColor">1. readiness = false</text>
-<text x="630" y="300" font-size="12" text-anchor="middle" fill="currentColor" opacity="0.8">đợi 5-10s rồi mới close</text>
-<line x1="402" y1="296" x2="513" y2="296" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#be06c-arrow)"/>
-<text x="459.5" y="324" font-size="12" text-anchor="middle" fill="currentColor" opacity="0.8">request lạc (eventual)</text>
+<text x="630" y="300" font-size="12" text-anchor="middle" fill="currentColor" opacity="0.8">ECS: deregister xong, close</text>
 </g>
 <g data-step="5">
 <rect x="515" y="340" width="230" height="48" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
@@ -315,11 +317,11 @@ process.on("SIGTERM", async () => {
 <text x="445" y="584" font-size="12" text-anchor="middle" fill="currentColor">không đỡ được, request dở dang đứt</text>
 </g>
 </svg>
-<step-note data-step="1">Lý do tắt có thể là deploy mới, scale-in hay node drain; dù vì gì, chuỗi phía sau giống hệt nhau và app không được biết trước.</step-note>
+<step-note data-step="1">Hình dùng thứ tự ECS service + ALB trong một lần dừng có kiểm soát. Kubernetes chạy endpoint removal và shutdown song song; node crash không cho app cơ hội drain.</step-note>
 <step-note data-step="2">Rút instance khỏi LB <b>trước</b> để không request mới nào được xếp vào nó. Target chuyển sang <code>draining</code> và chờ request đang chạy trong ALB <code>deregistration delay</code>: mặc định 300s, API thường chỉnh xuống 30-60s.</step-note>
 <step-note data-step="3">Từ lúc gửi <code>SIGTERM</code>, đồng hồ grace period bắt đầu chạy (ECS <code>stopTimeout</code>: mặc định 30s, tối đa 120s trên Fargate). Mọi việc dọn dẹp của app phải xong trong khoảng này.</step-note>
-<step-note data-step="4">Deregistration là eventual: vài giây sau <code>SIGTERM</code> LB vẫn có thể đẩy request tới. Nên app báo readiness fail rồi đợi 5-10s mới đóng listener, để request lạc vẫn được phục vụ thay vì bị từ chối.</step-note>
-<step-note data-step="5"><code>server.close()</code> chỉ chặn connection <b>mới</b>; request và job đang chạy được làm nốt (<code>jobQueue.drain()</code>). Grace period phải lớn hơn thời gian request dài nhất cộng deregistration delay.</step-note>
+<step-note data-step="4">Với Kubernetes, endpoint removal và shutdown có thể chồng nhau: cần khoảng chờ lan truyền được đo trên hệ của mình (ví dụ 5-10s). Với ECS + ALB, deregistration hoàn tất trước SIGTERM; không cộng lại toàn bộ ALB delay vào stopTimeout.</step-note>
+<step-note data-step="5"><code>server.close()</code> chỉ chặn connection <b>mới</b>; request và job đang chạy được làm nốt (<code>jobQueue.drain()</code>). K8s grace budget gồm hook/chờ lan truyền + drain + cleanup; ECS stopTimeout chỉ cần đủ phần app còn làm sau SIGTERM.</step-note>
 <step-note data-step="6">Đóng pool để DB không giữ connection mồ côi, rồi <code>process.exit(0)</code> chủ động trước hạn: orchestrator thấy task thoát sạch và thay instance ngay, không phải chờ hết grace period.</step-note>
 <step-note data-step="7">Quá hạn mà process chưa thoát (không bắt <code>SIGTERM</code>, hay PID 1 là <code>npm</code>/<code>sh</code> không forward tín hiệu) thì nhận <code>SIGKILL</code>: không bắt được, request dở dang đứt, transaction bỏ lửng.</step-note>
 </step-flow>
@@ -328,9 +330,9 @@ Ba lỗi kinh điển:
 
 1. **Không bắt SIGTERM** → process chết giữa chừng, request đang xử lý trả lỗi 502/đứt kết nối, transaction dở dang. Triệu chứng: *cứ mỗi lần deploy là có một nhịp error rate*.
 2. **PID 1 problem trong Docker**: viết `CMD npm start` → PID 1 là `npm`/`sh`, nó **không forward SIGTERM** cho node. App không bao giờ nhận được tín hiệu, đứng đợi đủ grace period rồi ăn SIGKILL. Fix: dùng exec form `CMD ["node", "server.js"]` hoặc init nhỏ như `tini`.
-3. **Race giữa LB và app**: deregistration là eventual — vài giây sau SIGTERM, LB *vẫn có thể* đẩy request tới. Best practice: nhận SIGTERM xong **đợi vài giây** (sleep 5-10s) rồi mới đóng listener, để chắc chắn LB đã ngừng gửi.
+3. **Race giữa LB và app**: trên Kubernetes, cần chờ endpoint/LB lan truyền trước khi đóng listener (vd 5-10s, phải đo lại); khoảng chờ này không bảo đảm tuyệt đối. Với ECS + ALB, task đã qua deregistration trước khi nhận SIGTERM.
 
-> **Ghi nhớ**: graceful shutdown là hợp đồng 3 bên — LB ngừng gửi, app drain xong việc, orchestrator chờ đủ lâu. Sai một bên là user thấy lỗi. Grace period phải > thời gian request dài nhất + deregistration delay.
+> **Ghi nhớ**: graceful shutdown là hợp đồng 3 bên — LB ngừng gửi, app drain xong việc, orchestrator chờ đủ lâu. Sai một bên là user thấy lỗi. Với K8s: grace period > hook/chờ lan truyền + drain request/job + cleanup. Với ECS: ALB deregistration delay nằm trước SIGTERM, còn stopTimeout bao phần drain/cleanup sau tín hiệu; không cần stopTimeout > 300s của ALB.
 
 ## 6. Health endpoint — liveness ≠ readiness
 

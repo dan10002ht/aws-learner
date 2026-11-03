@@ -204,8 +204,10 @@ function SearchBox() {
 **2. Lưu giá trị mutable qua các render mà không cần hiển thị** (id của timer, giá trị trước đó, cờ "đã mount chưa"):
 
 ```tsx
-const renderCount = useRef(0);
-renderCount.current += 1; // tăng được, nhưng không làm component render lại
+const clickCount = useRef(0);
+function handleClick() {
+  clickCount.current += 1; // event handler: không làm component render lại
+}
 ```
 
 > Ghi nhớ: Quy tắc chọn — nếu thay đổi giá trị **cần phản ánh lên UI** → `useState`. Nếu chỉ cần "ghi nhớ ngầm" không liên quan render → `useRef`. Đừng đọc/ghi `ref.current` *trong lúc render* (chỉ làm trong event handler hoặc effect).
@@ -385,7 +387,9 @@ setCount((c) => c + 1);
 
 // ✓ Cách 3: dùng useRef giữ giá trị mới nhất cho callback đọc
 const countRef = useRef(count);
-countRef.current = count; // mỗi render cập nhật
+useEffect(() => {
+  countRef.current = count; // đồng bộ sau commit, không ghi trong render
+}, [count]);
 // trong interval: setCount(countRef.current + 1);
 ```
 

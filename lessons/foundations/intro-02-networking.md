@@ -119,9 +119,9 @@ Analogy: bạn ở phòng 1502 trong chung cư. Khi gửi thư ra ngoài, **lễ
 <step-note data-step="4">Router tra ánh xạ để đổi đích về laptop. Không có ánh xạ phù hợp thì không thể tự suy ra thiết bị nhận.</step-note>
 </step-flow>
 
-Hệ quả quan trọng: NAT cho phép **bên trong chủ động gọi ra ngoài**, nhưng **bên ngoài không thể tự gọi vào** một máy private (lễ tân không biết chuyển cho ai nếu không có sổ ghi trước). Đây vừa là hạn chế, vừa là một lớp bảo vệ tự nhiên.
+Hệ quả quan trọng: NAT cho phép **bên trong chủ động gọi ra ngoài**, nhưng **bên ngoài thường không thể tự khởi tạo kết nối vào** một máy private khi chưa có mapping (lễ tân không biết chuyển cho ai nếu không có sổ ghi trước). Static mapping/port forwarding có thể mở chiều vào; NAT không thay thế firewall.
 
-> Ghi nhớ: Private IP = không ra Internet trực tiếp. NAT = bên trong gọi ra được, bên ngoài không gọi vào được. Mô hình "server private + NAT để cập nhật phần mềm" là kiến trúc chuẩn mực trong cloud.
+> Ghi nhớ: Private IP = không ra Internet trực tiếp. NAT động kiểu ví dụ cho phép gọi ra và nhận hồi đáp; chiều vào chủ động cần mapping/cấu hình phù hợp và firewall. Mô hình "server private + NAT để cập nhật phần mềm" là kiến trúc chuẩn mực trong cloud.
 
 ## 3. DNS — danh bạ của Internet
 
@@ -441,7 +441,7 @@ Khi đọc đề thi AWS, hãy "dịch ngược" về khái niệm gốc: thấy
 ## Tóm tắt
 
 - **IP/CIDR**: địa chỉ máy + cách chia mạng; `/n` càng nhỏ mạng càng to.
-- **Private IP + NAT**: trong gọi ra được, ngoài không gọi vào được.
+- **Private IP + NAT động**: trong gọi ra và nhận hồi đáp; port forwarding/static mapping có thể cho chiều vào, firewall vẫn cần thiết.
 - **DNS**: danh bạ phân cấp tên → IP, có cache và TTL.
 - **HTTPS = HTTP + TLS**: mã hoá, xác thực bằng certificate, bắt tay để tạo khoá phiên.
 - **Port** định danh chương trình; **firewall** lọc theo IP/port; stateful nhớ connection, stateless thì không.

@@ -92,7 +92,7 @@ Một cluster gồm 2 nhóm máy: **control plane** (bộ não, ra quyết đị
 
 | Thành phần | Vai trò |
 |---|---|
-| **kubelet** | Agent trên mỗi node. Nhận lệnh từ apiserver, bảo container runtime chạy Pod, báo cáo sức khỏe ngược lên |
+| **kubelet** | Agent trên mỗi node. Watch PodSpec từ apiserver, bảo container runtime chạy Pod, báo cáo sức khỏe ngược lên |
 | **container runtime** | Phần mềm chạy container thật. Năm 2025 là **containerd** (Docker shim `dockershim` đã bị gỡ từ K8s 1.24) |
 | **kube-proxy** | Lo network: chuyển traffic tới đúng Pod đứng sau một Service (qua iptables/IPVS) |
 

@@ -155,7 +155,7 @@ function Layout() {
 </Routes>
 ```
 
-`Layout` render một lần; khi đổi route con, chỉ phần trong `<Outlet />` đổi. Header/sidebar giữ nguyên, không re-mount.
+Khi đổi route con trong cùng layout route, phần trong `<Outlet />` đổi. `Layout` và header/sidebar thường giữ nguyên instance, không re-mount; chúng vẫn có thể re-render.
 
 > **Ghi nhớ:** `Outlet` cho route giống như `children` cho component — nó là chỗ React Router "cắm" component của route con vào layout cha.
 

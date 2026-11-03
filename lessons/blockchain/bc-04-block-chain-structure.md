@@ -14,7 +14,7 @@ Sau bài này bạn có thể:
 
 ### 2.1 Analogy — chồng niêm phong sáp
 
-Tưởng tượng bạn viết nhật ký, mỗi trang xong thì **niêm phong bằng sáp**, và **dấu niêm phong của trang mới được nặn từ chính dấu niêm phong của trang trước**. Nếu ai đó lén sửa một chữ ở trang 5, dấu sáp trang 5 đổi → dấu trang 6 (vốn nặn từ dấu trang 5) không còn khớp → trang 7 sai theo... đổ domino tới trang cuối. Người kiểm tra chỉ cần nhìn **một dấu duy nhất ở trang cuối** là biết cả cuốn có bị đụng vào hay không.
+Tưởng tượng bạn viết nhật ký, mỗi trang xong thì **niêm phong bằng sáp**, và **dấu niêm phong của trang mới được nặn từ chính dấu niêm phong của trang trước**. Nếu ai đó lén sửa một chữ ở trang 5, dấu sáp trang 5 đổi → dấu trang 6 (vốn nặn từ dấu trang 5) không còn khớp; nếu vá dấu trang 6, dấu của nó đổi và mới làm trang 7 lệch theo. Muốn kiểm cả cuốn phải xác minh chuỗi liên kết và dữ liệu, không chỉ nhìn dấu cuối.
 
 Blockchain làm đúng vậy, nhưng "dấu sáp" là **hàm băm mật mã** (Bài 2): đổi 1 bit đầu vào → hash đổi hoàn toàn, và **không thể đi ngược** từ hash ra dữ liệu. Đó là nền tảng của **tính bất biến**.
 
@@ -104,7 +104,7 @@ Chú ý mũi tên **trỏ ngược**: block mới trỏ về block cũ, không p
 
 1. Đổi tx → **Merkle root** của Block 52 đổi (vân tay tx thay đổi).
 2. Merkle root nằm trong header → **hash của Block 52** đổi từ `00f4b2..` thành `X`.
-3. Nhưng Block 53 lưu `prev = 00f4b2..`. Giờ `00f4b2..` không còn tồn tại → **Block 53 trỏ vào hư không** → chain đứt.
+3. Nhưng Block 53 lưu `prev = 00f4b2..`. Giờ hash đó không khớp bản Block 52 đã sửa → **liên kết 53 → 52 không hợp lệ** → chain đứt.
 4. Muốn "vá", kẻ tấn công phải sửa `prev` của Block 53 thành `X`. Nhưng làm vậy → **hash Block 53 đổi** → tới lượt Block 54 đứt...
 5. Domino chạy tới **block mới nhất**. Kẻ tấn công phải **đào lại (re-mine) mọi block từ 52 tới đỉnh** — mỗi block đều phải tìm lại nonce thỏa mãn difficulty.
 
@@ -123,7 +123,7 @@ Chú ý mũi tên **trỏ ngược**: block mới trỏ về block cũ, không p
 <ab-note>Sửa tx làm Merkle root rồi hash Block 52 đổi từ 00f4b2.. sang X: liên kết 53 → 52 đứt. Nếu sửa prev của 53 để vá, hash 53 đổi và mới làm đứt liên kết 54 → 53. Phải re-mine từ 52 tới đỉnh để có chuỗi thay thế đủ tổng công việc.</ab-note>
 </ab-toggle>
 
-Và đây là chỗ **đồng thuận** khóa lại: trong khi kẻ tấn công è cổ đào lại một chuỗi cũ, **mạng lương thiện** vẫn đang kéo dài chuỗi thật với **toàn bộ sức mạnh băm (hashpower)** của nó. Node luôn theo **chuỗi có tổng công việc lớn nhất** (heaviest chain). Để chuỗi giả vượt chuỗi thật, kẻ tấn công cần **> 50% hashpower toàn mạng** — tấn công 51%. Càng nhiều block xác nhận chồng lên trên giao dịch của bạn, "độ sâu" càng lớn, chi phí lật ngược càng tăng theo cấp số.
+Và đây là chỗ **đồng thuận** khóa lại: trong khi kẻ tấn công è cổ đào lại một chuỗi cũ, **mạng lương thiện** vẫn đang kéo dài chuỗi thật với **toàn bộ sức mạnh băm (hashpower)** của nó. Node luôn theo **chuỗi có tổng công việc lớn nhất** (heaviest chain). Kẻ tấn công có **> 50% hashpower toàn mạng** có lợi thế dài hạn để đuổi vượt — tấn công 51%. Dưới 50% vẫn có xác suất bắt kịp; trong mô hình PoW lý tưởng với tỷ lệ hashpower cố định, xác suất ấy giảm theo cấp số khi độ sâu xác nhận tăng. Không nên đồng nhất điều này với chi phí luôn tăng theo cấp số.
 
 > **Bất biến ≠ "không thể sửa".** Về vật lý bạn *có thể* sửa file block trên đĩa. Nhưng để mạng **chấp nhận** bản sửa, bạn phải làm lại toàn bộ PoW nhanh hơn phần còn lại của thế giới. Bất biến ở đây là **bất biến xác suất/kinh tế**: không phải cấm, mà là **quá đắt để đáng làm**.
 

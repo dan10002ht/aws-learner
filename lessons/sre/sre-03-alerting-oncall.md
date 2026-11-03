@@ -65,6 +65,11 @@ Với SLO 99.9% (error budget 0.1% trong 30 ngày):
   sum(rate(http_requests_total{job="checkout",code=~"5.."}[1h]))
     / sum(rate(http_requests_total{job="checkout"}[1h]))
 ) / 0.001 > 14.4
+and
+(
+  sum(rate(http_requests_total{job="checkout",code=~"5.."}[5m]))
+    / sum(rate(http_requests_total{job="checkout"}[5m]))
+) / 0.001 > 14.4
 ```
 
 Dùng hai window (ví dụ 1h **và** 5m cùng vượt) để vừa nhạy vừa không page vì một blip 30 giây.

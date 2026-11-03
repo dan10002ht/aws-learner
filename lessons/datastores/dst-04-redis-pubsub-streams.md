@@ -37,7 +37,7 @@ Reading messages... (press Ctrl-C to quit)
 
 # Terminal 2 — publisher
 127.0.0.1:6379> PUBLISH news:sport "Việt Nam thắng 2-0"
-(integer) 1          # số subscriber ĐÃ nhận (đang online)
+(integer) 1          # số client subscriber Redis gửi tới; không phải ACK xử lý
 
 # Terminal 1 nhận realtime:
 1) "message"
@@ -45,7 +45,7 @@ Reading messages... (press Ctrl-C to quit)
 3) "Việt Nam thắng 2-0"
 ```
 
-Con số `(integer) 1` trả về từ `PUBLISH` chính là **số subscriber đang online nhận được**. Nếu **không ai** subscribe, `PUBLISH` trả `0` và **message biến mất vĩnh viễn** — Redis không giữ lại gì.
+Con số `(integer) 1` trả về từ `PUBLISH` chính là **số client subscriber mà Redis gửi message tới**, không xác nhận ứng dụng đã đọc/xử lý. Nếu **không ai** subscribe, `PUBLISH` trả `0` và **message biến mất vĩnh viễn** — Redis không giữ lại gì.
 
 **Pattern subscribe** — subscribe theo mẫu glob thay vì tên chính xác:
 
@@ -157,7 +157,7 @@ Mỗi entry có **ID dạng `<millisecond>-<sequence>`** (ví dụ `171000000000
 
 ### 2.4 Consumer Group — chia tải + at-least-once
 
-`XREAD` thuần cho **fan-out** (mọi reader đọc *toàn bộ*). Muốn **N worker chia nhau** xử lý mỗi message *đúng một lần* và có **ACK + retry**, ta cần **consumer group**.
+`XREAD` thuần cho **fan-out** (mọi reader đọc *toàn bộ*). Muốn **N worker chia nhau** chia message cho worker và có **ACK + retry** (at-least-once: message có thể được xử lý lặp), ta cần **consumer group**.
 
 <svg viewBox="0 0 660 260" role="img" aria-labelledby="cg-t cg-d" style="width:100%;max-width:640px;height:auto;display:block;margin:1.25rem auto">
 <title id="cg-t">Consumer group chia message cho nhiều consumer</title>

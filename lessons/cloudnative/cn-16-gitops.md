@@ -69,11 +69,11 @@ Sau bài này bạn có thể:
 | | **CI push (cũ)** | **GitOps pull (mới)** |
 |--|------------------|----------------------|
 | Ai chạm cluster | CI runner **ngoài** cluster | Agent **trong** cluster |
-| Credential cụm | Nằm ở CI runner (Internet) | **Không rời** cluster |
-| Chiều kết nối | CI → mở kết nối vào API server (phải expose) | Agent → kéo ra Git (chỉ cần outbound) |
-| Bề mặt tấn công | Runner bị chiếm = cụm bị chiếm | Runner chỉ push code lên Git, không có key cụm |
+| Credential cụm | Nằm ở CI runner (có thể trong mạng riêng) | **Không rời** cluster |
+| Chiều kết nối | CI → API server phải truy cập được (public hoặc private) | Agent → kéo ra Git (chỉ cần outbound) |
+| Bề mặt tấn công | Runner bị chiếm → lộ quyền cụm mà credential/RBAC cho phép | Runner không cần key cụm; quyền ghi Git vẫn có thể đổi workload |
 
-Mấu chốt: với pull-based, **API server không cần lộ cho CI**, và **admin kubeconfig không đi ra ngoài**. Agent nằm sẵn trong cluster, chỉ cần quyền **đọc** Git repo (thường là read-only deploy key). Đây là lý do bảo mật lớn nhất khiến GitOps thắng CI-push cho khâu deploy.
+Mấu chốt: với pull-based, **API server không cần lộ cho CI**, và **admin kubeconfig không đi ra ngoài**. Agent nằm sẵn trong cluster, cần RBAC vừa đủ để apply; với Git repo chỉ cần quyền **đọc** (thường là read-only deploy key). Đây là lý do bảo mật lớn nhất khiến GitOps thắng CI-push cho khâu deploy.
 
 <ab-toggle data-labels="CI push|Agent pull">
 <svg viewBox="0 0 520 300" role="img" aria-labelledby="cn16-vis-0-t cn16-vis-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">

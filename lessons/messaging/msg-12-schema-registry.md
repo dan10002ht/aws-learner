@@ -18,7 +18,7 @@ Sau bài này bạn có thể:
 Khi `Order service` gửi message `{"order_id": 123, "amount": 50}` vào Kafka, nó đang **hứa** với mọi consumer về hình dạng dữ liệu: có field `order_id` kiểu số, field `amount` kiểu số. `Billing`, `Analytics`, `Fraud` đọc theo lời hứa đó. Đây là một **contract** — nhưng là contract *ngầm*, không ai viết ra, không ai kiểm.
 
 Vấn đề nổ ra khi thời gian trôi. Sáu tháng sau, team Order đổi `amount` (số nguyên VND) thành `{"value": 50, "currency": "USD"}` để hỗ trợ đa tiền tệ. Producer deploy phiên bản mới. Ngay lập tức:
-- `Billing` (chưa kịp deploy) đọc message mới, không thấy field `amount` → **crash** hoặc tính tiền = 0.
+- `Billing` (chưa kịp deploy) đọc message mới, thấy `amount` là object thay vì số → **crash** hoặc tính tiền = 0.
 - Trong Kafka **vẫn còn hàng triệu message cũ** (log giữ lại 7 ngày). Consumer mới đọc lại từ đầu (reprocess) sẽ gặp cả message cũ lẫn mới → phải hiểu **cả hai** dạng.
 
 Điểm cốt lõi: trong hệ streaming, **producer và consumer deploy độc lập, không đồng thời**, và **dữ liệu cũ vẫn tồn tại**. Nên tại một thời điểm bất kỳ, trong hệ luôn có **nhiều phiên bản schema cùng chạy**. Contract không phải "ảnh chụp hiện tại" mà là "mọi phiên bản còn sống". Không có gì canh giữ contract này → mỗi lần đổi field là một quả bom hẹn giờ.
@@ -186,7 +186,7 @@ Còn có biến thể `*_TRANSITIVE` (BACKWARD_TRANSITIVE...): kiểm với **m�
 |----------|----------|--------|
 | **Thêm field CÓ default** | ✓ Backward & Forward | Reader cũ bỏ qua field lạ; reader mới đọc data cũ thì điền default |
 | **Thêm field KHÔNG default** | ✗ Phá backward | Reader mới đọc data cũ không có field này → không biết điền gì |
-| **Xoá field CÓ default** | ✓ Backward | Reader mới thiếu field → dùng default khi đọc data cũ |
+| **Xoá field CÓ default trong schema cũ** | ✓ Backward & Forward (Avro) | Reader mới bỏ field cũ; reader cũ dùng default của mình khi đọc data mới thiếu field |
 | **Xoá field required (không default)** | ✗ Phá forward | Reader cũ đọc data mới thiếu field bắt buộc → lỗi |
 | **Đổi KIỂU field** (int → string) | ✗ Luôn nguy hiểm | Byte giải mã sai hoàn toàn; Avro không ép kiểu tuỳ tiện |
 | **Đổi TÊN field** (Avro) | ✗ (trừ khi dùng `aliases`) | Avro khớp theo tên; đổi tên = xoá field cũ + thêm field mới |
@@ -194,7 +194,7 @@ Còn có biến thể `*_TRANSITIVE` (BACKWARD_TRANSITIVE...): kiểm với **m�
 | **Mở rộng kiểu** (int → long) | Một số trường hợp OK | Avro cho phép promote int→long, float→double khi đọc |
 
 Ba luật vàng để nhớ:
-1. **Field mới → luôn có `default`.** Đây là chiếc phao cứu sinh cho evolution: có default thì cả reader cũ lẫn mới đều xử lý được khi field vắng mặt.
+1. **Field mới → luôn có `default`.** Đây là chiếc phao cứu sinh cho evolution: reader dùng default **trong schema của chính nó** khi writer không có field; reader đã xoá field thì bỏ qua field cũ.
 2. **Không bao giờ đổi kiểu của một field đang tồn tại.** Cần kiểu khác → thêm field *mới* với tên mới, migrate dần, rồi bỏ field cũ (có default) sau.
 3. **Không xoá field required.** Muốn bỏ, trước hết cấp `default` cho nó ở một version, đợi mọi consumer nâng cấp, rồi mới xoá.
 

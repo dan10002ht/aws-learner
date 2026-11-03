@@ -69,7 +69,14 @@ Ví dụ tính tay: một server web chỉ nghe **một** port 443, nhưng phụ
 
 ## 3. TCP states — chỉ cần hiểu ý tưởng
 
-Kết nối TCP đi qua các trạng thái: `LISTEN → SYN_SENT/SYN_RECEIVED → ESTABLISHED → FIN_WAIT → TIME_WAIT → CLOSED`.
+Mỗi endpoint có trạng thái riêng. Bên mở chủ động thường đi `CLOSED → SYN_SENT → ESTABLISHED`; bên nhận đi `LISTEN → SYN_RECEIVED → ESTABLISHED`. Khi đóng thông thường, bên đóng chủ động đi `FIN_WAIT_1 → FIN_WAIT_2 → TIME_WAIT → CLOSED`, còn bên đóng thụ động đi `CLOSE_WAIT → LAST_ACK → CLOSED` sau `ESTABLISHED` (bỏ qua các nhánh đóng đồng thời và lỗi).
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 490" role="img" aria-labelledby="fixeng-tcp-t fixeng-tcp-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="fixeng-tcp-t">TCP: hai đường trạng thái riêng</title>
+<desc id="fixeng-tcp-d">Hai cột tách vai trò chủ động và thụ động; mũi tên chỉ các chuyển tiếp thông thường.</desc>
+<defs><marker id="fixeng-tcp-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="currentColor"/></marker></defs>
+<text x="260" y="24" font-size="15" text-anchor="middle" fill="currentColor">Một endpoint: mở và đóng thông thường</text><text x="128" y="52" font-size="13" text-anchor="middle" fill="currentColor">Mở / đóng chủ động</text><rect x="16" y="70" width="224" height="34" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="128.0" y="92.0" font-size="13" text-anchor="middle" fill="currentColor">CLOSED</text><rect x="16" y="124" width="224" height="34" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="128.0" y="146.0" font-size="13" text-anchor="middle" fill="currentColor">SYN_SENT</text><path d="M128 104 L128 121" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#fixeng-tcp-a)"/><rect x="16" y="178" width="224" height="34" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="128.0" y="200.0" font-size="13" text-anchor="middle" fill="currentColor">ESTABLISHED</text><path d="M128 158 L128 175" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#fixeng-tcp-a)"/><rect x="16" y="232" width="224" height="34" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="128.0" y="254.0" font-size="13" text-anchor="middle" fill="currentColor">FIN_WAIT_1</text><path d="M128 212 L128 229" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#fixeng-tcp-a)"/><rect x="16" y="286" width="224" height="34" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="128.0" y="308.0" font-size="13" text-anchor="middle" fill="currentColor">FIN_WAIT_2</text><path d="M128 266 L128 283" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#fixeng-tcp-a)"/><rect x="16" y="340" width="224" height="34" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="128.0" y="362.0" font-size="13" text-anchor="middle" fill="currentColor">TIME_WAIT</text><path d="M128 320 L128 337" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#fixeng-tcp-a)"/><rect x="16" y="394" width="224" height="34" rx="7" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="128.0" y="416.0" font-size="13" text-anchor="middle" fill="currentColor">CLOSED</text><path d="M128 374 L128 391" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#fixeng-tcp-a)"/><text x="392" y="52" font-size="13" text-anchor="middle" fill="currentColor">Mở / đóng thụ động</text><rect x="280" y="70" width="224" height="34" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="392.0" y="92.0" font-size="13" text-anchor="middle" fill="currentColor">LISTEN</text><rect x="280" y="124" width="224" height="34" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="392.0" y="146.0" font-size="13" text-anchor="middle" fill="currentColor">SYN_RECEIVED</text><path d="M392 104 L392 121" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#fixeng-tcp-a)"/><rect x="280" y="178" width="224" height="34" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="392.0" y="200.0" font-size="13" text-anchor="middle" fill="currentColor">ESTABLISHED</text><path d="M392 158 L392 175" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#fixeng-tcp-a)"/><rect x="280" y="232" width="224" height="34" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="392.0" y="254.0" font-size="13" text-anchor="middle" fill="currentColor">CLOSE_WAIT</text><path d="M392 212 L392 229" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#fixeng-tcp-a)"/><rect x="280" y="286" width="224" height="34" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="392.0" y="308.0" font-size="13" text-anchor="middle" fill="currentColor">LAST_ACK</text><path d="M392 266 L392 283" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#fixeng-tcp-a)"/><rect x="280" y="340" width="224" height="34" rx="7" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="392.0" y="362.0" font-size="13" text-anchor="middle" fill="currentColor">CLOSED</text><path d="M392 320 L392 337" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#fixeng-tcp-a)"/><text x="260" y="468" font-size="13" text-anchor="middle" fill="currentColor">Bỏ qua đóng đồng thời, reset và các nhánh lỗi.</text>
+</svg>
 
 Đáng nhớ nhất là **TIME_WAIT**: bên *chủ động đóng* kết nối phải giữ socket thêm ~30–120 giây (2×MSL) để chắc chắn gói trễ của kết nối cũ không lẫn vào kết nối mới dùng lại cùng bộ 5 thành phần.
 
@@ -101,66 +108,25 @@ ss -tan | awk '{print $1}' | sort | uniq -c | sort -rn
 
 Tính tay với RTT 35ms, kết nối mới lần đầu:
 
-- HTTP/2: TCP (1 RTT) + TLS 1.3 (1 RTT) = **70ms** trước byte đầu tiên.
-- HTTP/3: QUIC handshake gộp luôn TLS = **35ms**. Quay lại lần sau với 0-RTT: **~0ms** chờ.
+- HTTP/2: TCP (1 RTT) + TLS 1.3 (1 RTT) = **70ms** chờ trước khi client gửi request ứng dụng (chưa phải thời gian nhận byte phản hồi đầu tiên).
+- HTTP/3: QUIC handshake gộp luôn TLS = **35ms** trước khi client gửi request 1-RTT. Khi phiên cho phép 0-RTT, client có thể gửi request ngay, **~0ms** chờ handshake; vẫn phải chờ mạng/server để nhận phản hồi. Early data có thể bị từ chối và có rủi ro replay.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 430" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>So sánh thiết lập kết nối TCP+TLS1.3 (HTTP/2) với QUIC (HTTP/3)</title>
-  <desc>Sơ đồ trình tự client–server: bên trái TCP 3-way handshake cộng TLS 1.3 tốn 2 RTT (70ms) trước byte đầu; bên phải QUIC gộp transport và TLS chỉ 1 RTT (35ms), quay lại 0-RTT gần 0ms với RTT 35ms.</desc>
-  <text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">Chi phí bắt tay (RTT = 35ms)</text>
-  <g>
-    <text x="180" y="46" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">TCP + TLS 1.3 (HTTP/2)</text>
-    <text x="80" y="66" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">Client</text>
-    <text x="280" y="66" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">Server</text>
-    <line x1="80" y1="74" x2="80" y2="392" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3"/>
-    <line x1="280" y1="74" x2="280" y2="392" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3"/>
-    <g stroke="currentColor" stroke-width="1.4" fill="none">
-      <path d="M80 92 L274 110" marker-end="url(#a1)"/>
-      <path d="M280 130 L86 148" marker-end="url(#a1)"/>
-      <path d="M80 168 L274 186" marker-end="url(#a1)"/>
-      <path d="M280 206 L86 224" marker-end="url(#a1)"/>
-      <path d="M80 244 L274 262" marker-end="url(#a1)"/>
-    </g>
-    <text x="180" y="100" font-size="9.5" text-anchor="middle" fill="currentColor">SYN</text>
-    <text x="180" y="140" font-size="9.5" text-anchor="middle" fill="currentColor">SYN-ACK</text>
-    <text x="180" y="176" font-size="9.5" text-anchor="middle" fill="currentColor">ACK + ClientHello</text>
-    <text x="180" y="216" font-size="9.5" text-anchor="middle" fill="currentColor">ServerHello + Cert</text>
-    <text x="180" y="254" font-size="9.5" text-anchor="middle" fill="currentColor">Finished + GET</text>
-    <rect x="40" y="116" width="40" height="16" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="60" y="128" font-size="9" text-anchor="middle" fill="currentColor">RTT 1</text>
-    <rect x="40" y="232" width="40" height="16" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="60" y="244" font-size="9" text-anchor="middle" fill="currentColor">RTT 2</text>
-    <rect x="60" y="280" width="240" height="26" rx="8" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="180" y="297" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">≈ 2 RTT = 70ms</text>
-  </g>
-  <g>
-    <text x="540" y="46" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">QUIC (HTTP/3)</text>
-    <text x="440" y="66" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">Client</text>
-    <text x="640" y="66" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">Server</text>
-    <line x1="440" y1="74" x2="440" y2="392" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3"/>
-    <line x1="640" y1="74" x2="640" y2="392" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3"/>
-    <g stroke="currentColor" stroke-width="1.4" fill="none">
-      <path d="M440 92 L634 110" marker-end="url(#a1)"/>
-      <path d="M640 130 L446 148" marker-end="url(#a1)"/>
-    </g>
-    <text x="540" y="100" font-size="9.5" text-anchor="middle" fill="currentColor">Initial: ClientHello + key_share</text>
-    <text x="540" y="140" font-size="9.5" text-anchor="middle" fill="currentColor">ServerHello + Cert + Finished</text>
-    <rect x="400" y="116" width="40" height="16" rx="8" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="420" y="128" font-size="9" text-anchor="middle" fill="currentColor">RTT 1</text>
-    <rect x="420" y="160" width="240" height="26" rx="8" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="540" y="177" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">≈ 1 RTT = 35ms (lần đầu)</text>
-    <g stroke="currentColor" stroke-width="1.4" fill="none">
-      <path d="M440 232 L634 250" marker-end="url(#a1)"/>
-    </g>
-    <text x="540" y="240" font-size="9.5" text-anchor="middle" fill="currentColor">0-RTT: GET gửi ngay (phiên cũ)</text>
-    <rect x="420" y="280" width="240" height="26" rx="8" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="540" y="297" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">≈ 0 RTT ≈ 0ms (quay lại)</text>
-  </g>
-  <text x="360" y="420" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">Thời gian đi xuống — QUIC gộp transport + TLS nên rút mất 1 RTT chờ.</text>
-  <defs>
-    <marker id="a1" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker>
-  </defs>
+<ab-toggle data-labels="TCP + TLS|QUIC">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 404" role="img" aria-labelledby="fixeng-rtt0-t fixeng-rtt0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="fixeng-rtt0-t">TCP và TLS handshake</title>
+<desc id="fixeng-rtt0-d">Cùng trục thời gian và vị trí client/server; độ dài chờ đến lúc gửi GET là một hoặc hai RTT.</desc>
+<defs><marker id="fixeng-rtt0-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="currentColor"/></marker></defs>
+<text x="260" y="25" font-size="15" text-anchor="middle" fill="currentColor">Thời gian trước khi gửi request</text><text x="90" y="54" font-size="13" text-anchor="middle" fill="currentColor">Client</text><line x1="90" y1="70" x2="90" y2="390" stroke="currentColor" stroke-dasharray="4 4" opacity="0.4"/><text x="430" y="54" font-size="13" text-anchor="middle" fill="currentColor">Server</text><line x1="430" y1="70" x2="430" y2="390" stroke="currentColor" stroke-dasharray="4 4" opacity="0.4"/><text x="35" y="86" font-size="13" text-anchor="middle" fill="currentColor">0ms</text><text x="35" y="170" font-size="13" text-anchor="middle" fill="currentColor">35ms</text><text x="35" y="254" font-size="13" text-anchor="middle" fill="currentColor">70ms</text><path d="M90 80 L430 122" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#fixeng-rtt0-a)"/><text x="260" y="89" font-size="13" text-anchor="middle" fill="currentColor">SYN</text><path d="M430 122 L90 164" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#fixeng-rtt0-a)"/><text x="260" y="131" font-size="13" text-anchor="middle" fill="currentColor">SYN-ACK</text><path d="M90 164 L430 206" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#fixeng-rtt0-a)"/><text x="260" y="173" font-size="13" text-anchor="middle" fill="currentColor">ACK + ClientHello</text><path d="M430 206 L90 248" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#fixeng-rtt0-a)"/><text x="260" y="215" font-size="13" text-anchor="middle" fill="currentColor">ServerHello + Cert + Finished</text><path d="M90 248 L430 290" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#fixeng-rtt0-a)"/><text x="260" y="257" font-size="13" text-anchor="middle" fill="currentColor">Finished + GET</text><line x1="65" y1="80" x2="65" y2="248" stroke="#10b981" stroke-width="5"/><text x="260" y="330" font-size="15" text-anchor="middle" fill="currentColor">2 RTT = 70ms</text><text x="260" y="355" font-size="13" text-anchor="middle" fill="currentColor">TCP 1 RTT + TLS 1.3 1 RTT</text><text x="260" y="380" font-size="13" text-anchor="middle" fill="currentColor">Chưa bao gồm chờ byte phản hồi đầu tiên.</text>
 </svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 404" role="img" aria-labelledby="fixeng-rtt1-t fixeng-rtt1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="fixeng-rtt1-t">QUIC handshake</title>
+<desc id="fixeng-rtt1-d">Cùng trục thời gian và vị trí client/server; độ dài chờ đến lúc gửi GET là một hoặc hai RTT.</desc>
+<defs><marker id="fixeng-rtt1-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8z" fill="currentColor"/></marker></defs>
+<text x="260" y="25" font-size="15" text-anchor="middle" fill="currentColor">Thời gian trước khi gửi request</text><text x="90" y="54" font-size="13" text-anchor="middle" fill="currentColor">Client</text><line x1="90" y1="70" x2="90" y2="390" stroke="currentColor" stroke-dasharray="4 4" opacity="0.4"/><text x="430" y="54" font-size="13" text-anchor="middle" fill="currentColor">Server</text><line x1="430" y1="70" x2="430" y2="390" stroke="currentColor" stroke-dasharray="4 4" opacity="0.4"/><text x="35" y="86" font-size="13" text-anchor="middle" fill="currentColor">0ms</text><text x="35" y="170" font-size="13" text-anchor="middle" fill="currentColor">35ms</text><text x="35" y="254" font-size="13" text-anchor="middle" fill="currentColor">70ms</text><path d="M90 80 L430 122" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#fixeng-rtt1-a)"/><text x="260" y="89" font-size="13" text-anchor="middle" fill="currentColor">Initial: ClientHello + key_share</text><path d="M430 122 L90 164" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#fixeng-rtt1-a)"/><text x="260" y="131" font-size="13" text-anchor="middle" fill="currentColor">ServerHello + Cert + Finished</text><path d="M90 164 L430 206" stroke="currentColor" stroke-width="2" fill="none" marker-end="url(#fixeng-rtt1-a)"/><text x="260" y="173" font-size="13" text-anchor="middle" fill="currentColor">Finished + GET</text><line x1="65" y1="80" x2="65" y2="164" stroke="#10b981" stroke-width="5"/><text x="260" y="330" font-size="15" text-anchor="middle" fill="currentColor">1 RTT = 35ms</text><text x="260" y="355" font-size="13" text-anchor="middle" fill="currentColor">0-RTT: gửi sớm ngay nếu phiên cho phép</text><text x="260" y="380" font-size="13" text-anchor="middle" fill="currentColor">Chưa bao gồm chờ byte phản hồi đầu tiên.</text>
+</svg>
+<ab-note>Ví dụ bỏ qua DNS, xử lý server và TCP Fast Open. Client gửi GET sau hai RTT; nhận phản hồi còn cần thời gian truyền và xử lý.</ab-note>
+<ab-note>QUIC gộp transport và TLS. 0-RTT chỉ bỏ chờ trước khi gửi early data, có thể bị từ chối và cần xử lý rủi ro replay.</ab-note>
+</ab-toggle>
 
 Đến 2025, khoảng **~30–35% website** đã bật HTTP/3 (Cloudflare, Google, các CDN lớn bật mặc định), HTTP/2 vẫn là mặt bằng chung.
 

@@ -127,13 +127,13 @@ Analogy: quán phở có **hai đầu bếp cùng nấu** mỗi ngày. Một ng�
 |---|---|---|
 | Bản dự phòng có phục vụ traffic? | Không (đứng chờ) | Có (chia tải) |
 | Tận dụng tài nguyên | Lãng phí hơn (máy chờ không làm gì) | Tốt hơn (mọi máy đều làm việc) |
-| Thời gian chuyển đổi khi sự cố | Có độ trễ failover (giây → phút) | Gần như tức thì (LB chỉ ngừng gửi tới máy chết) |
+| Thời gian chuyển đổi khi sự cố | Có độ trễ failover (giây → phút) | Sau phát hiện lỗi và rút node khỏi LB; request đang bay có thể fail/retry |
 | Độ phức tạp | Đơn giản hơn | Phức tạp hơn (đồng bộ dữ liệu, session, xung đột ghi) |
 | Phù hợp với | Database truyền thống, hệ thống khó chạy song song | Web server stateless, API |
 
 Lưu ý quan trọng: với **database**, active-active khó hơn nhiều vì hai bản cùng **ghi** dữ liệu có thể xung đột. Vì vậy database thường dùng active-passive (một primary ghi, một standby đồng bộ theo), còn tầng web stateless thì dùng active-active thoải mái.
 
-> **Ghi nhớ:** Active-passive = lốp dự phòng (chờ, có độ trễ khi thay). Active-active = hai đầu bếp cùng nấu (chia tải, chuyển đổi tức thì, nhưng phức tạp hơn — nhất là khi có ghi dữ liệu).
+> **Ghi nhớ:** Active-passive = lốp dự phòng (chờ, có độ trễ khi thay). Active-active = hai đầu bếp cùng nấu (chia tải, vẫn cần phát hiện lỗi và retry khi chuyển đổi, phức tạp hơn — nhất là khi có ghi dữ liệu).
 
 ## 4. Health Check & Failover — phát hiện và chuyển hướng
 

@@ -28,7 +28,7 @@ Bạn quản lý 1 thư viện 10 triệu cuốn sách. Có 3 cách sắp xếp:
 2. **Throughput**: 1 instance không đủ IOPS cho 100k QPS.
 3. **Locality**: muốn data người Việt ở SG, data người Đức ở Frankfurt (compliance + latency).
 
-Replication (bài 03) **không** giải quyết 1 & 2. Replication chỉ làm nhiều bản copy của cùng dataset → vẫn cùng kích thước. **Partition** mới chia dataset ra → mỗi node giữ 1 phần.
+Replication (bài 03) tạo nhiều bản copy, nên không chia nhỏ dataset hay tự scale ghi. **Read replica có thể tăng throughput đọc**; storage mỗi replica vẫn chứa cùng dữ liệu. **Partition** mới chia dataset ra → mỗi node giữ 1 phần.
 
 → Hệ thống lớn thường dùng **cả hai**: partition × replicate. DynamoDB: 1 table có nhiều partition, mỗi partition có 3 replica. Kafka: 1 topic có nhiều partition, mỗi partition RF=3.
 
@@ -168,7 +168,7 @@ Replication (bài 03) **không** giải quyết 1 & 2. Replication chỉ làm nh
 
 ### 3.3 Consistent hashing
 - Thêm/bớt node chỉ ảnh hưởng 1 phần keys (không phải toàn bộ như `mod N`).
-- **Vũ khí chính** của DynamoDB, Cassandra, ElastiCache Redis cluster.
+- **Cassandra** dùng token ring/vnode. DynamoDB quản lý partition và metadata routing, không nên đồng nhất với ring Dynamo paper; **ElastiCache Redis Cluster dùng 16384 hash slot**, không phải consistent-hash ring.
 
 ### 3.4 Directory-based
 - Có 1 bảng lookup `key → node`.
@@ -186,16 +186,16 @@ Replication (bài 03) **không** giải quyết 1 & 2. Replication chỉ làm nh
 ### 4.1 Mô hình
 - Mỗi item có **partition key (PK)** bắt buộc, optional **sort key (SK)**.
 - DynamoDB hash PK → quyết định partition.
-- Items cùng PK nằm cùng partition, sort theo SK.
+- Items cùng PK tạo một item collection, sort theo SK. Không có LSI, split-for-heat có thể tách item collection theo SK sang nhiều partition vật lý; có LSI thì không tách trong item collection.
 
 ### 4.2 Hot partition là gì?
 
 Mỗi partition có giới hạn cứng:
 - **1000 WCU/s** (1KB/write).
 - **3000 RCU/s** (4KB/read).
-- **10 GB storage** (mềm, tự split).
+- **10 GB storage** mỗi partition vật lý, có thể split; **10 GB/item collection khi có LSI** là giới hạn riêng cần lưu ý.
 
-Nếu 1 PK chiếm > 1000 WCU/s → **throttle**, dù tổng capacity của table còn dư. Đây là hot partition.
+Nếu tải dồn vào một partition vật lý vượt khả năng phục vụ → có thể **throttle** (split-for-heat không luôn giúp được PK nóng, nhất là SK tăng liên tục), dù tổng capacity của table còn dư. Đây là hot partition.
 
 ### 4.3 Ví dụ thiết kế tốt vs xấu
 
@@ -250,7 +250,7 @@ Nếu 1 PK chiếm > 1000 WCU/s → **throttle**, dù tổng capacity của tabl
 </svg>
 
 ### 4.4 Adaptive capacity (2018+) và bursting
-- DynamoDB tự re-balance khi phát hiện hot partition (vài phút sau).
+- Adaptive capacity phân bổ capacity theo tải trong giới hạn table/partition; split-for-heat có thể chia partition khi có lợi. Không có cam kết mọi hot key đều hết throttle sau vài phút.
 - Không phải lý do để design ẩu — chỉ là safety net.
 
 ### 4.5 Quy tắc design partition key
@@ -282,8 +282,8 @@ RDS native chỉ scale vertical + Read Replica. Khi 1 instance không đủ:
 - Đơn giản, hay làm trước khi horizontal sharding.
 
 ### 5.4 Khi nào cần sharding?
-- 1 instance lớn nhất (`db.r6i.32xlarge` ~ 128 vCPU, 1TB RAM) còn không đủ.
-- Storage > 64TB (giới hạn Aurora).
+- Instance phù hợp lớn nhất của engine/region hiện tại vẫn không đủ (không cố định một instance family là lớn nhất).
+- Storage tiến gần giới hạn Aurora của engine/version: hiện có mức 128 hoặc 256 TiB tùy phiên bản, không phải trần chung 64TB.
 - Write QPS > capacity của instance lớn nhất sau optimize.
 
 → Đến đây mới sharding. **Trước đó hãy optimize query, index, caching, read replica, connection pooling**. Sharding là đường một chiều: vào dễ, ra khó.
@@ -315,56 +315,13 @@ Khi dataset tăng → cần thêm partition. Có 2 cách:
 ### 7.2 Consistent hashing + virtual nodes
 - Mỗi physical node giữ nhiều "virtual node" trên ring.
 - Thêm node mới chỉ ảnh hưởng vài virtual node.
-- **DynamoDB, Cassandra, ElastiCache** đều dùng. App không thấy.
+- **Cassandra** dùng ring/vnode; DynamoDB có partition routing riêng, ElastiCache Redis Cluster dùng hash slots. App thường truy cập qua client/router.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Consistent hashing ring với virtual node so với mod N</title>
-  <desc>Bên trái mod N rehash toàn bộ key khi thêm node, hầu hết key phải di chuyển. Bên phải consistent hashing ring: key đi theo chiều kim đồng hồ tới node gần nhất; mỗi node có nhiều virtual node trải đều trên ring nên thêm node D chỉ kéo một phần nhỏ key từ các node lân cận, phần còn lại đứng yên.</desc>
-  <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">Consistent hashing + virtual nodes</text>
-  <text x="150" y="50" font-size="12.5" font-weight="700" text-anchor="middle" fill="#ef4444">mod N — thêm node = rehash hết</text>
-  <g font-size="10.5">
-    <text x="20" y="80" fill="currentColor" opacity="0.75">N=3:  key → hash % 3</text>
-    <rect x="20" y="92" width="84" height="26" rx="5" fill="#ef4444" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="62" y="109" text-anchor="middle" fill="currentColor">k1 → n0</text>
-    <rect x="110" y="92" width="84" height="26" rx="5" fill="#ef4444" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="152" y="109" text-anchor="middle" fill="currentColor">k2 → n1</text>
-    <rect x="200" y="92" width="84" height="26" rx="5" fill="#ef4444" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="242" y="109" text-anchor="middle" fill="currentColor">k3 → n2</text>
-    <text x="20" y="146" fill="currentColor" opacity="0.75">N=4:  key → hash % 4</text>
-    <rect x="20" y="158" width="84" height="26" rx="5" fill="#ef4444" fill-opacity="0.22" stroke="#ef4444" stroke-opacity="0.5"/>
-    <text x="62" y="175" text-anchor="middle" fill="currentColor">k1 → n1</text>
-    <rect x="110" y="158" width="84" height="26" rx="5" fill="#ef4444" fill-opacity="0.22" stroke="#ef4444" stroke-opacity="0.5"/>
-    <text x="152" y="175" text-anchor="middle" fill="currentColor">k2 → n2</text>
-    <rect x="200" y="158" width="84" height="26" rx="5" fill="#ef4444" fill-opacity="0.22" stroke="#ef4444" stroke-opacity="0.5"/>
-    <text x="242" y="175" text-anchor="middle" fill="currentColor">k3 → n3</text>
-  </g>
-  <text x="150" y="210" font-size="10.5" text-anchor="middle" fill="#ef4444">hầu như MỌI key phải đổi node</text>
-  <line x1="320" y1="44" x2="320" y2="356" stroke="currentColor" stroke-opacity="0.15"/>
-  <text x="530" y="50" font-size="12.5" font-weight="700" text-anchor="middle" fill="#10b981">ring — thêm D chỉ động 1 phần</text>
-  <circle cx="530" cy="200" r="100" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-width="2"/>
-  <text x="530" y="200" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.45">key đi theo</text>
-  <text x="530" y="214" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.45">chiều kim đồng hồ</text>
-  <g>
-    <circle cx="530" cy="100" r="9" fill="#3b82f6" fill-opacity="0.9"/>
-    <text x="530" y="86" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">A</text>
-    <circle cx="620" cy="155" r="9" fill="#3b82f6" fill-opacity="0.9"/>
-    <text x="640" y="150" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">A</text>
-    <circle cx="600" cy="270" r="9" fill="#10b981" fill-opacity="0.9"/>
-    <text x="620" y="282" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">B</text>
-    <circle cx="465" cy="285" r="9" fill="#10b981" fill-opacity="0.9"/>
-    <text x="450" y="300" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">B</text>
-    <circle cx="437" cy="138" r="9" fill="#8b5cf6" fill-opacity="0.9"/>
-    <text x="418" y="133" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">C</text>
-    <circle cx="448" cy="222" r="9" fill="#8b5cf6" fill-opacity="0.9"/>
-    <text x="430" y="226" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">C</text>
-  </g>
-  <circle cx="555" cy="298" r="10" fill="#f59e0b" fill-opacity="0.95"/>
-  <text x="555" y="302" font-size="11" font-weight="700" text-anchor="middle" fill="#fff">D</text>
-  <path d="M610 250 A 95 95 0 0 1 568 295" fill="none" stroke="#f59e0b" stroke-width="3"/>
-  <text x="525" y="345" font-size="10.5" text-anchor="middle" fill="#f59e0b">D thêm vào → chỉ kéo key của cung này</text>
-  <g font-size="10" opacity="0.8">
-    <text x="530" y="372" text-anchor="middle" fill="currentColor">A, B, C đều có 2 virtual node → trải đều, các key còn lại đứng yên</text>
-  </g>
+<svg viewBox="0 0 520 545" role="img" aria-labelledby="fd05fix-ring-t fd05fix-ring-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="fd05fix-ring-t">Mod và vùng ownership đổi khi thêm vnode D</title>
+<desc id="fd05fix-ring-d">Mod và vùng ownership đổi khi thêm vnode D</desc>
+<text x="260" y="25" font-size="14" text-anchor="middle" fill="currentColor">mod N: đổi N làm nhiều key đổi chủ</text><text x="45" y="90" font-size="13" text-anchor="middle" fill="currentColor">N=3</text><rect x="90" y="70" width="130" height="30" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="155" y="90" font-size="13" text-anchor="middle" fill="currentColor">k1 → n0</text><rect x="230" y="70" width="130" height="30" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="295" y="90" font-size="13" text-anchor="middle" fill="currentColor">k2 → n1</text><rect x="370" y="70" width="130" height="30" rx="6" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="435" y="90" font-size="13" text-anchor="middle" fill="currentColor">k3 → n2</text><text x="45" y="140" font-size="13" text-anchor="middle" fill="currentColor">N=4</text><rect x="90" y="120" width="130" height="30" rx="6" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/><text x="155" y="140" font-size="13" text-anchor="middle" fill="currentColor">k1 → n1</text><rect x="230" y="120" width="130" height="30" rx="6" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/><text x="295" y="140" font-size="13" text-anchor="middle" fill="currentColor">k2 → n2</text><rect x="370" y="120" width="130" height="30" rx="6" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/><text x="435" y="140" font-size="13" text-anchor="middle" fill="currentColor">k3 → n3</text><text x="260" y="185" font-size="14" text-anchor="middle" fill="currentColor">Ring: successor ≥ hash(key), chiều CW</text><circle cx="260" cy="335" r="110" fill="none" stroke="currentColor" stroke-opacity="0.5"/><circle cx="260.00" cy="225.00" r="9" fill="#3b82f6"/><text x="260.0" y="206.0" font-size="13" text-anchor="middle" fill="currentColor">A</text><circle cx="355.26" cy="280.00" r="9" fill="#3b82f6"/><text x="376.05" y="273.0" font-size="13" text-anchor="middle" fill="currentColor">A</text><circle cx="337.78" cy="412.78" r="9" fill="#10b981"/><text x="354.75" y="434.75" font-size="13" text-anchor="middle" fill="currentColor">B</text><circle cx="182.22" cy="412.78" r="9" fill="#10b981"/><text x="165.25" y="434.75" font-size="13" text-anchor="middle" fill="currentColor">B</text><circle cx="151.67" cy="354.10" r="9" fill="#8b5cf6"/><text x="128.04" y="363.27" font-size="13" text-anchor="middle" fill="currentColor">C</text><circle cx="164.74" cy="280.00" r="9" fill="#8b5cf6"/><text x="143.95" y="273.0" font-size="13" text-anchor="middle" fill="currentColor">C</text><path d="M337.78 412.78 A110 110 0 0 1 279.10 443.33" fill="none" stroke="#f59e0b" stroke-width="6"/><circle cx="279.10" cy="443.33" r="11" fill="#f59e0b"/><text x="279.1" y="448.33" font-size="13" text-anchor="middle" fill="currentColor">D</text><text x="260" y="329" font-size="13" text-anchor="middle" fill="currentColor">Thêm D</text><text x="260" y="352" font-size="13" text-anchor="middle" fill="currentColor">ngoài cung giữ chủ</text><text x="260" y="492" font-size="13" text-anchor="middle" fill="currentColor">Cung cam (B, D] chuyển từ B kế tiếp sang D</text><text x="260" y="520" font-size="13" text-anchor="middle" fill="currentColor">A/B/C: 2 vnode mỗi node; bố cục minh họa</text>
+<defs><marker id="fd05fix-ring-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 Z" fill="currentColor"/></marker></defs>
 </svg>
 
 ### 7.3 Pre-split / over-partition
@@ -420,7 +377,7 @@ Khi dataset tăng → cần thêm partition. Có 2 cách:
 
 ## 11. Tóm tắt 1 dòng
 
-> **Replication giải quyết availability; partition giải quyết scale.** Hot partition là kẻ thù lớn nhất — design key cẩn thận hơn design index. Cross-partition operation luôn đắt — schema phải tránh.
+> **Replication hỗ trợ availability và scale đọc; partition chia dữ liệu để scale storage/ghi.** Hot partition là kẻ thù lớn nhất — design key cẩn thận hơn design index. Cross-partition operation luôn đắt — schema phải tránh.
 
 ---
 

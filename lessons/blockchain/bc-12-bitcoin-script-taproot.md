@@ -5,7 +5,7 @@ Sau bài này bạn có thể:
 - Giải thích **Bitcoin Script** là gì, vì sao nó **stack-based** và **không Turing-complete** — và tại sao đó là lựa chọn có chủ đích chứ không phải thiếu sót.
 - Đọc hiểu cặp **locking script (scriptPubKey)** và **unlocking script (scriptSig)**, hình dung máy ảo chạy chúng như một stack.
 - Phân biệt **P2PKH**, **P2SH**, **multisig** — biết mỗi khuôn (template) khoá coin theo điều kiện gì.
-- Hiểu **SegWit**: witness được tách khỏi phần dữ liệu ký, sửa **transaction malleability**, và giảm phí thế nào.
+- Hiểu **SegWit**: witness được tách khỏi phần dữ liệu tính txid, sửa **transaction malleability**, và giảm phí thế nào.
 - Nắm **Taproot** = **Schnorr signature** + **MAST** + **Pay-to-Taproot (P2TR)**: nâng cấp cả **privacy** lẫn **hiệu quả**.
 
 ---
@@ -187,7 +187,7 @@ Thường được gói trong P2SH để địa chỉ gọn. Ứng dụng: ví c
 
 ### 4.1 Bài toán transaction malleability
 
-Trước SegWit, **chữ ký (witness) nằm ngay trong scriptSig**, và **txid = hash của toàn bộ giao dịch, gồm cả chữ ký**. Vấn đề: một chữ ký ECDSA có thể được **biến đổi hợp lệ** (ví dụ đổi dấu thành phần `s`) mà **vẫn đúng** — làm **thay đổi txid** dù nội dung kinh tế không đổi.
+Trước SegWit, **chữ ký của input legacy nằm trong scriptSig**, và **txid = hash của toàn bộ giao dịch, gồm cả chữ ký**. Vấn đề: một chữ ký ECDSA có thể được **biến đổi hợp lệ** (ví dụ đổi dấu thành phần `s`) mà **vẫn đúng** — làm **thay đổi txid** dù nội dung kinh tế không đổi.
 
 Đây là **transaction malleability**: kẻ thứ ba (hoặc chính người gửi) có thể "nắn" chữ ký, tạo ra một txid khác cho cùng giao dịch trước khi nó vào block. Hệ quả nghiêm trọng: bất kỳ hệ thống nào **tham chiếu tới txid của giao dịch chưa xác nhận** (ví dụ các kênh Lightning Network) đều gãy — đó là lý do Lightning gần như không khả thi trước SegWit.
 
@@ -212,7 +212,7 @@ SegWit **di dời phần witness (chữ ký + script mở khoá) ra một cấu 
 
 ### 4.3 Hai lợi ích lớn
 
-1. **Xoá malleability**: txid chỉ còn phụ thuộc dữ liệu đầu vào/ra, không phụ thuộc chữ ký nữa. Nắn chữ ký không đổi được txid → mở khoá cho **Lightning Network** và các giao thức layer-2.
+1. **Chống đổi txid qua witness**: với giao dịch dùng toàn input SegWit, txid không băm witness. Nắn chữ ký trong witness không đổi txid; không có nghĩa mọi giao dịch hay mọi dạng malleability đều biến mất → mở khoá cho **Lightning Network** và các giao thức layer-2.
 2. **Tăng dung lượng qua "block weight"**: SegWit thay giới hạn 1 MB cứng bằng khái niệm **weight** (tối đa 4 triệu weight units). Dữ liệu witness được **tính trọng số nhẹ hơn** (1 WU/byte thay vì 4 WU/byte). Kết quả: block chứa được nhiều giao dịch hơn (thực tế ~1.7–2 MB tương đương), và **phí cho input SegWit rẻ hơn** vì phần chữ ký được chiết khấu.
 
 Về triển khai, SegWit là **soft fork** khéo léo: node cũ vẫn thấy giao dịch hợp lệ (dưới dạng "ai cũng tiêu được" nhưng thực chất được node mới thực thi luật witness). Địa chỉ SegWit "native" dùng **bech32**, bắt đầu bằng `bc1q...` (P2WPKH / P2WSH).
@@ -298,7 +298,7 @@ Tình huống: Alice mua hàng của Bob qua một sàn, có trọng tài Trent.
 - **Bitcoin Script** là ngôn ngữ **stack-based, không Turing-complete** — cố ý hạn chế để **đảm bảo dừng, an toàn, dự đoán được**; đánh đổi bằng khả năng biểu đạt.
 - Coin bị khoá bởi **scriptPubKey** (locking) và mở bằng **scriptSig** (unlocking); node ghép hai script rồi chạy trên stack, còn TRUE ở đỉnh là hợp lệ.
 - **P2PKH** khoá theo hash public key; **P2SH** dồn độ phức tạp & phí về người tiêu bằng cách khoá theo hash của redeemScript; **multisig** đòi m/n chữ ký.
-- **SegWit** tách witness ra khỏi phần tính txid → xoá **malleability** (mở đường Lightning) và tăng dung lượng nhờ **block weight** giảm phí cho input SegWit.
+- **SegWit** tách witness ra khỏi phần tính txid → chống **malleability qua witness** cho input SegWit (mở đường Lightning) và tăng dung lượng nhờ **block weight** giảm phí cho input SegWit.
 - **Taproot** = **Schnorr** (gộp khoá/chữ ký, tuyến tính) + **MAST** (chỉ lộ nhánh dùng) + **P2TR** (key path riêng tư, script path khi cần) → nâng cả **privacy** lẫn **hiệu quả**.
 
 > **Bài tiếp theo (Bài 13):** rời mô hình UTXO của Bitcoin để bước sang **Ethereum & mô hình account-based** — nơi Script tối giản nhường chỗ cho **EVM Turing-complete** và smart contract.

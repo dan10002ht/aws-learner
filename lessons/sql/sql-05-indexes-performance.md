@@ -111,9 +111,10 @@ Loại INDEX mặc định trong hầu hết database (PostgreSQL, MySQL) là **
 
 B-tree giữ các giá trị **đã sắp xếp** trong một cây nhiều tầng:
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Cấu trúc B-tree nhiều tầng và đường đi tìm kiếm O(log n)</title>
-  <desc>Cây B-tree ba tầng: nút gốc, tầng nhánh, tầng lá chứa giá trị và con trỏ tới dòng. Đường tìm một giá trị chỉ qua 3 bước, mỗi tầng loại bỏ phần lớn nhánh còn lại.</desc>
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" role="img" aria-labelledby="fix-sql05-bt-t fix-sql05-bt-d" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+  <title id="fix-sql05-bt-t">Cấu trúc B-tree nhiều tầng và đường đi tìm kiếm O(log n)</title>
+  <desc id="fix-sql05-bt-d">Cây B-tree ba tầng: nút gốc, tầng nhánh, tầng lá chứa giá trị và con trỏ tới dòng. Đường tìm một giá trị chỉ qua 3 bước, mỗi tầng loại bỏ phần lớn nhánh còn lại.</desc>
   <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">B-tree — tìm 1 giá trị chỉ qua 3–4 bước</text>
   <g stroke="currentColor" stroke-opacity="0.3" fill="none">
     <path d="M360 86 L188 138"/>
@@ -125,33 +126,31 @@ B-tree giữ các giá trị **đã sắp xếp** trong một cây nhiều tần
     <path d="M570 174 L570 226"/>
     <path d="M570 174 L650 226"/>
   </g>
-  <g stroke="currentColor" stroke-opacity="0.85" fill="none" stroke-width="2.2">
-    <path d="M360 86 L188 138"/>
-    <path d="M150 174 L290 226"/>
-  </g>
+<g data-step="1"><path d="M360 86 L188 138" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#fix-sql05-bt-a)"/></g>
+<g data-step="2"><path d="M226 174 L290 226" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#fix-sql05-bt-a)"/></g>
   <g>
     <rect x="312" y="56" width="96" height="32" rx="7" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
     <text x="360" y="77" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">M</text>
-    <text x="416" y="77" font-size="10.5" fill="currentColor" opacity="0.7">gốc</text>
+    <text x="416" y="77" font-size="13" fill="currentColor" opacity="0.7">gốc</text>
   </g>
   <g>
     <rect x="108" y="146" width="118" height="32" rx="7" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.45"/>
-    <text x="167" y="167" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">D · H</text>
+    <text x="167" y="167" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">D · H</text>
     <rect x="452" y="146" width="118" height="32" rx="7" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="511" y="167" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">R · W</text>
-    <text x="232" y="167" font-size="10.5" fill="currentColor" opacity="0.7">nhánh</text>
+    <text x="511" y="167" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">R · W</text>
+    <text x="232" y="167" font-size="13" fill="currentColor" opacity="0.7">nhánh</text>
   </g>
-  <g font-size="10.5" text-anchor="middle">
+  <g font-size="13" text-anchor="middle">
     <rect x="28" y="226" width="84" height="42" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="70" y="244" font-weight="700" fill="currentColor">A · B · C</text>
     <text x="70" y="260" fill="currentColor" opacity="0.6">→ con trỏ</text>
     <rect x="116" y="226" width="84" height="42" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="158" y="244" font-weight="700" fill="currentColor">E · F · G</text>
     <text x="158" y="260" fill="currentColor" opacity="0.6">→ con trỏ</text>
-    <rect x="248" y="226" width="84" height="42" rx="6" fill="#f59e0b" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.5"/>
+<g data-step="3">    <rect x="248" y="226" width="84" height="42" rx="6" fill="#f59e0b" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.5"/>
     <text x="290" y="244" font-weight="700" fill="currentColor">I · J · K</text>
     <text x="290" y="260" fill="currentColor" opacity="0.75">→ DÒNG</text>
-    <rect x="388" y="226" width="84" height="42" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.25"/>
+</g>    <rect x="388" y="226" width="84" height="42" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.25"/>
     <text x="430" y="244" font-weight="700" fill="currentColor">N · P · Q</text>
     <text x="430" y="260" fill="currentColor" opacity="0.6">→ con trỏ</text>
     <rect x="528" y="226" width="84" height="42" rx="6" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.25"/>
@@ -161,13 +160,18 @@ B-tree giữ các giá trị **đã sắp xếp** trong một cây nhiều tần
     <text x="658" y="244" font-weight="700" fill="currentColor">X · Y · Z</text>
     <text x="658" y="260" fill="currentColor" opacity="0.6">→ con trỏ</text>
   </g>
-  <text x="16" y="219" font-size="10" fill="currentColor" opacity="0.55">tầng lá</text>
-  <g font-size="10.5" fill="#f59e0b">
-    <text x="240" y="108" font-weight="700">"J" trước M → trái</text>
-    <text x="60" y="200" font-weight="700">"J" sau H → phải</text>
+  <text x="16" y="219" font-size="13" fill="currentColor" opacity="0.55">tầng lá</text>
+  <g font-size="13" fill="#f59e0b">
+    <text x="16" y="120" font-weight="700">"J" trước M → trái</text>
+    <text x="280" y="200" font-weight="700">"J" sau H → phải</text>
   </g>
-  <text x="360" y="300" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.8">2.000.000 dòng → chỉ ~3–4 bước thay vì 2.000.000 lần so sánh (O(log n))</text>
+  <text x="360" y="300" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">2.000.000 dòng → chỉ ~3–4 bước thay vì 2.000.000 lần so sánh (O(log n))</text>
+<defs><marker id="fix-sql05-bt-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
 </svg>
+<step-note data-step="1">Tìm J: J nhỏ hơn M nên đi nhánh trái.</step-note>
+<step-note data-step="2">Trong nút D · H, J lớn hơn H: theo cạnh phải tới lá I · J · K.</step-note>
+<step-note data-step="3">Tìm J trong lá rồi theo con trỏ tới dòng; số tầng thực tế phụ thuộc kích thước trang và cây.</step-note>
+</step-flow>
 
 Để tìm `'an@example.com'`, database đi từ gốc, mỗi tầng loại bỏ một nửa (hoặc hơn) số nhánh còn lại. Với 2 triệu dòng, thay vì so sánh 2.000.000 lần, B-tree chỉ cần khoảng **3–4 bước**. Đó là độ phức tạp **O(log n)** thay vì **O(n)**.
 

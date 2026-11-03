@@ -372,12 +372,12 @@ Thứ tự ưu tiên thực dụng:
 2. TOTP (Google Authenticator) — ổn, nhưng vẫn phish được OTP.
 3. SMS OTP — phương án cuối.
 
-**Passkeys** dùng public-key cryptography: thiết bị giữ private key (trong Secure Enclave/TPM), server chỉ giữ public key. Đăng nhập là ký một challenge bằng sinh trắc.
+**Passkeys** dùng public-key cryptography: authenticator quản lý private key, server giữ public key. Key có thể gắn với thiết bị (ví dụ Secure Enclave/TPM) hoặc đồng bộ qua nhà cung cấp passkey. Đăng nhập ký dữ liệu gắn với challenge và origin sau khi xác minh người dùng bằng sinh trắc hoặc PIN.
 
 <step-flow>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 420" role="img" aria-labelledby="sec05-pass-t sec05-pass-d" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
   <title id="sec05-pass-t">Passkey / WebAuthn: đăng ký và đăng nhập challenge-response</title>
-  <desc id="sec05-pass-d">Sequence diagram hai cột Thiết bị và Server. Khi đăng ký, thiết bị sinh cặp khoá và gửi public key cho server lưu. Khi đăng nhập, server gửi challenge ngẫu nhiên, thiết bị mở private key bằng vân tay và ký challenge kèm origin, gửi chữ ký về; server verify bằng public key đã lưu. Vì chữ ký gắn với origin nên trang phishing không lấy được chữ ký hợp lệ.</desc>
+  <desc id="sec05-pass-d">Sequence diagram hai cột Thiết bị và Server. Khi đăng ký, thiết bị sinh cặp khoá và gửi public key cho server lưu. Khi đăng nhập, server gửi challenge ngẫu nhiên, authenticator cho phép dùng private key sau xác minh bằng sinh trắc hoặc PIN và ký challenge kèm origin, gửi chữ ký về; server verify bằng public key đã lưu. Vì chữ ký gắn với origin nên trang phishing không lấy được chữ ký hợp lệ.</desc>
   <text x="360" y="22" font-size="15" font-weight="700" text-anchor="middle" fill="currentColor">Passkey / WebAuthn — challenge-response</text>
   <text x="150" y="48" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Thiết bị</text>
   <text x="570" y="48" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Server</text>
@@ -387,8 +387,8 @@ Thứ tự ưu tiên thực dụng:
   <text x="36" y="81" font-size="13" font-weight="700" fill="currentColor">Đăng ký (1 lần)</text>
 <g data-step="1">
   <rect x="36" y="96" width="228" height="40" rx="8" fill="#3b82f6" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.3"/>
-  <text x="150" y="112" font-size="13" text-anchor="middle" fill="currentColor">sinh cặp khoá; private trong</text>
-  <text x="150" y="127" font-size="13" text-anchor="middle" fill="currentColor">Secure Enclave/TPM)</text>
+  <text x="150" y="112" font-size="13" text-anchor="middle" fill="currentColor">sinh cặp khoá; private do</text>
+  <text x="150" y="127" font-size="13" text-anchor="middle" fill="currentColor">authenticator quản lý</text>
 </g>
 <g data-step="2">
   <line x1="150" y1="152" x2="570" y2="152" stroke="currentColor" stroke-opacity="0.65" marker-end="url(#sec05-pass-a)"/>
@@ -404,7 +404,7 @@ Thứ tự ưu tiên thực dụng:
 </g>
 <g data-step="4">
   <rect x="36" y="262" width="228" height="44" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-  <text x="150" y="282" font-size="13" text-anchor="middle" fill="currentColor">vân tay → ký challenge</text>
+  <text x="150" y="282" font-size="13" text-anchor="middle" fill="currentColor">sinh trắc/PIN → ký</text>
   <text x="150" y="298" font-size="13" text-anchor="middle" fill="currentColor">+ origin bằng PRIVATE key</text>
 </g>
 <g data-step="5">
@@ -419,7 +419,7 @@ Thứ tự ưu tiên thực dụng:
   </defs>
 </svg>
 <step-note data-step="1">Thiết bị tạo cặp khoá để server không cần giữ bí mật đăng nhập của người dùng.</step-note>
-<step-note data-step="2">Chỉ public key được gửi và lưu ở server; private key dùng ký vẫn ở phía thiết bị.</step-note>
+<step-note data-step="2">Chỉ public key được gửi và lưu ở server; private key do authenticator quản lý; có thể gắn thiết bị hoặc đồng bộ.</step-note>
 <step-note data-step="3">Challenge ngẫu nhiên mới cho mỗi lần đăng nhập chống phát lại chữ ký cũ.</step-note>
 <step-note data-step="4">Xác minh người dùng cho phép sử dụng private key. Dữ liệu được ký gắn với challenge và origin của phiên.</step-note>
 <step-note data-step="5">Server kiểm chữ ký bằng public key cùng challenge và origin mong đợi, rồi mới chấp nhận đăng nhập.</step-note>
