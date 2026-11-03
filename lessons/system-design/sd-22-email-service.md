@@ -662,6 +662,19 @@ Và một điểm dễ bỏ sót: **`thread_id` là cục bộ theo từng ngư�
 
 ## 8. Deep dive 2 — Luồng gửi thư
 
+<step-flow>
+<svg viewBox="0 0 520 555" role="img" aria-labelledby="sd22med-t sd22med-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="sd22med-t">Luồng gửi thư và kết quả SMTP</title>
+<desc id="sd22med-d">Từ validation tới Sent, queue theo domain, tách nội bộ và bên ngoài, rồi xử lý delivered, deferred hoặc bounced. Nhánh nội bộ kết thúc tại Inbox.</desc>
+<defs><marker id="sd22med-ar" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs><g data-step="1"><rect x="12" y="15" width="496" height="78" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/><text x="260" y="42" font-size="15" text-anchor="middle" fill="currentColor">1. Nhận POST /v1/messages</text><text x="260" y="70" font-size="13" text-anchor="middle" fill="currentColor">LB rate limit theo user; kiểm tra rẻ, đồng bộ.</text><line x1="260" y1="93" x2="260" y2="119" stroke="currentColor" marker-end="url(#sd22med-ar)"/></g><g data-step="2"><rect x="12" y="123" width="496" height="78" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/><text x="260" y="150" font-size="15" text-anchor="middle" fill="currentColor">2. Ghi Sent → queue theo domain</text><text x="260" y="178" font-size="13" text-anchor="middle" fill="currentColor">Persist Sent trước; enqueue rồi trả 202 Accepted.</text><line x1="260" y1="201" x2="260" y2="227" stroke="currentColor" marker-end="url(#sd22med-ar)"/></g><g data-step="3"><rect x="12" y="231" width="496" height="78" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/><text x="260" y="258" font-size="15" text-anchor="middle" fill="currentColor">3. Tách người nhận nội bộ / bên ngoài</text><text x="260" y="286" font-size="13" text-anchor="middle" fill="currentColor">Nội bộ → quét spam → ghi Inbox, không ra Internet.</text><line x1="260" y1="309" x2="260" y2="335" stroke="currentColor" marker-end="url(#sd22med-ar)"/></g><g data-step="4"><rect x="12" y="339" width="496" height="78" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/><text x="260" y="366" font-size="15" text-anchor="middle" fill="currentColor">4. Bên ngoài: SMTP outgoing worker</text><text x="260" y="394" font-size="13" text-anchor="middle" fill="currentColor">Quét spam/virus → DKIM → chọn IP pool.</text><line x1="260" y1="417" x2="260" y2="443" stroke="currentColor" marker-end="url(#sd22med-ar)"/></g><g data-step="5"><rect x="12" y="447" width="496" height="78" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/><text x="260" y="474" font-size="15" text-anchor="middle" fill="currentColor">5. Phân nhánh theo phản hồi SMTP</text><text x="260" y="502" font-size="13" text-anchor="middle" fill="currentColor">2xx → delivered; 4xx → deferred; 5xx → bounced.</text></g>
+</svg>
+<step-note data-step="1">Chặn sớm thư vượt 35 MB sau base64, địa chỉ sai, vượt quota hoặc attachment không tồn tại; lỗi trả 4xx ngay.</step-note>
+<step-note data-step="2">Sent cho người gửi thấy dấu vết ngay. Job dò tìm có thể enqueue lại thư còn queued nếu sự cố xảy ra giữa hai lần ghi.</step-note>
+<step-note data-step="3">Short-circuit tiết kiệm khoảng 30% lưu lượng SMTP theo bài; vẫn quét spam để tài khoản bị chiếm không vượt qua bộ lọc.</step-note>
+<step-note data-step="4">Tra MX rồi TCP, STARTTLS và DATA. Queue theo domain giúp domain đang lỗi không chặn các domain khác.</step-note>
+<step-note data-step="5">2xx cập nhật Sent; 4xx retry với backoff và jitter 1m, 5m, 15m, 1h, 4h… tới 72h rồi bounce. 5xx không retry, sinh DSN và xử lý suppression theo loại lỗi.</step-note>
+</step-flow>
+
 ```
  ① POST /v1/messages ──▶ LB (rate limit theo user: N thư/giờ)
                           │

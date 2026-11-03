@@ -16,38 +16,21 @@ Một startup khởi đầu với 1 account, mọi thứ chung nhau. Nó hoạt 
 
 **Billing & ownership.** Đây là lý do bị xem nhẹ nhưng quan trọng nhất với người ra quyết định. Một account = một đường kẻ chi phí rõ ràng. Muốn biết team Search tốn bao nhiêu? Cho họ account riêng, đọc bill. Không cần tag chuẩn chỉnh, không cần cost allocation phức tạp.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Single account vs Multi-account: blast radius và billing</title>
-  <desc>Single account: một lỗ làm cháy toàn bộ, billing là một cục mờ. Multi-account: sự cố dừng ở ranh giới mỗi account, billing là nhiều dòng rõ ràng.</desc>
-  <text x="170" y="28" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">SINGLE ACCOUNT</text>
-  <text x="540" y="28" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">MULTI-ACCOUNT</text>
-  <rect x="40" y="48" width="260" height="150" rx="11" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
-  <text x="170" y="74" font-size="11.5" text-anchor="middle" fill="currentColor" opacity="0.7">dev · staging · prod chung nhau</text>
-  <circle cx="170" cy="125" r="34" fill="#f59e0b" fill-opacity="0.55"/>
-  <circle cx="170" cy="125" r="60" fill="none" stroke="#f59e0b" stroke-opacity="0.5" stroke-dasharray="4 4"/>
-  <text x="170" y="129" font-size="11" text-anchor="middle" font-weight="700" fill="#fff">CHÁY HẾT</text>
-  <text x="170" y="186" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">một lỗ → lan ra toàn bộ</text>
-  <rect x="380" y="48" width="100" height="150" rx="11" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
-  <rect x="490" y="48" width="100" height="150" rx="11" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
-  <rect x="600" y="48" width="100" height="150" rx="11" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.35"/>
-  <text x="430" y="74" font-size="12" text-anchor="middle" font-weight="700" fill="currentColor">Prod</text>
-  <text x="540" y="74" font-size="12" text-anchor="middle" font-weight="700" fill="currentColor">Staging</text>
-  <text x="650" y="74" font-size="12" text-anchor="middle" font-weight="700" fill="currentColor">Dev</text>
-  <circle cx="430" cy="130" r="26" fill="#f59e0b" fill-opacity="0.55"/>
-  <text x="430" y="134" font-size="9.5" text-anchor="middle" font-weight="700" fill="#fff">cháy</text>
-  <text x="430" y="184" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">dừng ở ranh giới</text>
-  <text x="540" y="134" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">an toàn</text>
-  <text x="650" y="134" font-size="11" text-anchor="middle" fill="currentColor" opacity="0.7">an toàn</text>
-  <rect x="40" y="226" width="260" height="64" rx="10" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2"/>
-  <text x="56" y="250" font-size="11.5" font-weight="700" fill="currentColor">Billing:</text>
-  <rect x="56" y="262" width="228" height="14" rx="3" fill="#f59e0b" fill-opacity="0.4"/>
-  <text x="170" y="273" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.8">1 cục mờ mịt — không tách được</text>
-  <rect x="380" y="226" width="320" height="64" rx="10" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.2"/>
-  <text x="396" y="246" font-size="11.5" font-weight="700" fill="currentColor">Billing:</text>
-  <text x="396" y="264" font-size="10.5" fill="currentColor" opacity="0.85">Prod  ........ $$$$</text>
-  <text x="396" y="278" font-size="10.5" fill="currentColor" opacity="0.85">Staging ...... $$   ·   Dev ...... $</text>
-  <text x="560" y="246" font-size="10" fill="currentColor" opacity="0.7">3 dòng rõ ràng</text>
+<ab-toggle data-labels="Một account|Nhiều account">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 320" role="img" aria-labelledby="vsdb070-t vsdb070-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="sans-serif">
+<title id="vsdb070-t">Ranh giới account và billing</title>
+<desc id="vsdb070-d">Ranh giới account và billing. Đọc từ trên xuống dưới.</desc>
+<text x="20" y="28" font-size="16" fill="currentColor">Cùng sự cố ở Prod: phạm vi ảnh hưởng</text><rect x="20" y="48" width="480" height="158" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/><text x="44" y="78" font-size="16" fill="currentColor">Prod</text><text x="44" y="124" font-size="14" fill="currentColor">Sự cố</text><text x="204" y="78" font-size="16" fill="currentColor">Staging</text><text x="204" y="124" font-size="14" fill="currentColor">Có thể lan</text><text x="364" y="78" font-size="16" fill="currentColor">Dev</text><text x="364" y="124" font-size="14" fill="currentColor">Có thể lan</text><text x="32" y="181" font-size="14" fill="currentColor">Chung IAM / quota</text><rect x="20" y="222" width="480" height="72" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/><text x="32" y="246" font-size="14" fill="currentColor">Billing: một tổng, khó tách ownership</text><text x="32" y="276" font-size="14" fill="currentColor">Prod + Staging + Dev: chung một bill</text>
 </svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 320" role="img" aria-labelledby="vsdb071-t vsdb071-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="sans-serif">
+<title id="vsdb071-t">Ranh giới account và billing</title>
+<desc id="vsdb071-d">Ranh giới account và billing. Đọc từ trên xuống dưới.</desc>
+<text x="20" y="28" font-size="16" fill="currentColor">Cùng sự cố ở Prod: phạm vi ảnh hưởng</text><rect x="32" y="48" width="144" height="158" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/><text x="44" y="78" font-size="16" fill="currentColor">Prod</text><text x="44" y="124" font-size="14" fill="currentColor">Sự cố</text><rect x="192" y="48" width="144" height="158" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/><text x="204" y="78" font-size="16" fill="currentColor">Staging</text><text x="204" y="124" font-size="14" fill="currentColor">Cô lập</text><rect x="352" y="48" width="144" height="158" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/><text x="364" y="78" font-size="16" fill="currentColor">Dev</text><text x="364" y="124" font-size="14" fill="currentColor">Cô lập</text><text x="44" y="163" font-size="14" fill="currentColor">IAM riêng</text>
+<text x="44" y="185" font-size="14" fill="currentColor">Quota riêng</text><rect x="20" y="222" width="480" height="72" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/><text x="32" y="246" font-size="14" fill="currentColor">Billing: ba dòng theo account</text><text x="32" y="276" font-size="14" fill="currentColor">Prod: $$$$    Staging: $$    Dev: $</text>
+</svg>
+<ab-note>Prod, Staging và Dev cùng account: sự cố có thể lan qua quyền dùng chung; chi phí chưa được chia theo môi trường.</ab-note>
+<ab-note>Ba account tạo ranh giới quyền, quota và chi phí. Sự cô lập phụ thuộc cả cấu hình quyền truy cập chéo account.</ab-note>
+</ab-toggle>
 
 > Nguyên tắc: Account là đơn vị cô lập VÀ đơn vị tính tiền. Hãy vẽ ranh giới account theo *blast radius bạn muốn chặn* và *chi phí bạn muốn đo riêng* — thường hai cái này trùng nhau.
 

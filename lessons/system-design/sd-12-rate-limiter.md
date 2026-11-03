@@ -152,6 +152,12 @@ estimate = curr + prev × (1 − e)
 
 Limit 100/phút, bây giờ 12:01:18 → `e = 18/60 = 0,3`, phần cửa sổ trước còn nằm trong cửa sổ trượt là 70%:
 
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 345" role="img" aria-labelledby="vsdb12-t vsdb12-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="sans-serif">
+<title id="vsdb12-t">Nội suy hai counter theo cửa sổ trượt</title>
+<desc id="vsdb12-d">Nội suy hai counter theo cửa sổ trượt. Đọc từ trên xuống dưới.</desc>
+<text x="20" y="28" font-size="16" fill="currentColor">Tại 12:01:18 · limit 100 request/phút</text><rect x="40" y="70" width="220" height="72" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/><rect x="260" y="70" width="220" height="72" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/><text x="52" y="95" font-size="14" fill="currentColor">prev = 84</text><text x="272" y="95" font-size="14" fill="currentColor">curr = 36</text><text x="52" y="120" font-size="14" fill="currentColor">12:00 → 12:01</text><text x="272" y="120" font-size="14" fill="currentColor">12:01 → 12:02</text><rect x="106" y="152" width="220" height="30" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/><text x="40" y="64" font-size="14" fill="currentColor">12:00</text><text x="240" y="64" font-size="14" fill="currentColor">12:01</text><text x="430" y="64" font-size="14" fill="currentColor">12:02</text><text x="106" y="207" font-size="14" fill="currentColor">12:00:18</text><text x="305" y="230" font-size="14" fill="currentColor">12:01:18 · now</text><text x="115" y="173" font-size="13" fill="currentColor">Cửa sổ trượt 60 giây</text><text x="20" y="265" font-size="14" fill="currentColor">prev còn 42/60 giây = 70%; curr trôi 18/60 = 30%.</text><text x="20" y="292" font-size="16" fill="currentColor">estimate = 36 + 84 × 0,70 = 94,8 &lt; 100</text><text x="20" y="321" font-size="14" fill="currentColor">70% là trọng số thời gian, không phải đếm chính xác.</text>
+</svg>
+
 ```
  12:00 (prev) = 84 request
  12:01 (curr) = 36 request      e = 0,30

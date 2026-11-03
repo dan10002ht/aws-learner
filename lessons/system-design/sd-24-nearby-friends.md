@@ -729,6 +729,96 @@ Có ba cách phân phối tự nhiên. Đặt cạnh nhau thì lựa chọn gầ
 | **Channel theo geohash** | Publish vào ô không gian, ai ở ô đó thì nghe | Hợp với **người lạ**; số channel cố định | Ô Manhattan giờ tan tầm = **hot channel** kinh hoàng; người nhận phải tự lọc bạn/không-bạn trong hàng nghìn tin rác; người đứng ở ranh giới ô phải nghe 4–9 ô |
 | **Channel theo user** ✓ | Mỗi user một channel; ai quan tâm thì subscribe | Người gửi **không cần biết gì** về người nhận; định tuyến trở thành phép hash thuần; tự nhiên song song hoá; hoàn toàn không có hot channel (mỗi channel đúng 1 người publish, đúng 1 tin mỗi 30 s) | Số channel rất lớn (100 triệu) — nhưng §2.4 cho thấy chi phí chấp nhận được |
 
+<ab-toggle data-labels="Nối thẳng|Theo ô|Theo user">
+<svg viewBox="0 0 520 330" role="img" aria-labelledby="sd24c-t sd24c-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="sd24c-t">Phân phối kiểu nối thẳng giữa các server</title>
+<desc id="sd24c-d">Server A tra registry toàn cục xem bạn của Alice ở server nào rồi gửi thẳng tới B và C. Registry phải cập nhật 334 nghìn lần mỗi giây; 150 máy nối nhau thành 22.350 liên kết.</desc>
+<defs><marker id="sd24c-ar" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<text x="260" y="24" font-size="14" text-anchor="middle" fill="currentColor" font-weight="700">A phải biết bạn của Alice nằm ở máy nào</text>
+<rect x="10" y="135" width="130" height="64" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="75" y="160" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">WS server A</text>
+<text x="75" y="181" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">Alice gửi vị trí</text>
+<rect x="186" y="135" width="148" height="64" rx="9" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="260" y="160" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Registry toàn cục</text>
+<text x="260" y="181" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">334k cập nhật/giây</text>
+<rect x="380" y="56" width="130" height="56" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="445" y="79" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">WS server B</text>
+<text x="445" y="99" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">bạn: Bob, Carol</text>
+<rect x="380" y="140" width="130" height="56" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="445" y="163" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">WS server C</text>
+<text x="445" y="183" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">bạn: Dan</text>
+<rect x="380" y="224" width="130" height="56" rx="9" fill="#64748b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="445" y="247" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">WS server D</text>
+<text x="445" y="267" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">chỉ người lạ</text>
+<path d="M140 167 L184 167" fill="none" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.6" marker-end="url(#sd24c-ar)"/>
+<text x="162" y="158" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">tra</text>
+<path d="M75 135 C 90 70, 250 60, 378 82" fill="none" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.6" marker-end="url(#sd24c-ar)"/>
+<path d="M75 199 C 100 268, 300 250, 378 182" fill="none" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.6" marker-end="url(#sd24c-ar)"/>
+<path d="M508 112 L508 140 M508 196 L508 224" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.4" stroke-dasharray="4 4"/>
+<text x="330" y="108" font-size="13" text-anchor="end" fill="currentColor" opacity="0.8">gửi thẳng</text>
+<text x="260" y="306" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.9">150 máy nối nhau: 22.350 liên kết phải tự quản;</text>
+<text x="260" y="324" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.9">một máy chết là mọi máy phải cập nhật</text>
+</svg>
+<svg viewBox="0 0 520 330" role="img" aria-labelledby="sd24d-t sd24d-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="sd24d-t">Phân phối theo channel ô geohash</title>
+<desc id="sd24d-d">Server A publish vào channel của ô geohash. Mọi server có người trong ô đều nhận, kể cả D chỉ có người lạ; người nhận tự lọc bạn và không phải bạn. Ô đông giờ tan tầm thành hot channel.</desc>
+<defs><marker id="sd24d-ar" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<text x="260" y="24" font-size="14" text-anchor="middle" fill="currentColor" font-weight="700">A publish vào ô không gian, ai ở ô đó cũng nghe</text>
+<rect x="10" y="135" width="130" height="64" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="75" y="160" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">WS server A</text>
+<text x="75" y="181" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">Alice gửi vị trí</text>
+<rect x="186" y="135" width="148" height="64" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="260" y="160" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Channel ô geohash</text>
+<text x="260" y="181" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">hot lúc tan tầm</text>
+<rect x="380" y="56" width="130" height="56" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="445" y="79" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">WS server B</text>
+<text x="445" y="99" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">bạn: Bob, Carol</text>
+<rect x="380" y="140" width="130" height="56" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="445" y="163" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">WS server C</text>
+<text x="445" y="183" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">bạn: Dan</text>
+<rect x="380" y="224" width="130" height="56" rx="9" fill="#64748b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="445" y="247" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">WS server D</text>
+<text x="445" y="267" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">chỉ người lạ</text>
+<path d="M140 167 L184 167" fill="none" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.6" marker-end="url(#sd24d-ar)"/>
+<path d="M334 150 L378 92" fill="none" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.6" marker-end="url(#sd24d-ar)"/>
+<path d="M334 167 L378 168" fill="none" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.6" marker-end="url(#sd24d-ar)"/>
+<path d="M334 184 L378 246" fill="none" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.6" marker-end="url(#sd24d-ar)"/>
+<text x="348" y="234" font-size="13" text-anchor="end" fill="currentColor" font-weight="700" opacity="0.9">✗ tin rác</text>
+<text x="260" y="306" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.9">Người nhận tự lọc bạn/không-bạn trong hàng nghìn tin;</text>
+<text x="260" y="324" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.9">đứng ở ranh giới ô thì phải nghe 4–9 ô</text>
+</svg>
+<svg viewBox="0 0 520 330" role="img" aria-labelledby="sd24e-t sd24e-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="sd24e-t">Phân phối theo channel của từng user</title>
+<desc id="sd24e-d">Server A publish vào channel loc:alice; node Redis chứa channel được chọn bằng hash. Chỉ B và C, nơi giữ bạn của Alice, subscribe nên chỉ họ nhận; D không subscribe nên không nhận gì. Mỗi channel đúng một người viết, một tin mỗi 30 giây.</desc>
+<defs><marker id="sd24e-ar" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<text x="260" y="24" font-size="14" text-anchor="middle" fill="currentColor" font-weight="700">A publish vào channel của chính Alice</text>
+<rect x="10" y="135" width="130" height="64" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="75" y="160" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">WS server A</text>
+<text x="75" y="181" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">Alice gửi vị trí</text>
+<rect x="186" y="135" width="148" height="64" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="260" y="160" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">loc:alice</text>
+<text x="260" y="181" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">node = hash(channel)</text>
+<rect x="380" y="56" width="130" height="56" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="445" y="79" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">WS server B</text>
+<text x="445" y="99" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">bạn: Bob, Carol</text>
+<rect x="380" y="140" width="130" height="56" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="445" y="163" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">WS server C</text>
+<text x="445" y="183" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">bạn: Dan</text>
+<rect x="380" y="224" width="130" height="56" rx="9" fill="#64748b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="445" y="247" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">WS server D</text>
+<text x="445" y="267" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">chỉ người lạ</text>
+<path d="M140 167 L184 167" fill="none" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.6" marker-end="url(#sd24e-ar)"/>
+<path d="M334 150 L378 92" fill="none" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.6" marker-end="url(#sd24e-ar)"/>
+<path d="M334 167 L378 168" fill="none" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.6" marker-end="url(#sd24e-ar)"/>
+<text x="372" y="226" font-size="13" text-anchor="end" fill="currentColor" opacity="0.7">không subscribe</text>
+<text x="260" y="306" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.9">Alice không cần biết ai nghe; mỗi channel đúng 1 người viết,</text>
+<text x="260" y="324" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.9">1 tin/30 s, không có hot channel</text>
+</svg>
+<ab-note>Không có hạ tầng trung gian, nhưng server gửi phải biết topology của mọi kết nối: registry toàn cục cập nhật 334k lần/giây và đồ thị N×N giữa các máy.</ab-note>
+<ab-note>Hợp với bài tìm người lạ và số channel cố định, nhưng định tuyến theo không gian chứ không theo quan hệ bạn bè, nên tin thừa và điểm nóng là tất yếu.</ab-note>
+<ab-note>Định tuyến trùng khớp với đồ thị quan tâm: chỉ server đang giữ bạn của Alice subscribe. Cái giá là 100 triệu channel, nhưng §2.4 cho thấy chấp nhận được.</ab-note>
+</ab-toggle>
+
 Lý do sâu nhất đáng phát biểu thành một câu: **channel theo user làm cho việc định tuyến trùng khớp chính xác với đồ thị quan tâm**. Bạn subscribe đúng những người bạn quan tâm, không hơn một ai. Không có tin thừa nào phải lọc bỏ, không có điểm nóng nào, và người publish được giải thoát hoàn toàn khỏi việc biết ai đang nghe.
 
 Còn một tính chất mà bảng trên chưa nêu: **mỗi channel có đúng một người viết**. Không tranh chấp, không cần thứ tự giữa nhiều nguồn, và tốc độ ghi trên mỗi channel bị chặn cứng ở 1 tin/30 giây. Đây là kiểu phân mảnh (partitioning) mà bạn hiếm khi gặp được — **phân bố đều một cách hoàn hảo theo định nghĩa**, vì nó chia theo chính con người.

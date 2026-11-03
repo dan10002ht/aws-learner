@@ -754,6 +754,93 @@ Luật xây cây gọn trong một câu: **nếu một node chứa nhiều hơn 
 
 Kết quả là bản đồ **có độ phân giải biến thiên**: lá ở downtown San Francisco rộng 100 m, lá giữa sa mạc Nevada rộng 200 km, nhưng **cả hai đều chứa dưới 100 business**. Đúng điều ta muốn từ đầu: **chia đều công việc, không chia đều không gian** — và hệ quả là **thời gian truy vấn gần như hằng số bất kể mật độ** (Manhattan đi sâu 14 tầng rồi lấy 100, Nevada đi sâu 6 tầng rồi lấy 100), trong khi geohash cùng một độ dài ô thì Manhattan trả 6.000 còn Nevada trả 0.
 
+<svg viewBox="0 0 520 400" role="img" aria-labelledby="sd23c-t sd23c-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="sd23c-t">Quadtree chia ô theo mật độ business</title>
+<desc id="sd23c-d">Một vùng bản đồ thu nhỏ với N = 4 thay cho 100. Ô nào chứa hơn N điểm thì tách thành 4. Khu đông (góc trên trái) bị tách tới tầng 4, ô nhỏ; vùng vắng chỉ tách 1 tầng, ô lớn. Mọi lá đều chứa không quá N điểm.</desc>
+<text x="12" y="26" font-size="14" font-weight="700" fill="currentColor">Luật: ô có &gt; N business thì tách 4</text>
+<rect x="12.0" y="44.0" width="76.0" height="76.0" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45" stroke-width="1"/>
+<rect x="12.0" y="120.0" width="38.0" height="38.0" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45" stroke-width="1"/>
+<rect x="12.0" y="158.0" width="38.0" height="38.0" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45" stroke-width="1"/>
+<rect x="50.0" y="120.0" width="38.0" height="38.0" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45" stroke-width="1"/>
+<rect x="50.0" y="158.0" width="38.0" height="38.0" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45" stroke-width="1"/>
+<rect x="88.0" y="44.0" width="38.0" height="38.0" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45" stroke-width="1"/>
+<rect x="88.0" y="82.0" width="38.0" height="38.0" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45" stroke-width="1"/>
+<rect x="126.0" y="44.0" width="38.0" height="38.0" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45" stroke-width="1"/>
+<rect x="126.0" y="82.0" width="38.0" height="38.0" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45" stroke-width="1"/>
+<rect x="88.0" y="120.0" width="19.0" height="19.0" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45" stroke-width="1"/>
+<rect x="88.0" y="139.0" width="19.0" height="19.0" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45" stroke-width="1"/>
+<rect x="107.0" y="120.0" width="19.0" height="19.0" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45" stroke-width="1"/>
+<rect x="107.0" y="139.0" width="19.0" height="19.0" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45" stroke-width="1"/>
+<rect x="88.0" y="158.0" width="19.0" height="19.0" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45" stroke-width="1"/>
+<rect x="88.0" y="177.0" width="19.0" height="19.0" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45" stroke-width="1"/>
+<rect x="107.0" y="158.0" width="19.0" height="19.0" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45" stroke-width="1"/>
+<rect x="107.0" y="177.0" width="19.0" height="19.0" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45" stroke-width="1"/>
+<rect x="126.0" y="120.0" width="38.0" height="38.0" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45" stroke-width="1"/>
+<rect x="126.0" y="158.0" width="38.0" height="38.0" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45" stroke-width="1"/>
+<rect x="12.0" y="196.0" width="152.0" height="152.0" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45" stroke-width="1"/>
+<rect x="164.0" y="44.0" width="152.0" height="152.0" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45" stroke-width="1"/>
+<rect x="164.0" y="196.0" width="152.0" height="152.0" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45" stroke-width="1"/>
+<circle cx="100.3" cy="163.3" r="2.6" fill="currentColor"/>
+<circle cx="101.2" cy="133.5" r="2.6" fill="currentColor"/>
+<circle cx="80.1" cy="141.6" r="2.6" fill="currentColor"/>
+<circle cx="141.4" cy="165.7" r="2.6" fill="currentColor"/>
+<circle cx="119.8" cy="153.6" r="2.6" fill="currentColor"/>
+<circle cx="58.0" cy="173.7" r="2.6" fill="currentColor"/>
+<circle cx="118.2" cy="163.0" r="2.6" fill="currentColor"/>
+<circle cx="57.3" cy="95.7" r="2.6" fill="currentColor"/>
+<circle cx="118.6" cy="128.7" r="2.6" fill="currentColor"/>
+<circle cx="88.2" cy="204.5" r="2.6" fill="currentColor"/>
+<circle cx="119.7" cy="183.9" r="2.6" fill="currentColor"/>
+<circle cx="94.4" cy="125.8" r="2.6" fill="currentColor"/>
+<circle cx="94.6" cy="114.3" r="2.6" fill="currentColor"/>
+<circle cx="92.4" cy="184.6" r="2.6" fill="currentColor"/>
+<circle cx="83.8" cy="150.3" r="2.6" fill="currentColor"/>
+<circle cx="120.8" cy="103.3" r="2.6" fill="currentColor"/>
+<circle cx="114.5" cy="187.2" r="2.6" fill="currentColor"/>
+<circle cx="42.6" cy="138.4" r="2.6" fill="currentColor"/>
+<circle cx="99.8" cy="128.5" r="2.6" fill="currentColor"/>
+<circle cx="117.9" cy="146.1" r="2.6" fill="currentColor"/>
+<circle cx="133.1" cy="176.4" r="2.6" fill="currentColor"/>
+<circle cx="151.2" cy="163.9" r="2.6" fill="currentColor"/>
+<circle cx="111.6" cy="109.0" r="2.6" fill="currentColor"/>
+<circle cx="94.4" cy="110.1" r="2.6" fill="currentColor"/>
+<circle cx="79.0" cy="132.1" r="2.6" fill="currentColor"/>
+<circle cx="146.7" cy="87.0" r="2.6" fill="currentColor"/>
+<circle cx="64.3" cy="150.2" r="2.6" fill="currentColor"/>
+<circle cx="51.0" cy="72.5" r="2.6" fill="currentColor"/>
+<circle cx="74.4" cy="177.3" r="2.6" fill="currentColor"/>
+<circle cx="141.1" cy="152.7" r="2.6" fill="currentColor"/>
+<circle cx="115.4" cy="166.0" r="2.6" fill="currentColor"/>
+<circle cx="155.8" cy="166.6" r="2.6" fill="currentColor"/>
+<circle cx="61.0" cy="186.5" r="2.6" fill="currentColor"/>
+<circle cx="43.8" cy="129.0" r="2.6" fill="currentColor"/>
+<circle cx="242.0" cy="84.0" r="2.6" fill="currentColor"/>
+<circle cx="282.0" cy="154.0" r="2.6" fill="currentColor"/>
+<circle cx="72.0" cy="294.0" r="2.6" fill="currentColor"/>
+<circle cx="212.0" cy="244.0" r="2.6" fill="currentColor"/>
+<circle cx="262.0" cy="314.0" r="2.6" fill="currentColor"/>
+<circle cx="292.0" cy="274.0" r="2.6" fill="currentColor"/>
+<circle cx="132.0" cy="280.0" r="2.6" fill="currentColor"/>
+<rect x="12" y="44" width="304" height="304" fill="none" stroke="currentColor" stroke-opacity="0.8" stroke-width="1.5"/>
+<text x="334" y="62" font-size="13" font-weight="700" fill="currentColor">Màu = độ sâu của lá</text>
+<rect x="334" y="72" width="16" height="16" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="358" y="85" font-size="13" fill="currentColor">tầng 1</text>
+<rect x="334" y="96" width="16" height="16" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="358" y="109" font-size="13" fill="currentColor">tầng 2</text>
+<rect x="334" y="120" width="16" height="16" fill="#3b82f6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="358" y="133" font-size="13" fill="currentColor">tầng 3</text>
+<rect x="334" y="144" width="16" height="16" fill="#f43f5e" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.45"/>
+<text x="358" y="157" font-size="13" fill="currentColor">tầng 4</text>
+<text x="334" y="188" font-size="13" fill="currentColor" font-weight="700">Khu đông:</text>
+<text x="334" y="207" font-size="13" fill="currentColor" opacity="0.85">tách sâu, ô nhỏ</text>
+<text x="334" y="245" font-size="13" fill="currentColor" font-weight="700">Vùng vắng:</text>
+<text x="334" y="264" font-size="13" fill="currentColor" opacity="0.85">tách 1 tầng, ô lớn</text>
+<text x="334" y="302" font-size="13" fill="currentColor" font-weight="700">Mọi lá ≤ N điểm</text>
+<text x="334" y="321" font-size="13" fill="currentColor" opacity="0.85">→ mỗi truy vấn đọc</text>
+<text x="334" y="340" font-size="13" fill="currentColor" opacity="0.85">khối lượng gần bằng nhau</text>
+<text x="12" y="374" font-size="13" fill="currentColor" opacity="0.8">Hình thu nhỏ: N = 4 (bài dùng N = 100). Chấm = business.</text>
+</svg>
+
 Và đây là chỗ quadtree vô địch: **k-nearest neighbors** — "5 trạm xăng gần nhất, không giới hạn bán kính". Geohash phải đoán bán kính, tra, thiếu, nới, tra lại. Quadtree đi xuống lá chứa điểm truy vấn, thu ứng viên, rồi **leo ngược lên** và chỉ duyệt nhánh anh em nào có bounding box gần hơn kết quả tệ nhất hiện tại (branch-and-bound). Không đoán, không lặp.
 
 ### 8.2 Quadtree tốn bao nhiêu RAM

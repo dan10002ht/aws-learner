@@ -206,60 +206,38 @@ Không precompute gì cả. Khi user mở feed, ta mới **gom** post: lấy dan
 
 Hai mô hình đặt cạnh nhau — chú ý công việc nặng nằm ở **lúc ghi** (push) hay **lúc đọc** (pull):
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 430" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>So sánh Fan-out on write (push) và Fan-out on read (pull)</title>
-  <desc>Bên trái push: lúc ghi prepend post_id vào feed cache của từng follower nên đọc chỉ O(1). Bên phải pull: lúc ghi chỉ 1 dòng nên đọc phải gom following rồi merge-sort.</desc>
-  <text x="180" y="24" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Fan-out on WRITE (push)</text>
-  <text x="540" y="24" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Fan-out on READ (pull)</text>
-  <line x1="360" y1="36" x2="360" y2="414" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"/>
-  <defs>
-    <marker id="ah5" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="currentColor"/></marker>
-  </defs>
-  <!-- PUSH side -->
-  <g font-size="11" stroke="currentColor" fill="none">
-    <text x="20" y="58" font-size="11" font-weight="700" stroke="none" fill="currentColor" opacity="0.7">LÚC GHI (đắt):</text>
-    <rect x="20" y="68" width="120" height="40" rx="9" fill="#3b82f6" fill-opacity="0.16" stroke-opacity="0.3"/>
-    <text x="80" y="92" font-size="12" font-weight="700" text-anchor="middle" stroke="none" fill="currentColor">A đăng post</text>
-    <path d="M80 108 V128" stroke-opacity="0.5" marker-end="url(#ah5)"/>
-    <rect x="20" y="132" width="200" height="86" rx="9" fill="#3b82f6" fill-opacity="0.1" stroke-opacity="0.3"/>
-    <text x="120" y="152" font-size="10.5" text-anchor="middle" stroke="none" fill="currentColor" opacity="0.75">prepend post_id vào feed_cache</text>
-    <text x="120" y="167" font-size="10.5" text-anchor="middle" stroke="none" fill="currentColor" opacity="0.75">của TỪNG follower:</text>
-    <g stroke="none" fill="currentColor">
-      <rect x="34" y="176" width="172" height="15" rx="4" fill="#3b82f6" fill-opacity="0.18" stroke="none"/>
-      <text x="40" y="187" font-size="9.5">feed_cache[follower_1] ← post_id</text>
-      <rect x="34" y="194" width="172" height="15" rx="4" fill="#3b82f6" fill-opacity="0.18" stroke="none"/>
-      <text x="40" y="205" font-size="9.5">feed_cache[follower_2] … (F lần)</text>
-    </g>
-    <text x="20" y="262" font-size="11" font-weight="700" stroke="none" fill="currentColor" opacity="0.7">LÚC ĐỌC (rẻ):</text>
-    <rect x="20" y="272" width="200" height="44" rx="9" fill="#10b981" fill-opacity="0.16" stroke-opacity="0.3"/>
-    <text x="120" y="291" font-size="11" font-weight="700" text-anchor="middle" stroke="none" fill="currentColor">đọc feed_cache[me]</text>
-    <text x="120" y="307" font-size="10" text-anchor="middle" stroke="none" fill="currentColor" opacity="0.7">1 lần đọc → trả ngay</text>
-    <rect x="20" y="332" width="320" height="64" rx="9" fill="#10b981" fill-opacity="0.1" stroke-opacity="0.25"/>
-    <text x="32" y="352" font-size="11" stroke="none" fill="currentColor">Đọc: <tspan font-weight="700">O(1)</tspan> — p99 cực thấp, hợp read-heavy</text>
-    <text x="32" y="371" font-size="11" stroke="none" fill="currentColor">Ghi: <tspan font-weight="700">đắt</tspan> — F lần ghi/post (qua queue, async)</text>
-    <text x="32" y="388" font-size="10" stroke="none" fill="currentColor" opacity="0.7">→ feed dựng SẴN (precomputed)</text>
-  </g>
-  <!-- PULL side -->
-  <g font-size="11" stroke="currentColor" fill="none">
-    <text x="380" y="58" font-size="11" font-weight="700" stroke="none" fill="currentColor" opacity="0.7">LÚC GHI (rẻ):</text>
-    <rect x="380" y="68" width="200" height="40" rx="9" fill="#3b82f6" fill-opacity="0.16" stroke-opacity="0.3"/>
-    <text x="480" y="86" font-size="11" font-weight="700" text-anchor="middle" stroke="none" fill="currentColor">A đăng post → ghi 1 dòng</text>
-    <text x="480" y="101" font-size="10" text-anchor="middle" stroke="none" fill="currentColor" opacity="0.7">không fan-out gì cả</text>
-    <text x="380" y="138" font-size="11" font-weight="700" stroke="none" fill="currentColor" opacity="0.7">LÚC ĐỌC (đắt):</text>
-    <rect x="380" y="148" width="180" height="38" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke-opacity="0.3"/>
-    <text x="470" y="171" font-size="10.5" text-anchor="middle" stroke="none" fill="currentColor">gom following = [u1…u200]</text>
-    <path d="M470 186 V204" stroke-opacity="0.5" marker-end="url(#ah5)"/>
-    <rect x="380" y="208" width="180" height="38" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke-opacity="0.3"/>
-    <text x="470" y="231" font-size="10.5" text-anchor="middle" stroke="none" fill="currentColor">query N post mới của từng u</text>
-    <path d="M470 246 V264" stroke-opacity="0.5" marker-end="url(#ah5)"/>
-    <rect x="380" y="268" width="180" height="38" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke-opacity="0.3"/>
-    <text x="470" y="291" font-size="10.5" text-anchor="middle" stroke="none" fill="currentColor">merge-sort → trả 20 đầu</text>
-    <rect x="380" y="332" width="320" height="64" rx="9" fill="#f59e0b" fill-opacity="0.1" stroke-opacity="0.25"/>
-    <text x="392" y="352" font-size="11" stroke="none" fill="currentColor">Ghi: <tspan font-weight="700">O(1)</tspan> — chỉ 1 dòng post</text>
-    <text x="392" y="371" font-size="11" stroke="none" fill="currentColor">Đọc: <tspan font-weight="700">đắt</tspan> — fan-out query + merge runtime</text>
-    <text x="392" y="388" font-size="10" stroke="none" fill="currentColor" opacity="0.7">→ tệ với read:write 20:1, nhưng luôn tươi</text>
-  </g>
+<ab-toggle data-labels="Push|Pull">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 500" role="img" aria-labelledby="sd04-med-push-t sd04-med-push-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="sd04-med-push-t">Fan-out Push</title>
+<desc id="sd04-med-push-d">Cùng bố cục đăng bài, xử lý ghi, mở feed, xử lý đọc; chi phí dịch từ lúc ghi sang lúc đọc.</desc>
+<defs><marker id="sd04-med-push-a" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="currentColor"/></marker></defs>
+<text x="260" y="26" text-anchor="middle" font-size="16" fill="currentColor">Chi phí chuyển giữa lúc ghi và lúc đọc</text>
+<rect x="40" y="50" width="440" height="45" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="260.0" y="75" text-anchor="middle" font-size="14" fill="currentColor">A đăng post</text>
+<path d="M260 95 L260 120" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#sd04-med-push-a)"/>
+<rect x="40" y="125" width="440" height="83" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="260.0" y="150" text-anchor="middle" font-size="14" fill="currentColor">Queue · async</text><text x="260.0" y="169" text-anchor="middle" font-size="14" fill="currentColor">prepend post_id vào feed_cache</text><text x="260.0" y="188" text-anchor="middle" font-size="14" fill="currentColor">follower_1, follower_2 … F lần</text>
+<rect x="40" y="260" width="440" height="45" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="260.0" y="285" text-anchor="middle" font-size="14" fill="currentColor">Người dùng mở feed</text>
+<path d="M260 305 L260 330" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#sd04-med-push-a)"/>
+<rect x="40" y="335" width="440" height="83" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="260.0" y="360" text-anchor="middle" font-size="14" fill="currentColor">Đọc feed_cache[me] · 1 lần</text><text x="260.0" y="379" text-anchor="middle" font-size="14" fill="currentColor">Feed dựng sẵn · O(1)</text><text x="260.0" y="398" text-anchor="middle" font-size="14" fill="currentColor">p99 thấp · hợp read-heavy</text>
+<text x="260" y="460" text-anchor="middle" font-size="14" fill="currentColor">Ghi F lần / post; đọc rẻ.</text>
+<text x="260" y="482" text-anchor="middle" font-size="13" fill="currentColor">Đánh đổi: lưu feed riêng cho từng follower.</text>
 </svg>
+<ab-note>Đưa công việc sang lúc đăng: mỗi post cần F lần cập nhật feed qua queue, đổi lại mở feed chỉ đọc bản dựng sẵn.</ab-note>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 500" role="img" aria-labelledby="sd04-med-pull-t sd04-med-pull-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="sd04-med-pull-t">Fan-out Pull</title>
+<desc id="sd04-med-pull-d">Cùng bố cục đăng bài, xử lý ghi, mở feed, xử lý đọc; chi phí dịch từ lúc ghi sang lúc đọc.</desc>
+<defs><marker id="sd04-med-pull-a" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="currentColor"/></marker></defs>
+<text x="260" y="26" text-anchor="middle" font-size="16" fill="currentColor">Chi phí chuyển giữa lúc ghi và lúc đọc</text>
+<rect x="40" y="50" width="440" height="45" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="260.0" y="75" text-anchor="middle" font-size="14" fill="currentColor">A đăng post</text>
+<path d="M260 95 L260 120" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#sd04-med-pull-a)"/>
+<rect x="40" y="125" width="440" height="64" rx="9" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="260.0" y="150" text-anchor="middle" font-size="14" fill="currentColor">Ghi 1 dòng post · O(1)</text><text x="260.0" y="169" text-anchor="middle" font-size="14" fill="currentColor">Không fan-out lúc ghi</text>
+<rect x="40" y="260" width="440" height="45" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="260.0" y="285" text-anchor="middle" font-size="14" fill="currentColor">Người dùng mở feed</text>
+<path d="M260 305 L260 330" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#sd04-med-pull-a)"/>
+<rect x="40" y="335" width="440" height="83" rx="9" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="260.0" y="360" text-anchor="middle" font-size="14" fill="currentColor">Gom following [u1 … u200]</text><text x="260.0" y="379" text-anchor="middle" font-size="14" fill="currentColor">Query N post mới của từng u</text><text x="260.0" y="398" text-anchor="middle" font-size="14" fill="currentColor">Merge-sort → trả 20 đầu</text>
+<text x="260" y="460" text-anchor="middle" font-size="14" fill="currentColor">Đọc fan-out + merge runtime; dữ liệu tươi.</text>
+<text x="260" y="482" text-anchor="middle" font-size="13" fill="currentColor">Bất lợi khi read:write = 20:1.</text>
+</svg>
+<ab-note>Chỉ ghi một dòng khi đăng; mỗi lần mở feed phải gom bài của các tài khoản đang theo dõi rồi trộn kết quả.</ab-note>
+</ab-toggle>
 
 ### 5.3 Bảng trade-off PUSH vs PULL
 

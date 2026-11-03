@@ -341,63 +341,114 @@ Ba điều đáng chỉ ra khi trình bày API này:
 
 ### 5.1 Kiến trúc tổng thể
 
-```
-                              ┌──────────────┐
-                              │  Client app  │
-                              │ (iOS/Android │
-                              │   / Web)     │
-                              └──┬───┬────┬──┘
-             tile GET (HTTPS)    │   │    │  WebSocket (phiên navigation)
-        ┌──────────────────────── ┘   │    └────────────────────────┐
-        v                             │ HTTPS                       v
-┌───────────────┐            ┌────────v────────┐          ┌──────────────────┐
-│      CDN      │            │  API Gateway /  │          │  WebSocket layer │
-│  (edge POPs)  │            │   Load balancer │          │  (sticky, stateful)
-│  cache 95-99% │            └────────┬────────┘          └─────────┬────────┘
-└───────┬───────┘                     │                             │
-        │ cache miss        ┌─────────┼──────────┐                  │
-        v                   v         v          v                  v
-┌───────────────┐   ┌────────────┐ ┌────────┐ ┌────────────┐ ┌──────────────┐
-│ Tile origin   │   │ Geocoding  │ │ Route  │ │    ETA     │ │  Location    │
-│ (S3 / object  │   │  service   │ │planner │ │  service   │ │  service     │
-│  storage)     │   └─────┬──────┘ └───┬────┘ └─────┬──────┘ └──────┬───────┘
-└───────▲───────┘         │            │            │               │
-        │                 v            v            v               v
-        │          ┌────────────┐ ┌─────────────┐ ┌──────┐  ┌───────────────┐
-        │          │  Geo index │ │Shortest-path│ │ ML   │  │ Message queue │
-        │          │  (Redis)   │ │  service    │ │model │  │ (Kafka/Kinesis│
-        │          └────────────┘ └──────┬──────┘ └──▲───┘  └───────┬───────┘
-        │                                │           │              │
-        │                          ┌─────v──────┐    │        ┌─────v────────┐
-        │                          │  Routing   │    │        │   Stream     │
-        │                          │  tile store│    │        │  processing  │
-        │                          │ (S3+cache) │    │        │(Flink/Spark) │
-        │                          └─────▲──────┘    │        └─────┬────────┘
-        │                                │           │              │
-        │                                │      ┌────┴──────┐       │ map matching
-        │                                │      │ Historical│       │ + tổng hợp
-        │                                │      │  traffic  │       v
-        │                                │      │ warehouse │  ┌────────────┐
-        │                                │      └───────────┘  │  Traffic   │
-        │                                │                     │  weights   │
-        │                                └─────────────────────┤  (Redis)   │
-        │                                   đọc trọng số cạnh  └─────┬──────┘
-        │                                                            │
-   ┌────┴─────────────────────────────────────────────────────┐      │
-   │        OFFLINE PIPELINE (chạy theo lô, không đồng bộ)    │      │
-   │  Ảnh vệ tinh + Street View + dữ liệu bên thứ ba          │      │
-   │  + báo cáo người dùng + dấu vết GPS tổng hợp             │<─────┘
-   │        │                                                  │
-   │        v                                                  │
-   │  ┌──────────────┐    ┌────────────────┐                   │
-   │  │ Tile renderer│    │ Graph builder  │                   │
-   │  │  (EMR/Spark) │    │  + CH preproc  │                   │
-   │  └──────┬───────┘    └───────┬────────┘                   │
-   └─────────┼────────────────────┼────────────────────────────┘
-             │ đẩy tile mới       │ đẩy routing tile mới
-             v                    v
-       (Tile origin)        (Routing tile store)
-```
+<svg viewBox="0 0 520 726" role="img" aria-labelledby="sd25g-t sd25g-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="sd25g-t">Kiến trúc tổng thể hệ thống bản đồ</title>
+<desc id="sd25g-d">Client app gọi ba đường: tile GET qua CDN (cache 95-99%, miss thì về Tile origin S3); HTTPS qua API Gateway tới Geocoding (Geo index Redis), Route planner (Shortest-path service đọc Routing tile store) và ETA service (ML model học từ Historical traffic warehouse); WebSocket phiên navigation qua WebSocket layer tới Location service, Message queue, Stream processing (map matching, tổng hợp) rồi Traffic weights Redis. Traffic weights được routing đọc làm trọng số cạnh và đổ vào Offline pipeline; pipeline gồm Tile renderer và Graph builder đẩy tile mới về Tile origin và routing tile mới về Routing tile store.</desc>
+<defs><marker id="sd25g-ar" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<rect x="150" y="8" width="220" height="48" rx="8" fill="#64748b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="260.0" y="28.0" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Client app</text>
+<text x="260.0" y="46.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">iOS / Android / Web</text>
+<path d="M150 32 L59 32 L59 116" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd25g-ar)"/>
+<text x="66" y="84" font-size="13" text-anchor="start" fill="currentColor" opacity="0.85">tile GET (HTTPS)</text>
+<path d="M260 56 L260 116" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd25g-ar)"/>
+<text x="266" y="90" font-size="13" text-anchor="start" fill="currentColor" opacity="0.85">HTTPS</text>
+<path d="M370 32 L457 32 L457 116" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd25g-ar)"/>
+<text x="450" y="74" font-size="13" text-anchor="end" fill="currentColor" opacity="0.85">WebSocket</text>
+<text x="450" y="92" font-size="13" text-anchor="end" fill="currentColor" opacity="0.85">(phiên navigation)</text>
+<rect x="12" y="118" width="94" height="60" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="59.0" y="135.0" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">CDN</text>
+<text x="59.0" y="153.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">edge POPs</text>
+<text x="59.0" y="171.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">cache 95–99%</text>
+<rect x="112" y="118" width="294" height="60" rx="8" fill="#64748b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="259.0" y="144.0" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">API Gateway</text>
+<text x="259.0" y="162.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">Load balancer</text>
+<rect x="412" y="118" width="94" height="60" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="459.0" y="135.0" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">WebSocket</text>
+<text x="459.0" y="153.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">layer</text>
+<text x="459.0" y="171.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">sticky, stateful</text>
+<path d="M59.0 178 L59.0 212" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd25g-ar)"/>
+<text x="65.0" y="201" font-size="13" text-anchor="start" fill="currentColor" opacity="0.85">cache miss</text>
+<path d="M159.0 178 L159.0 212" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd25g-ar)"/>
+<path d="M259.0 178 L259.0 212" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd25g-ar)"/>
+<path d="M359.0 178 L359.0 212" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd25g-ar)"/>
+<path d="M459.0 178 L459.0 212" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd25g-ar)"/>
+<rect x="12" y="214" width="94" height="60" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="59.0" y="231.0" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Tile origin</text>
+<text x="59.0" y="249.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">S3 / object</text>
+<text x="59.0" y="267.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">storage</text>
+<rect x="112" y="214" width="94" height="60" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="159.0" y="240.0" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Geocoding</text>
+<text x="159.0" y="258.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">service</text>
+<rect x="212" y="214" width="94" height="60" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="259.0" y="240.0" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Route</text>
+<text x="259.0" y="258.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">planner</text>
+<rect x="312" y="214" width="94" height="60" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="359.0" y="240.0" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">ETA</text>
+<text x="359.0" y="258.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">service</text>
+<rect x="412" y="214" width="94" height="60" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="459.0" y="240.0" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Location</text>
+<text x="459.0" y="258.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">service</text>
+<path d="M159.0 274 L159.0 310" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd25g-ar)"/>
+<path d="M259.0 274 L259.0 310" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd25g-ar)"/>
+<path d="M359.0 274 L359.0 310" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd25g-ar)"/>
+<path d="M459.0 274 L459.0 310" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd25g-ar)"/>
+<rect x="112" y="312" width="94" height="60" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="159.0" y="338.0" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Geo index</text>
+<text x="159.0" y="356.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">(Redis)</text>
+<rect x="212" y="312" width="94" height="60" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="259.0" y="338.0" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Shortest-</text>
+<text x="259.0" y="356.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">path service</text>
+<rect x="312" y="312" width="94" height="60" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="359.0" y="347.0" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">ML model</text>
+<rect x="412" y="312" width="94" height="60" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="459.0" y="329.0" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Message</text>
+<text x="459.0" y="347.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">queue</text>
+<text x="459.0" y="365.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">Kafka/Kinesis</text>
+<path d="M259.0 372 L259.0 408" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd25g-ar)"/>
+<path d="M359.0 410 L359.0 374" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd25g-ar)"/>
+<path d="M459.0 372 L459.0 408" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd25g-ar)"/>
+<rect x="212" y="410" width="94" height="60" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="259.0" y="427.0" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Routing</text>
+<text x="259.0" y="445.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">tile store</text>
+<text x="259.0" y="463.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">S3 + cache</text>
+<rect x="312" y="410" width="94" height="60" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="359.0" y="427.0" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Historical</text>
+<text x="359.0" y="445.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">traffic</text>
+<text x="359.0" y="463.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">warehouse</text>
+<rect x="412" y="410" width="94" height="60" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="459.0" y="427.0" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Stream</text>
+<text x="459.0" y="445.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">processing</text>
+<text x="459.0" y="463.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">Flink/Spark</text>
+<path d="M459.0 470 L459.0 524" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd25g-ar)"/>
+<text x="453.0" y="494" font-size="13" text-anchor="end" fill="currentColor" opacity="0.85">map matching</text>
+<text x="453.0" y="512" font-size="13" text-anchor="end" fill="currentColor" opacity="0.85">+ tổng hợp</text>
+<rect x="412" y="526" width="94" height="60" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="459.0" y="543.0" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Traffic</text>
+<text x="459.0" y="561.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">weights</text>
+<text x="459.0" y="579.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">(Redis)</text>
+<path d="M412 546 L359.0 546 L359.0 488 L292 488 L292 472" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd25g-ar)"/>
+<text x="359.0" y="568" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">đọc trọng số</text>
+<text x="359.0" y="586" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">cạnh</text>
+<rect x="12" y="526" width="294" height="192" rx="9" fill="#14b8a6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.45" stroke-dasharray="6 4"/>
+<text x="159.0" y="548" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">OFFLINE PIPELINE</text>
+<rect x="22" y="560" width="126" height="52" rx="8" fill="#14b8a6" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="85.0" y="582.0" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Tile renderer</text>
+<text x="85.0" y="600.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">(EMR/Spark)</text>
+<rect x="160" y="560" width="126" height="52" rx="8" fill="#14b8a6" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="223.0" y="582.0" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700">Graph builder</text>
+<text x="223.0" y="600.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">+ CH preproc</text>
+<path d="M159.0 634 L159.0 614" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd25g-ar)"/>
+<text x="159.0" y="650" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.9">Ảnh vệ tinh + Street View + dữ liệu</text>
+<text x="159.0" y="667" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.9">bên thứ ba + báo cáo người dùng</text>
+<text x="159.0" y="684" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.9">+ dấu vết GPS tổng hợp</text>
+<text x="159.0" y="712" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">chạy theo lô, không đồng bộ</text>
+<path d="M459.0 586 L459.0 678 L308 678" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" marker-end="url(#sd25g-ar)"/>
+<path d="M42 560 L42 276" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#sd25g-ar)"/>
+<text x="48" y="338" font-size="13" text-anchor="start" fill="currentColor" opacity="0.85">đẩy</text>
+<text x="48" y="356" font-size="13" text-anchor="start" fill="currentColor" opacity="0.85">tile mới</text>
+<path d="M242 560 L242 472" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5" stroke-dasharray="6 4" marker-end="url(#sd25g-ar)"/>
+<text x="236" y="506" font-size="13" text-anchor="end" fill="currentColor" opacity="0.85">đẩy routing tile mới</text>
+</svg>
 
 ### 5.2 Vai trò từng thành phần — và vì sao nó ở đó
 
@@ -666,21 +717,67 @@ Vấn đề: ở giữa chuyến Sài Gòn–Hà Nội, **ta không quan tâm t�
 | **Level 1 — arterial** | Đường trục, tỉnh lộ, đường chính đô thị. Bỏ hẻm | ~20–50 km | Đoạn giữa của chuyến trong thành phố / liên huyện |
 | **Level 2 — highway** | Chỉ cao tốc và quốc lộ | ~200–500 km | Phần lớn quãng đường của chuyến liên tỉnh |
 
-```
-Chuyến TP.HCM → Hà Nội, chiến lược phân cấp:
+<svg viewBox="0 30 520 330" role="img" aria-labelledby="sd25f-t sd25f-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="sd25f-t">Routing phân cấp cho chuyến TP.HCM tới Hà Nội</title>
+<desc id="sd25f-d">Ba tầng routing tile: L0 mọi đường với tile nhỏ, L1 đường trục với tile vừa, L2 chỉ cao tốc với tile lớn. Chuyến đi bắt đầu ở L0 khoảng 8 tile, leo lên L1 khoảng 4 tile, chạy 1,650 km trên L2 khoảng 6 tile, rồi xuống L1 khoảng 4 tile và L0 khoảng 8 tile tới đích. Tổng khoảng 30 tile thay vì 2,000 đến 10,000.</desc>
+<defs><marker id="sd25f-ar" markerWidth="9" markerHeight="9" refX="8" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="currentColor"/></marker></defs>
+<rect x="10" y="40" width="500" height="72" rx="8" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="46" y="73" font-size="15" text-anchor="middle" fill="currentColor" font-weight="700">L2</text>
+<text x="46" y="92" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">cao tốc</text>
+<rect x="10" y="118" width="500" height="72" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="46" y="151" font-size="15" text-anchor="middle" fill="currentColor" font-weight="700">L1</text>
+<text x="46" y="170" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">đường trục</text>
+<rect x="10" y="196" width="500" height="72" rx="8" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="46" y="229" font-size="15" text-anchor="middle" fill="currentColor" font-weight="700">L0</text>
+<text x="46" y="248" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">mọi đường</text>
+<path d="M84 46 L84 262" stroke="currentColor" stroke-opacity="0.2"/>
+<rect x="96" y="229.0" width="10" height="10" fill="#10b981" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.55"/>
+<rect x="108" y="229.0" width="10" height="10" fill="#10b981" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.55"/>
+<rect x="120" y="229.0" width="10" height="10" fill="#10b981" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.55"/>
+<rect x="132" y="229.0" width="10" height="10" fill="#10b981" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.55"/>
+<rect x="96" y="241.0" width="10" height="10" fill="#10b981" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.55"/>
+<rect x="108" y="241.0" width="10" height="10" fill="#10b981" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.55"/>
+<rect x="120" y="241.0" width="10" height="10" fill="#10b981" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.55"/>
+<rect x="132" y="241.0" width="10" height="10" fill="#10b981" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.55"/>
+<text x="119.0" y="223.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.9">~8 tile</text>
+<rect x="158" y="155.0" width="14" height="14" fill="#3b82f6" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.55"/>
+<rect x="174" y="155.0" width="14" height="14" fill="#3b82f6" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.55"/>
+<rect x="190" y="155.0" width="14" height="14" fill="#3b82f6" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.55"/>
+<rect x="206" y="155.0" width="14" height="14" fill="#3b82f6" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.55"/>
+<text x="189.0" y="149.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.9">~4 tile</text>
+<rect x="230" y="73.0" width="22" height="22" fill="#8b5cf6" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.55"/>
+<rect x="254" y="73.0" width="22" height="22" fill="#8b5cf6" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.55"/>
+<rect x="278" y="73.0" width="22" height="22" fill="#8b5cf6" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.55"/>
+<rect x="302" y="73.0" width="22" height="22" fill="#8b5cf6" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.55"/>
+<rect x="326" y="73.0" width="22" height="22" fill="#8b5cf6" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.55"/>
+<rect x="350" y="73.0" width="22" height="22" fill="#8b5cf6" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.55"/>
+<text x="301.0" y="67.0" font-size="13" text-anchor="middle" fill="currentColor" font-weight="700" opacity="0.9">~6 tile · 1,650 km</text>
+<rect x="388" y="155.0" width="14" height="14" fill="#3b82f6" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.55"/>
+<rect x="404" y="155.0" width="14" height="14" fill="#3b82f6" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.55"/>
+<rect x="420" y="155.0" width="14" height="14" fill="#3b82f6" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.55"/>
+<rect x="436" y="155.0" width="14" height="14" fill="#3b82f6" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.55"/>
+<text x="419.0" y="149.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.9">~4 tile</text>
+<rect x="454" y="229.0" width="10" height="10" fill="#10b981" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.55"/>
+<rect x="466" y="229.0" width="10" height="10" fill="#10b981" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.55"/>
+<rect x="478" y="229.0" width="10" height="10" fill="#10b981" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.55"/>
+<rect x="490" y="229.0" width="10" height="10" fill="#10b981" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.55"/>
+<rect x="454" y="241.0" width="10" height="10" fill="#10b981" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.55"/>
+<rect x="466" y="241.0" width="10" height="10" fill="#10b981" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.55"/>
+<rect x="478" y="241.0" width="10" height="10" fill="#10b981" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.55"/>
+<rect x="490" y="241.0" width="10" height="10" fill="#10b981" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.55"/>
+<text x="477.0" y="223.0" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.9">~8 tile</text>
+<path d="M92 240 L96 240 L142 240 L158 162 L220 162 L230 84 L372 84 L388 162 L450 162 L454 240 L500 240 L505 240" fill="none" stroke="#f43f5e" stroke-width="2.4" stroke-opacity="0.9"/>
+<circle cx="92" cy="240" r="4" fill="#f43f5e"/>
+<circle cx="505" cy="240" r="4" fill="#f43f5e"/>
+<text x="92" y="290" font-size="13" text-anchor="start" fill="currentColor" opacity="0.9">nhà (TP.HCM)</text>
+<text x="509" y="290" font-size="13" text-anchor="end" fill="currentColor" opacity="0.9">đích (Hà Nội)</text>
+<text x="214" y="92" font-size="13" text-anchor="end" fill="currentColor" opacity="0.85">leo cấp</text>
+<text x="384" y="92" font-size="13" text-anchor="start" fill="currentColor" opacity="0.85">xuống cấp</text>
+<text x="260" y="320" font-size="14" text-anchor="middle" fill="currentColor" font-weight="700">Tổng ~30 tile thay vì 2,000–10,000 (giảm ~100–300 lần)</text>
+<text x="260" y="344" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.85">tile càng lên cao càng to và càng ít đường bên trong</text>
+</svg>
 
-  [L0] nhà → đường lớn      : ~8 tile local, vài trăm mét đầu
-       │ leo cấp (upward)
-  [L1] đường lớn → cao tốc  : ~4 tile arterial
-       │ leo cấp
-  [L2] ─────── 1,650 km trên mạng cao tốc ───────  : ~6 tile highway
-       │ xuống cấp (downward)
-  [L1] cao tốc → đường lớn HN : ~4 tile arterial
-       │ xuống cấp
-  [L0] đường lớn → đích     : ~8 tile local
-
-  Tổng: ~30 tile thay vì 2,000–10,000  →  giảm ~100–300 lần
-```
+Đầu chuyến: ~8 tile local cho vài trăm mét từ nhà ra đường lớn, rồi leo cấp (upward) lên ~4 tile arterial từ đường lớn ra cao tốc. Giữa chuyến: 1,650 km trên mạng cao tốc chỉ tốn ~6 tile highway. Cuối chuyến đối xứng: xuống cấp (downward) qua ~4 tile arterial từ cao tốc vào đường lớn Hà Nội, rồi ~8 tile local từ đường lớn tới đích.
 
 Đây chính là **hierarchical routing**, và nó phản ánh đúng cách con người nghĩ về đường đi: bạn không nhớ từng ngã rẽ suốt 1,700 km, bạn nhớ "ra Quốc lộ 1, đi tới Hà Nội, rồi tìm đường vào nhà".
 

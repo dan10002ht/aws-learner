@@ -186,6 +186,12 @@ thêm một label tưởng chừng vô hại:
 
 Nhưng thực tế không bùng lên ngay, và **đó mới là phần nguy hiểm**: series chỉ được tạo khi thực sự có dữ liệu. Hệ sẽ không sập trong 1 giây — nó **phình đều đặn suốt vài giờ rồi chết** khi bộ nhớ cạn, đúng kiểu sự cố khó chẩn đoán nhất.
 
+<svg viewBox="0 0 520 360" role="img" aria-labelledby="sd17med-card-t sd17med-card-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="sd17med-card-t">Hệ số nhân của label user_id</title>
+<desc id="sd17med-card-d">Phân biệt số tổ hợp tiềm năng với series thực sự được tạo khi có dữ liệu.</desc>
+<text x="20" y="28" fill="currentColor" font-size="16">Cardinality: tích các label, không phải tổng</text><rect x="20" y="48" width="480" height="76" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor"/><text x="32" y="72" fill="currentColor" font-size="14">200 service × 50 endpoint × 5 method</text><text x="32" y="93" fill="currentColor" font-size="14">× 10 status × 5 region = 2.500.000 series</text><text x="30" y="153" fill="currentColor" font-size="14">↓ Thêm user_id: nhân tiếp 100.000.000</text><rect x="20" y="174" width="480" height="76" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/><text x="32" y="198" fill="currentColor" font-size="14">2,5 × 10¹⁴ tổ hợp có thể có</text><text x="32" y="219" fill="currentColor" font-size="14">Gấp 100 triệu lần không gian series ban đầu</text><text x="20" y="285" fill="currentColor" font-size="14">Đây là số tổ hợp tiềm năng, không tạo sẵn tất cả.</text><text x="20" y="310" fill="currentColor" font-size="14">Chỉ tổ hợp có dữ liệu mới sinh series thực tế.</text><text x="20" y="335" fill="currentColor" font-size="14">Series mới tích luỹ → index và RAM phình dần.</text>
+</svg>
+
 | Tài nguyên | Vì sao phình | Hậu quả |
 |---|---|---|
 | **Bộ nhớ index** | Mỗi series cần entry trong inverted index + head chunk trong RAM (~1–3 KB/series) | 10M series ≈ 10–30 GB RAM; 100M series ≈ OOM |

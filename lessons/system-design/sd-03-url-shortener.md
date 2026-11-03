@@ -335,69 +335,106 @@ GET /aXf3Qz
 
 ### Bước 10: Bottleneck & Scale (High-level đầy đủ)
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 470" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Kiến trúc high-level URL Shortener</title>
-  <desc>User qua CloudFront (cache edge) tới API Gateway, tách hai nhánh: WRITE gồm Write service và KGS, READ gồm Read service rồi ElastiCache hit hoặc miss xuống DynamoDB; click event bắn async qua Kinesis tới analytics store.</desc>
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 470" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif" aria-labelledby="sd03-med-arch2-t sd03-med-arch2-d">
+  <title id="sd03-med-arch2-t">Kiến trúc high-level URL Shortener</title>
+  <desc id="sd03-med-arch2-d">User qua CloudFront (cache edge) tới API Gateway, tách hai nhánh: WRITE gồm Write service và KGS, READ gồm Read service rồi ElastiCache hit hoặc miss xuống DynamoDB; click event bắn async qua Kinesis tới analytics store.</desc>
   <defs>
-    <marker id="ah1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <marker id="sd03-med-arch2-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
     </marker>
   </defs>
-  <g stroke="currentColor" stroke-opacity="0.55" fill="none" marker-end="url(#ah1)">
-    <path d="M120 56 H300"/>
-    <path d="M390 74 V108"/>
-    <path d="M340 144 V165 H120 V190"/>
-    <path d="M440 144 V165 H560 V190"/>
-    <path d="M302 211 H180"/>
-    <path d="M548 232 V270"/>
-    <path d="M572 270 V232"/>
-    <path d="M560 312 V322 H265"/>
-    <path d="M510 232 V245 H280 V348"/>
-    <path d="M330 365 H400"/>
-    <path d="M500 365 H560"/>
-  </g>
-  <g font-size="11">
-    <text x="210" y="48" text-anchor="middle" fill="currentColor" opacity="0.7">302 cache</text>
-    <text x="396" y="98" fill="currentColor" opacity="0.7">miss</text>
-    <text x="92" y="180" fill="currentColor" opacity="0.7" text-anchor="middle">WRITE</text>
-    <text x="525" y="180" fill="currentColor" opacity="0.7" text-anchor="middle">READ</text>
-    <text x="536" y="258" fill="currentColor" opacity="0.7" text-anchor="end">đọc</text>
-    <text x="582" y="258" fill="currentColor" opacity="0.7">hit</text>
-    <text x="400" y="316" fill="currentColor" opacity="0.7" text-anchor="middle">miss → DynamoDB</text>
-    <text x="200" y="262" fill="currentColor" opacity="0.7" text-anchor="middle">click (async)</text>
-  </g>
+  <g stroke="currentColor" stroke-opacity="0.55" fill="none" marker-end="url(#sd03-med-arch2-a)">
+    </g>
+  <g font-size="13">
+    </g>
   <g>
-    <rect x="30" y="38" width="90" height="36" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="75" y="61" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">User</text>
-    <rect x="300" y="38" width="180" height="36" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="390" y="56" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">CloudFront</text>
-    <text x="390" y="69" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.62">CDN, cache redirect ở edge</text>
-    <rect x="300" y="108" width="180" height="36" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="390" y="126" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">API Gateway</text>
-    <text x="390" y="139" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.62">auth · rate limit · route</text>
-    <rect x="60" y="190" width="120" height="42" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="120" y="216" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Write svc</text>
-    <rect x="222" y="194" width="80" height="34" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="262" y="214" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">KGS</text>
-    <text x="262" y="226" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.62">cấp key</text>
-    <rect x="500" y="190" width="120" height="42" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="560" y="216" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">Read svc</text>
-    <rect x="500" y="270" width="120" height="42" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="560" y="288" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">ElastiCache</text>
-    <text x="560" y="302" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.62">Redis (cache đọc)</text>
-    <rect x="45" y="300" width="220" height="44" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="155" y="320" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">DynamoDB</text>
-    <text x="155" y="335" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.62">url_mapping · shard theo short_code</text>
-    <rect x="230" y="348" width="100" height="34" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="280" y="369" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Kinesis</text>
-    <rect x="400" y="348" width="100" height="34" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="450" y="364" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">stream</text>
-    <text x="450" y="376" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">proc</text>
-    <rect x="560" y="348" width="120" height="34" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="620" y="364" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">analytics</text>
-    <text x="620" y="376" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">store</text>
+    <rect x="30" y="38" width="90" height="36" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6" stroke-opacity="0.65"/>
+    <text x="75" y="61" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">User</text>
+    <rect x="300" y="38" width="180" height="36" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6" stroke-opacity="0.65"/>
+    <text x="390" y="56" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">CloudFront</text>
+    <text x="390" y="69" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.62">CDN · cache ở edge</text>
+    <rect x="300" y="108" width="180" height="36" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6" stroke-opacity="0.65"/>
+    <text x="390" y="126" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">API Gateway</text>
+    <text x="390" y="139" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.62">auth · rate limit · route</text>
+    <rect x="60" y="190" width="120" height="42" rx="9" fill="#10b981" fill-opacity="0.15" stroke="#10b981" stroke-opacity="0.65"/>
+    <text x="120" y="216" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Write svc</text>
+    <rect x="222" y="194" width="80" height="34" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="#f59e0b" stroke-opacity="0.65"/>
+    <text x="262" y="212" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">KGS</text>
+    <text x="262" y="227" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.62">cấp key</text>
+    <rect x="500" y="190" width="120" height="42" rx="9" fill="#10b981" fill-opacity="0.15" stroke="#10b981" stroke-opacity="0.65"/>
+    <text x="560" y="216" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Read svc</text>
+    <rect x="500" y="270" width="120" height="42" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6" stroke-opacity="0.65"/>
+    <text x="560" y="288" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">ElastiCache</text>
+    <text x="560" y="302" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.62">Redis · cache đọc</text>
+    <rect x="45" y="300" width="220" height="44" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="#f59e0b" stroke-opacity="0.65"/>
+    <text x="155" y="320" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">DynamoDB</text>
+    <text x="155" y="335" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.62">url_mapping · short_code</text>
+    <rect x="230" y="348" width="100" height="34" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6" stroke-opacity="0.65"/>
+    <text x="280" y="369" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Kinesis</text>
+    <rect x="400" y="348" width="100" height="34" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6" stroke-opacity="0.65"/>
+    <text x="450" y="364" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">stream</text>
+    <text x="450" y="376" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">proc</text>
+    <rect x="560" y="348" width="120" height="34" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6" stroke-opacity="0.65"/>
+    <text x="620" y="364" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">analytics</text>
+    <text x="620" y="376" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">store</text>
+  </g>
+  <g data-step="1">
+    <g stroke="currentColor" stroke-opacity="0.85" fill="none" marker-end="url(#sd03-med-arch2-a)">
+      <path d="M120 56 H300" marker-end="url(#sd03-med-arch2-a)"/>
+      <path d="M390 74 V108" marker-end="url(#sd03-med-arch2-a)"/>
+    </g>
+    <g font-size="13" stroke-opacity="1">
+      <text x="210" y="48" text-anchor="middle" fill="currentColor" opacity="0.7">302 cache</text>
+      <text x="396" y="98" fill="currentColor" opacity="0.7">miss</text>
+    </g>
+  </g>
+  <g data-step="2">
+    <g stroke="currentColor" stroke-opacity="0.85" fill="none" marker-end="url(#sd03-med-arch2-a)">
+      <path d="M340 144 V165 H120 V190" marker-end="url(#sd03-med-arch2-a)"/>
+      <path d="M222 211 H180" marker-end="url(#sd03-med-arch2-a)"/>
+    </g>
+    <g font-size="13" stroke-opacity="1">
+      <text x="92" y="180" fill="currentColor" opacity="0.7" text-anchor="middle">WRITE</text>
+    </g>
+  </g>
+  <g data-step="3">
+    <g stroke="currentColor" stroke-opacity="0.85" fill="none" marker-end="url(#sd03-med-arch2-a)">
+      <path d="M440 144 V165 H560 V190" marker-end="url(#sd03-med-arch2-a)"/>
+      <path d="M548 232 V270" marker-end="url(#sd03-med-arch2-a)"/>
+      <path d="M572 270 V232" marker-end="url(#sd03-med-arch2-a)"/>
+    </g>
+    <g font-size="13" stroke-opacity="1">
+      <text x="525" y="180" fill="currentColor" opacity="0.7" text-anchor="middle">READ</text>
+      <text x="536" y="258" fill="currentColor" opacity="0.7" text-anchor="end">đọc</text>
+      <text x="582" y="258" fill="currentColor" opacity="0.7">hit</text>
+    </g>
+  </g>
+  <g data-step="4">
+    <g stroke="currentColor" stroke-opacity="0.85" fill="none" marker-end="url(#sd03-med-arch2-a)">
+      <path d="M560 312 V322 H265" marker-end="url(#sd03-med-arch2-a)"/>
+    </g>
+    <g font-size="13" stroke-opacity="1">
+      <text x="400" y="316" fill="currentColor" opacity="0.7" text-anchor="middle">miss → DynamoDB</text>
+    </g>
+  </g>
+  <g data-step="5">
+    <g stroke="currentColor" stroke-opacity="0.85" fill="none" marker-end="url(#sd03-med-arch2-a)">
+      <path d="M510 232 V245 H280 V348" marker-end="url(#sd03-med-arch2-a)"/>
+      <path d="M330 365 H400" marker-end="url(#sd03-med-arch2-a)"/>
+      <path d="M500 365 H560" marker-end="url(#sd03-med-arch2-a)"/>
+    </g>
+    <g font-size="13" stroke-opacity="1">
+      <text x="200" y="262" fill="currentColor" opacity="0.7" text-anchor="middle">click (async)</text>
+    </g>
   </g>
 </svg>
+<step-note data-step="1">CloudFront có thể trả redirect 302 đã cache; miss mới về API Gateway. Cache hit ở edge không chạy qua Read service để phát click event.</step-note>
+<step-note data-step="2">Nhánh WRITE nhận key từ KGS; tách service ghi cho phép scale độc lập với đường redirect.</step-note>
+<step-note data-step="3">Nhánh READ hỏi Redis; hit trả mapping về Read service mà không đọc DB.</step-note>
+<step-note data-step="4">Cache miss lấy url_mapping từ DynamoDB, phân mảnh theo short_code để lookup theo key.</step-note>
+<step-note data-step="5">Click event đi bất đồng bộ qua Kinesis, stream processor rồi analytics store để không chặn redirect.</step-note>
+</step-flow>
 
 | Bottleneck tiềm ẩn | Triệu chứng | Cách gỡ |
 |---|---|---|

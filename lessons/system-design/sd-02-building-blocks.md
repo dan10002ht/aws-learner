@@ -439,70 +439,99 @@ Tầng ứng dụng **không giữ state cục bộ** giữa các request: bất
 
 ## Bức tranh tổng thể: các khối phối hợp
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 420" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Bức tranh tổng thể end-to-end của các khối phối hợp</title>
-  <desc>Luồng từ Client qua CDN, L7 LB, API Gateway tới stateless app tier; app tier dùng App Cache và Queue cộng workers; ghi vào Leader DB sharded rồi replicate tới followers phục vụ read. Mỗi mũi tên là một đánh đổi.</desc>
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 420" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif" aria-labelledby="sd02-med-arch2-t sd02-med-arch2-d">
+  <title id="sd02-med-arch2-t">Bức tranh tổng thể end-to-end của các khối phối hợp</title>
+  <desc id="sd02-med-arch2-d">Luồng từ Client qua CDN, L7 LB, API Gateway tới stateless app tier; app tier dùng App Cache và Queue cộng workers; ghi vào Leader DB sharded rồi replicate tới followers phục vụ read. Mỗi mũi tên là một đánh đổi.</desc>
   <text x="16" y="24" font-size="15" font-weight="700" fill="currentColor">End-to-end: mỗi mũi tên là một đánh đổi</text>
   <defs>
-    <marker id="e2eHead" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <marker id="sd02-med-arch2-a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
       <path d="M0 0 L10 5 L0 10 z" fill="currentColor"/>
     </marker>
   </defs>
-  <g font-size="11">
-    <rect x="16" y="52" width="92" height="40" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+  <g font-size="13">
+    <rect x="16" y="52" width="92" height="40" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" stroke-opacity="0.65"/>
     <text x="62" y="76" text-anchor="middle" fill="currentColor">Client</text>
-    <rect x="138" y="52" width="92" height="40" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <rect x="138" y="52" width="92" height="40" rx="9" fill="#10b981" fill-opacity="0.15" stroke="#10b981" stroke-opacity="0.65"/>
     <text x="184" y="76" text-anchor="middle" fill="currentColor">CDN</text>
-    <rect x="260" y="52" width="92" height="40" rx="9" fill="#10b981" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
+    <rect x="260" y="52" width="92" height="40" rx="9" fill="#10b981" fill-opacity="0.13" stroke="#10b981" stroke-opacity="0.65"/>
     <text x="306" y="71" text-anchor="middle" fill="currentColor">L7 LB</text>
-    <text x="306" y="85" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">path route, TLS</text>
-    <rect x="382" y="52" width="108" height="40" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
+    <text x="306" y="85" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.6">route · TLS</text>
+    <rect x="382" y="52" width="108" height="40" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" stroke-opacity="0.65"/>
     <text x="436" y="71" text-anchor="middle" fill="currentColor">API Gateway</text>
-    <text x="436" y="85" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">auth, rate limit</text>
-    <rect x="520" y="48" width="184" height="48" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="612" y="70" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">stateless app tier</text>
-    <text x="612" y="86" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">cattle, auto-scale</text>
+    <text x="436" y="85" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.6">auth, rate limit</text>
+    <rect x="520" y="48" width="184" height="48" rx="9" fill="#3b82f6" fill-opacity="0.13" stroke="#3b82f6" stroke-opacity="0.65"/>
+    <text x="612" y="70" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">stateless app tier</text>
+    <text x="612" y="86" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.6">cattle, auto-scale</text>
   </g>
   <g stroke="currentColor" stroke-opacity="0.55" fill="none">
-    <line x1="108" y1="72" x2="138" y2="72" marker-end="url(#e2eHead)"/>
-    <line x1="230" y1="72" x2="260" y2="72" marker-end="url(#e2eHead)"/>
-    <line x1="352" y1="72" x2="382" y2="72" marker-end="url(#e2eHead)"/>
-    <line x1="490" y1="72" x2="520" y2="72" marker-end="url(#e2eHead)"/>
-  </g>
-  <g font-size="11">
-    <rect x="380" y="160" width="120" height="46" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.2"/>
-    <text x="440" y="181" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">App Cache</text>
-    <text x="440" y="196" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">Redis — read nhanh</text>
-    <rect x="560" y="150" width="144" height="40" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    </g>
+  <g font-size="13">
+    <rect x="380" y="160" width="120" height="46" rx="9" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6" stroke-opacity="0.65"/>
+    <text x="440" y="181" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">App Cache</text>
+    <text x="440" y="196" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.6">Redis · read nhanh</text>
+    <rect x="560" y="150" width="144" height="40" rx="9" fill="#f59e0b" fill-opacity="0.15" stroke="#f59e0b" stroke-opacity="0.65"/>
     <text x="632" y="174" text-anchor="middle" fill="currentColor">Queue / Pub-Sub</text>
-    <rect x="580" y="206" width="104" height="38" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <rect x="580" y="206" width="104" height="38" rx="9" fill="#10b981" fill-opacity="0.15" stroke="#10b981" stroke-opacity="0.65"/>
     <text x="632" y="229" text-anchor="middle" fill="currentColor">workers</text>
   </g>
   <g stroke="currentColor" stroke-opacity="0.5" fill="none">
-    <line x1="590" y1="96" x2="490" y2="160" marker-end="url(#e2eHead)"/>
-    <line x1="634" y1="96" x2="632" y2="150" stroke-dasharray="4 3" marker-end="url(#e2eHead)"/>
-    <line x1="632" y1="190" x2="632" y2="206" marker-end="url(#e2eHead)"/>
-  </g>
-  <text x="660" y="124" font-size="9.5" text-anchor="end" fill="currentColor" opacity="0.6">async</text>
-  <g font-size="11">
-    <rect x="300" y="300" width="180" height="56" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="390" y="324" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">Leader DB (sharded)</text>
-    <text x="390" y="342" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.6">nhận write, phân mảnh</text>
-    <rect x="528" y="296" width="176" height="32" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    </g>
+  <text x="660" y="124" font-size="13" text-anchor="end" fill="currentColor" opacity="0.6">async</text>
+  <g font-size="13">
+    <rect x="300" y="300" width="180" height="56" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="#f59e0b" stroke-opacity="0.65"/>
+    <text x="390" y="324" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">Leader DB (sharded)</text>
+    <text x="390" y="342" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.6">nhận write, phân mảnh</text>
+    <rect x="528" y="296" width="176" height="32" rx="9" fill="#10b981" fill-opacity="0.15" stroke="#10b981" stroke-opacity="0.65"/>
     <text x="616" y="316" text-anchor="middle" fill="currentColor">follower 1 (reads)</text>
-    <rect x="528" y="334" width="176" height="32" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.2"/>
+    <rect x="528" y="334" width="176" height="32" rx="9" fill="#10b981" fill-opacity="0.15" stroke="#10b981" stroke-opacity="0.65"/>
     <text x="616" y="354" text-anchor="middle" fill="currentColor">follower 2 (reads)</text>
   </g>
   <g stroke="currentColor" stroke-opacity="0.5" fill="none">
-    <line x1="440" y1="206" x2="400" y2="300" marker-end="url(#e2eHead)"/>
-    <line x1="600" y1="244" x2="450" y2="300" marker-end="url(#e2eHead)"/>
-    <line x1="480" y1="318" x2="528" y2="312" marker-end="url(#e2eHead)"/>
-    <line x1="480" y1="332" x2="528" y2="346" marker-end="url(#e2eHead)"/>
+    </g>
+  <text x="704" y="383" font-size="13" text-anchor="end" fill="currentColor" opacity="0.6">← replication từ leader</text>
+  <text x="16" y="392" font-size="13" fill="currentColor" opacity="0.7">Mỗi hop thêm: độ trễ, một điểm cần HA, một chỗ dữ liệu có thể stale.</text>
+  <text x="16" y="408" font-size="13" font-weight="600" fill="currentColor" opacity="0.85">Đừng thêm khối nào trước khi có vấn đề đo được mà nó giải quyết.</text>
+  <g data-step="1">
+    <g stroke="currentColor" stroke-opacity="0.85" fill="none">
+      <line x1="108" y1="72" x2="138" y2="72" marker-end="url(#sd02-med-arch2-a)"/>
+      <line x1="230" y1="72" x2="260" y2="72" marker-end="url(#sd02-med-arch2-a)"/>
+      <line x1="352" y1="72" x2="382" y2="72" marker-end="url(#sd02-med-arch2-a)"/>
+      <line x1="490" y1="72" x2="520" y2="72" marker-end="url(#sd02-med-arch2-a)"/>
+    </g>
   </g>
-  <text x="492" y="290" font-size="9.5" fill="currentColor" opacity="0.6">replication →</text>
-  <text x="16" y="392" font-size="11" fill="currentColor" opacity="0.7">Mỗi hop thêm: độ trễ, một điểm cần HA, một chỗ dữ liệu có thể stale.</text>
-  <text x="16" y="408" font-size="11" font-weight="600" fill="currentColor" opacity="0.85">Đừng thêm khối nào trước khi có vấn đề đo được mà nó giải quyết.</text>
+  <g data-step="2">
+    <g stroke="currentColor" stroke-opacity="0.85" fill="none">
+      <line x1="590" y1="96" x2="490" y2="160" marker-end="url(#sd02-med-arch2-a)"/>
+    </g>
+    <g stroke="currentColor" stroke-opacity="0.85" fill="none">
+      <line x1="440" y1="206" x2="400" y2="300" marker-end="url(#sd02-med-arch2-a)"/>
+    </g>
+  </g>
+  <g data-step="3">
+    <g stroke="currentColor" stroke-opacity="0.85" fill="none">
+      <line x1="634" y1="96" x2="632" y2="150" stroke-dasharray="4 3" marker-end="url(#sd02-med-arch2-a)"/>
+      <line x1="632" y1="190" x2="632" y2="206" marker-end="url(#sd02-med-arch2-a)"/>
+    </g>
+  </g>
+  <g data-step="4">
+    <g stroke="currentColor" stroke-opacity="0.85" fill="none">
+      <line x1="600" y1="244" x2="450" y2="300" marker-end="url(#sd02-med-arch2-a)"/>
+    </g>
+  </g>
+  <g data-step="5">
+    <g stroke="currentColor" stroke-opacity="0.85" fill="none">
+      <line x1="480" y1="318" x2="528" y2="312" marker-end="url(#sd02-med-arch2-a)"/>
+      <line x1="480" y1="332" x2="528" y2="346" marker-end="url(#sd02-med-arch2-a)"/>
+    </g>
+  </g>
 </svg>
+<step-note data-step="1">CDN giảm quãng đường cho nội dung cache được; LB định tuyến và kết thúc TLS, gateway kiểm auth/rate limit trước stateless app tier. Mỗi hop đều cần HA.</step-note>
+<step-note data-step="2">Cache giảm đọc lặp xuống DB; miss phải về dữ liệu nguồn. Cache cần kiểm soát độ trễ làm mới.</step-note>
+<step-note data-step="3">Queue/Pub-Sub tách công việc nền khỏi request; worker có thể scale theo backlog, đổi lại kết quả hoàn tất bất đồng bộ.</step-note>
+<step-note data-step="4">Worker ghi vào leader của shard; queue không tự loại bỏ giới hạn công suất ghi của DB.</step-note>
+<step-note data-step="5">Replication mở rộng đọc qua hai follower; lag có thể khiến lần đọc chưa thấy ghi mới nhất.</step-note>
+</step-flow>
 
 ```
                     ┌─────┐

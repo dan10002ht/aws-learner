@@ -71,70 +71,44 @@ Vấn đề cốt lõi: HTTP là client-hỏi-server-trả. Chat cần server **
 
 **Kết luận:** dùng **WebSocket** làm chính, **long polling làm fallback** (mạng doanh nghiệp / proxy đôi khi chặn WS). SSE không đủ vì chat cần gửi 2 chiều.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 340" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>So sánh cơ chế Long polling và WebSocket</title>
-  <desc>Hai sơ đồ tuần tự cạnh nhau: Long polling thì client hỏi đi hỏi lại, server giữ rồi trả; WebSocket bắt tay một lần rồi giữ một kết nối hai chiều persistent để đẩy tin tự do.</desc>
-  <text x="180" y="22" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">Long polling</text>
-  <text x="540" y="22" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">WebSocket</text>
-  <!-- LONG POLLING -->
-  <g>
-    <rect x="70" y="36" width="80" height="26" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="110" y="53" font-size="11.5" text-anchor="middle" fill="currentColor">client</text>
-    <rect x="210" y="36" width="80" height="26" rx="6" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="250" y="53" font-size="11.5" text-anchor="middle" fill="currentColor">server</text>
-    <line x1="110" y1="62" x2="110" y2="320" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3"/>
-    <line x1="250" y1="62" x2="250" y2="320" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="3 3"/>
-  </g>
-  <g stroke="currentColor" fill="currentColor" font-size="10.5">
-    <line x1="110" y1="86" x2="246" y2="86" stroke-width="1.3"/>
-    <polygon points="250,86 242,82 242,90"/>
-    <text x="178" y="80" text-anchor="middle">request</text>
-    <text x="250" y="106" text-anchor="middle" fill="currentColor" opacity="0.7" font-style="italic">server GIỮ…</text>
-    <line x1="250" y1="124" x2="114" y2="124" stroke-width="1.3"/>
-    <polygon points="110,124 118,120 118,128"/>
-    <text x="178" y="118" text-anchor="middle">response (khi có data)</text>
-    <line x1="110" y1="164" x2="246" y2="164" stroke-width="1.3"/>
-    <polygon points="250,164 242,160 242,168"/>
-    <text x="178" y="158" text-anchor="middle">request (lặp lại)</text>
-    <text x="250" y="184" text-anchor="middle" fill="currentColor" opacity="0.7" font-style="italic">giữ tiếp…</text>
-    <line x1="250" y1="202" x2="114" y2="202" stroke-width="1.3"/>
-    <polygon points="110,202 118,198 118,206"/>
-    <text x="178" y="196" text-anchor="middle">response</text>
-  </g>
-  <text x="180" y="244" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">mở/đóng liên tục → tốn,</text>
-  <text x="180" y="259" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">độ trễ trung bình</text>
-  <!-- divider -->
-  <line x1="360" y1="36" x2="360" y2="320" stroke="currentColor" stroke-opacity="0.18"/>
-  <!-- WEBSOCKET -->
-  <g>
-    <rect x="430" y="36" width="80" height="26" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="470" y="53" font-size="11.5" text-anchor="middle" fill="currentColor">client</text>
-    <rect x="570" y="36" width="80" height="26" rx="6" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="610" y="53" font-size="11.5" text-anchor="middle" fill="currentColor">server</text>
-    <line x1="470" y1="62" x2="470" y2="320" stroke="currentColor" stroke-opacity="0.3"/>
-    <line x1="610" y1="62" x2="610" y2="320" stroke="currentColor" stroke-opacity="0.3"/>
-  </g>
-  <g stroke="currentColor" fill="currentColor" font-size="10.5">
-    <line x1="470" y1="86" x2="606" y2="86" stroke-width="1.3"/>
-    <polygon points="610,86 602,82 602,90"/>
-    <line x1="610" y1="100" x2="474" y2="100" stroke-width="1.3"/>
-    <polygon points="470,100 478,96 478,104"/>
-    <text x="540" y="80" text-anchor="middle">handshake (1 lần)</text>
-    <rect x="466" y="112" width="148" height="18" rx="9" fill="#10b981" fill-opacity="0.16"/>
-    <text x="540" y="125" text-anchor="middle" fill="currentColor">1 kết nối 2 chiều, persistent</text>
-    <line x1="610" y1="156" x2="474" y2="156" stroke-width="1.3"/>
-    <polygon points="470,156 478,152 478,160"/>
-    <text x="540" y="150" text-anchor="middle">msg (server đẩy)</text>
-    <line x1="470" y1="184" x2="606" y2="184" stroke-width="1.3"/>
-    <polygon points="610,184 602,180 602,188"/>
-    <text x="540" y="178" text-anchor="middle">msg (client gửi)</text>
-    <line x1="610" y1="212" x2="474" y2="212" stroke-width="1.3"/>
-    <polygon points="470,212 478,208 478,216"/>
-    <text x="540" y="206" text-anchor="middle">msg (bất cứ lúc nào)</text>
-  </g>
-  <text x="540" y="244" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">giữ kết nối → đẩy tức thì,</text>
-  <text x="540" y="259" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">nhưng server stateful</text>
+<ab-toggle data-labels="Long polling|WebSocket">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 470" role="img" aria-labelledby="sd05-med-lp-t sd05-med-lp-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="sd05-med-lp-t">Long polling</title>
+<desc id="sd05-med-lp-d">Cùng trục thời gian đi xuống giữa client và server; request/response lặp lại hoặc một kết nối hai chiều.</desc>
+<defs><marker id="sd05-med-lp-a" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="currentColor"/></marker></defs>
+<rect x="40" y="20" width="120" height="45" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="100.0" y="45" text-anchor="middle" font-size="14" fill="currentColor">Client</text>
+<line x1="100" y1="65" x2="100" y2="395" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 4"/>
+<rect x="360" y="20" width="120" height="45" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="420.0" y="45" text-anchor="middle" font-size="14" fill="currentColor">Server</text>
+<line x1="420" y1="65" x2="420" y2="395" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 4"/>
+<text x="260" y="91" text-anchor="middle" font-size="14" fill="currentColor">Request 1</text><path d="M100 100 L420 100" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#sd05-med-lp-a)"/>
+<text x="260" y="206" text-anchor="middle" font-size="14" fill="currentColor">Response · tin 1</text><path d="M420 215 L100 215" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#sd05-med-lp-a)"/>
+<text x="260" y="241" text-anchor="middle" font-size="14" fill="currentColor">Request 2 · lặp lại</text><path d="M100 250 L420 250" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#sd05-med-lp-a)"/>
+<text x="260" y="336" text-anchor="middle" font-size="14" fill="currentColor">Response · tin 2</text><path d="M420 345 L100 345" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#sd05-med-lp-a)"/>
+<text x="260" y="376" text-anchor="middle" font-size="14" fill="currentColor">Request 3 · lặp lại</text><path d="M100 385 L420 385" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#sd05-med-lp-a)"/>
+<text x="260" y="165" text-anchor="middle" font-size="14" fill="currentColor">Server giữ request…</text><text x="260" y="300" text-anchor="middle" font-size="14" fill="currentColor">Server giữ tiếp…</text>
+<text x="260" y="425" text-anchor="middle" font-size="14" fill="currentColor">Nhiều vòng HTTP → thêm overhead, độ trễ.</text>
+<text x="260" y="450" text-anchor="middle" font-size="13" fill="currentColor">Thời gian đi từ trên xuống</text>
 </svg>
+<ab-note>Server giữ request tới khi có data rồi trả; client phải mở request tiếp theo. Đây là fallback khi WebSocket bị chặn.</ab-note>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 470" role="img" aria-labelledby="sd05-med-ws-t sd05-med-ws-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="sd05-med-ws-t">WebSocket</title>
+<desc id="sd05-med-ws-d">Cùng trục thời gian đi xuống giữa client và server; request/response lặp lại hoặc một kết nối hai chiều.</desc>
+<defs><marker id="sd05-med-ws-a" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="currentColor"/></marker></defs>
+<rect x="40" y="20" width="120" height="45" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="100.0" y="45" text-anchor="middle" font-size="14" fill="currentColor">Client</text>
+<line x1="100" y1="65" x2="100" y2="395" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 4"/>
+<rect x="360" y="20" width="120" height="45" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.5"/><text x="420.0" y="45" text-anchor="middle" font-size="14" fill="currentColor">Server</text>
+<line x1="420" y1="65" x2="420" y2="395" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 4"/>
+<text x="260" y="91" text-anchor="middle" font-size="14" fill="currentColor">Handshake · 1 lần</text><path d="M100 100 L420 100" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#sd05-med-ws-a)"/>
+<text x="260" y="131" text-anchor="middle" font-size="14" fill="currentColor">Upgrade thành công</text><path d="M420 140 L100 140" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#sd05-med-ws-a)"/>
+<text x="260" y="206" text-anchor="middle" font-size="14" fill="currentColor">Tin 1 · server đẩy</text><path d="M420 215 L100 215" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#sd05-med-ws-a)"/>
+<text x="260" y="271" text-anchor="middle" font-size="14" fill="currentColor">Tin 2 · client gửi</text><path d="M100 280 L420 280" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#sd05-med-ws-a)"/>
+<text x="260" y="336" text-anchor="middle" font-size="14" fill="currentColor">Tin 3 · server đẩy</text><path d="M420 345 L100 345" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#sd05-med-ws-a)"/>
+<text x="260" y="177" text-anchor="middle" font-size="13" fill="currentColor">Một kết nối persistent · full-duplex</text>
+<text x="260" y="425" text-anchor="middle" font-size="14" fill="currentColor">Giữ kết nối → đẩy ngay; server stateful.</text>
+<text x="260" y="450" text-anchor="middle" font-size="13" fill="currentColor">Thời gian đi từ trên xuống</text>
+</svg>
+<ab-note>Bắt tay một lần rồi gửi hai chiều trên cùng kết nối; connection node phải giữ state của socket.</ab-note>
+</ab-toggle>
 
 > Bẫy thiết kế: WebSocket biến server thành **stateful** — kết nối "thuộc về" một node cụ thể. Đây là gốc rễ của mọi khó khăn scale phía dưới. Long polling thì stateless hơn nhưng tốn CPU vì đóng/mở liên tục.
 
@@ -263,56 +237,36 @@ Vì WS stateful, một tin gửi cho B phải tới **đúng node đang giữ B*
 
 **Lựa chọn thực tế:** gateway giữ WS + một **Connection Registry** (Redis) ánh xạ `userId -> nodeId`, và một **pub/sub** để node-của-A nói chuyện với node-của-B mà không cần biết nhau trực tiếp.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Định tuyến tin qua pub/sub tránh mesh N²</title>
-  <desc>A nối node-1, B nối node-7. node-1 không kết nối trực tiếp node-7; nó tra registry biết B ở node-7, publish lên pub/sub, node-7 subscribe rồi push frame xuống B.</desc>
-  <!-- A and node-1 -->
-  <circle cx="70" cy="150" r="22" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
-  <text x="70" y="155" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">A</text>
-  <rect x="140" y="124" width="92" height="52" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
-  <text x="186" y="155" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">node-1</text>
-  <!-- pub/sub -->
-  <rect x="290" y="116" width="140" height="68" rx="12" fill="#8b5cf6" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.35"/>
-  <text x="360" y="146" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">pub/sub</text>
-  <text x="360" y="164" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.7">channel: node-7</text>
-  <!-- node-7 and B -->
-  <rect x="488" y="124" width="92" height="52" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
-  <text x="534" y="155" font-size="13" font-weight="700" text-anchor="middle" fill="currentColor">node-7</text>
-  <circle cx="650" cy="150" r="22" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.35"/>
-  <text x="650" y="155" font-size="14" font-weight="700" text-anchor="middle" fill="currentColor">B</text>
-  <!-- registry -->
-  <rect x="140" y="232" width="160" height="44" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.3"/>
-  <text x="220" y="251" font-size="11" font-weight="700" text-anchor="middle" fill="currentColor">Connection Registry</text>
-  <text x="220" y="266" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.75">B → node-7</text>
-  <!-- edges -->
-  <g stroke="currentColor" fill="currentColor" font-size="10.5">
-    <line x1="92" y1="150" x2="138" y2="150" stroke-width="1.4"/>
-    <text x="115" y="142" text-anchor="middle">WS</text>
-    <!-- node-1 tra registry -->
-    <line x1="186" y1="176" x2="200" y2="230" stroke-width="1.2" stroke-dasharray="4 3"/>
-    <polygon points="186,176 195,182 200,174" stroke="none"/>
-    <text x="214" y="208" font-size="9.5" text-anchor="middle" opacity="0.8">tra: B?</text>
-    <!-- publish -->
-    <line x1="234" y1="150" x2="286" y2="150" stroke-width="1.6"/>
-    <polygon points="290,150 282,146 282,154" stroke="none"/>
-    <text x="262" y="142" text-anchor="middle">publish</text>
-    <!-- deliver -->
-    <line x1="432" y1="150" x2="484" y2="150" stroke-width="1.6"/>
-    <polygon points="488,150 480,146 480,154" stroke="none"/>
-    <text x="460" y="142" text-anchor="middle">subscribe</text>
-    <!-- push to B -->
-    <line x1="582" y1="150" x2="616" y2="150" stroke-width="1.4"/>
-    <polygon points="626,150 616,145 616,155" stroke="none"/>
-    <text x="604" y="142" text-anchor="middle">push</text>
-  </g>
-  <!-- no direct mesh -->
-  <g>
-    <path d="M210 110 Q360 60 560 110" fill="none" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="6 5"/>
-    <line x1="375" y1="76" x2="397" y2="98" stroke="#ef4444" stroke-width="2.2"/>
-    <line x1="397" y1="76" x2="375" y2="98" stroke="#ef4444" stroke-width="2.2"/>
-    <text x="386" y="50" font-size="10.5" text-anchor="middle" fill="currentColor" opacity="0.8">KHÔNG nối trực tiếp node↔node (tránh N²)</text>
-  </g>
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 330" role="img" aria-labelledby="sd05-med-route2-t sd05-med-route2-d" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto">
+<title id="sd05-med-route2-t">Định tuyến tin A tới B qua registry và pub/sub</title>
+<desc id="sd05-med-route2-d">A nối node-1; node-1 tra registry B ở node-7, publish vào channel node-7; node-7 subscribe rồi push xuống B. Mỗi node chỉ xuất hiện một lần.</desc>
+<defs><marker id="sd05-med-route2-a" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto"><path d="M0 0 L6 3 L0 6 z" fill="currentColor"/></marker></defs>
+<text x="360" y="32" text-anchor="middle" font-size="15" fill="currentColor">Không nối mesh trực tiếp node ↔ node (tránh N²)</text>
+<circle cx="48" cy="135" r="23" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" stroke-opacity="0.65"/><text x="48" y="140" text-anchor="middle" font-size="15" fill="currentColor">A</text>
+<circle cx="666" cy="135" r="23" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" stroke-opacity="0.65"/><text x="666" y="140" text-anchor="middle" font-size="15" fill="currentColor">B</text>
+<rect x="130" y="110" width="100" height="50" rx="10" fill="#10b981" fill-opacity="0.14" stroke="#10b981" stroke-opacity="0.65"/>
+<text x="180.0" y="135" text-anchor="middle" font-size="13" fill="currentColor">node-1</text>
+<rect x="300" y="100" width="145" height="70" rx="10" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6" stroke-opacity="0.65"/>
+<text x="372.5" y="125" text-anchor="middle" font-size="13" fill="currentColor">Pub/sub</text>
+<text x="372.5" y="143" text-anchor="middle" font-size="13" fill="currentColor">channel: node-7</text>
+<rect x="515" y="110" width="100" height="50" rx="10" fill="#10b981" fill-opacity="0.14" stroke="#10b981" stroke-opacity="0.65"/>
+<text x="565.0" y="135" text-anchor="middle" font-size="13" fill="currentColor">node-7</text>
+<rect x="118" y="245" width="210" height="60" rx="10" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b" stroke-opacity="0.65"/>
+<text x="223.0" y="270" text-anchor="middle" font-size="13" fill="currentColor">Connection Registry</text>
+<text x="223.0" y="288" text-anchor="middle" font-size="13" fill="currentColor">B → node-7</text>
+<g data-step="1"><path d="M72 135 H126" fill="none" stroke="currentColor" stroke-width="1.7" marker-end="url(#sd05-med-route2-a)"/><text x="100" y="124" text-anchor="middle" font-size="13" fill="currentColor">WS</text></g>
+<g data-step="2"><path d="M165 160 V240" fill="none" stroke="currentColor" stroke-width="1.7" marker-end="url(#sd05-med-route2-a)"/><path d="M200 245 V165" fill="none" stroke="currentColor" stroke-width="1.7" stroke-dasharray="4 3" marker-end="url(#sd05-med-route2-a)"/><text x="115" y="205" text-anchor="middle" font-size="13" fill="currentColor">Tra B?</text><text x="259" y="205" text-anchor="middle" font-size="13" fill="currentColor">B → node-7</text></g>
+<g data-step="3"><path d="M230 135 H295" fill="none" stroke="currentColor" stroke-width="1.7" marker-end="url(#sd05-med-route2-a)"/><text x="265" y="124" text-anchor="middle" font-size="13" fill="currentColor">publish</text></g>
+<g data-step="4"><path d="M445 135 H510" fill="none" stroke="currentColor" stroke-width="1.7" marker-end="url(#sd05-med-route2-a)"/><text x="480" y="124" text-anchor="middle" font-size="13" fill="currentColor">subscribe</text></g>
+<g data-step="5"><path d="M615 135 H638" fill="none" stroke="currentColor" stroke-width="1.7" marker-end="url(#sd05-med-route2-a)"/><text x="642" y="99" text-anchor="middle" font-size="13" fill="currentColor">push</text></g>
 </svg>
+<step-note data-step="1">Socket của A thuộc node-1; node khác không thể dùng trực tiếp kết nối này.</step-note>
+<step-note data-step="2">Tra registry để biết B đang ở node nào; mũi tên nét đứt là kết quả lookup.</step-note>
+<step-note data-step="3">Publish lên kênh node-7 giúp node-1 không phải nối mesh trực tiếp tới mọi gateway.</step-note>
+<step-note data-step="4">node-7 nhận từ kênh đã subscribe và tìm socket B cục bộ.</step-note>
+<step-note data-step="5">Push frame xuống B hoàn tất chặng realtime. Registry và pub/sub cần HA.</step-note>
+</step-flow>
 
 > Bẫy thiết kế: Đừng cho các connection node **kết nối mesh trực tiếp** với nhau (N node → N² kết nối). Pub/sub là tầng gián tiếp giúp tránh nổ N². Nhưng nhớ: registry và pub/sub trở thành điểm phụ thuộc nóng — phải HA.
 
