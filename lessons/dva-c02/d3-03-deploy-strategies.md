@@ -30,52 +30,11 @@ Trước hết phải nắm trục so sánh: **downtime**, **chi phí hạ tần
 > - **Blue/Green** = nhảy 0% → 100% một phát (sau khi green sẵn sàng). Không có "một phần traffic".
 > Đề hay mô tả "shift 10% traffic, đợi 10 phút, rồi shift hết" → đó là **Canary**, KHÔNG phải linear.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Đồ thị % traffic chuyển sang bản mới theo thời gian — Canary, Linear, Blue/Green, All-at-once</title>
-  <desc>Trục ngang là thời gian, trục dọc là phần trăm traffic sang bản mới. Canary nhảy lên một phần nhỏ rồi nhảy thẳng 100%. Linear tăng đều từng bước 10%. Blue/Green và All-at-once nhảy thẳng 0 lên 100% trong một lần chuyển.</desc>
-  <text x="16" y="24" font-size="14" font-weight="700" fill="currentColor">% traffic sang bản mới theo thời gian</text>
-  <g stroke="currentColor" stroke-opacity="0.5" fill="none">
-    <path d="M70 40 V300"/>
-    <path d="M70 300 H660"/>
-  </g>
-  <g font-size="10.5" fill="currentColor" opacity="0.7">
-    <text x="64" y="60" text-anchor="end">100%</text>
-    <text x="64" y="174" text-anchor="end">50%</text>
-    <text x="64" y="304" text-anchor="end">0%</text>
-    <text x="360" y="328" text-anchor="middle">thời gian →</text>
-    <text x="40" y="170" text-anchor="middle" transform="rotate(-90 40 170)">% traffic</text>
-  </g>
-  <g stroke="currentColor" stroke-opacity="0.12" fill="none">
-    <path d="M70 56 H660"/>
-    <path d="M70 178 H660"/>
-  </g>
-  <g stroke-width="2.5" fill="none" stroke-linejoin="round">
-    <path d="M70 300 H300 V274 H470 V56 H660" stroke="#3b82f6"/>
-    <path d="M70 300 H120 L300 105 V56 H660" stroke="#10b981"/>
-    <path d="M70 300 H440 V56 H660" stroke="#8b5cf6"/>
-    <path d="M70 300 H120 V56 H660" stroke="#f59e0b" stroke-dasharray="6 4"/>
-  </g>
-  <g fill="currentColor">
-    <circle cx="300" cy="274" r="3.5" fill="#3b82f6"/>
-    <circle cx="470" cy="56" r="3.5" fill="#3b82f6"/>
-    <circle cx="120" cy="261" r="3" fill="#10b981"/>
-    <circle cx="210" cy="183" r="3" fill="#10b981"/>
-    <circle cx="300" cy="105" r="3" fill="#10b981"/>
-  </g>
-  <g font-size="11">
-    <rect x="486" y="246" width="12" height="12" rx="2" fill="#3b82f6"/>
-    <text x="503" y="256" fill="currentColor">Canary (10% → 100%)</text>
-    <rect x="486" y="266" width="12" height="12" rx="2" fill="#10b981"/>
-    <text x="503" y="276" fill="currentColor">Linear (+10% mỗi bước)</text>
-    <rect x="486" y="286" width="12" height="12" rx="2" fill="#8b5cf6"/>
-    <text x="503" y="296" fill="currentColor">Blue/Green (0→100% 1 lần)</text>
-    <rect x="486" y="306" width="12" height="12" rx="2" fill="#f59e0b"/>
-    <text x="503" y="316" fill="currentColor">All-at-once (tức thì)</text>
-  </g>
-  <g font-size="10" fill="currentColor" opacity="0.7">
-    <text x="306" y="270">đợi rồi nhảy 100%</text>
-    <text x="124" y="255">bước đều</text>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 645" role="img" aria-labelledby="dva-deploy-traffic-t dva-deploy-traffic-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dva-deploy-traffic-t">Bốn nhịp chuyển traffic sang bản mới</title>
+<desc id="dva-deploy-traffic-d">Canary giữ 10% rồi nhảy 100%. Linear có mười bậc bằng nhau. Blue/Green chờ môi trường mới sẵn sàng. All-at-once đổi toàn bộ ngay.</desc>
+<defs><marker id="dva-deploy-traffic-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<text x="20" y="24" font-size="15" text-anchor="start" fill="currentColor">Traffic sang bản mới (%) theo thời gian</text><text x="55" y="56" font-size="14" text-anchor="start" fill="currentColor">Canary: 10% → đợi → 100%</text><path d="M55 70 V150 H485" fill="none" stroke="currentColor" stroke-opacity="0.4"/><text x="48" y="75" font-size="13" text-anchor="end" fill="currentColor">100</text><text x="48" y="154" font-size="13" text-anchor="end" fill="currentColor">0</text><path d="M55 150.0 L98 150.0 L98 142.0 L356 142.0 L356 70.0 L485 70.0" fill="none" stroke="#3b82f6" stroke-width="3"/><text x="485" y="173" font-size="13" text-anchor="end" fill="currentColor">thời gian →</text><text x="55" y="191" font-size="14" text-anchor="start" fill="currentColor">Linear: +10% mỗi bước</text><path d="M55 205 V285 H485" fill="none" stroke="currentColor" stroke-opacity="0.4"/><text x="48" y="210" font-size="13" text-anchor="end" fill="currentColor">100</text><text x="48" y="289" font-size="13" text-anchor="end" fill="currentColor">0</text><path d="M55 285.0 L98 285.0 L98 277.0 L141 277.0 L141 269.0 L184 269.0 L184 261.0 L227 261.0 L227 253.0 L270 253.0 L270 245.0 L313 245.0 L313 237.0 L356 237.0 L356 229.0 L399 229.0 L399 221.0 L442 221.0 L442 213.0 L485 213.0 L485 205.0" fill="none" stroke="#10b981" stroke-width="3"/><text x="485" y="308" font-size="13" text-anchor="end" fill="currentColor">thời gian →</text><text x="55" y="326" font-size="14" text-anchor="start" fill="currentColor">Blue/Green: sẵn sàng rồi switch</text><path d="M55 340 V420 H485" fill="none" stroke="currentColor" stroke-opacity="0.4"/><text x="48" y="345" font-size="13" text-anchor="end" fill="currentColor">100</text><text x="48" y="424" font-size="13" text-anchor="end" fill="currentColor">0</text><path d="M55 420.0 L356 420.0 L356 340.0 L485 340.0" fill="none" stroke="#8b5cf6" stroke-width="3"/><text x="485" y="443" font-size="13" text-anchor="end" fill="currentColor">thời gian →</text><text x="55" y="461" font-size="14" text-anchor="start" fill="currentColor">All-at-once: đổi toàn bộ ngay</text><path d="M55 475 V555 H485" fill="none" stroke="currentColor" stroke-opacity="0.4"/><text x="48" y="480" font-size="13" text-anchor="end" fill="currentColor">100</text><text x="48" y="559" font-size="13" text-anchor="end" fill="currentColor">0</text><path d="M55 555.0 L98 555.0 L98 475.0 L485 475.0" fill="none" stroke="#f59e0b" stroke-width="3"/><text x="485" y="578" font-size="13" text-anchor="end" fill="currentColor">thời gian →</text><text x="20" y="623" font-size="13" text-anchor="start" fill="currentColor">Minh hoạ nhịp chuyển, không phải thời lượng deploy.</text>
 </svg>
 
 ## 2. Deploy trên Elastic Beanstalk (hay bị nhầm lẫn)

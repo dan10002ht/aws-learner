@@ -275,6 +275,25 @@ Vài điểm tinh:
 - `behavior` bất đối xứng là best practice: **lên nhanh** (chịu spike ngay) nhưng **xuống chậm** (tránh scale xuống rồi tải lại tăng, gây flapping tốn tài nguyên).
 - **KEDA** mở rộng HPA để scale theo event (queue rỗng → scale về **0**), thứ HPA gốc không làm được.
 
+<svg viewBox="0 0 520 328" role="img" aria-labelledby="cn11-vis-hpa-t cn11-vis-hpa-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="cn11-vis-hpa-t">HPA phản ứng bất đối xứng</title>
+<desc id="cn11-vis-hpa-d">Nhu cầu tăng đưa replicas từ bốn lên tám. Khi nhu cầu giảm, cửa sổ 300 giây giữ đề xuất cao rồi policy cho giảm mỗi lần một Pod.</desc>
+<text x="25" y="25" font-size="13" text-anchor="start" fill="currentColor">HPA: lên nhanh, xuống có cửa sổ ổn định</text>
+<text x="25" y="49" font-size="13" text-anchor="start" fill="currentColor">Minh hoạ riêng: 4 Pod, CPU 90%, target 50%</text>
+<line x1="55" y1="205" x2="490" y2="205" stroke="currentColor" />
+<line x1="55" y1="205" x2="55" y2="65" stroke="currentColor" />
+<text x="45" y="93" font-size="13" text-anchor="end" fill="currentColor">8</text>
+<text x="45" y="165" font-size="13" text-anchor="end" fill="currentColor">4</text>
+<path d="M55 160 H140 V90 H355 V108 H425 V126 H490" fill="none" stroke="#3b82f6" stroke-width="3"/>
+<path d="M55 160 H140 V90 H210 V170 H490" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="5 4"/>
+<text x="230" y="80" font-size="13" text-anchor="start" fill="currentColor">Giữ đề xuất cao trong 300 s</text>
+<line x1="210" y1="188" x2="355" y2="188" stroke="#8b5cf6" stroke-width="3"/>
+<text x="230" y="233" font-size="13" text-anchor="start" fill="currentColor">Tải giảm</text>
+<text x="25" y="260" font-size="13" text-anchor="start" fill="currentColor">Xanh: replicas · vàng đứt: nhu cầu từ metric</text>
+<text x="25" y="284" font-size="13" text-anchor="start" fill="currentColor">Sau cửa sổ: giảm tối đa 1 Pod / 60 s</text>
+<text x="25" y="308" font-size="13" text-anchor="start" fill="currentColor">Trục thời gian sơ đồ, không theo tỉ lệ</text>
+</svg>
+
 Kiểm tra nhanh khi vận hành:
 
 ```bash

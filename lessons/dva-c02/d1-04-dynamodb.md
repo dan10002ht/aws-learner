@@ -307,6 +307,27 @@ table.update_item(
 )
 ```
 
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 430" role="img" aria-labelledby="dva-ddb-lock-t dva-ddb-lock-d" style="width:100%;max-width:700px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dva-ddb-lock-t">Hai writer cạnh tranh cùng version</title>
+<desc id="dva-ddb-lock-d">Hai writer cùng đọc version 5. A cập nhật thành version 6. Điều kiện của B không còn đúng nên ghi bị từ chối; B phải đọc và tính lại.</desc>
+<defs><marker id="dva-ddb-lock-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<rect x="15" y="15" width="130" height="36" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="80" y="38" font-size="14" text-anchor="middle" fill="currentColor">Writer A</text><path d="M80 51 V410" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"/><rect x="285" y="15" width="130" height="36" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="350" y="38" font-size="14" text-anchor="middle" fill="currentColor">Item DynamoDB</text><path d="M350 51 V410" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"/><rect x="555" y="15" width="130" height="36" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="620" y="38" font-size="14" text-anchor="middle" fill="currentColor">Writer B</text><path d="M620 51 V410" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="4 4"/><g data-step="1">
+<path d="M350 85 H82" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dva-ddb-lock-a)"/><path d="M350 85 H618" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dva-ddb-lock-a)"/><text x="215" y="73" font-size="13" text-anchor="middle" fill="currentColor">đọc version = 5</text><text x="485" y="73" font-size="13" text-anchor="middle" fill="currentColor">đọc version = 5</text>
+</g><g data-step="2">
+<path d="M80 155 H348" fill="none" stroke="#10b981" stroke-width="1.5" marker-end="url(#dva-ddb-lock-a)"/><text x="215" y="141" font-size="13" text-anchor="middle" fill="currentColor">A: nếu version = 5</text><rect x="278" y="166" width="144" height="52" rx="8" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="350" y="187" font-size="13" text-anchor="middle" fill="currentColor">stock = 9</text><text x="350" y="207" font-size="13" text-anchor="middle" fill="currentColor">version = 6</text>
+</g><g data-step="3">
+<path d="M620 265 H352" fill="none" stroke="#f43f5e" stroke-width="1.5" marker-end="url(#dva-ddb-lock-a)"/><text x="485" y="248" font-size="13" text-anchor="middle" fill="currentColor">B: nếu version = 5</text><path d="M350 310 H618" fill="none" stroke="#f43f5e" stroke-width="1.5" marker-end="url(#dva-ddb-lock-a)"/><text x="485" y="299" font-size="13" text-anchor="middle" fill="currentColor">5 ≠ 6 → từ chối ghi</text>
+</g><g data-step="4">
+<path d="M620 370 H352" fill="none" stroke="#8b5cf6" stroke-width="1.5" marker-end="url(#dva-ddb-lock-a)"/><text x="485" y="352" font-size="13" text-anchor="middle" fill="currentColor">B đọc lại version = 6</text><text x="350" y="405" font-size="13" text-anchor="middle" fill="currentColor">Tính lại thay đổi trước khi thử ghi tiếp</text>
+</g>
+</svg>
+<step-note data-step="1">Cả hai client có cùng ảnh chụp ban đầu, nên đọc riêng lẻ chưa ngăn được lost update.</step-note>
+<step-note data-step="2">Điều kiện và cập nhật được kiểm tra nguyên tử trên item: A đổi stock thành 9 và version thành 6.</step-note>
+<step-note data-step="3">B vẫn dùng version cũ nên nhận <code>ConditionalCheckFailedException</code>; dữ liệu A không bị ghi đè.</step-note>
+<step-note data-step="4">Không retry mù với giá trị stock cũ. Đọc lại và tính lại thay đổi từ trạng thái mới.</step-note>
+</step-flow>
+
 > Mẹo thi: "Tránh lost update / nhiều client cùng sửa 1 item" → **Optimistic Locking với version attribute + ConditionExpression**. DynamoDB Mapper (Java) có annotation `@DynamoDBVersionAttribute` làm tự động.
 
 ## 11. Batch Operations

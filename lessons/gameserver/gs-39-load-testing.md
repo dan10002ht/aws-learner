@@ -244,29 +244,39 @@ Chiều thứ nhất — **thundering herd giả**. 4.000 bot connect trong 0,4 
 
 Chiều thứ hai tinh vi hơn — **đồng pha**. Bot khởi động cùng lúc thì `time.Tick` của chúng lệch nhau vài trăm micro giây. 4.000 bot × 60 Hz là **240 gói/ms** nếu rải đều, nhưng nếu đồng pha thì **4.000 gói dồn vào 1 ms** rồi 15,67 ms im lặng: đỉnh gấp **16,67 lần** trung bình, đúng bằng chu kỳ tick `1000 / 60 = 16,67 ms`. Server bị đo bằng một hình dạng lưu lượng không có thật.
 
-<svg viewBox="0 0 700 240" role="img" aria-labelledby="gs39-a-t gs39-a-d" style="width:100%;height:auto">
-<title id="gs39-a-t">Bot đồng pha so với bot rải pha trong một chu kỳ tick</title>
-<desc id="gs39-a-d">Trên một chu kỳ 16,67 mili giây, bốn nghìn bot đồng pha dồn bốn nghìn gói vào đúng một mili giây rồi im lặng phần còn lại, trong khi bốn nghìn bot rải pha ngẫu nhiên cho một mặt phẳng hai trăm bốn mươi gói mỗi mili giây suốt chu kỳ. Đỉnh chênh nhau mười sáu phẩy sáu bảy lần.</desc>
-<text x="16" y="18" font-size="11" font-weight="bold" fill="currentColor">4.000 bot đồng pha — đỉnh 4.000 gói/ms</text>
-<line x1="60" y1="100" x2="660" y2="100" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5"/>
-<line x1="60" y1="30" x2="60" y2="100" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5"/>
-<rect x="61" y="32" width="34" height="68" fill="#ef4444" fill-opacity="0.55"/>
-<text x="112" y="52" font-size="10" fill="currentColor">4.000 gói trong 1 ms</text>
-<text x="112" y="68" font-size="10" fill="currentColor" opacity="0.75">rồi 15,67 ms không có gì</text>
-<text x="52" y="34" text-anchor="end" font-size="9" fill="currentColor" opacity="0.7">4.000</text>
-<text x="52" y="104" text-anchor="end" font-size="9" fill="currentColor" opacity="0.7">0</text>
-<text x="16" y="150" font-size="11" font-weight="bold" fill="currentColor">4.000 bot rải pha — phẳng 240 gói/ms</text>
-<line x1="60" y1="215" x2="660" y2="215" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5"/>
-<line x1="60" y1="160" x2="60" y2="215" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.5"/>
-<rect x="61" y="211" width="599" height="4" fill="#84cc16" fill-opacity="0.75"/>
-<text x="52" y="164" text-anchor="end" font-size="9" fill="currentColor" opacity="0.7">4.000</text>
-<text x="52" y="219" text-anchor="end" font-size="9" fill="currentColor" opacity="0.7">0</text>
-<text x="120" y="205" font-size="10" fill="currentColor">240 gói/ms, đều suốt chu kỳ — cùng tổng 240.000 gói/giây</text>
-<line x1="660" y1="24" x2="660" y2="221" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 3"/>
-<text x="656" y="234" text-anchor="end" font-size="9" fill="currentColor" opacity="0.8">16,67 ms — một chu kỳ tick 60 Hz</text>
-<text x="64" y="234" font-size="9" fill="currentColor" opacity="0.8">0 ms</text>
-<text x="330" y="130" text-anchor="middle" font-size="10" font-style="italic" fill="currentColor">cùng một tải trung bình, đỉnh chênh 16,67 lần</text>
+<ab-toggle data-labels="Đồng pha|Rải pha">
+<svg viewBox="0 0 520 280" role="img" aria-labelledby="gs39-vis-0-t gs39-vis-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="gs39-vis-0-t">Đồng pha so với rải pha</title>
+<desc id="gs39-vis-0-d">Cùng thang 0 đến 4000 gói/ms và cùng cửa sổ 16,67 ms; diện tích bằng nhau, đỉnh rất khác.</desc>
+<text x="25" y="25" font-size="13" text-anchor="start" fill="currentColor">4.000 bot · 60 Hz · cùng 240.000 gói/s</text>
+<line x1="65" y1="205" x2="490" y2="205" stroke="currentColor" />
+<line x1="65" y1="205" x2="65" y2="49" stroke="currentColor" />
+<text x="59" y="61" font-size="13" text-anchor="end" fill="currentColor">4.000</text>
+<text x="59" y="209" font-size="13" text-anchor="end" fill="currentColor">0</text>
+<text x="65" y="231" font-size="13" text-anchor="start" fill="currentColor">0 ms</text>
+<text x="490" y="231" font-size="13" text-anchor="end" fill="currentColor">16,67 ms</text>
+<text x="25" y="260" font-size="13" text-anchor="start" fill="currentColor">gói/ms · đỉnh / trung bình = 16,67</text>
+<rect x="65" y="55" width="25.5" height="150" rx="4" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e" />
+<text x="113" y="91" font-size="13" text-anchor="start" fill="currentColor">4.000 gói trong 1 ms</text>
+<text x="113" y="115" font-size="13" text-anchor="start" fill="currentColor">15,67 ms còn lại im lặng</text>
 </svg>
+<svg viewBox="0 0 520 280" role="img" aria-labelledby="gs39-vis-1-t gs39-vis-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="gs39-vis-1-t">Đồng pha so với rải pha</title>
+<desc id="gs39-vis-1-d">Cùng thang 0 đến 4000 gói/ms và cùng cửa sổ 16,67 ms; diện tích bằng nhau, đỉnh rất khác.</desc>
+<text x="25" y="25" font-size="13" text-anchor="start" fill="currentColor">4.000 bot · 60 Hz · cùng 240.000 gói/s</text>
+<line x1="65" y1="205" x2="490" y2="205" stroke="currentColor" />
+<line x1="65" y1="205" x2="65" y2="49" stroke="currentColor" />
+<text x="59" y="61" font-size="13" text-anchor="end" fill="currentColor">4.000</text>
+<text x="59" y="209" font-size="13" text-anchor="end" fill="currentColor">0</text>
+<text x="65" y="231" font-size="13" text-anchor="start" fill="currentColor">0 ms</text>
+<text x="490" y="231" font-size="13" text-anchor="end" fill="currentColor">16,67 ms</text>
+<text x="25" y="260" font-size="13" text-anchor="start" fill="currentColor">gói/ms · đỉnh / trung bình = 1 (kỳ vọng)</text>
+<rect x="65" y="196" width="425" height="9" rx="4" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<text x="150" y="181" font-size="13" text-anchor="start" fill="currentColor">240 gói/ms (trung bình kỳ vọng)</text>
+</svg>
+<ab-note>Cùng tổng số gói nhưng dồn thành đỉnh, làm sai tải mà server phải chịu.</ab-note>
+<ab-note>Jitter ban đầu phân bố pha trong chu kỳ; 240 gói/ms là kỳ vọng, không phải cam kết mỗi mili giây đều đúng 240.</ab-note>
+</ab-toggle>
 
 Chữa bằng một dòng: cho mỗi bot ngủ một khoảng ngẫu nhiên trong `[0; 16,67 ms)` trước khi vào vòng lặp.
 

@@ -75,6 +75,50 @@ Sau bài này bạn có thể:
 
 Mấu chốt: với pull-based, **API server không cần lộ cho CI**, và **admin kubeconfig không đi ra ngoài**. Agent nằm sẵn trong cluster, chỉ cần quyền **đọc** Git repo (thường là read-only deploy key). Đây là lý do bảo mật lớn nhất khiến GitOps thắng CI-push cho khâu deploy.
 
+<ab-toggle data-labels="CI push|Agent pull">
+<svg viewBox="0 0 520 300" role="img" aria-labelledby="cn16-vis-0-t cn16-vis-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="cn16-vis-0-t">Chiều kết nối và vị trí credential: push</title>
+<desc id="cn16-vis-0-d">Các khối giữ nguyên vị trí; ranh giới cluster bao API server và CD agent. Mũi tên là bên khởi tạo kết nối, nhãn key xác định nơi giữ credential.</desc>
+<defs><marker id="cn16-vis-0-m" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<rect x="270" y="45" width="230" height="205" rx="4" fill="#14b8a6" fill-opacity="0.14" stroke="#14b8a6" />
+<text x="285" y="70" font-size="13" text-anchor="start" fill="currentColor">Ranh giới cluster</text>
+<rect x="25" y="85" width="105" height="45" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="77" y="113" font-size="13" text-anchor="middle" fill="currentColor">CI runner</text>
+<rect x="25" y="185" width="105" height="45" rx="4" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b" />
+<text x="77" y="213" font-size="13" text-anchor="middle" fill="currentColor">Git</text>
+<rect x="345" y="85" width="130" height="45" rx="4" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<text x="410" y="113" font-size="13" text-anchor="middle" fill="currentColor">API server</text>
+<rect x="345" y="185" width="130" height="45" rx="4" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6" />
+<text x="410" y="213" font-size="13" text-anchor="middle" fill="currentColor">CD agent</text>
+<line x1="130" y1="107" x2="345" y2="107" stroke="currentColor" marker-end="url(#cn16-vis-0-m)"/>
+<text x="230" y="94" font-size="13" text-anchor="middle" fill="currentColor">push</text>
+<text x="25" y="161" font-size="13" text-anchor="start" fill="currentColor">[Key cụm] tại CI runner</text>
+<text x="25" y="277" font-size="13" text-anchor="start" fill="currentColor">CI phải truy cập được API server</text>
+</svg>
+<svg viewBox="0 0 520 300" role="img" aria-labelledby="cn16-vis-1-t cn16-vis-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="cn16-vis-1-t">Chiều kết nối và vị trí credential: pull</title>
+<desc id="cn16-vis-1-d">Các khối giữ nguyên vị trí; ranh giới cluster bao API server và CD agent. Mũi tên là bên khởi tạo kết nối, nhãn key xác định nơi giữ credential.</desc>
+<defs><marker id="cn16-vis-1-m" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<rect x="270" y="45" width="230" height="205" rx="4" fill="#14b8a6" fill-opacity="0.14" stroke="#14b8a6" />
+<text x="285" y="70" font-size="13" text-anchor="start" fill="currentColor">Ranh giới cluster</text>
+<rect x="25" y="85" width="105" height="45" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="77" y="113" font-size="13" text-anchor="middle" fill="currentColor">CI runner</text>
+<rect x="25" y="185" width="105" height="45" rx="4" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b" />
+<text x="77" y="213" font-size="13" text-anchor="middle" fill="currentColor">Git</text>
+<rect x="345" y="85" width="130" height="45" rx="4" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<text x="410" y="113" font-size="13" text-anchor="middle" fill="currentColor">API server</text>
+<rect x="345" y="185" width="130" height="45" rx="4" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6" />
+<text x="410" y="213" font-size="13" text-anchor="middle" fill="currentColor">CD agent</text>
+<line x1="345" y1="207" x2="130" y2="207" stroke="currentColor" marker-end="url(#cn16-vis-1-m)"/>
+<text x="195" y="194" font-size="13" text-anchor="middle" fill="currentColor">pull</text>
+<line x1="410" y1="185" x2="410" y2="130" stroke="currentColor" marker-end="url(#cn16-vis-1-m)"/>
+<text x="25" y="161" font-size="13" text-anchor="start" fill="currentColor">CI cập nhật Git</text>
+<text x="290" y="244" font-size="13" text-anchor="start" fill="currentColor">[Key cụm] tại CD agent</text>
+</svg>
+<ab-note>CI ngoài cluster dùng credential cụm và khởi tạo kết nối tới API server; CD agent không tham gia ở chế độ này.</ab-note>
+<ab-note>Agent trong cluster khởi tạo kết nối đọc Git rồi apply nội bộ; credential cụm không cần chuyển cho CI. CI vẫn cần quyền ghi Git theo nhiệm vụ.</ab-note>
+</ab-toggle>
+
 > Phân vai chuẩn: **CI** lo *build + test + push image + cập nhật tag trong Git*. **CD (GitOps agent)** lo *đưa Git vào cluster*. CI không còn cầm chìa khoá cụm.
 
 ### 2.4 Drift detection & self-heal

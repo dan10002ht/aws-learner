@@ -138,43 +138,11 @@ Khi 1 consumer nhan message, message khong bi xoa ma bi "an" trong khoang visibi
 - Neu xu ly **lau hon** visibility timeout → message hien lai → **bi xu ly 2 lan** (lap vo han neu khong fix).
 - Consumer can them thoi gian: goi `ChangeMessageVisibility` de gia han.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Timeline visibility timeout cua SQS</title>
-  <desc>Hai kich ban tren truc thoi gian: kich ban tot la message duoc nhan, an trong cua so timeout, roi DeleteMessage thi message bien mat; kich ban xau la timeout het truoc khi xu ly xong nen message hien lai va bi xu ly lai; ChangeMessageVisibility gia han cua so.</desc>
-  <defs>
-    <marker id="vtArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.55"/></marker>
-  </defs>
-  <text x="16" y="22" font-size="13.5" font-weight="700" fill="currentColor">Visibility timeout — hai ket cuc</text>
-  <text x="700" y="22" font-size="10.5" text-anchor="end" fill="currentColor" opacity="0.6">thoi gian →</text>
-  <!-- Kich ban tot -->
-  <text x="16" y="56" font-size="11.5" font-weight="700" fill="#10b981">Tot: xoa truoc khi het timeout</text>
-  <line x1="16" y1="100" x2="704" y2="100" stroke="currentColor" stroke-opacity="0.3"/>
-  <circle cx="60" cy="100" r="6" fill="#3b82f6" fill-opacity="0.9"/>
-  <text x="60" y="84" font-size="9.5" text-anchor="middle" fill="currentColor">ReceiveMessage</text>
-  <rect x="60" y="92" width="320" height="16" rx="4" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="220" y="104" font-size="9.5" text-anchor="middle" fill="currentColor">message AN (visibility timeout)</text>
-  <circle cx="300" cy="100" r="6" fill="#10b981" fill-opacity="0.95"/>
-  <text x="300" y="128" font-size="9.5" text-anchor="middle" fill="currentColor">DeleteMessage</text>
-  <text x="300" y="142" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.65">→ message bien mat</text>
-  <line x1="380" y1="100" x2="500" y2="100" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="3 3"/>
-  <text x="500" y="96" font-size="9" fill="currentColor" opacity="0.55">(timeout chua het cung khong sao)</text>
-  <!-- Kich ban xau -->
-  <text x="16" y="196" font-size="11.5" font-weight="700" fill="#f59e0b">Xau: timeout het truoc khi xu ly xong</text>
-  <line x1="16" y1="240" x2="704" y2="240" stroke="currentColor" stroke-opacity="0.3"/>
-  <circle cx="60" cy="240" r="6" fill="#3b82f6" fill-opacity="0.9"/>
-  <text x="60" y="224" font-size="9.5" text-anchor="middle" fill="currentColor">ReceiveMessage</text>
-  <rect x="60" y="232" width="240" height="16" rx="4" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="180" y="244" font-size="9.5" text-anchor="middle" fill="currentColor">message AN</text>
-  <circle cx="300" cy="240" r="6" fill="#f59e0b" fill-opacity="0.95"/>
-  <text x="300" y="224" font-size="9.5" text-anchor="middle" fill="currentColor">timeout het</text>
-  <text x="300" y="268" font-size="9.5" text-anchor="middle" fill="currentColor">message HIEN LAI</text>
-  <line x1="300" y1="252" x2="300" y2="240" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#vtArr)"/>
-  <circle cx="480" cy="240" r="6" fill="#3b82f6" fill-opacity="0.9"/>
-  <text x="480" y="224" font-size="9.5" text-anchor="middle" fill="currentColor">consumer khac nhan</text>
-  <text x="480" y="268" font-size="9.5" text-anchor="middle" fill="#f59e0b">→ XU LY LAI (trung)</text>
-  <!-- ChangeMessageVisibility -->
-  <rect x="60" y="288" width="540" height="22" rx="5" fill="#8b5cf6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.22"/>
-  <text x="330" y="303" font-size="10" text-anchor="middle" fill="currentColor">ChangeMessageVisibility = gia han cua so AN khi can them thoi gian xu ly</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 465" role="img" aria-labelledby="dva-sqs-time-t dva-sqs-time-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dva-sqs-time-t">Hai kết cục của SQS visibility timeout</title>
+<desc id="dva-sqs-time-d">Cùng trục thời gian và deadline T. Xoá trước deadline kết thúc message; không xoá thì message hiện lại trong khi consumer A vẫn xử lý.</desc>
+<defs><marker id="dva-sqs-time-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<text x="20" y="24" font-size="15" text-anchor="start" fill="currentColor">Visibility timeout — thời gian từ lúc nhận</text><text x="20" y="62" font-size="14" text-anchor="start" fill="currentColor">Xoá kịp</text><path d="M80 150 H490" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dva-sqs-time-a)"/><text x="80" y="170" font-size="13" text-anchor="middle" fill="currentColor">0</text><text x="350" y="170" font-size="13" text-anchor="middle" fill="currentColor">T</text><path d="M350 70 V153" stroke="currentColor" stroke-dasharray="4 4"/><text x="80" y="192" font-size="13" text-anchor="start" fill="currentColor">ReceiveMessage</text><text x="20" y="212" font-size="14" text-anchor="start" fill="currentColor">Hết timeout</text><path d="M80 300 H490" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dva-sqs-time-a)"/><text x="80" y="320" font-size="13" text-anchor="middle" fill="currentColor">0</text><text x="350" y="320" font-size="13" text-anchor="middle" fill="currentColor">T</text><path d="M350 220 V303" stroke="currentColor" stroke-dasharray="4 4"/><text x="80" y="342" font-size="13" text-anchor="start" fill="currentColor">ReceiveMessage</text><rect x="80" y="85" width="180" height="30" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="170" y="105" font-size="13" text-anchor="middle" fill="currentColor">ẨN</text><path d="M260 80 V125" stroke="#10b981" stroke-width="3"/><text x="260" y="140" font-size="13" text-anchor="middle" fill="currentColor">DeleteMessage</text><text x="366" y="106" font-size="13" text-anchor="start" fill="currentColor">đã xoá</text><rect x="80" y="235" width="270" height="30" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="210" y="255" font-size="13" text-anchor="middle" fill="currentColor">ẨN</text><rect x="350" y="235" width="140" height="30" rx="8" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="420" y="255" font-size="13" text-anchor="middle" fill="currentColor">HIỆN LẠI</text><rect x="80" y="277" width="370" height="14" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/><text x="490" y="288" font-size="13" text-anchor="end" fill="currentColor">A còn xử lý</text><text x="20" y="390" font-size="13" text-anchor="start" fill="currentColor">Sau T: consumer B có thể nhận → xử lý trùng.</text><text x="20" y="416" font-size="13" text-anchor="start" fill="currentColor">ChangeMessageVisibility kéo dài cửa sổ ẨN.</text><text x="20" y="442" font-size="13" text-anchor="start" fill="currentColor">Xoá trước T: message biến mất, không cần chờ hết T.</text>
 </svg>
 
 ```python

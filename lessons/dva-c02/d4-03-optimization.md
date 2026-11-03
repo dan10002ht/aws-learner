@@ -170,55 +170,22 @@ def save_user(user_id, data):
     cache.set(user_id, data)          # cap nhat cache ngay
 ```
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 350" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Lazy Loading vs Write-Through — hai luong cache</title>
-  <desc>Lazy loading: doc, neu cache miss thi query DB roi populate cache kem TTL. Write-through: ghi xuong DB va cap nhat cache cung luc. TTL dong vai luoi an toan chong stale data o ca hai.</desc>
-  <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Lazy Loading (cache-aside) — luong ĐỌC</text>
-  <g>
-    <rect x="16" y="36" width="92" height="40" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="62" y="60" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">App đọc</text>
-    <rect x="168" y="36" width="100" height="40" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="218" y="55" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Cache</text>
-    <text x="218" y="69" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">miss?</text>
-    <rect x="328" y="36" width="100" height="40" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="378" y="60" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Query DB</text>
-    <rect x="488" y="36" width="216" height="40" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="596" y="55" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Populate cache</text>
-    <text x="596" y="69" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.75">cache.set(..., ttl=300)</text>
-  </g>
-  <g stroke="currentColor" stroke-opacity="0.5" fill="none" marker-end="url(#cacheArr)">
-    <line x1="108" y1="56" x2="166" y2="56"/>
-    <line x1="268" y1="56" x2="326" y2="56"/>
-    <line x1="428" y1="56" x2="486" y2="56"/>
-  </g>
-  <text x="138" y="50" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">miss</text>
-  <path d="M218 76 v22 h-156 v-22" stroke="#10b981" stroke-opacity="0.6" fill="none" marker-end="url(#cacheArrG)"/>
-  <text x="140" y="112" font-size="9.5" fill="#10b981" opacity="0.95">hit → tra ngay (lan sau)</text>
-  <line x1="16" y1="132" x2="704" y2="132" stroke="currentColor" stroke-opacity="0.15"/>
-  <text x="16" y="160" font-size="13.5" font-weight="700" fill="currentColor">Write-Through — luong GHI</text>
-  <g>
-    <rect x="16" y="172" width="92" height="40" rx="8" fill="#3b82f6" fill-opacity="0.13" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="62" y="196" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">App ghi</text>
-    <rect x="260" y="148" width="180" height="40" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="350" y="172" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">DB write</text>
-    <rect x="260" y="196" width="180" height="40" rx="8" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-    <text x="350" y="216" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Cache update</text>
-    <text x="350" y="230" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.7">cung luc</text>
-  </g>
-  <g stroke="currentColor" stroke-opacity="0.5" fill="none" marker-end="url(#cacheArr)">
-    <path d="M108 192 h60 v-24 h90"/>
-    <path d="M108 192 h60 v24 h90"/>
-  </g>
-  <text x="460" y="170" font-size="10.5" fill="currentColor" opacity="0.85">→ data vua ghi luon co trong cache</text>
-  <text x="460" y="218" font-size="10.5" fill="currentColor" opacity="0.85">→ cache to hon (ghi ca data chua doc)</text>
-  <rect x="16" y="262" width="688" height="42" rx="9" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="5 3"/>
-  <text x="32" y="280" font-size="11.5" font-weight="700" fill="currentColor">TTL = luoi an toan</text>
-  <text x="32" y="296" font-size="10.5" fill="currentColor" opacity="0.78">Du dung chien luoc nao, TTL het han buoc cache nap lai → chong stale data.</text>
-  <defs>
-    <marker id="cacheArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
-    <marker id="cacheArrG" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="#10b981" fill-opacity="0.7"/></marker>
-  </defs>
+<ab-toggle data-labels="Lazy loading|Write-through">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 435" role="img" aria-labelledby="dva-cache-0-t dva-cache-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dva-cache-0-t">Lazy loading</title>
+<desc id="dva-cache-0-d">Cùng ba node App, Cache và DB. Các cạnh thể hiện thứ tự đọc khi cache miss.</desc>
+<defs><marker id="dva-cache-0-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<rect x="25" y="45" width="120" height="58" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="85.0" y="80" font-size="15" text-anchor="middle" fill="currentColor">App</text><rect x="345" y="45" width="150" height="58" rx="8" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="420.0" y="80" font-size="15" text-anchor="middle" fill="currentColor">Cache</text><rect x="345" y="275" width="150" height="58" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/><text x="420.0" y="310" font-size="15" text-anchor="middle" fill="currentColor">DB</text><path d="M145 62 H343" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dva-cache-0-a)"/><text x="245" y="49" font-size="13" text-anchor="middle" fill="currentColor">1. đọc</text><path d="M345 89 H147" fill="none" stroke="#10b981" stroke-width="1.5" marker-end="url(#dva-cache-0-a)"/><text x="245" y="113" font-size="13" text-anchor="middle" fill="currentColor">hit: trả ngay</text><path d="M85 103 V304 H343" fill="none" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#dva-cache-0-a)"/><text x="100" y="210" font-size="13" text-anchor="start" fill="currentColor">2. miss: query DB</text><path d="M345 323 H55 V120" fill="none" stroke="#8b5cf6" stroke-width="1.5" marker-end="url(#dva-cache-0-a)"/><path d="M145 81 H265 V150 H420 V105" fill="none" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#dva-cache-0-a)"/><text x="275" y="173" font-size="13" text-anchor="middle" fill="currentColor">3. populate + TTL</text><text x="25" y="375" font-size="13" text-anchor="start" fill="currentColor">Lần sau cache hit → bỏ qua đường xuống DB.</text><text x="25" y="409" font-size="13" text-anchor="start" fill="currentColor">TTL = 300s trong ví dụ; hết hạn → nạp lại.</text>
 </svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 435" role="img" aria-labelledby="dva-cache-1-t dva-cache-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dva-cache-1-t">Write-through</title>
+<desc id="dva-cache-1-d">Cùng ba node; luồng ghi tới DB và cập nhật cache.</desc>
+<defs><marker id="dva-cache-1-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<rect x="25" y="45" width="120" height="58" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="85.0" y="80" font-size="15" text-anchor="middle" fill="currentColor">App</text><rect x="345" y="45" width="150" height="58" rx="8" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="420.0" y="80" font-size="15" text-anchor="middle" fill="currentColor">Cache</text><rect x="345" y="275" width="150" height="58" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/><text x="420.0" y="310" font-size="15" text-anchor="middle" fill="currentColor">DB</text><path d="M85 103 V304 H343" fill="none" stroke="#8b5cf6" stroke-width="1.5" marker-end="url(#dva-cache-1-a)"/><text x="100" y="245" font-size="13" text-anchor="start" fill="currentColor">1. ghi DB</text><path d="M145 74 H343" fill="none" stroke="#10b981" stroke-width="1.5" marker-end="url(#dva-cache-1-a)"/><text x="245" y="61" font-size="13" text-anchor="middle" fill="currentColor">2. cập nhật cache</text><text x="160" y="175" font-size="13" text-anchor="start" fill="currentColor">Ghi DB và cache cùng luồng.</text><text x="160" y="201" font-size="13" text-anchor="start" fill="currentColor">Cache cả dữ liệu chưa đọc.</text><text x="25" y="375" font-size="13" text-anchor="start" fill="currentColor">Đọc sau ghi có dữ liệu sẵn trong cache.</text><text x="25" y="409" font-size="13" text-anchor="start" fill="currentColor">TTL = 300s trong ví dụ; hết hạn → nạp lại.</text>
+</svg>
+<ab-note>Cache-aside chỉ nạp khi đọc miss; cache hit tránh truy cập DB. Ví dụ dùng <code>cache.set(..., ttl=300)</code>.</ab-note>
+<ab-note>Luồng ghi cập nhật DB và cache, tăng số lần ghi cache và có thể giữ cả dữ liệu chưa được đọc. TTL giới hạn thời gian giữ dữ liệu cũ khi có thay đổi ngoài luồng.</ab-note>
+</ab-toggle>
 
 > **Meo thi:** Thuc te thuong **ket hop ca hai** + **TTL**. TTL la "luoi an toan" chong stale data du dung chien luoc nao. Cau hoi "cache co data cu" hau nhu luon co dap an dinh den **them/giam TTL**.
 

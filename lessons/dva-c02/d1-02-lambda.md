@@ -58,50 +58,11 @@ Sau một invocation, Lambda "đóng băng" (freeze) execution context và có t
 - **Không** dựa vào việc context luôn được tái dùng — có thể bị tạo mới bất cứ lúc nào. Đừng lưu trạng thái business quan trọng ở đây.
 - Background thread/process bị freeze khi invocation kết thúc, "rã đông" ở lần sau (đừng dựa vào nó chạy nền).
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 360" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Vòng đời execution context của Lambda — cold start, warm, freeze và thaw</title>
-  <desc>Sơ đồ trạng thái: cold start khởi tạo runtime và chạy code ngoài handler, sang trạng thái warm tái dùng context (biến global, /tmp, connection vẫn còn); sau invocation context bị freeze rồi thaw lại cho lần gọi sau; hoặc context cũ bị huỷ và một environment mới được tạo (cold start lại).</desc>
-  <defs>
-    <marker id="lcArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
-  </defs>
-  <text x="16" y="24" font-size="13.5" font-weight="700" fill="currentColor">Vòng đời execution context</text>
-  <g>
-    <rect x="16" y="44" width="220" height="78" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="30" y="66" font-size="12.5" font-weight="700" fill="currentColor">COLD START</text>
-    <text x="30" y="86" font-size="10.5" fill="currentColor" opacity="0.75">Init runtime + tải code</text>
-    <text x="30" y="102" font-size="10.5" fill="currentColor" opacity="0.75">Chạy code NGOÀI handler</text>
-    <text x="30" y="116" font-size="10.5" fill="currentColor" opacity="0.6">(tạo conn, SDK client...)</text>
-  </g>
-  <g>
-    <rect x="336" y="44" width="240" height="78" rx="10" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="350" y="66" font-size="12.5" font-weight="700" fill="currentColor">WARM — chạy handler</text>
-    <text x="350" y="86" font-size="10.5" fill="currentColor" opacity="0.75">Tái dùng context:</text>
-    <text x="350" y="102" font-size="10.5" fill="currentColor" opacity="0.75">biến global · /tmp · connection</text>
-    <text x="350" y="116" font-size="10.5" fill="currentColor" opacity="0.6">vẫn còn → latency thấp</text>
-  </g>
-  <line x1="236" y1="83" x2="330" y2="83" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#lcArr)"/>
-  <text x="248" y="78" font-size="10" fill="currentColor" opacity="0.7">gọi handler</text>
-  <g>
-    <rect x="336" y="166" width="240" height="66" rx="10" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.22"/>
-    <text x="350" y="188" font-size="12.5" font-weight="700" fill="currentColor">FREEZE</text>
-    <text x="350" y="208" font-size="10.5" fill="currentColor" opacity="0.75">Sau invocation: đóng băng</text>
-    <text x="350" y="223" font-size="10.5" fill="currentColor" opacity="0.6">background thread tạm dừng</text>
-  </g>
-  <line x1="456" y1="122" x2="456" y2="160" stroke="currentColor" stroke-opacity="0.55" marker-end="url(#lcArr)"/>
-  <text x="466" y="146" font-size="10" fill="currentColor" opacity="0.7">xong</text>
-  <path d="M336 199 H300 V95 H332" fill="none" stroke="#10b981" stroke-opacity="0.7" stroke-width="1.4" marker-end="url(#lcArr)"/>
-  <text x="262" y="150" font-size="10" fill="#10b981" opacity="0.95" font-weight="700">THAW — gọi lại</text>
-  <text x="262" y="164" font-size="9.5" fill="currentColor" opacity="0.65">(cùng env, về WARM)</text>
-  <g>
-    <rect x="16" y="248" width="560" height="80" rx="10" fill="currentColor" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.25" stroke-dasharray="5 4"/>
-    <text x="30" y="272" font-size="12.5" font-weight="700" fill="currentColor">ENVIRONMENT MỚI được tạo</text>
-    <text x="30" y="292" font-size="10.5" fill="currentColor" opacity="0.75">Khi scale-up, context cũ hết hạn, hoặc bị huỷ bất cứ lúc nào</text>
-    <text x="30" y="310" font-size="10.5" fill="currentColor" opacity="0.6">→ context cũ KHÔNG còn → cold start lại từ đầu (đừng dựa vào việc luôn tái dùng)</text>
-  </g>
-  <path d="M456 232 V240 H300 V244" fill="none" stroke="currentColor" stroke-opacity="0.4" stroke-dasharray="4 3" marker-end="url(#lcArr)"/>
-  <path d="M120 248 V140 V122" fill="none" stroke="currentColor" stroke-opacity="0.4" stroke-dasharray="4 3" marker-end="url(#lcArr)"/>
-  <text x="126" y="200" font-size="9.5" fill="#f59e0b" opacity="0.95" font-weight="700">tạo mới →</text>
-  <text x="126" y="214" font-size="9.5" fill="#f59e0b" opacity="0.95" font-weight="700">cold start</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 426" role="img" aria-labelledby="dva-lambda-life-t dva-lambda-life-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dva-lambda-life-t">Vòng đời Lambda với vòng tái dùng context</title>
+<desc id="dva-lambda-life-d">Vòng Invoke, Freeze, Thaw tái dùng một environment. Nhánh nét đứt tạo environment mới và chạy init lại.</desc>
+<defs><marker id="dva-lambda-life-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="currentColor"/></marker></defs>
+<text x="20" y="24" font-size="15" text-anchor="start" fill="currentColor">Execution environment: tái dùng hoặc tạo mới</text><rect x="20" y="48" width="210" height="104" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="35" y="72" font-size="15" text-anchor="start" fill="currentColor">COLD / INIT</text><text x="35" y="96" font-size="13" text-anchor="start" fill="currentColor">Runtime + tải code</text><text x="35" y="118" font-size="13" text-anchor="start" fill="currentColor">Code ngoài handler</text><text x="35" y="140" font-size="13" text-anchor="start" fill="currentColor">Tạo SDK client / connection</text><rect x="300" y="48" width="200" height="104" rx="8" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="315" y="72" font-size="15" text-anchor="start" fill="currentColor">INVOKE</text><text x="315" y="96" font-size="13" text-anchor="start" fill="currentColor">Handler chạy mỗi lần gọi</text><text x="315" y="118" font-size="13" text-anchor="start" fill="currentColor">Warm: giữ global, /tmp,</text><text x="315" y="140" font-size="13" text-anchor="start" fill="currentColor">connection → latency thấp</text><path d="M230 83 H298" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dva-lambda-life-a)"/><text x="240" y="72" font-size="13" text-anchor="start" fill="currentColor">gọi</text><rect x="300" y="212" width="200" height="84" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="315" y="236" font-size="15" text-anchor="start" fill="currentColor">FREEZE</text><text x="315" y="260" font-size="13" text-anchor="start" fill="currentColor">Sau invocation: đóng băng</text><text x="315" y="282" font-size="13" text-anchor="start" fill="currentColor">Background thread dừng</text><path d="M400 152 V210" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dva-lambda-life-a)"/><text x="410" y="185" font-size="13" text-anchor="start" fill="currentColor">xong</text><path d="M300 253 H264 V128 H298" fill="none" stroke="#10b981" stroke-width="1.5" marker-end="url(#dva-lambda-life-a)"/><text x="170" y="197" font-size="13" text-anchor="start" fill="currentColor">THAW: gọi lại</text><rect x="20" y="340" width="480" height="66" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6" stroke-dasharray="5 4"/><text x="35" y="364" font-size="13" text-anchor="start" fill="currentColor">ENV MỚI: scale-up / hết hạn / context cũ bị huỷ</text><text x="35" y="388" font-size="13" text-anchor="start" fill="currentColor">Global và /tmp cũ không còn; không đảm bảo tái dùng.</text><path d="M400 296 V338" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dva-lambda-life-a)" stroke-dasharray="4 4"/><path d="M100 340 V154" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dva-lambda-life-a)" stroke-dasharray="4 4"/><text x="112" y="280" font-size="13" text-anchor="start" fill="currentColor">cold start lại</text>
 </svg>
 
 > Bẫy: `/tmp` là **ephemeral và cục bộ theo từng execution environment**, KHÔNG chia sẻ giữa các concurrent instance. Cần state chia sẻ → dùng S3, EFS, DynamoDB, ElastiCache. Cần dung lượng > 512MB → tăng `ephemeral-storage`, KHÔNG phải tăng memory.

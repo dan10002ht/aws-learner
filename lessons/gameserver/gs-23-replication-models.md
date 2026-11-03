@@ -77,35 +77,89 @@ Ba câu trả lời, ba mô hình:
 | **Delta** | phần đổi so với một mốc | trong mốc kế tiếp | tới **mốc mới** |
 | **Event** | chuyện vừa xảy ra | **không ở đâu cả** | **vĩnh viễn** |
 
-<svg viewBox="0 0 700 260" role="img" aria-labelledby="gs23-a-t gs23-a-d" style="width:100%;height:auto">
-<title id="gs23-a-t">Ba mô hình phục hồi khác nhau khi mất tick số 3</title>
-<desc id="gs23-a-d">Ba dòng thời gian song song, mỗi dòng sáu tick. Tick ba bị mất ở cả ba. Dòng snapshot trở lại đúng ngay tick bốn. Dòng delta sai từ tick bốn tới khi gặp mốc keyframe ở tick sáu. Dòng event sai từ tick bốn trở đi và không bao giờ tự khỏi.</desc>
-<text x="12" y="24" font-size="11" font-weight="bold" fill="currentColor">mất tick 3 — client sai trong bao lâu</text>
-<text x="12" y="62" font-size="11" font-weight="bold" fill="currentColor">SNAPSHOT</text>
-<text x="12" y="132" font-size="11" font-weight="bold" fill="currentColor">DELTA</text>
-<text x="12" y="202" font-size="11" font-weight="bold" fill="currentColor">EVENT</text>
-<rect x="120" y="44" width="86" height="26" rx="5" fill="#84cc16" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.3"/>
-<text x="163" y="61" text-anchor="middle" font-size="10" fill="currentColor">tick 2 ok</text>
-<rect x="212" y="44" width="86" height="26" rx="5" fill="#ef4444" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.3"/>
-<text x="255" y="61" text-anchor="middle" font-size="10" fill="currentColor">tick 3 MẤT</text>
-<rect x="304" y="44" width="366" height="26" rx="5" fill="#84cc16" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.3"/>
-<text x="487" y="61" text-anchor="middle" font-size="10" fill="currentColor">tick 4 đã đúng lại — mỗi gói chứa toàn bộ state</text>
-<rect x="120" y="114" width="86" height="26" rx="5" fill="#84cc16" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.3"/>
-<text x="163" y="131" text-anchor="middle" font-size="10" fill="currentColor">tick 2 ok</text>
-<rect x="212" y="114" width="86" height="26" rx="5" fill="#ef4444" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.3"/>
-<text x="255" y="131" text-anchor="middle" font-size="10" fill="currentColor">tick 3 MẤT</text>
-<rect x="304" y="114" width="182" height="26" rx="5" fill="#f59e0b" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.3"/>
-<text x="395" y="131" text-anchor="middle" font-size="10" fill="currentColor">tick 4–5 LỆCH</text>
-<rect x="492" y="114" width="178" height="26" rx="5" fill="#84cc16" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.3"/>
-<text x="581" y="131" text-anchor="middle" font-size="10" fill="currentColor">mốc mới → đúng lại</text>
-<rect x="120" y="184" width="86" height="26" rx="5" fill="#84cc16" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.3"/>
-<text x="163" y="201" text-anchor="middle" font-size="10" fill="currentColor">tick 2 ok</text>
-<rect x="212" y="184" width="86" height="26" rx="5" fill="#ef4444" fill-opacity="0.28" stroke="currentColor" stroke-opacity="0.3"/>
-<text x="255" y="201" text-anchor="middle" font-size="10" fill="currentColor">tick 3 MẤT</text>
-<rect x="304" y="184" width="366" height="26" rx="5" fill="#ef4444" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.3"/>
-<text x="487" y="201" text-anchor="middle" font-size="10" fill="currentColor">sai tới hết trận — không gói nào nhắc lại sự kiện đó</text>
-<text x="12" y="240" font-size="10" fill="currentColor">Cột phục hồi này quyết định mức đảm bảo, không phải kích thước gói.</text>
+<ab-toggle data-labels="Snapshot|Delta|Event">
+<svg viewBox="0 0 520 255" role="img" aria-labelledby="gs23-vis-0-t gs23-vis-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="gs23-vis-0-t">Snapshot khi mất tick 3</title>
+<desc id="gs23-vis-0-d">Cùng trục tick; chiều dài dải hồng cho biết khoảng thiếu thông tin.</desc>
+<text x="25" y="26" font-size="13" text-anchor="start" fill="currentColor">Mất tick 3 · mỗi tick = 50 ms</text>
+<line x1="55" y1="94" x2="490" y2="94" stroke="currentColor" />
+<line x1="55" y1="88" x2="55" y2="100" stroke="currentColor" />
+<text x="55" y="121" font-size="13" text-anchor="middle" fill="currentColor">2</text>
+<line x1="137" y1="88" x2="137" y2="100" stroke="currentColor" />
+<text x="137" y="121" font-size="13" text-anchor="middle" fill="currentColor">3</text>
+<line x1="219" y1="88" x2="219" y2="100" stroke="currentColor" />
+<text x="219" y="121" font-size="13" text-anchor="middle" fill="currentColor">4</text>
+<line x1="301" y1="88" x2="301" y2="100" stroke="currentColor" />
+<text x="301" y="121" font-size="13" text-anchor="middle" fill="currentColor">5</text>
+<line x1="383" y1="88" x2="383" y2="100" stroke="currentColor" />
+<text x="383" y="121" font-size="13" text-anchor="middle" fill="currentColor">6</text>
+<line x1="465" y1="88" x2="465" y2="100" stroke="currentColor" />
+<text x="465" y="121" font-size="13" text-anchor="middle" fill="currentColor">7</text>
+<rect x="55" y="60" width="82" height="25" rx="4" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<rect x="137" y="60" width="82" height="25" rx="4" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e" />
+<text x="25" y="152" font-size="13" text-anchor="start" fill="currentColor">Hồng: client thiếu thông tin</text>
+<text x="25" y="177" font-size="13" text-anchor="start" fill="currentColor">Đúng lại ở tick 4</text>
+<text x="25" y="202" font-size="13" text-anchor="start" fill="currentColor">Gói sau chứa toàn bộ state</text>
+<rect x="219" y="60" width="271" height="25" rx="4" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<text x="25" y="236" font-size="13" text-anchor="start" fill="currentColor">X: gói tick 3 bị mất</text>
+<text x="137" y="52" font-size="13" text-anchor="middle" fill="currentColor">X</text>
 </svg>
+<svg viewBox="0 0 520 255" role="img" aria-labelledby="gs23-vis-1-t gs23-vis-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="gs23-vis-1-t">Delta khi mất tick 3</title>
+<desc id="gs23-vis-1-d">Cùng trục tick; chiều dài dải hồng cho biết khoảng thiếu thông tin.</desc>
+<text x="25" y="26" font-size="13" text-anchor="start" fill="currentColor">Mất tick 3 · mỗi tick = 50 ms</text>
+<line x1="55" y1="94" x2="490" y2="94" stroke="currentColor" />
+<line x1="55" y1="88" x2="55" y2="100" stroke="currentColor" />
+<text x="55" y="121" font-size="13" text-anchor="middle" fill="currentColor">2</text>
+<line x1="137" y1="88" x2="137" y2="100" stroke="currentColor" />
+<text x="137" y="121" font-size="13" text-anchor="middle" fill="currentColor">3</text>
+<line x1="219" y1="88" x2="219" y2="100" stroke="currentColor" />
+<text x="219" y="121" font-size="13" text-anchor="middle" fill="currentColor">4</text>
+<line x1="301" y1="88" x2="301" y2="100" stroke="currentColor" />
+<text x="301" y="121" font-size="13" text-anchor="middle" fill="currentColor">5</text>
+<line x1="383" y1="88" x2="383" y2="100" stroke="currentColor" />
+<text x="383" y="121" font-size="13" text-anchor="middle" fill="currentColor">6</text>
+<line x1="465" y1="88" x2="465" y2="100" stroke="currentColor" />
+<text x="465" y="121" font-size="13" text-anchor="middle" fill="currentColor">7</text>
+<rect x="55" y="60" width="82" height="25" rx="4" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<rect x="137" y="60" width="246" height="25" rx="4" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e" />
+<text x="25" y="152" font-size="13" text-anchor="start" fill="currentColor">Hồng: client thiếu thông tin</text>
+<text x="25" y="177" font-size="13" text-anchor="start" fill="currentColor">Đúng lại ở keyframe tick 6</text>
+<text x="25" y="202" font-size="13" text-anchor="start" fill="currentColor">Mô hình delta nối tiếp / chờ mốc mới</text>
+<rect x="383" y="60" width="107" height="25" rx="4" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<text x="25" y="236" font-size="13" text-anchor="start" fill="currentColor">X: gói tick 3 bị mất</text>
+<text x="137" y="52" font-size="13" text-anchor="middle" fill="currentColor">X</text>
+</svg>
+<svg viewBox="0 0 520 255" role="img" aria-labelledby="gs23-vis-2-t gs23-vis-2-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="gs23-vis-2-t">Event khi mất tick 3</title>
+<desc id="gs23-vis-2-d">Cùng trục tick; chiều dài dải hồng cho biết khoảng thiếu thông tin.</desc>
+<text x="25" y="26" font-size="13" text-anchor="start" fill="currentColor">Mất tick 3 · mỗi tick = 50 ms</text>
+<line x1="55" y1="94" x2="490" y2="94" stroke="currentColor" />
+<line x1="55" y1="88" x2="55" y2="100" stroke="currentColor" />
+<text x="55" y="121" font-size="13" text-anchor="middle" fill="currentColor">2</text>
+<line x1="137" y1="88" x2="137" y2="100" stroke="currentColor" />
+<text x="137" y="121" font-size="13" text-anchor="middle" fill="currentColor">3</text>
+<line x1="219" y1="88" x2="219" y2="100" stroke="currentColor" />
+<text x="219" y="121" font-size="13" text-anchor="middle" fill="currentColor">4</text>
+<line x1="301" y1="88" x2="301" y2="100" stroke="currentColor" />
+<text x="301" y="121" font-size="13" text-anchor="middle" fill="currentColor">5</text>
+<line x1="383" y1="88" x2="383" y2="100" stroke="currentColor" />
+<text x="383" y="121" font-size="13" text-anchor="middle" fill="currentColor">6</text>
+<line x1="465" y1="88" x2="465" y2="100" stroke="currentColor" />
+<text x="465" y="121" font-size="13" text-anchor="middle" fill="currentColor">7</text>
+<rect x="55" y="60" width="82" height="25" rx="4" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<rect x="137" y="60" width="353" height="25" rx="4" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e" />
+<text x="25" y="152" font-size="13" text-anchor="start" fill="currentColor">Hồng: client thiếu thông tin</text>
+<text x="25" y="177" font-size="13" text-anchor="start" fill="currentColor">Không tự phục hồi</text>
+<text x="25" y="202" font-size="13" text-anchor="start" fill="currentColor">Event mất và không được gửi lại</text>
+<text x="484" y="80" font-size="13" text-anchor="end" fill="currentColor">→</text>
+<text x="25" y="236" font-size="13" text-anchor="start" fill="currentColor">X: gói tick 3 bị mất</text>
+<text x="137" y="52" font-size="13" text-anchor="middle" fill="currentColor">X</text>
+</svg>
+<ab-note>Tick 4 thay thế toàn bộ state, nên gói mất chỉ gây lệch một tick.</ab-note>
+<ab-note>Đây là trường hợp delta phụ thuộc phần đã mất; mốc mới ở tick 6 chữa được sai lệch. Delta theo baseline đã ack ở bài 25 có tính chất khác.</ab-note>
+<ab-note>Nếu không giao lại event đã mất, các event sau không tái tạo được thông tin đó.</ab-note>
+</ab-toggle>
 
 Ba dòng đó không phải ba lựa chọn kỹ thuật ngang hàng. Chúng là **ba tính chất phục hồi khác nhau**, và tính chất phục hồi là thứ bạn không mua lại được bằng băng thông. Phần còn lại của bài đi theo đúng thứ tự đó: mô hình tự chữa trước, mô hình nợ mốc sau, mô hình không có đường về cuối cùng.
 

@@ -81,23 +81,30 @@ Kubernetes (viết tắt **K8s** — "K" + 8 chữ + "s") là orchestrator phổ
 
 Bạn mô tả **desired state** (trạng thái mong muốn) trong file YAML — ví dụ "Deployment `web` gồm 3 replica image `web:v2`". Kubernetes liên tục chạy vòng lặp **reconciliation**: so sánh *thực tế* với *mong muốn*, và tự hành động để kéo thực tế về đúng mong muốn.
 
-<svg viewBox="0 0 620 180" role="img" aria-labelledby="rc-t rc-d" style="width:100%;max-width:560px;height:auto;display:block;margin:1.25rem auto">
-<title id="rc-t">Vòng lặp reconciliation của Kubernetes</title>
-<desc id="rc-d">Kubernetes liên tục so sánh desired state với actual state và hành động để hai bên khớp nhau</desc>
-<rect x="40" y="60" width="150" height="52" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="115" y="82" text-anchor="middle" font-size="12" fill="currentColor">Desired state</text>
-<text x="115" y="100" text-anchor="middle" font-size="11" fill="currentColor">"muốn 3 bản"</text>
-<rect x="430" y="60" width="150" height="52" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="505" y="82" text-anchor="middle" font-size="12" fill="currentColor">Actual state</text>
-<text x="505" y="100" text-anchor="middle" font-size="11" fill="currentColor">"đang có 2 bản"</text>
-<rect x="235" y="55" width="150" height="62" rx="8" fill="#326ce5" fill-opacity="0.16" stroke="currentColor"/>
-<text x="310" y="80" text-anchor="middle" font-size="12" fill="currentColor">Controller</text>
-<text x="310" y="98" text-anchor="middle" font-size="10" fill="currentColor">so sánh + hành động</text>
-<line x1="190" y1="86" x2="233" y2="86" stroke="currentColor" stroke-width="1.3" marker-end="url(#ar)"/>
-<line x1="430" y1="86" x2="387" y2="86" stroke="currentColor" stroke-width="1.3" marker-end="url(#ar)"/>
-<text x="310" y="145" text-anchor="middle" font-size="11" fill="currentColor">Lệch → tạo thêm 1 bản → khớp. Lặp lại mãi mãi.</text>
-<defs><marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<auto-anim data-dur="8">
+<svg viewBox="0 0 520 270" role="img" aria-labelledby="cn01-vis-loop-t cn01-vis-loop-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="cn01-vis-loop-t">Reconciliation liên tục</title>
+<desc id="cn01-vis-loop-d">Hai Pod luôn còn; Pod thứ ba xuất hiện rồi mất. Desired cố định là ba, controller luôn đối chiếu actual.</desc>
+<text x="25" y="25" font-size="13" text-anchor="start" fill="currentColor">Desired: 3 Pod</text>
+<text x="300" y="25" font-size="13" text-anchor="start" fill="currentColor">Actual</text>
+<rect x="25" y="60" width="140" height="48" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="95" y="89" font-size="13" text-anchor="middle" fill="currentColor">Controller</text>
+<line x1="165" y1="84" x2="290" y2="84" stroke="currentColor" stroke-width="2"/>
+<text x="185" y="73" font-size="13" text-anchor="start" fill="currentColor">tạo Pod</text>
+<rect x="300" y="57" width="55" height="55" rx="4" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<rect x="370" y="57" width="55" height="55" rx="4" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<text x="327" y="89" font-size="13" text-anchor="middle" fill="currentColor">Pod</text>
+<text x="397" y="89" font-size="13" text-anchor="middle" fill="currentColor">Pod</text>
+<g opacity="0"><rect x="440" y="57" width="55" height="55" rx="4" fill="#10b981" fill-opacity="0.14" stroke="#10b981" /><text x="467" y="89" font-size="13" text-anchor="middle" fill="currentColor">Pod</text><animate attributeName="opacity" dur="8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;0.35;0.7;1" values="0;1;0;0"/></g>
+<text x="25" y="153" font-size="13" text-anchor="start" fill="currentColor">Actual 2 → tạo 1 → đủ 3 → mất 1 → lặp lại</text>
+<line x1="35" y1="197" x2="485" y2="197" stroke="currentColor" />
+<text x="35" y="221" font-size="13" text-anchor="start" fill="currentColor">0 s</text>
+<text x="260" y="221" font-size="13" text-anchor="middle" fill="currentColor">4 s</text>
+<text x="485" y="221" font-size="13" text-anchor="end" fill="currentColor">8 s</text>
+<circle cx="35" cy="197" r="6" fill="#3b82f6"><animate attributeName="cx" dur="8s" repeatCount="indefinite" keyTimes="0;1" values="35;485"/></circle>
+<text x="25" y="251" font-size="13" text-anchor="start" fill="currentColor">Thời gian minh hoạ; không phải chu kỳ controller</text>
 </svg>
+</auto-anim>
 
 Chính vòng lặp này tạo ra **self-healing**: một Pod chết → actual còn 2, desired là 3 → controller tạo Pod mới. Bạn không viết logic "nếu chết thì khởi động lại" — bạn chỉ khai báo "muốn 3", K8s lo phần còn lại.
 

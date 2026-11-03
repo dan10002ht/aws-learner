@@ -58,6 +58,13 @@ Chọn một đáp án trước khi đọc tiếp.
 
 ### 3.1 Subagent là gì, và nó biết gì lúc bắt đầu
 
+<svg viewBox="0 0 520 405" role="img" aria-labelledby="ag14med-t ag14med-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="ag14med-t">Hai context tách biệt, brief đi sang và tóm tắt đi về</title>
+<desc id="ag14med-d">Hai context tách biệt, brief đi sang và tóm tắt đi về</desc>
+<defs><marker id="ag14med-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L7 4L0 8Z" fill="currentColor"/></marker></defs>
+<rect x="15" y="30" width="205" height="280" rx="12" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><rect x="300" y="30" width="205" height="280" rx="12" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/><text x="118" y="60" font-size="14" text-anchor="middle" fill="currentColor">Context phiên chính</text><text x="402" y="60" font-size="14" text-anchor="middle" fill="currentColor">Context subagent</text><rect x="35" y="90" width="165" height="45" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="117.5" y="117.5" font-size="14" text-anchor="middle" fill="currentColor">Lịch sử / thử sai</text><rect x="35" y="155" width="165" height="45" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="117.5" y="182.5" font-size="14" text-anchor="middle" fill="currentColor">File đã đọc</text><rect x="320" y="90" width="165" height="45" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/><text x="402.5" y="117.5" font-size="14" text-anchor="middle" fill="currentColor">Prompt / brief</text><rect x="320" y="155" width="165" height="45" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/><text x="402.5" y="182.5" font-size="14" text-anchor="middle" fill="currentColor">Tool / log riêng</text><path d="M220 110H300" fill="none" stroke="currentColor" marker-end="url(#ag14med-a)"/><text x="260" y="97" font-size="13" text-anchor="middle" fill="currentColor">brief</text><path d="M300 255H220" fill="none" stroke="currentColor" marker-end="url(#ag14med-a)"/><text x="260" y="242" font-size="13" text-anchor="middle" fill="currentColor">tóm tắt</text><text x="260" y="350" font-size="13" text-anchor="middle" fill="currentColor">Lịch sử và log không tự đi qua ranh giới</text><text x="260" y="380" font-size="13" text-anchor="middle" fill="currentColor">Fork là ngoại lệ: kế thừa cả hội thoại</text>
+</svg>
+
 **Subagent** là một agent con được phiên chính sinh ra để làm một việc, chạy trong **context window riêng** (context window: lượng token model nhìn thấy được trong một lần gọi — xem [[ag-04-context-va-file-huong-dan]]), rồi trả về một bản tóm tắt.
 
 Theo docs Claude Code ([sub-agents](https://code.claude.com/docs/en/sub-agents)):

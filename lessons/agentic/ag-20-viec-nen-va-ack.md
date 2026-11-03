@@ -205,6 +205,45 @@ print(interval_s)         # độ trễ phát hiện xấu nhất = 5 s
 
 So với việc bắt main agent "nhìn màn hình pane" mỗi lần kiểm: mỗi lần đó là một tool call đưa cả màn hình vào context. Chi phí token cụ thể **chưa đo**; cách đo là chạy cùng một vòng chờ hai kiểu và so `total_cost_usd` trong output `--output-format json` của hai run. Nguyên tắc rút ra không cần số: để **script** chờ, để agent chỉ đọc kết cục.
 
+<step-flow>
+<svg viewBox="0 0 520 415" role="img" aria-labelledby="ag20v-t ag20v-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="ag20v-t">Nonce nối brief với report của đúng vòng</title>
+<desc id="ag20v-d">Ba lifeline cố định. Brief đi tới worker, worker ghi report, coordinator đọc lại và so nonce.</desc>
+<rect x="10" y="15" width="120" height="40" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="70" y="41" text-anchor="middle" font-size="14" fill="currentColor">Coordinator</text>
+<path d="M70 55 L70 330" fill="none" stroke="currentColor" stroke-dasharray="4 4" stroke-opacity="0.4"/>
+<rect x="200" y="15" width="120" height="40" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="260" y="41" text-anchor="middle" font-size="14" fill="currentColor">Worker</text>
+<path d="M260 55 L260 330" fill="none" stroke="currentColor" stroke-dasharray="4 4" stroke-opacity="0.4"/>
+<rect x="390" y="15" width="120" height="40" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="450" y="41" text-anchor="middle" font-size="14" fill="currentColor">Report</text>
+<path d="M450 55 L450 330" fill="none" stroke="currentColor" stroke-dasharray="4 4" stroke-opacity="0.4"/>
+<defs><marker id="ag20v-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L7 4 L0 8Z" fill="currentColor"/></marker></defs>
+<g data-step="1">
+<text x="165.0" y="88" text-anchor="middle" font-size="13" fill="currentColor">Brief: nonce r-new</text>
+<path d="M70 100 L260 100" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#ag20v-arrow)"/>
+</g>
+<g data-step="2">
+<text x="355.0" y="163" text-anchor="middle" font-size="13" fill="currentColor">Ghi round: r-new</text>
+<path d="M260 175 L450 175" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#ag20v-arrow)"/>
+</g>
+<g data-step="3">
+<text x="260.0" y="243" text-anchor="middle" font-size="13" fill="currentColor">Đọc dòng đầu: r-new</text>
+<path d="M450 255 L70 255" fill="none" stroke="currentColor" stroke-width="2" marker-end="url(#ag20v-arrow)"/>
+</g>
+<g data-step="4">
+<rect x="25" y="345" width="235" height="48" rx="8" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="142" y="375" text-anchor="middle" font-size="13" fill="currentColor">r-new = r-new → DONE</text>
+<rect x="275" y="345" width="220" height="48" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="385" y="375" text-anchor="middle" font-size="13" fill="currentColor">r-old ≠ r-new → chờ</text>
+</g>
+</svg>
+<step-note data-step="1">Mỗi vòng sinh mã mới để report còn sót từ vòng trước không được nhận nhầm.</step-note>
+<step-note data-step="2">Worker phải đọc đúng brief mới có mã để chép lại; chỉ thấy tiến trình kết thúc chưa đủ.</step-note>
+<step-note data-step="3">Script đọc nội dung report, thay vì suy ra hoàn thành từ thời gian sửa file.</step-note>
+<step-note data-step="4">Chỉ mã khớp mới được nhận. Hết deadline mà vẫn lệch hoặc thiếu report thì trả UNKNOWN.</step-note>
+</step-flow>
+
 ### 3.5 Một FAIL không phải một loại
 
 Khi việc nền quay về FAIL, phản xạ là giao lại cho lane. Giao lại nhầm loại thì đốt trọn một vòng. Kinh nghiệm thực tế qua nhiều vòng loop cho ba loại:

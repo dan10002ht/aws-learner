@@ -143,6 +143,32 @@ Bảng va chạm, xếp theo cơ chế:
 
 Dòng cuối là chỗ người mới hay hiểu sai: worktree **hoãn** va chạm chứ không xoá nó. Hai agent sửa cùng một file ở hai worktree thì không ai đè ai — cho tới lúc merge.
 
+<svg viewBox="0 0 520 415" role="img" aria-labelledby="ag15v-t ag15v-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="ag15v-t">Ranh giới cô lập của worktree</title>
+<desc id="ag15v-d">Hai vùng file riêng cùng nối vào tài nguyên Git chung. Port, database và cache nằm ngoài ranh giới cô lập của Git.</desc>
+<rect x="20" y="15" width="220" height="105" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="130" y="43" text-anchor="middle" font-size="14" fill="currentColor">Worktree A</text>
+<text x="130" y="73" text-anchor="middle" font-size="14" fill="currentColor">File · HEAD · index</text>
+<text x="130" y="101" text-anchor="middle" font-size="14" fill="currentColor">Một bản riêng</text>
+<path d="M130 120 L130 150" fill="none" stroke="currentColor" />
+<path d="M130 150 L260 150" fill="none" stroke="currentColor" />
+<rect x="280" y="15" width="220" height="105" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="390" y="43" text-anchor="middle" font-size="14" fill="currentColor">Worktree B</text>
+<text x="390" y="73" text-anchor="middle" font-size="14" fill="currentColor">File · HEAD · index</text>
+<text x="390" y="101" text-anchor="middle" font-size="14" fill="currentColor">Một bản riêng</text>
+<path d="M390 120 L390 150" fill="none" stroke="currentColor" />
+<path d="M390 150 L260 150" fill="none" stroke="currentColor" />
+<path d="M260 150 L260 170" fill="none" stroke="currentColor" />
+<rect x="55" y="170" width="410" height="90" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="260" y="198" text-anchor="middle" font-size="14" fill="currentColor">Git chung</text>
+<text x="260" y="222" text-anchor="middle" font-size="14" fill="currentColor">Objects · refs/heads · refs/stash</text>
+<text x="260" y="245" text-anchor="middle" font-size="14" fill="currentColor">.git/config (mặc định)</text>
+<rect x="55" y="290" width="410" height="75" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="260" y="318" text-anchor="middle" font-size="14" fill="currentColor">Ngoài Git: vẫn chung máy</text>
+<text x="260" y="345" text-anchor="middle" font-size="14" fill="currentColor">Port · DB / emulator · cache</text>
+<text x="260" y="393" text-anchor="middle" font-size="13" fill="currentColor">File riêng lúc sửa → có thể đụng lúc merge</text>
+</svg>
+
 ### 3.3 File chung: phải có đúng một người ghi
 
 Lấy một file **registry** — danh sách đăng ký kiểu "mỗi bài học/route/migration thêm một dòng". Repo bạn đang đọc có đúng file như vậy: `web/data/lessons.ts`. Khi nhiều agent viết bài song song cho course này, brief cấm worker đụng `web/`; chỉ main agent thêm dòng đăng ký sau khi gom bài.

@@ -74,6 +74,18 @@ Codex CLI dùng cùng định dạng thư mục + `SKILL.md`, chỉ khác chỗ 
 
 ### 3.2 Progressive disclosure: ba tầng nạp
 
+<step-flow>
+<svg viewBox="0 0 520 400" role="img" aria-labelledby="ag07med-t ag07med-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="ag07med-t">Ba tầng đưa nội dung vào cùng một context khi cần</title>
+<desc id="ag07med-d">Ba tầng đưa nội dung vào cùng một context khi cần</desc>
+<defs><marker id="ag07med-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L7 4L0 8Z" fill="currentColor"/></marker></defs>
+<rect x="300" y="20" width="200" height="320" rx="12" fill="none" stroke="currentColor"/><text x="400" y="47" font-size="14" text-anchor="middle" fill="currentColor">Context</text><g data-step="1"><rect x="20" y="70" width="170" height="45" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="105.0" y="97.5" font-size="14" text-anchor="middle" fill="currentColor">Metadata</text><path d="M190 92H320" fill="none" stroke="currentColor" marker-end="url(#ag07med-a)"/><rect x="320" y="75" width="160" height="45" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="400.0" y="102.5" font-size="14" text-anchor="middle" fill="currentColor">Metadata</text></g><g data-step="2"><rect x="20" y="165" width="170" height="45" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="105.0" y="192.5" font-size="14" text-anchor="middle" fill="currentColor">SKILL.md</text><path d="M190 187H320" fill="none" stroke="currentColor" marker-end="url(#ag07med-a)"/><rect x="320" y="165" width="160" height="45" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/><text x="400.0" y="192.5" font-size="14" text-anchor="middle" fill="currentColor">SKILL.md</text></g><g data-step="3"><rect x="20" y="260" width="170" height="45" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="105.0" y="287.5" font-size="14" text-anchor="middle" fill="currentColor">File tham chiếu</text><path d="M190 282H320" fill="none" stroke="currentColor" marker-end="url(#ag07med-a)"/><rect x="320" y="255" width="160" height="45" rx="8" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="400.0" y="282.5" font-size="14" text-anchor="middle" fill="currentColor">File tham chiếu</text></g><text x="260" y="375" font-size="13" text-anchor="middle" fill="currentColor">Script → thực thi; không nạp mã vào context</text>
+</svg>
+<step-note data-step="1">Description giúp chọn đúng skill mà chưa phải đọc toàn bộ thân; có ngoại lệ khi tắt model invocation.</step-note>
+<step-note data-step="2">Chỉ skill được gọi mới đưa thân vào cửa sổ dùng chung.</step-note>
+<step-note data-step="3">Tài liệu phụ chỉ chiếm context khi được đọc; script được chạy thay vì nạp mã.</step-note>
+</step-flow>
+
 Đáp án ⏸ là **(b)**.
 
 Docs Claude Code mô tả ba tầng:

@@ -106,6 +106,30 @@ Bảng tra (đứng sau phần giải thích):
 | R2 ghi, lùi tự dựng | script `revert`/`down` đã chạy thử | chạy sau dry-run | duyệt bản dry-run |
 | R3 không lùi / của người khác | không có | soạn nháp | bấm chạy |
 
+<svg viewBox="0 0 520 435" role="img" aria-labelledby="ag25v-t ag25v-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="ag25v-t">Trần tự động theo rủi ro</title>
+<desc id="ag25v-d">Bốn thanh hạ dần từ R0 tới R3 biểu thị giới hạn quyền tự chạy; đây là thứ bậc định tính, không phải thang số.</desc>
+<text x="260" y="25" text-anchor="middle" font-size="15" fill="currentColor">Rủi ro tăng → trần tự chạy hạ xuống</text>
+<text x="20" y="65" text-anchor="start" font-size="13" fill="currentColor">Tự chạy</text>
+<path d="M80 70 L80 300" fill="none" stroke="currentColor" />
+<path d="M80 300 L500 300" fill="none" stroke="currentColor" />
+<rect x="95" y="80" width="88" height="220" rx="8" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/>
+<text x="139" y="324" text-anchor="middle" font-size="14" fill="currentColor">R0</text>
+<text x="139" y="70" text-anchor="middle" font-size="13" fill="currentColor">Theo lịch</text>
+<rect x="195" y="130" width="88" height="170" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="239" y="324" text-anchor="middle" font-size="14" fill="currentColor">R1</text>
+<text x="239" y="120" text-anchor="middle" font-size="13" fill="currentColor">Loop + gate</text>
+<rect x="295" y="190" width="88" height="110" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/>
+<text x="339" y="324" text-anchor="middle" font-size="14" fill="currentColor">R2</text>
+<text x="339" y="180" text-anchor="middle" font-size="13" fill="currentColor">Sau dry-run</text>
+<rect x="395" y="250" width="88" height="50" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/>
+<text x="439" y="324" text-anchor="middle" font-size="14" fill="currentColor">R3</text>
+<text x="439" y="240" text-anchor="middle" font-size="13" fill="currentColor">Chỉ nháp</text>
+<text x="290" y="355" text-anchor="middle" font-size="14" fill="currentColor">Rủi ro của hành động →</text>
+<text x="260" y="385" text-anchor="middle" font-size="13" fill="currentColor">Chiều cao là thứ bậc, không phải số đo</text>
+<text x="260" y="410" text-anchor="middle" font-size="13" fill="currentColor">R3: người bấm chạy dù tiết kiệm nhiều giờ</text>
+</svg>
+
 ### 3.3 Chi phí token: tính thử, rồi xem tiền nằm ở đâu
 
 Cơ chế (dữ kiện, theo https://code.claude.com/docs/en/costs, mục *Why usage climbs in a long session*):

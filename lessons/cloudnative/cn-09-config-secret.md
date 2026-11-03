@@ -278,22 +278,46 @@ Câu hỏi vận hành cốt lõi: **sửa ConfigMap/Secret rồi thì Pod có t
 | Muốn app dùng giá trị mới | App phải **watch file & reload**, hoặc restart | **Bắt buộc restart Pod** |
 | `subPath` mount | **Không** tự cập nhật (ngoại lệ cần nhớ) | — |
 
-<svg viewBox="0 0 640 210" role="img" aria-labelledby="rl-t rl-d" style="width:100%;max-width:600px;height:auto;display:block;margin:1.25rem auto">
-<title id="rl-t">Reload config: mount tự cập nhật, env thì không</title>
-<desc id="rl-d">Sửa ConfigMap: nhánh mount thì file trong Pod tự đổi và app reload, nhánh env thì giá trị đứng yên tới khi restart Pod</desc>
-<rect x="235" y="16" width="170" height="42" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor"/>
-<text x="320" y="35" text-anchor="middle" font-size="12" fill="currentColor">Sửa ConfigMap</text>
-<text x="320" y="51" text-anchor="middle" font-size="10" fill="currentColor">kubectl apply</text>
-<rect x="40" y="100" width="250" height="52" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor"/>
-<text x="165" y="122" text-anchor="middle" font-size="12" fill="currentColor">Mount (volume)</text>
-<text x="165" y="140" text-anchor="middle" font-size="10" fill="currentColor">file tự đổi -> app watch/reload</text>
-<rect x="350" y="100" width="250" height="52" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="currentColor"/>
-<text x="475" y="122" text-anchor="middle" font-size="12" fill="currentColor">Env var</text>
-<text x="475" y="140" text-anchor="middle" font-size="10" fill="currentColor">đứng yên -> phải restart Pod</text>
-<line x1="290" y1="58" x2="165" y2="100" stroke="currentColor" stroke-width="1"/>
-<line x1="350" y1="58" x2="475" y2="100" stroke="currentColor" stroke-width="1"/>
-<text x="320" y="185" text-anchor="middle" font-size="10" fill="currentColor">Env var chỉ đọc một lần lúc container khởi động</text>
+<ab-toggle data-labels="Volume|Env">
+<svg viewBox="0 0 520 225" role="img" aria-labelledby="cn09-vis-0-t cn09-vis-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="cn09-vis-0-t">Config mới đi tới ứng dụng bằng volume</title>
+<desc id="cn09-vis-0-d">Cùng ba vị trí: nguồn ConfigMap, giá trị trong container và giá trị ứng dụng đang dùng; v2 xanh, v1 cũ hồng.</desc>
+<text x="25" y="25" font-size="13" text-anchor="start" fill="currentColor">ConfigMap vừa đổi v1 → v2</text>
+<rect x="25" y="70" width="135" height="60" rx="4" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b" />
+<text x="92" y="95" font-size="13" text-anchor="middle" fill="currentColor">ConfigMap</text>
+<text x="92" y="116" font-size="13" text-anchor="middle" fill="currentColor">v2</text>
+<rect x="205" y="70" width="125" height="60" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="267" y="95" font-size="13" text-anchor="middle" fill="currentColor">File</text>
+<text x="267" y="116" font-size="13" text-anchor="middle" fill="currentColor">v2</text>
+<rect x="375" y="70" width="120" height="60" rx="4" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<text x="435" y="95" font-size="13" text-anchor="middle" fill="currentColor">App</text>
+<text x="435" y="116" font-size="13" text-anchor="middle" fill="currentColor">v2</text>
+<line x1="160" y1="100" x2="205" y2="100" stroke="currentColor" stroke-width="2"/>
+<line x1="330" y1="100" x2="375" y2="100" stroke="currentColor" stroke-width="2"/>
+<text x="25" y="175" font-size="13" text-anchor="start" fill="currentColor">Sau kubelet sync + app reload</text>
+<text x="25" y="201" font-size="13" text-anchor="start" fill="currentColor">subPath không tự cập nhật</text>
 </svg>
+<svg viewBox="0 0 520 225" role="img" aria-labelledby="cn09-vis-1-t cn09-vis-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="cn09-vis-1-t">Config mới đi tới ứng dụng bằng env</title>
+<desc id="cn09-vis-1-d">Cùng ba vị trí: nguồn ConfigMap, giá trị trong container và giá trị ứng dụng đang dùng; v2 xanh, v1 cũ hồng.</desc>
+<text x="25" y="25" font-size="13" text-anchor="start" fill="currentColor">ConfigMap vừa đổi v1 → v2</text>
+<rect x="25" y="70" width="135" height="60" rx="4" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b" />
+<text x="92" y="95" font-size="13" text-anchor="middle" fill="currentColor">ConfigMap</text>
+<text x="92" y="116" font-size="13" text-anchor="middle" fill="currentColor">v2</text>
+<rect x="205" y="70" width="125" height="60" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="267" y="95" font-size="13" text-anchor="middle" fill="currentColor">Env</text>
+<text x="267" y="116" font-size="13" text-anchor="middle" fill="currentColor">v1</text>
+<rect x="375" y="70" width="120" height="60" rx="4" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e" />
+<text x="435" y="95" font-size="13" text-anchor="middle" fill="currentColor">App</text>
+<text x="435" y="116" font-size="13" text-anchor="middle" fill="currentColor">v1</text>
+<line x1="160" y1="100" x2="205" y2="100" stroke="currentColor" stroke-dasharray="4 3"/>
+<line x1="330" y1="100" x2="375" y2="100" stroke="currentColor" stroke-dasharray="4 3"/>
+<text x="25" y="175" font-size="13" text-anchor="start" fill="currentColor">Pod cũ giữ v1 đến khi được thay</text>
+<text x="25" y="201" font-size="13" text-anchor="start" fill="currentColor">Env được set lúc container khởi động</text>
+</svg>
+<ab-note>File được cập nhật sau kubelet sync; ứng dụng vẫn phải watch và reload hoặc restart. Mount bằng subPath là ngoại lệ.</ab-note>
+<ab-note>Sửa nguồn không đổi môi trường của container đang chạy. Rollout restart tạo Pod mới để đọc v2.</ab-note>
+</ab-toggle>
 
 **Hai kỹ thuật production để reload sạch:**
 

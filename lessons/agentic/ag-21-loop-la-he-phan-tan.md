@@ -219,6 +219,35 @@ Hai mặt trái phải chặn bằng cơ chế:
 
 Một biến thể dễ bỏ qua: **tài nguyên có tên cố định là lock ngầm.** Case thực tế: runner hàng đợi chạy build trong một systemd scope tên cố định `slot-job`. `kill -9` runner không kéo theo tiến trình build con; tiến trình mồ côi giữ scope sống, nên runner mới bị từ chối "Unit slot-job.scope was already loaded" — **im lặng**, mỗi vòng quét 3 giây hỏng một lần. Hệ tự khỏi sau khoảng 9 giây vì build mồ côi chạy xong, nhưng đó là may chứ không phải thiết kế. Sửa: dọn scope cũ trước khi dựng runner (chỉ khi `flock` chứng minh không còn runner nào), và nếu không dọn được thì bỏ tên cố định. Bài học kèm theo: done-criteria "kill -9 giữa bước build" đáng tồn tại, vì không test thì lỗi này chỉ xuất hiện lần đầu lúc runner chết thật, giữa đêm.
 
+<auto-anim data-dur="8">
+<svg viewBox="0 0 520 375" role="img" aria-labelledby="ag21v-t ag21v-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="ag21v-t">Lease hết trước khi task xong</title>
+<desc id="ag21v-d">Độ dài thanh biểu thị thời gian. Task A chạy 65 phút nhưng lease chỉ 30 phút. Tick 35 nhận lại task, tạo vùng chạy chồng từ 35 tới 65.</desc>
+<text x="260" y="25" text-anchor="middle" font-size="14" fill="currentColor">Ví dụ D = 65 phút, TTL = 30, tick = 5</text>
+<text x="260" y="48" text-anchor="middle" font-size="13" fill="currentColor">Bỏ qua kiểm sống → nhận trùng ở phút 35</text>
+<path d="M95 75 L95 245" fill="none" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="95" y="270" text-anchor="middle" font-size="13" fill="currentColor">0</text>
+<path d="M275 75 L275 245" fill="none" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="275" y="270" text-anchor="middle" font-size="13" fill="currentColor">30</text>
+<path d="M305 75 L305 245" fill="none" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="305" y="270" text-anchor="middle" font-size="13" fill="currentColor">35</text>
+<path d="M485 75 L485 245" fill="none" stroke="currentColor" stroke-opacity="0.2"/>
+<text x="485" y="270" text-anchor="middle" font-size="13" fill="currentColor">65</text>
+<text x="300" y="295" text-anchor="middle" font-size="13" fill="currentColor">Thời gian kể từ lúc nhận task (phút)</text>
+<text x="15" y="112" text-anchor="start" font-size="13" fill="currentColor">Lease A</text>
+<rect x="95" y="90" width="180" height="30" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6"/>
+<text x="15" y="172" text-anchor="start" font-size="13" fill="currentColor">Task A</text>
+<rect x="95" y="150" width="390" height="30" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"><animate attributeName="width" dur="8s" repeatCount="indefinite" keyTimes="0;0.46;0.54;1" values="0;180;210;390"/></rect>
+<text x="15" y="232" text-anchor="start" font-size="13" fill="currentColor">Task B</text>
+<rect x="305" y="210" width="180" height="30" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"><animate attributeName="width" dur="8s" repeatCount="indefinite" keyTimes="0;0.46;0.54;1" values="0;0;0;180"/></rect>
+<rect x="305" y="140" width="180" height="110" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"><animate attributeName="opacity" dur="8s" repeatCount="indefinite" calcMode="discrete" keyTimes="0;0.54;1" values="0;1;1"/></rect>
+<text x="395" y="200" text-anchor="middle" font-size="13" fill="currentColor">Chạy chồng</text>
+<g><path d="M95 65 V250" stroke="currentColor" stroke-width="2"><animate attributeName="d" dur="8s" repeatCount="indefinite" keyTimes="0;0.46;0.54;1" values="M95 65 V250;M275 65 V250;M305 65 V250;M485 65 V250"/></path></g>
+<text x="260" y="325" text-anchor="middle" font-size="13" fill="currentColor">30: hết TTL · 35: tick đầu tiên có tuổi lock &gt; TTL</text>
+<text x="260" y="350" text-anchor="middle" font-size="13" fill="currentColor">Chưa kiểm agent sống → timestamp có thể đánh lừa</text>
+</svg>
+</auto-anim>
+
 ### 3.6 Hàng đợi slot: tài nguyên khan hiếm phải xếp hàng, và hàng phải hiện ra
 
 Agent nhiều thì rẻ; môi trường để **chứng minh** việc agent làm (một bản app chạy thật, một DB staging) thì ít. Case thực tế: một VM nhỏ chạy 4 "slot" staging để verify task trên app thật. Ban đầu mỗi slot giữ một watcher build thường trú tốn khoảng 1,9 GB khi đứng yên, nên VM chỉ chạy được 2 slot. Đổi sang:

@@ -264,31 +264,51 @@ Mesh không miễn phí. Phải cân nhắc thật:
 
 Kết quả: chi phí tài nguyên & latency giảm mạnh cho các workload chỉ cần mTLS, còn tính năng L7 vẫn có khi cần. Linkerd cũng đi hướng cực nhẹ nhờ proxy Rust. Đây là xu hướng làm mesh "vô hình và rẻ" hơn.
 
-<svg viewBox="0 0 640 200" role="img" aria-labelledby="am-t am-d" style="width:100%;max-width:600px;height:auto;display:block;margin:1.25rem auto">
-<title id="am-t">Sidecar mesh so với ambient mesh</title>
-<desc id="am-d">Bên trái mỗi Pod có một Envoy riêng, bên phải các Pod dùng chung một ztunnel trên mỗi node cho lớp L4 và mTLS</desc>
-<text x="160" y="30" text-anchor="middle" font-size="12" fill="currentColor">Sidecar: mỗi Pod 1 Envoy</text>
-<rect x="40" y="45" width="110" height="60" rx="8" fill="#3b82f6" fill-opacity="0.10" stroke="currentColor"/>
-<text x="80" y="70" text-anchor="middle" font-size="10" fill="currentColor">App</text>
-<rect x="95" y="52" width="48" height="46" rx="5" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="119" y="79" text-anchor="middle" font-size="9" fill="currentColor">Envoy</text>
-<rect x="40" y="120" width="110" height="60" rx="8" fill="#3b82f6" fill-opacity="0.10" stroke="currentColor"/>
-<text x="80" y="145" text-anchor="middle" font-size="10" fill="currentColor">App</text>
-<rect x="95" y="127" width="48" height="46" rx="5" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="119" y="154" text-anchor="middle" font-size="9" fill="currentColor">Envoy</text>
-<text x="470" y="30" text-anchor="middle" font-size="12" fill="currentColor">Ambient: 1 ztunnel / node</text>
-<rect x="370" y="45" width="90" height="55" rx="8" fill="#3b82f6" fill-opacity="0.10" stroke="currentColor"/>
-<text x="415" y="76" text-anchor="middle" font-size="10" fill="currentColor">App</text>
-<rect x="370" y="115" width="90" height="55" rx="8" fill="#3b82f6" fill-opacity="0.10" stroke="currentColor"/>
-<text x="415" y="146" text-anchor="middle" font-size="10" fill="currentColor">App</text>
-<rect x="500" y="70" width="100" height="75" rx="8" fill="#14b8a6" fill-opacity="0.14" stroke="currentColor"/>
-<text x="550" y="100" text-anchor="middle" font-size="10" fill="currentColor">ztunnel</text>
-<text x="550" y="116" text-anchor="middle" font-size="9" fill="currentColor">L4 + mTLS</text>
-<text x="550" y="131" text-anchor="middle" font-size="9" fill="currentColor">(cả node)</text>
-<line x1="460" y1="72" x2="500" y2="95" stroke="currentColor" stroke-width="1.2" marker-end="url(#a4)"/>
-<line x1="460" y1="142" x2="500" y2="120" stroke="currentColor" stroke-width="1.2" marker-end="url(#a4)"/>
-<defs><marker id="a4" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker></defs>
+<ab-toggle data-labels="Sidecar|Ambient">
+<svg viewBox="0 0 520 325" role="img" aria-labelledby="cn17-vis-0-t cn17-vis-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="cn17-vis-0-t">Proxy theo Pod so với proxy theo node</title>
+<desc id="cn17-vis-0-d">Hai Pod và app cố định; sidecar là hai Envoy trong hai Pod, ambient là một ztunnel ở ngoài Pod nhưng trong node.</desc>
+<rect x="25" y="40" width="470" height="235" rx="4" fill="#14b8a6" fill-opacity="0.14" stroke="#14b8a6" />
+<text x="40" y="64" font-size="13" text-anchor="start" fill="currentColor">Một node · cùng hai workload</text>
+<rect x="50" y="85" width="195" height="95" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="62" y="106" font-size="13" text-anchor="start" fill="currentColor">Pod 1</text>
+<rect x="62" y="122" width="65" height="38" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="94" y="146" font-size="13" text-anchor="middle" fill="currentColor">App</text>
+<rect x="141" y="122" width="92" height="38" rx="4" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6" />
+<text x="187" y="146" font-size="13" text-anchor="middle" fill="currentColor">Envoy</text>
+<line x1="127" y1="141" x2="141" y2="141" stroke="currentColor" />
+<rect x="275" y="85" width="195" height="95" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="287" y="106" font-size="13" text-anchor="start" fill="currentColor">Pod 2</text>
+<rect x="287" y="122" width="65" height="38" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="319" y="146" font-size="13" text-anchor="middle" fill="currentColor">App</text>
+<rect x="366" y="122" width="92" height="38" rx="4" fill="#8b5cf6" fill-opacity="0.14" stroke="#8b5cf6" />
+<text x="412" y="146" font-size="13" text-anchor="middle" fill="currentColor">Envoy</text>
+<line x1="352" y1="141" x2="366" y2="141" stroke="currentColor" />
+<text x="260" y="239" font-size="13" text-anchor="middle" fill="currentColor">2 Pod → 2 proxy</text>
+<text x="25" y="303" font-size="13" text-anchor="start" fill="currentColor">Proxy đặt bên trong từng Pod</text>
 </svg>
+<svg viewBox="0 0 520 325" role="img" aria-labelledby="cn17-vis-1-t cn17-vis-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="cn17-vis-1-t">Proxy theo Pod so với proxy theo node</title>
+<desc id="cn17-vis-1-d">Hai Pod và app cố định; sidecar là hai Envoy trong hai Pod, ambient là một ztunnel ở ngoài Pod nhưng trong node.</desc>
+<rect x="25" y="40" width="470" height="235" rx="4" fill="#14b8a6" fill-opacity="0.14" stroke="#14b8a6" />
+<text x="40" y="64" font-size="13" text-anchor="start" fill="currentColor">Một node · cùng hai workload</text>
+<rect x="50" y="85" width="195" height="95" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="62" y="106" font-size="13" text-anchor="start" fill="currentColor">Pod 1</text>
+<rect x="62" y="122" width="65" height="38" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="94" y="146" font-size="13" text-anchor="middle" fill="currentColor">App</text>
+<line x1="94" y1="160" x2="260" y2="215" stroke="currentColor" />
+<rect x="275" y="85" width="195" height="95" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="287" y="106" font-size="13" text-anchor="start" fill="currentColor">Pod 2</text>
+<rect x="287" y="122" width="65" height="38" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="319" y="146" font-size="13" text-anchor="middle" fill="currentColor">App</text>
+<line x1="319" y1="160" x2="260" y2="215" stroke="currentColor" />
+<rect x="155" y="215" width="210" height="40" rx="4" fill="#10b981" fill-opacity="0.14" stroke="#10b981" />
+<text x="260" y="240" font-size="13" text-anchor="middle" fill="currentColor">ztunnel · L4 + mTLS</text>
+<text x="25" y="303" font-size="13" text-anchor="start" fill="currentColor">Waypoint (Envoy) riêng khi cần L7</text>
+</svg>
+<ab-note>Mỗi Pod mang một Envoy riêng; tăng số Pod cũng tăng số sidecar.</ab-note>
+<ab-note>Hai Pod trên node dùng chung ztunnel cho L4 và mTLS. L7 cần waypoint riêng theo phạm vi cấu hình, không phải do ztunnel xử lý.</ab-note>
+</ab-toggle>
 
 ---
 

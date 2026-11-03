@@ -147,6 +147,36 @@ kubectl top pod web-xyz --containers
 
 `BackOff` = kubelet **giãn dần** thời gian chờ giữa các lần restart (10s → 20s → 40s → ... tối đa 5 phút) để tránh nướng CPU. Nó là *triệu chứng*, không phải bệnh — bệnh nằm trong log.
 
+<svg viewBox="0 0 520 350" role="img" aria-labelledby="cn13-vis-backoff-t cn13-vis-backoff-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="cn13-vis-backoff-t">Backoff tăng gấp đôi rồi chạm trần</title>
+<desc id="cn13-vis-backoff-d">Bảy thanh có độ dài tỉ lệ với các khoảng chờ 10, 20, 40, 80, 160, 300 và 300 giây. Cùng thang đo cho thấy restart thưa dần.</desc>
+<text x="25" y="25" font-size="13" text-anchor="start" fill="currentColor">Crash ngay sau khởi động: khoảng chờ dài dần</text>
+<text x="25" y="49" font-size="13" text-anchor="start" fill="currentColor">Độ dài thanh = thời gian chờ, cùng thang đo</text>
+<text x="25" y="86" font-size="13" text-anchor="start" fill="currentColor">Lần 1</text>
+<rect x="100" y="70" width="10.5" height="20" rx="4" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b" />
+<text x="150" y="86" font-size="13" text-anchor="start" fill="currentColor">10 s</text>
+<text x="25" y="116" font-size="13" text-anchor="start" fill="currentColor">Lần 2</text>
+<rect x="100" y="100" width="21.0" height="20" rx="4" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b" />
+<text x="150" y="116" font-size="13" text-anchor="start" fill="currentColor">20 s</text>
+<text x="25" y="146" font-size="13" text-anchor="start" fill="currentColor">Lần 3</text>
+<rect x="100" y="130" width="42.0" height="20" rx="4" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b" />
+<text x="150" y="146" font-size="13" text-anchor="start" fill="currentColor">40 s</text>
+<text x="25" y="176" font-size="13" text-anchor="start" fill="currentColor">Lần 4</text>
+<rect x="100" y="160" width="84.0" height="20" rx="4" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b" />
+<text x="192.0" y="176" font-size="13" text-anchor="start" fill="currentColor">80 s</text>
+<text x="25" y="206" font-size="13" text-anchor="start" fill="currentColor">Lần 5</text>
+<rect x="100" y="190" width="168.0" height="20" rx="4" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b" />
+<text x="276.0" y="206" font-size="13" text-anchor="start" fill="currentColor">160 s</text>
+<text x="25" y="236" font-size="13" text-anchor="start" fill="currentColor">Lần 6</text>
+<rect x="100" y="220" width="315.0" height="20" rx="4" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b" />
+<text x="423.0" y="236" font-size="13" text-anchor="start" fill="currentColor">300 s</text>
+<text x="25" y="266" font-size="13" text-anchor="start" fill="currentColor">Lần 7</text>
+<rect x="100" y="250" width="315.0" height="20" rx="4" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b" />
+<text x="423.0" y="266" font-size="13" text-anchor="start" fill="currentColor">300 s</text>
+<text x="25" y="307" font-size="13" text-anchor="start" fill="currentColor">300 s = 5 phút: chạm trần, không tăng tiếp</text>
+<text x="25" y="331" font-size="13" text-anchor="start" fill="currentColor">Minh hoạ backoff mặc định được mô tả trong bài</text>
+</svg>
+
 ```bash
 kubectl get pod web-xyz            # RESTARTS tăng đều, STATUS CrashLoopBackOff
 kubectl logs web-xyz -p            # <-- ĐÂY: xem exception/panic lúc boot

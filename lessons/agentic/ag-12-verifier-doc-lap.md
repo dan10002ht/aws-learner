@@ -131,6 +131,13 @@ Codex CLI có đường tương đương cho chế độ không tương tác: th
 
 ### 3.3 Verdict ba trạng thái, và luật không đôn
 
+<svg viewBox="0 0 520 435" role="img" aria-labelledby="ag12med-t ag12med-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="ag12med-t">Ba nhánh verdict theo bằng chứng; thiếu bằng chứng quay về người hoặc hàng đợi</title>
+<desc id="ag12med-d">Ba nhánh verdict theo bằng chứng; thiếu bằng chứng quay về người hoặc hàng đợi</desc>
+<defs><marker id="ag12med-a" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L7 4L0 8Z" fill="currentColor"/></marker></defs>
+<rect x="160" y="20" width="200" height="45" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/><text x="260.0" y="47.5" font-size="14" text-anchor="middle" fill="currentColor">Bằng chứng kiểm tra</text><path d="M160 42H85V110" fill="none" stroke="currentColor" marker-end="url(#ag12med-a)"/><path d="M260 65V235" fill="none" stroke="currentColor" marker-end="url(#ag12med-a)"/><path d="M360 42H435V110" fill="none" stroke="currentColor" marker-end="url(#ag12med-a)"/><rect x="15" y="110" width="145" height="55" rx="8" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/><text x="87.5" y="142.5" font-size="14" text-anchor="middle" fill="currentColor">FAIL</text><text x="88" y="190" font-size="13" text-anchor="middle" fill="currentColor">Gate đỏ / có lỗi</text><rect x="350" y="110" width="155" height="55" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="427.5" y="142.5" font-size="14" text-anchor="middle" fill="currentColor">UNVERIFIED</text><text x="428" y="190" font-size="13" text-anchor="middle" fill="currentColor">Thiếu bằng chứng</text><rect x="185" y="235" width="150" height="55" rx="8" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="260.0" y="267.5" font-size="14" text-anchor="middle" fill="currentColor">PASS</text><text x="260" y="315" font-size="13" text-anchor="middle" fill="currentColor">Gate xanh + A/B đủ + không finding</text><path d="M428 165V355H350" fill="none" stroke="currentColor" marker-end="url(#ag12med-a)"/><rect x="170" y="335" width="180" height="45" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="260.0" y="362.5" font-size="14" text-anchor="middle" fill="currentColor">Người / hàng đợi</text><text x="260" y="410" font-size="13" text-anchor="middle" fill="currentColor">UNVERIFIED không có đường nâng lên PASS</text>
+</svg>
+
 Hai trạng thái PASS/FAIL ép mọi kết quả "không biết" phải rơi vào một bên. Trong thực tế nó rơi vào PASS, vì "không thấy lỗi" trông giống "không có lỗi". `UNVERIFIED` tồn tại để có chỗ đặt "không biết".
 
 | Tình huống | Verdict | Lý do |

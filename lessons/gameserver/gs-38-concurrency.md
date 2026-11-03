@@ -266,40 +266,69 @@ Và nhiều core cũng không phải luôn tốt: mục 3.4 vừa cho một ph�
 
 Còn một cách "song song" nữa không phải chia vòng lặp: **xếp tầng**. Tick N chạy sim, trong khi tick N−1 đang được đóng gói và gửi.
 
-<svg viewBox="0 0 700 210" role="img" aria-labelledby="gs38-b-t gs38-b-d" style="width:100%;height:auto">
-<title id="gs38-b-t">Tuần tự so với pipeline hai tầng</title>
-<desc id="gs38-b-d">Ở bản tuần tự, mô phỏng và đóng gói của cùng một tick nằm nối nhau trong một tick; ở bản pipeline, đóng gói của tick N chạy trong tick N cộng một, nên snapshot rời server muộn hơn đúng một tick.</desc>
-<text x="10" y="26" font-size="11" fill="currentColor">tuần tự</text>
-<line x1="90" y1="14" x2="90" y2="82" stroke="currentColor" stroke-opacity="0.3"/>
-<line x1="280" y1="14" x2="280" y2="82" stroke="currentColor" stroke-opacity="0.3"/>
-<line x1="470" y1="14" x2="470" y2="82" stroke="currentColor" stroke-opacity="0.3"/>
-<line x1="660" y1="14" x2="660" y2="82" stroke="currentColor" stroke-opacity="0.3"/>
-<rect x="92" y="18" width="30" height="22" rx="4" fill="#3b82f6" fill-opacity="0.35"/>
-<text x="107" y="33" text-anchor="middle" font-size="10" fill="currentColor">sim</text>
-<rect x="124" y="18" width="90" height="22" rx="4" fill="#f59e0b" fill-opacity="0.35"/>
-<text x="169" y="33" text-anchor="middle" font-size="10" fill="currentColor">đóng gói N</text>
-<text x="220" y="55" font-size="10" fill="currentColor">snapshot N rời server ở đây</text>
-<line x1="214" y1="40" x2="214" y2="50" stroke="#84cc16" stroke-width="2"/>
-<rect x="282" y="18" width="30" height="22" rx="4" fill="#3b82f6" fill-opacity="0.35"/>
-<rect x="314" y="18" width="90" height="22" rx="4" fill="#f59e0b" fill-opacity="0.35"/>
-<text x="107" y="98" text-anchor="middle" font-size="11" fill="currentColor">tick N</text>
-<text x="297" y="98" text-anchor="middle" font-size="11" fill="currentColor">tick N+1</text>
-<text x="487" y="98" text-anchor="middle" font-size="11" fill="currentColor">tick N+2</text>
-<text x="10" y="136" font-size="11" fill="currentColor">pipeline</text>
-<line x1="90" y1="118" x2="90" y2="186" stroke="currentColor" stroke-opacity="0.3"/>
-<line x1="280" y1="118" x2="280" y2="186" stroke="currentColor" stroke-opacity="0.3"/>
-<line x1="470" y1="118" x2="470" y2="186" stroke="currentColor" stroke-opacity="0.3"/>
-<line x1="660" y1="118" x2="660" y2="186" stroke="currentColor" stroke-opacity="0.3"/>
-<rect x="92" y="122" width="30" height="22" rx="4" fill="#3b82f6" fill-opacity="0.35"/>
-<text x="107" y="137" text-anchor="middle" font-size="10" fill="currentColor">sim</text>
-<rect x="282" y="122" width="30" height="22" rx="4" fill="#3b82f6" fill-opacity="0.35"/>
-<rect x="282" y="150" width="90" height="22" rx="4" fill="#f59e0b" fill-opacity="0.35"/>
-<text x="327" y="165" text-anchor="middle" font-size="10" fill="currentColor">đóng gói N</text>
-<rect x="472" y="122" width="30" height="22" rx="4" fill="#3b82f6" fill-opacity="0.35"/>
-<rect x="472" y="150" width="90" height="22" rx="4" fill="#f59e0b" fill-opacity="0.35"/>
-<line x1="372" y1="172" x2="372" y2="182" stroke="#ef4444" stroke-width="2"/>
-<text x="378" y="182" font-size="10" fill="currentColor">snapshot N rời server muộn hơn 16,67 ms</text>
+<ab-toggle data-labels="Tuần tự|Pipeline">
+<svg viewBox="0 0 520 270" role="img" aria-labelledby="gs38-vis-0-t gs38-vis-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="gs38-vis-0-t">Pipeline đổi thông lượng lấy độ trễ</title>
+<desc id="gs38-vis-0-d">Cột là tick; sim ở hàng trên, đóng gói ở hàng dưới. Đóng gói N dịch một cột khi dùng pipeline.</desc>
+<text x="20" y="24" font-size="13" text-anchor="start" fill="currentColor">Cột = tick 60 Hz; vị trí trong tick chỉ minh hoạ</text>
+<line x1="90" y1="47" x2="90" y2="205" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="98" y="44" font-size="13" text-anchor="start" fill="currentColor">N</text>
+<line x1="220" y1="47" x2="220" y2="205" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="228" y="44" font-size="13" text-anchor="start" fill="currentColor">N+1</text>
+<line x1="350" y1="47" x2="350" y2="205" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="358" y="44" font-size="13" text-anchor="start" fill="currentColor">N+2</text>
+<line x1="480" y1="47" x2="480" y2="205" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="488" y="44" font-size="13" text-anchor="start" fill="currentColor">N+3</text>
+<text x="20" y="90" font-size="13" text-anchor="start" fill="currentColor">Sim</text>
+<text x="20" y="150" font-size="13" text-anchor="start" fill="currentColor">Pack</text>
+<rect x="92" y="65" width="28" height="32" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="106" y="87" font-size="13" text-anchor="middle" fill="currentColor">N</text>
+<rect x="92" y="125" width="90" height="32" rx="4" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b" />
+<text x="137" y="147" font-size="13" text-anchor="middle" fill="currentColor">N</text>
+<rect x="222" y="65" width="28" height="32" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="236" y="87" font-size="13" text-anchor="middle" fill="currentColor">N+1</text>
+<rect x="222" y="125" width="90" height="32" rx="4" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b" />
+<text x="267" y="147" font-size="13" text-anchor="middle" fill="currentColor">N+1</text>
+<rect x="352" y="65" width="28" height="32" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="366" y="87" font-size="13" text-anchor="middle" fill="currentColor">N+2</text>
+<rect x="352" y="125" width="90" height="32" rx="4" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b" />
+<text x="397" y="147" font-size="13" text-anchor="middle" fill="currentColor">N+2</text>
+<line x1="182" y1="157" x2="182" y2="184" stroke="#10b981" stroke-width="3"/>
+<path d="M106 98 L106 116 L130 116 L130 124" fill="none" stroke="currentColor"/>
+<text x="20" y="224" font-size="13" text-anchor="start" fill="currentColor">Snapshot N rời server: tick N</text>
+<text x="20" y="249" font-size="13" text-anchor="start" fill="currentColor">Đường tới hạn: 0,96 + 37,78 = 38,74 µs</text>
 </svg>
+<svg viewBox="0 0 520 270" role="img" aria-labelledby="gs38-vis-1-t gs38-vis-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="gs38-vis-1-t">Pipeline đổi thông lượng lấy độ trễ</title>
+<desc id="gs38-vis-1-d">Cột là tick; sim ở hàng trên, đóng gói ở hàng dưới. Đóng gói N dịch một cột khi dùng pipeline.</desc>
+<text x="20" y="24" font-size="13" text-anchor="start" fill="currentColor">Cột = tick 60 Hz; vị trí trong tick chỉ minh hoạ</text>
+<line x1="90" y1="47" x2="90" y2="205" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="98" y="44" font-size="13" text-anchor="start" fill="currentColor">N</text>
+<line x1="220" y1="47" x2="220" y2="205" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="228" y="44" font-size="13" text-anchor="start" fill="currentColor">N+1</text>
+<line x1="350" y1="47" x2="350" y2="205" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="358" y="44" font-size="13" text-anchor="start" fill="currentColor">N+2</text>
+<line x1="480" y1="47" x2="480" y2="205" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="488" y="44" font-size="13" text-anchor="start" fill="currentColor">N+3</text>
+<text x="20" y="90" font-size="13" text-anchor="start" fill="currentColor">Sim</text>
+<text x="20" y="150" font-size="13" text-anchor="start" fill="currentColor">Pack</text>
+<rect x="92" y="65" width="28" height="32" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="106" y="87" font-size="13" text-anchor="middle" fill="currentColor">N</text>
+<rect x="222" y="125" width="90" height="32" rx="4" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b" />
+<text x="267" y="147" font-size="13" text-anchor="middle" fill="currentColor">N</text>
+<rect x="222" y="65" width="28" height="32" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="236" y="87" font-size="13" text-anchor="middle" fill="currentColor">N+1</text>
+<rect x="352" y="125" width="90" height="32" rx="4" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b" />
+<text x="397" y="147" font-size="13" text-anchor="middle" fill="currentColor">N+1</text>
+<rect x="352" y="65" width="28" height="32" rx="4" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6" />
+<text x="366" y="87" font-size="13" text-anchor="middle" fill="currentColor">N+2</text>
+<line x1="312" y1="157" x2="312" y2="184" stroke="#10b981" stroke-width="3"/>
+<text x="20" y="224" font-size="13" text-anchor="start" fill="currentColor">Snapshot N rời server: tick N+1 (+16,67 ms)</text>
+<text x="20" y="249" font-size="13" text-anchor="start" fill="currentColor">Đường tới hạn: max(0,96; 37,78) = 37,78 µs</text>
+</svg>
+<ab-note>Sim và pack N cùng hoàn tất trong tick N.</ab-note>
+<ab-note>Pack N chạy đồng thời với sim N+1; snapshot N ra muộn đúng một tick, chỉ giảm đường tới hạn 2,48%.</ab-note>
+</ab-toggle>
 
 Cái giá thì tính được ngay, và nó là một khoản cố định. Ngân sách bấm nút tới nhìn thấy của bài 8 là **182 ms**; pipeline chèn thêm đúng một tick 60 Hz:
 
