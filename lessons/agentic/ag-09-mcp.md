@@ -56,6 +56,49 @@ Theo tài liệu kiến trúc (modelcontextprotocol.io/docs/learn/architecture):
 - **MCP client** — thành phần trong host giữ **một** kết nối tới **một** server. Host nối 3 server thì tạo 3 client.
 - **MCP server** — chương trình cung cấp context. "Server" là vai trò, không phải nơi chạy: có server chạy ngay trên máy bạn, có server chạy trên cloud.
 
+<svg viewBox="0 0 520 506" role="img" aria-labelledby="ag09a-t ag09a-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif"><title id="ag09a-t">Ba vai MCP: host, client, server và hai transport</title><desc id="ag09a-d">Trên máy bạn, một MCP host (Claude Code, Codex CLI, IDE) gộp tool từ mọi server cho model và tạo ba MCP client, mỗi client giữ một kết nối tới một server. Client 1 và 2 nói chuyện bằng stdio với server A và B, là subprocess do host khởi động trên cùng máy. Client 3 gửi HTTP POST tới endpoint /mcp của server C, một process độc lập chạy trên cloud hoặc máy khác, phục vụ được nhiều client. Mọi message là JSON-RPC 2.0.</desc>
+<defs><marker id="ag09a-m" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<rect x="6" y="6" width="508" height="326" rx="8" fill="#64748b" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.3" stroke-width="1.2" stroke-dasharray="5 4"/>
+<text x="18" y="28" font-size="13" fill="currentColor" font-weight="600" opacity="0.75">MÁY BẠN</text>
+<rect x="20" y="40" width="480" height="150" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="260" y="64" font-size="15" fill="currentColor" text-anchor="middle" font-weight="600">MCP host</text>
+<text x="260" y="84" font-size="13" fill="currentColor" text-anchor="middle" opacity="0.85">Claude Code, Codex CLI, IDE</text>
+<text x="260" y="106" font-size="13" fill="currentColor" text-anchor="middle">gộp tools/list của mọi server cho model</text>
+<rect x="32" y="120" width="136" height="54" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="100" y="143" font-size="13" fill="currentColor" text-anchor="middle" font-weight="600">MCP client 1</text>
+<text x="100" y="162" font-size="13" fill="currentColor" text-anchor="middle" opacity="0.85">1 kết nối</text>
+<rect x="192" y="120" width="136" height="54" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="260" y="143" font-size="13" fill="currentColor" text-anchor="middle" font-weight="600">MCP client 2</text>
+<text x="260" y="162" font-size="13" fill="currentColor" text-anchor="middle" opacity="0.85">1 kết nối</text>
+<rect x="352" y="120" width="136" height="54" rx="8" fill="#3b82f6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="420" y="143" font-size="13" fill="currentColor" text-anchor="middle" font-weight="600">MCP client 3</text>
+<text x="420" y="162" font-size="13" fill="currentColor" text-anchor="middle" opacity="0.85">1 kết nối</text>
+<rect x="32" y="254" width="136" height="62" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="100" y="278" font-size="14" fill="currentColor" text-anchor="middle" font-weight="600">server A</text>
+<text x="100" y="299" font-size="13" fill="currentColor" text-anchor="middle" opacity="0.85">host khởi động</text>
+<line x1="100" y1="178" x2="100" y2="250" stroke="currentColor" stroke-width="1.6" stroke-opacity="0.75" marker-start="url(#ag09a-m)" marker-end="url(#ag09a-m)"/>
+<text x="108" y="208" font-size="13" fill="currentColor" font-weight="600">stdio</text>
+<text x="108" y="226" font-size="13" fill="currentColor" opacity="0.85">stdin/stdout</text>
+<rect x="192" y="254" width="136" height="62" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="260" y="278" font-size="14" fill="currentColor" text-anchor="middle" font-weight="600">server B</text>
+<text x="260" y="299" font-size="13" fill="currentColor" text-anchor="middle" opacity="0.85">host khởi động</text>
+<line x1="260" y1="178" x2="260" y2="250" stroke="currentColor" stroke-width="1.6" stroke-opacity="0.75" marker-start="url(#ag09a-m)" marker-end="url(#ag09a-m)"/>
+<text x="268" y="208" font-size="13" fill="currentColor" font-weight="600">stdio</text>
+<text x="268" y="226" font-size="13" fill="currentColor" opacity="0.85">stdin/stdout</text>
+<rect x="6" y="350" width="508" height="124" rx="8" fill="#14b8a6" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.3" stroke-width="1.2" stroke-dasharray="5 4"/>
+<text x="18" y="372" font-size="13" fill="currentColor" font-weight="600" opacity="0.75">CLOUD / MÁY KHÁC</text>
+<rect x="352" y="392" width="136" height="62" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="420" y="416" font-size="14" fill="currentColor" text-anchor="middle" font-weight="600">server C</text>
+<text x="420" y="437" font-size="13" fill="currentColor" text-anchor="middle" opacity="0.85">process độc lập</text>
+<line x1="420" y1="178" x2="420" y2="388" stroke="currentColor" stroke-width="1.6" stroke-opacity="0.75" marker-start="url(#ag09a-m)" marker-end="url(#ag09a-m)"/>
+<text x="428" y="236" font-size="13" fill="currentColor" font-weight="600">Streamable</text>
+<text x="428" y="254" font-size="13" fill="currentColor" font-weight="600">HTTP</text>
+<text x="428" y="274" font-size="13" fill="currentColor" opacity="0.85">POST /mcp</text>
+<text x="20" y="404" font-size="13" fill="currentColor">một server HTTP phục vụ</text>
+<text x="20" y="422" font-size="13" fill="currentColor">được nhiều client</text>
+<text x="260" y="496" font-size="13" fill="currentColor" text-anchor="middle" opacity="0.85">mọi message trên cả hai transport: JSON-RPC 2.0</text>
+</svg>
+
 Server phơi ra ba loại **primitive**:
 
 | Primitive | Là gì | Ai quyết định dùng |

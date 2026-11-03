@@ -61,16 +61,37 @@ Viết câu trả lời một dòng trước khi đọc §3.3.
 
 **Iteration** (một lượt) là một lần chạy trọn vòng: từ đọc state trên đĩa tới ghi state mới xuống đĩa. Loop chỉ là việc gọi lại iteration theo nhịp. Muốn loop đúng thì trước hết **một iteration phải đúng và phải idempotent** (chạy lại lần nữa trên cùng state thì không gây thêm hiệu ứng — task đã `[x …]` không bị làm lại).
 
-```
-iteration
- 1. đọc BRIEF.md            ── main agent
- 2. lọc task nhận được       ── main agent (bỏ [x …], [wait …], [lock …] chưa quá ngưỡng)
- 3. recon vùng file          ── agent Explore (song song, chỉ đọc)
- 4. nhận task: [ ] → [lock YYYY-MM-DD HH:MM]   ── main agent, TRƯỚC khi spawn
- 5. giao worker              ── N subagent, mỗi cái một worktree, spawn trong MỘT message
- 6. verify                   ── N verifier, context sạch, không có Edit/Write
- 7. đóng: commit / mark [x …] / ghi blocker / dọn task cũ   ── main agent
-```
+<step-flow>
+<svg viewBox="0 0 760 520" role="img" aria-labelledby="ag19a-t ag19a-d" style="width:100%;height:auto" font-family="ui-sans-serif, system-ui, sans-serif"><title id="ag19a-t">Một iteration: bảy bước và ai làm bước nào</title><desc id="ag19a-d">Bốn cột vai: main agent (điều phối, BRIEF.md, git), agent Explore chỉ đọc, N worker và N verifier. Bước 1 đọc BRIEF.md, bước 2 lọc task nhận được, bước 4 nhận task bằng lock trước khi spawn và bước 7 đóng (commit, mark, ghi blocker, dọn task cũ) đều do main agent; bước 3 recon do Explore chạy song song chỉ đọc; bước 5 giao N worker, mỗi worker một worktree, spawn trong một message; bước 6 là N verifier context sạch, không có Edit/Write.</desc>
+<defs><marker id="ag19a-m" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<rect x="20" y="10" width="180" height="50" rx="8" fill="#8b5cf6" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="110" y="31" font-size="14" fill="currentColor" text-anchor="middle" font-weight="600">main agent</text>
+<text x="110" y="50" font-size="13" fill="currentColor" text-anchor="middle" opacity="0.85">điều phối, BRIEF.md, git</text>
+<rect x="220" y="10" width="140" height="50" rx="8" fill="#14b8a6" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="290" y="31" font-size="14" fill="currentColor" text-anchor="middle" font-weight="600">Explore</text>
+<text x="290" y="50" font-size="13" fill="currentColor" text-anchor="middle" opacity="0.85">chỉ đọc</text>
+<rect x="380" y="10" width="160" height="50" rx="8" fill="#3b82f6" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="460" y="31" font-size="14" fill="currentColor" text-anchor="middle" font-weight="600">N worker</text>
+<text x="460" y="50" font-size="13" fill="currentColor" text-anchor="middle" opacity="0.85">không chạy git</text>
+<rect x="560" y="10" width="180" height="50" rx="8" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="650" y="31" font-size="14" fill="currentColor" text-anchor="middle" font-weight="600">N verifier</text>
+<text x="650" y="50" font-size="13" fill="currentColor" text-anchor="middle" opacity="0.85">không có Edit/Write</text>
+<g data-step="1"><rect x="20" y="76" width="180" height="48" rx="8" fill="#8b5cf6" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/><text x="110" y="105" font-size="13" fill="currentColor" text-anchor="middle" font-weight="600">1  đọc BRIEF.md</text></g>
+<g data-step="2"><rect x="20" y="138" width="180" height="48" rx="8" fill="#8b5cf6" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/><text x="110" y="167" font-size="13" fill="currentColor" text-anchor="middle" font-weight="600">2  lọc task nhận được</text><text x="220" y="167" font-size="13" fill="currentColor" opacity="0.9">bỏ [x …], [wait …], [lock …] chưa quá ngưỡng</text></g>
+<g data-step="3"><path d="M 228 196 L 360 196 L 360 240" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/><path d="M 224 200 L 356 200 L 356 244" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/><rect x="220" y="204" width="132" height="44" rx="8" fill="#14b8a6" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/><text x="286" y="233" font-size="13" fill="currentColor" text-anchor="middle" font-weight="600">3  recon vùng file</text><text x="380" y="233" font-size="13" fill="currentColor" opacity="0.9">song song, chỉ đọc</text></g>
+<g data-step="4"><rect x="20" y="262" width="180" height="48" rx="8" fill="#8b5cf6" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/><text x="110" y="291" font-size="13" fill="currentColor" text-anchor="middle" font-weight="600">4  nhận task</text><text x="220" y="284" font-size="13" fill="currentColor" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">[ ] → [lock YYYY-MM-DD HH:MM]</text><text x="220" y="303" font-size="13" fill="currentColor" font-weight="600">TRƯỚC khi spawn</text></g>
+<g data-step="5"><path d="M 388 320 L 540 320 L 540 364" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/><path d="M 384 324 L 536 324 L 536 368" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/><rect x="380" y="328" width="152" height="44" rx="8" fill="#3b82f6" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/><text x="456" y="348" font-size="13" fill="currentColor" text-anchor="middle" font-weight="600">5  giao worker</text><text x="456" y="366" font-size="13" fill="currentColor" text-anchor="middle" opacity="0.85">mỗi cái 1 worktree</text><text x="368" y="357" font-size="13" fill="currentColor" text-anchor="end" opacity="0.9">N subagent, spawn trong MỘT message</text></g>
+<g data-step="6"><path d="M 568 382 L 740 382 L 740 426" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/><path d="M 564 386 L 736 386 L 736 430" fill="none" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/><rect x="560" y="390" width="172" height="44" rx="8" fill="#10b981" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/><text x="646" y="410" font-size="13" fill="currentColor" text-anchor="middle" font-weight="600">6  verify</text><text x="646" y="428" font-size="13" fill="currentColor" text-anchor="middle" opacity="0.85">context sạch</text><text x="548" y="419" font-size="13" fill="currentColor" text-anchor="end" opacity="0.9">task nào xong verify task đó</text></g>
+<g data-step="7"><rect x="20" y="448" width="180" height="48" rx="8" fill="#8b5cf6" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/><text x="110" y="477" font-size="13" fill="currentColor" text-anchor="middle" font-weight="600">7  đóng</text><text x="220" y="477" font-size="13" fill="currentColor" opacity="0.9">commit / mark [x …] / ghi blocker / dọn task cũ</text></g>
+</svg>
+<step-note data-step="1">State sống trên đĩa, không sống trong context, nên mỗi iteration bắt đầu bằng việc đọc lại sổ.</step-note>
+<step-note data-step="2">Lọc ở đây là thứ làm iteration idempotent: task đã <code>[x …]</code> không bao giờ bị nhặt lại.</step-note>
+<step-note data-step="3">Đọc vùng file là việc tốn token. Đẩy sang Explore để context của main agent còn sống qua nhiều iteration.</step-note>
+<step-note data-step="4">Ghi lock xuống <code>BRIEF.md</code> trước khi spawn, để iteration chồng lên không nhặt trùng task đang làm.</step-note>
+<step-note data-step="5">Mỗi worker một worktree nên không giẫm file của nhau; worker bị cấm <code>git</code> nên không có chuyện agent A <code>checkout</code> làm mất việc của agent B.</step-note>
+<step-note data-step="6">Verifier không phải main agent: đứa soạn brief mang cùng giả định với worker, tự chấm thì không còn là gate.</step-note>
+<step-note data-step="7">Git và bookkeeping tập trung một chỗ. Main agent không viết code và không tự chấm, chỉ điều phối, ghi sổ và commit.</step-note>
+</step-flow>
 
 Luật phân vai, rút từ skill loop đang chạy thật (kinh nghiệm thực tế): **main agent không viết code và không tự chấm**. Nó chỉ làm ba thứ: điều phối, bookkeeping trên `BRIEF.md`, và git. Lý do của từng vế:
 

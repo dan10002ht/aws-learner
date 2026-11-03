@@ -56,18 +56,38 @@ Lý thuyết tool calling ở mức API đã có ở [[aiml-05-agents-tools]] (m
 
 Một vòng như sau:
 
-```
-prompt của bạn
-   │
-   ▼
-[model] đọc context → trả về: text, hoặc một/vài tool call (Read, Edit, Bash…)
-   │                                     │
-   │ (chỉ text, không tool call)         ▼
-   ▼                         [harness] kiểm permission → (sandbox) → chạy tool
- xong lượt                               │
-                                         ▼
-                         output tool được NỐI vào context → quay lại [model]
-```
+<step-flow>
+<svg viewBox="0 0 700 420" role="img" aria-labelledby="ag03a-t ag03a-d" style="width:100%;height:auto" font-family="ui-sans-serif, system-ui, sans-serif"><title id="ag03a-t">Một vòng của coding agent: model đề nghị, harness chạy</title><desc id="ag03a-d">Ba cột Model, Harness và Tool chạy thật, bên dưới là Context của model và Bạn. Prompt vào context, model đọc context và trả về tool call; harness kiểm permission, sandbox, chạy tool trên máy; output được nối vào context rồi model đọc lại; khi model chỉ trả text thì harness đưa câu trả lời cho bạn và xong lượt.</desc>
+<defs><marker id="ag03a-m" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<rect x="20" y="40" width="190" height="190" rx="8" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="115" y="64" font-size="15" fill="currentColor" text-anchor="middle" font-weight="600">Model</text>
+<rect x="250" y="40" width="220" height="190" rx="8" fill="#10b981" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="360" y="64" font-size="15" fill="currentColor" text-anchor="middle" font-weight="600">Harness</text>
+<text x="360" y="84" font-size="13" fill="currentColor" text-anchor="middle" opacity="0.8">chạy trên máy bạn</text>
+<rect x="510" y="40" width="170" height="190" rx="8" fill="#64748b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="595" y="64" font-size="15" fill="currentColor" text-anchor="middle" font-weight="600">Tool chạy thật</text>
+<text x="526" y="92" font-size="13" fill="currentColor">Read, Edit: file</text>
+<text x="526" y="112" font-size="13" fill="currentColor">Bash: shell, test</text>
+<rect x="20" y="290" width="450" height="120" rx="8" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="34" y="312" font-size="15" fill="currentColor" font-weight="600">Context của model</text>
+<rect x="510" y="290" width="170" height="120" rx="8" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.45" stroke-width="1.2"/>
+<text x="595" y="312" font-size="15" fill="currentColor" text-anchor="middle" font-weight="600">Bạn</text>
+<g data-step="1"><text x="34" y="336" font-size="13" fill="currentColor">prompt: sửa test đang fail</text><line x1="508" y1="331" x2="474" y2="331" stroke="currentColor" stroke-width="1.6" stroke-opacity="0.75" marker-end="url(#ag03a-m)"/><line x1="60" y1="288" x2="60" y2="234" stroke="currentColor" stroke-width="1.6" stroke-opacity="0.75" marker-end="url(#ag03a-m)"/><text x="68" y="266" font-size="13" fill="currentColor">đọc context</text></g>
+<g data-step="2"><text x="32" y="100" font-size="13" fill="currentColor">trả về một/vài</text><text x="32" y="118" font-size="13" fill="currentColor">tool call:</text><text x="32" y="140" font-size="13" fill="currentColor" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">Bash npm test</text><line x1="212" y1="136" x2="248" y2="136" stroke="currentColor" stroke-width="1.6" stroke-opacity="0.75" marker-end="url(#ag03a-m)"/><text x="32" y="176" font-size="13" fill="currentColor" font-weight="600">không chạy gì cả</text><text x="32" y="194" font-size="13" fill="currentColor" opacity="0.8">chỉ đề nghị</text></g>
+<g data-step="3"><text x="264" y="118" font-size="13" fill="currentColor">1. kiểm permission ✓</text><text x="264" y="140" font-size="13" fill="currentColor">2. (sandbox)</text></g>
+<g data-step="4"><text x="264" y="162" font-size="13" fill="currentColor">3. chạy tool</text><line x1="472" y1="158" x2="508" y2="158" stroke="currentColor" stroke-width="1.6" stroke-opacity="0.75" marker-end="url(#ag03a-m)"/><line x1="508" y1="186" x2="472" y2="186" stroke="currentColor" stroke-width="1.6" stroke-opacity="0.75" marker-end="url(#ag03a-m)"/><text x="526" y="160" font-size="13" fill="currentColor" font-weight="600">npm test chạy</text><text x="526" y="190" font-size="13" fill="currentColor" opacity="0.85">trả output</text></g>
+<g data-step="5"><line x1="330" y1="232" x2="330" y2="288" stroke="currentColor" stroke-width="1.6" stroke-opacity="0.75" marker-end="url(#ag03a-m)"/><text x="338" y="266" font-size="13" fill="currentColor">nối vào</text><text x="34" y="358" font-size="13" fill="currentColor">output tool: 3.000 dòng log</text></g>
+<g data-step="6"><line x1="190" y1="288" x2="190" y2="234" stroke="#f59e0b" stroke-width="2.4" marker-end="url(#ag03a-m)"/><text x="198" y="266" font-size="13" fill="currentColor">đọc lại</text><text x="34" y="382" font-size="13" fill="currentColor" font-weight="600">lặp: model đọc lại, đề nghị bước tiếp</text><text x="34" y="400" font-size="13" fill="currentColor" opacity="0.8">(Read file lỗi, Edit, chạy test lại…)</text></g>
+<g data-step="7"><text x="32" y="218" font-size="13" fill="currentColor" font-weight="600">hoặc: chỉ text</text><line x1="212" y1="214" x2="248" y2="214" stroke="currentColor" stroke-width="1.6" stroke-opacity="0.75" marker-end="url(#ag03a-m)"/><text x="264" y="214" font-size="13" fill="currentColor">đưa text cho bạn</text><path d="M 440 232 L 440 260 L 650 260 L 650 288" fill="none" stroke="currentColor" stroke-width="1.6" stroke-opacity="0.75" marker-end="url(#ag03a-m)"/><text x="526" y="352" font-size="13" fill="currentColor">nhận câu trả lời</text><text x="526" y="374" font-size="13" fill="currentColor" font-weight="600">→ xong lượt</text></g>
+</svg>
+<step-note data-step="1">Mọi thứ model biết đều phải nằm trong context. Prompt của bạn là thứ đầu tiên harness đưa vào.</step-note>
+<step-note data-step="2">Model chỉ trả về một yêu cầu có cấu trúc (<code>tool_use</code>). Không có lệnh nào chạy ở phía model, nên lời dặn model không phải chỗ đặt kiểm soát.</step-note>
+<step-note data-step="3">Harness là chỗ đặt rào: tool call bị chặn ở đây thì không bao giờ đụng tới máy bạn.</step-note>
+<step-note data-step="4">Chỉ đến lúc này mới có thứ thật sự chạy, và người chạy là harness trên máy bạn.</step-note>
+<step-note data-step="5">Output tool trở thành input của bước sau. Test in 3.000 dòng thì 3.000 dòng đó chiếm context.</step-note>
+<step-note data-step="6">Chạy test lại chỉ là một tool call nữa, nên agent tự kiểm được việc của mình. Ví dụ "fix the failing tests" là sáu vòng như thế.</step-note>
+<step-note data-step="7">Vòng dừng khi model trả về chỉ text, không kèm tool call nào. Harness đưa câu trả lời cho bạn và chờ prompt tiếp theo.</step-note>
+</step-flow>
 
 Docs mô tả ba pha *gather context → take action → verify results*, và đưa ví dụ "fix the failing tests": chạy test → đọc lỗi → tìm file nguồn → đọc file → sửa → chạy test lại. Sáu bước, mỗi bước là một vòng.
 
