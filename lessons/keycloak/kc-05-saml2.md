@@ -39,48 +39,66 @@ Dev nói đúng là không sửa được nội dung. Vậy dòng log này nguy 
 
 ### 3.1 Vì sao vẫn còn SAML, và nó khác OIDC từ gốc ở đâu
 
-Đáp án là **(c)**, và để thấy vì sao, cần một điểm khác biệt nằm ở tận gốc giao thức.
+Đáp án: **(c)**.
 
 SAML 2.0 là giao thức xác thực trao đổi **tài liệu XML** giữa IdP (identity provider, bên xác thực user) và SP (service provider, ứng dụng muốn biết user là ai). Keycloak tự khuyến nghị OIDC cho hầu hết trường hợp; lý do docs nêu để chọn SAML rất thực dụng: ứng dụng sẵn có đã được bảo vệ bằng nó. Bản sai "SAML lỗi thời, Keycloak sắp bỏ" không có chỗ dựa: bản 26.7 vừa đưa step-up authentication cho SAML client lên supported. Thứ bị deprecate là SHA1 và việc Keycloak tự sinh key cho client, không phải SAML.
 
 Điểm khác gốc: trong authorization code flow ở bài 2, token **không đi qua trình duyệt**. Trình duyệt chỉ chở `code`, app đổi `code` lấy token qua back-channel có xác thực client. Trong luồng SAML phổ biến nhất (Web Browser SSO, POST binding), **chính assertion** (tài liệu XML khẳng định "user này là alice, xác thực lúc X, có thuộc tính Y") đi từ Keycloak, qua trình duyệt, tới SP.
 
-Hệ quả kéo theo cả bài: trình duyệt là kênh người dùng (hoặc malware, extension) kiểm soát, nên SP không được tin byte nào trong assertion trừ khi nó được ký, đúng người nhận, đúng thời điểm, và chưa dùng lần nào. Mỗi thuộc tính bạn sắp đọc là câu trả lời cho "nếu kẻ tấn công cầm được tài liệu này thì sao".
+Trình duyệt do user, malware hoặc extension kiểm soát. SP chỉ tin assertion sau khi kiểm chữ ký, người nhận, thời hạn và chống replay.
 
-<svg viewBox="0 0 720 400" role="img" aria-labelledby="kc5-a-t kc5-a-d" style="width:100%;height:auto">
+<step-flow>
+<svg viewBox="0 0 720 705" role="img" aria-labelledby="kc5-a-t kc5-a-d" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto">
 <title id="kc5-a-t">Luồng SAML SP-initiated với POST binding</title>
 <desc id="kc5-a-d">Ba cột Browser, SP và Keycloak. SP chuyển hướng trình duyệt sang Keycloak kèm SAMLRequest, user đăng nhập, Keycloak trả về một form HTML tự submit chứa SAMLResponse, trình duyệt POST nó tới ACS của SP. Không có bước back-channel nào giữa SP và Keycloak.</desc>
-<defs><marker id="kc5-a-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor" fill-opacity="0.7"/></marker></defs>
-<rect x="60" y="14" width="100" height="28" rx="8" fill="#64748b" fill-opacity="0.25"/>
-<text x="110" y="33" text-anchor="middle" font-size="12" fill="currentColor">Browser</text>
-<rect x="300" y="14" width="120" height="28" rx="8" fill="#84cc16" fill-opacity="0.25"/>
-<text x="360" y="33" text-anchor="middle" font-size="12" fill="currentColor">SP (app Java)</text>
-<rect x="560" y="14" width="100" height="28" rx="8" fill="#3b82f6" fill-opacity="0.25"/>
-<text x="610" y="33" text-anchor="middle" font-size="12" fill="currentColor">Keycloak</text>
-<line x1="110" y1="42" x2="110" y2="390" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-<line x1="360" y1="42" x2="360" y2="390" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-<line x1="610" y1="42" x2="610" y2="390" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-<line x1="110" y1="70" x2="356" y2="70" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc5-a-arrow)"/>
-<text x="120" y="64" font-size="11" fill="currentColor">1. GET /bao-cao (chưa có phiên)</text>
-<line x1="360" y1="104" x2="114" y2="104" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc5-a-arrow)"/>
-<text x="120" y="98" font-size="11" fill="currentColor">2. 302 tới Keycloak ?SAMLRequest=...</text>
-<line x1="110" y1="138" x2="606" y2="138" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc5-a-arrow)"/>
-<text x="120" y="132" font-size="11" fill="currentColor">3. GET /protocol/saml?SAMLRequest=...&amp;RelayState=rs-42 (Redirect binding)</text>
-<line x1="610" y1="172" x2="114" y2="172" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc5-a-arrow)"/>
-<text x="370" y="166" font-size="11" fill="currentColor">4. 200 form đăng nhập</text>
-<line x1="110" y1="206" x2="606" y2="206" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc5-a-arrow)"/>
-<text x="370" y="200" font-size="11" fill="currentColor">5. POST username, password</text>
-<line x1="610" y1="240" x2="114" y2="240" stroke="#f59e0b" stroke-width="2" marker-end="url(#kc5-a-arrow)"/>
-<text x="120" y="234" font-size="11" fill="currentColor">6. 200 HTML form tự submit, ô ẩn SAMLResponse = base64(XML đã ký)</text>
-<line x1="110" y1="274" x2="356" y2="274" stroke="#f59e0b" stroke-width="2" marker-end="url(#kc5-a-arrow)"/>
-<text x="120" y="268" font-size="11" fill="currentColor">7. POST /saml/acs SAMLResponse=...</text>
-<rect x="230" y="290" width="260" height="44" rx="8" fill="#84cc16" fill-opacity="0.18"/>
-<text x="360" y="308" text-anchor="middle" font-size="11" fill="currentColor">8. kiểm chữ ký, Audience, Recipient,</text>
-<text x="360" y="324" text-anchor="middle" font-size="11" fill="currentColor">InResponseTo, thời gian, ID chưa dùng</text>
-<rect x="430" y="346" width="280" height="40" rx="8" fill="#ef4444" fill-opacity="0.15"/>
-<text x="570" y="362" text-anchor="middle" font-size="11" fill="currentColor">Không có mũi tên SP - Keycloak nào:</text>
-<text x="570" y="378" text-anchor="middle" font-size="11" fill="currentColor">assertion đi trọn qua trình duyệt</text>
+<defs>
+<marker id="kc5-a-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+<path d="M0,0 L10,5 L0,10 z" fill="currentColor" fill-opacity="0.7" />
+</marker>
+</defs>
+<rect x="60" y="23.8" width="100" height="47.6" rx="8" fill="#14b8a6" fill-opacity="0.15" stroke="#14b8a6" />
+<text x="110" y="56.1" text-anchor="middle" font-size="13" fill="currentColor">Browser</text>
+<rect x="300" y="23.8" width="120" height="47.6" rx="8" fill="#10b981" fill-opacity="0.15" stroke="#10b981" />
+<text x="360" y="56.1" text-anchor="middle" font-size="13" fill="currentColor">SP (app Java)</text>
+<rect x="560" y="23.8" width="100" height="47.6" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6" />
+<text x="610" y="56.1" text-anchor="middle" font-size="13" fill="currentColor">Keycloak</text>
+<line x1="110" y1="71.4" x2="110" y2="663.0" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4" />
+<line x1="360" y1="71.4" x2="360" y2="663.0" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4" />
+<line x1="610" y1="71.4" x2="610" y2="663.0" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4" />
+<g data-step="1">
+<line x1="110" y1="119.0" x2="356" y2="119.0" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc5-a-arrow)" />
+<text x="120" y="108.8" font-size="13" fill="currentColor">1. GET /bao-cao (chưa có phiên)</text>
+<line x1="360" y1="176.8" x2="114" y2="176.8" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc5-a-arrow)" />
+<text x="120" y="166.6" font-size="13" fill="currentColor">2. 302 tới Keycloak ?SAMLRequest=...</text>
+<line x1="110" y1="234.6" x2="606" y2="234.6" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc5-a-arrow)" />
+<text x="120" y="224.4" font-size="13" fill="currentColor">3. GET /protocol/saml?SAMLRequest=...&amp;RelayState=rs-42 (Redirect binding)</text>
+</g>
+<g data-step="2">
+<line x1="610" y1="292.4" x2="114" y2="292.4" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc5-a-arrow)" />
+<text x="370" y="282.2" font-size="13" fill="currentColor">4. 200 form đăng nhập</text>
+<line x1="110" y1="350.2" x2="606" y2="350.2" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc5-a-arrow)" />
+<text x="370" y="340.0" font-size="13" fill="currentColor">5. POST username, password</text>
+</g>
+<g data-step="3">
+<line x1="610" y1="408.0" x2="114" y2="408.0" stroke="#f59e0b" stroke-width="2" marker-end="url(#kc5-a-arrow)" />
+<text x="120" y="397.8" font-size="13" fill="currentColor">6. 200 HTML form tự submit, ô ẩn SAMLResponse = base64(XML đã ký)</text>
+<line x1="110" y1="465.8" x2="356" y2="465.8" stroke="#f59e0b" stroke-width="2" marker-end="url(#kc5-a-arrow)" />
+<text x="120" y="455.6" font-size="13" fill="currentColor">7. POST /saml/acs SAMLResponse=...</text>
+</g>
+<g data-step="4">
+<rect x="230" y="493.0" width="260" height="74.8" rx="8" fill="#10b981" fill-opacity="0.15" stroke="#10b981" />
+<text x="360" y="523.6" text-anchor="middle" font-size="13" fill="currentColor">8. kiểm chữ ký, Audience, Recipient,</text>
+<text x="360" y="550.8" text-anchor="middle" font-size="13" fill="currentColor">InResponseTo, thời gian, ID chưa dùng</text>
+<rect x="430" y="588.2" width="280" height="68.0" rx="8" fill="#f43f5e" fill-opacity="0.15" stroke="#f43f5e" />
+<text x="570" y="615.4" text-anchor="middle" font-size="13" fill="currentColor">Không có mũi tên SP - Keycloak nào:</text>
+<text x="570" y="642.6" text-anchor="middle" font-size="13" fill="currentColor">assertion đi trọn qua trình duyệt</text>
+</g>
 </svg>
+<step-note data-step="1">SP giữ request để đối chiếu.</step-note>
+<step-note data-step="2">Browser mang request tới IdP; SP không gọi IdP.</step-note>
+<step-note data-step="3">Mật khẩu chỉ tới IdP.</step-note>
+<step-note data-step="4">Assertion quay qua browser nên SP kiểm chữ ký, replay.</step-note>
+</step-flow>
 
 > **Nguồn.** *"SAML 2.0 is an authentication protocol that exchanges XML documents between authentication servers and applications."* ([server_admin #_saml](https://www.keycloak.org/docs/latest/server_admin/#_saml)); *"For most purposes, Keycloak recommends using OIDC."* ([ref-saml-vs-oidc](https://www.keycloak.org/docs/latest/server_admin/#ref-saml-vs-oidc_server_administration_guide)). Lý do chọn SAML, step-up SAML supported ở 26.7, SHA1 và sinh key deprecated: dòng #4, #167, #14, #21 của `kc-saml-federation.md`.
 

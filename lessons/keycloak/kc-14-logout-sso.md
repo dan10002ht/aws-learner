@@ -195,49 +195,65 @@ ResponseEntity<Void> backchannelLogout(@RequestParam(LOGOUT_TOKEN) String raw) {
 
 > **Suy luận.** Không nguồn nào của course nêu timeout back-channel hay cách cấu hình nó. "Khoảng 5 s" suy từ hai dòng WARN cách nhau 5,006 s; "tuần tự" suy từ hai POST cách nhau 3,0 s dù listener đa luồng, và từ stack trace (`browserLogoutAllClients` gọi `ArrayList.forEach`). Kiểm bằng: ba client cùng treo 20 s, tổng có gần 15 s không.
 
-<svg viewBox="0 0 720 410" role="img" aria-labelledby="kc14-a-t kc14-a-d" style="width:100%;height:auto">
+<step-flow>
+<svg viewBox="0 0 720 722" role="img" aria-labelledby="kc14-a-t kc14-a-d" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto">
 <title id="kc14-a-t">Sequence back-channel logout đo trên lab</title>
 <desc id="kc14-a-d">Trình duyệt bấm Logout ở app-a, được redirect tới endpoint logout của Keycloak kèm id_token_hint; Keycloak xoá user session, gửi POST logout_token lần lượt tới app-b sau 52 ms và app-a sau 56 ms, chờ cả hai trả 200, rồi mới trả 302 về trang bye của app-a và xoá cookie KEYCLOAK_IDENTITY.</desc>
 <defs>
-<marker id="kc14-a-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker>
+<marker id="kc14-a-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+<path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+</marker>
 </defs>
-<rect x="30" y="16" width="120" height="30" rx="8" fill="#64748b" fill-opacity="0.25"/>
-<text x="90" y="36" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor">Trình duyệt</text>
-<rect x="190" y="16" width="120" height="30" rx="8" fill="#3b82f6" fill-opacity="0.25"/>
-<text x="250" y="36" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor">app-a (portal)</text>
-<rect x="370" y="16" width="120" height="30" rx="8" fill="#8b5cf6" fill-opacity="0.25"/>
-<text x="430" y="36" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor">Keycloak</text>
-<rect x="550" y="16" width="120" height="30" rx="8" fill="#84cc16" fill-opacity="0.25"/>
-<text x="610" y="36" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor">app-b (billing)</text>
-<line x1="90" y1="46" x2="90" y2="372" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-<line x1="250" y1="46" x2="250" y2="372" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-<line x1="430" y1="46" x2="430" y2="372" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-<line x1="610" y1="46" x2="610" y2="372" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-<text x="170" y="74" text-anchor="middle" font-size="10.5" fill="currentColor">1. bấm Logout</text>
-<line x1="90" y1="80" x2="248" y2="80" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc14-a-arrow)"/>
-<text x="170" y="104" text-anchor="middle" font-size="10.5" fill="currentColor">2. 302 tới /logout?id_token_hint=...</text>
-<line x1="250" y1="110" x2="92" y2="110" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#kc14-a-arrow)"/>
-<text x="260" y="136" text-anchor="middle" font-size="10.5" fill="currentColor">3. GET /logout + cookie KEYCLOAK_IDENTITY (t = 0)</text>
-<line x1="90" y1="142" x2="428" y2="142" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc14-a-arrow)"/>
-<rect x="372" y="156" width="116" height="34" rx="6" fill="#ef4444" fill-opacity="0.18"/>
-<text x="430" y="171" text-anchor="middle" font-size="10" fill="currentColor">4. xoá user session</text>
-<text x="430" y="184" text-anchor="middle" font-size="10" fill="currentColor">sid=eEgx2uJ6...</text>
-<text x="520" y="208" text-anchor="middle" font-size="10.5" fill="currentColor">5. POST logout_token, +52 ms</text>
-<line x1="430" y1="214" x2="608" y2="214" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc14-a-arrow)"/>
-<text x="520" y="236" text-anchor="middle" font-size="10.5" fill="currentColor">6. 200</text>
-<line x1="610" y1="242" x2="432" y2="242" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#kc14-a-arrow)"/>
-<text x="340" y="266" text-anchor="middle" font-size="10.5" fill="currentColor">7. POST logout_token, +56 ms</text>
-<line x1="430" y1="272" x2="252" y2="272" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc14-a-arrow)"/>
-<text x="340" y="294" text-anchor="middle" font-size="10.5" fill="currentColor">8. 200</text>
-<line x1="250" y1="300" x2="428" y2="300" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#kc14-a-arrow)"/>
-<text x="260" y="326" text-anchor="middle" font-size="10.5" fill="currentColor">9. 302 về /a/bye?state=lo1, xoá cookie (t = 91 ms)</text>
-<line x1="430" y1="332" x2="92" y2="332" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#kc14-a-arrow)"/>
-<rect x="488" y="262" width="224" height="56" rx="6" fill="#f59e0b" fill-opacity="0.18"/>
-<text x="600" y="280" text-anchor="middle" font-size="10" fill="currentColor">Bước 5 đến 8: đồng bộ, tuần tự.</text>
-<text x="600" y="294" text-anchor="middle" font-size="10" fill="currentColor">App treo: chờ khoảng 5 s mỗi app.</text>
-<text x="600" y="308" text-anchor="middle" font-size="10" fill="currentColor">App trả 500: không gửi lại.</text>
-<text x="360" y="396" text-anchor="middle" font-size="10.5" fill="currentColor">Bước 4 luôn xảy ra; bước 5 đến 8 là gửi một lần, best-effort.</text>
+<rect x="30" y="27.2" width="120" height="51.0" rx="8" fill="#14b8a6" fill-opacity="0.15" stroke="#14b8a6" />
+<text x="90" y="61.2" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">Trình duyệt</text>
+<rect x="190" y="27.2" width="120" height="51.0" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6" />
+<text x="250" y="61.2" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">app-a (portal)</text>
+<rect x="370" y="27.2" width="120" height="51.0" rx="8" fill="#8b5cf6" fill-opacity="0.15" stroke="#8b5cf6" />
+<text x="430" y="61.2" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">Keycloak</text>
+<rect x="550" y="27.2" width="120" height="51.0" rx="8" fill="#10b981" fill-opacity="0.15" stroke="#10b981" />
+<text x="610" y="61.2" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">app-b (billing)</text>
+<line x1="90" y1="78.2" x2="90" y2="632.4" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4" />
+<line x1="250" y1="78.2" x2="250" y2="632.4" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4" />
+<line x1="430" y1="78.2" x2="430" y2="632.4" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4" />
+<line x1="610" y1="78.2" x2="610" y2="632.4" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4" />
+<g data-step="1">
+<text x="170" y="125.8" text-anchor="middle" font-size="13" fill="currentColor">1. bấm Logout</text>
+<line x1="90" y1="136.0" x2="248" y2="136.0" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc14-a-arrow)" />
+<text x="170" y="176.8" text-anchor="middle" font-size="13" fill="currentColor">2. 302 tới /logout?id_token_hint=...</text>
+<line x1="250" y1="187.0" x2="92" y2="187.0" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#kc14-a-arrow)" />
+<text x="260" y="231.2" text-anchor="middle" font-size="13" fill="currentColor">3. GET /logout + cookie KEYCLOAK_IDENTITY (t = 0)</text>
+<line x1="90" y1="241.4" x2="428" y2="241.4" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc14-a-arrow)" />
+</g>
+<g data-step="2">
+<rect x="372" y="265.2" width="116" height="57.8" rx="6" fill="#f43f5e" fill-opacity="0.15" stroke="#f43f5e" />
+<text x="430" y="290.7" text-anchor="middle" font-size="13" fill="currentColor">4. xoá user session</text>
+<text x="430" y="312.8" text-anchor="middle" font-size="13" fill="currentColor">sid=eEgx2uJ6...</text>
+<text x="520" y="353.6" text-anchor="middle" font-size="13" fill="currentColor">5. POST logout_token, +52 ms</text>
+<line x1="430" y1="363.8" x2="608" y2="363.8" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc14-a-arrow)" />
+</g>
+<g data-step="3">
+<text x="520" y="401.2" text-anchor="middle" font-size="13" fill="currentColor">6. 200</text>
+<line x1="610" y1="411.4" x2="432" y2="411.4" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#kc14-a-arrow)" />
+<text x="340" y="452.2" text-anchor="middle" font-size="13" fill="currentColor">7. POST logout_token, +56 ms</text>
+<line x1="430" y1="462.4" x2="252" y2="462.4" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc14-a-arrow)" />
+<text x="340" y="499.8" text-anchor="middle" font-size="13" fill="currentColor">8. 200</text>
+<line x1="250" y1="510.0" x2="428" y2="510.0" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#kc14-a-arrow)" />
+<rect x="488" y="445.4" width="224" height="95.2" rx="6" fill="#f59e0b" fill-opacity="0.15" stroke="#f59e0b" />
+<text x="600" y="476.0" text-anchor="middle" font-size="13" fill="currentColor">Bước 5 đến 8: đồng bộ, tuần tự.</text>
+<text x="600" y="499.8" text-anchor="middle" font-size="13" fill="currentColor">App treo: chờ khoảng 5 s mỗi app.</text>
+<text x="600" y="523.6" text-anchor="middle" font-size="13" fill="currentColor">App trả 500: không gửi lại.</text>
+</g>
+<g data-step="4">
+<text x="260" y="554.2" text-anchor="middle" font-size="13" fill="currentColor">9. 302 về /a/bye?state=lo1, xoá cookie (t = 91 ms)</text>
+<line x1="430" y1="564.4" x2="92" y2="564.4" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#kc14-a-arrow)" />
+<text x="360" y="673.2" text-anchor="middle" font-size="13" fill="currentColor">Bước 4 luôn xảy ra; bước 5 đến 8 là gửi một lần, best-effort.</text>
+</g>
 </svg>
+<step-note data-step="1">Browser khởi xướng; kênh thông báo sau đó là server tới server.</step-note>
+<step-note data-step="2">Xoá phiên IdP không tự xoá session cục bộ của app.</step-note>
+<step-note data-step="3">Keycloak chờ từng RP; RP phải xoá phiên theo sid hoặc sub.</step-note>
+<step-note data-step="4">Redirect chỉ về sau các lần gọi; lỗi RP không được thử lại.</step-note>
+</step-flow>
 
 > **Nguồn.** OIDC Back-Channel Logout: *"The POST body uses the application/x-www-form-urlencoded encoding and must include a logout_token parameter containing a Logout Token from the OP for the RP identifying the End-User to be logged out."*, *"A Logout Token MUST contain either a sub or a sid Claim, and MAY contain both."*, *"nonce PROHIBITED. A nonce Claim MUST NOT be present."*, *"If the logout succeeded, the RP MUST respond with HTTP 200 OK."* ([backchannel](https://openid.net/specs/openid-connect-backchannel-1_0.html)).
 

@@ -136,42 +136,57 @@ Chính cơ chế này để lại dấu vết ở mục 2: kẻ tấn công gử
 
 ### 3.4 OTP chặn được gì, không chặn được gì
 
-Sec-05 §5 đã xếp hạng SMS < TOTP < passkey và nói "TOTP vẫn phish được" (`security/sec-05-authn-authz.md`). Đây là cơ chế của câu đó: `mã = f(secret, floor(t/30))`, không có gì trong mã cho biết nó được gõ vào **trang nào**. Một trang giả đứng giữa (**relay phishing**, adversary-in-the-middle) chỉ cần chuyển mã sang Keycloak thật trong lúc mã còn hiệu lực. Một lượt gửi mã mất khoảng 8 ms trên lab (mục 4.6); cửa sổ 90 s dư dả cho proxy.
+TOTP không gắn origin (sec-05 §5). Một lượt gửi mã khoảng 8 ms trên lab (4.6), so với cửa sổ 90 s: proxy kịp chuyển tiếp.
 
-<svg viewBox="0 0 700 340" role="img" aria-labelledby="kc19-a-t kc19-a-d" style="width:100%;height:auto">
+<step-flow>
+<svg viewBox="0 0 700 603" role="img" aria-labelledby="kc19-a-t kc19-a-d" style="width:100%;max-width:700px;height:auto;display:block;margin:1.25rem auto">
 <title id="kc19-a-t">Relay phishing vượt qua OTP</title>
 <desc id="kc19-a-d">Sơ đồ tuần tự ba cột: trình duyệt của bob, proxy phishing login-acme.co và Keycloak auth.acme.com. Proxy chuyển tiếp mật khẩu và mã OTP sang Keycloak, Keycloak nhận vì mã không chứa thông tin domain, cookie phiên rơi vào tay kẻ tấn công, lần gửi sau của bob bị từ chối vì mã đã dùng.</desc>
-<defs><marker id="kc19-a-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
-<rect x="20" y="10" width="160" height="34" rx="8" fill="#3b82f6" fill-opacity="0.25"/>
-<text x="100" y="31" text-anchor="middle" font-size="11" fill="currentColor">Trình duyệt bob</text>
-<rect x="270" y="10" width="160" height="34" rx="8" fill="#ef4444" fill-opacity="0.25"/>
-<text x="350" y="31" text-anchor="middle" font-size="11" fill="currentColor">Proxy login-acme.co</text>
-<rect x="520" y="10" width="160" height="34" rx="8" fill="#84cc16" fill-opacity="0.25"/>
-<text x="600" y="31" text-anchor="middle" font-size="11" fill="currentColor">Keycloak auth.acme.com</text>
-<line x1="100" y1="44" x2="100" y2="300" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-<line x1="350" y1="44" x2="350" y2="300" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-<line x1="600" y1="44" x2="600" y2="300" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-<line x1="100" y1="70" x2="346" y2="70" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc19-a-arrow)"/>
-<text x="225" y="64" text-anchor="middle" font-size="11" fill="currentColor">1. mở link trong email</text>
-<line x1="350" y1="95" x2="596" y2="95" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc19-a-arrow)"/>
-<text x="475" y="89" text-anchor="middle" font-size="11" fill="currentColor">2. GET trang login thật</text>
-<line x1="100" y1="125" x2="346" y2="125" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc19-a-arrow)"/>
-<text x="225" y="119" text-anchor="middle" font-size="11" fill="currentColor">3. username + mật khẩu</text>
-<line x1="350" y1="145" x2="596" y2="145" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc19-a-arrow)"/>
-<text x="475" y="139" text-anchor="middle" font-size="11" fill="currentColor">3'. chuyển tiếp nguyên văn</text>
-<line x1="596" y1="175" x2="104" y2="175" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc19-a-arrow)"/>
-<text x="350" y="169" text-anchor="middle" font-size="11" fill="currentColor">4. form OTP (qua proxy)</text>
-<line x1="100" y1="205" x2="346" y2="205" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc19-a-arrow)"/>
-<text x="225" y="199" text-anchor="middle" font-size="11" fill="currentColor">5. mã 605458</text>
-<line x1="350" y1="225" x2="596" y2="225" stroke="#ef4444" stroke-width="2" marker-end="url(#kc19-a-arrow)"/>
-<text x="475" y="219" text-anchor="middle" font-size="11" fill="currentColor">5'. 605458, gửi ngay</text>
-<line x1="596" y1="255" x2="354" y2="255" stroke="#ef4444" stroke-width="2" marker-end="url(#kc19-a-arrow)"/>
-<text x="475" y="249" text-anchor="middle" font-size="11" fill="currentColor">6. 302 + cookie phiên</text>
-<line x1="100" y1="285" x2="596" y2="285" stroke="currentColor" stroke-opacity="0.4" stroke-width="1.5" stroke-dasharray="6 3" marker-end="url(#kc19-a-arrow)"/>
-<text x="350" y="279" text-anchor="middle" font-size="11" fill="currentColor">7. bob gửi lại 605458: Invalid authenticator code (mã đã dùng)</text>
-<rect x="20" y="304" width="660" height="30" rx="8" fill="#f59e0b" fill-opacity="0.2"/>
-<text x="350" y="323" text-anchor="middle" font-size="11" fill="currentColor">mã = HMAC(secret, floor(t/30)): không chứa domain nào, Keycloak không phân biệt được bob với proxy</text>
+<defs>
+<marker id="kc19-a-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+<path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+</marker>
+</defs>
+<rect x="20" y="17.0" width="160" height="57.8" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6" />
+<text x="100" y="52.7" text-anchor="middle" font-size="13" fill="currentColor">Trình duyệt bob</text>
+<rect x="270" y="17.0" width="160" height="57.8" rx="8" fill="#f43f5e" fill-opacity="0.15" stroke="#f43f5e" />
+<text x="350" y="52.7" text-anchor="middle" font-size="13" fill="currentColor">Proxy login-acme.co</text>
+<rect x="520" y="17.0" width="160" height="57.8" rx="8" fill="#10b981" fill-opacity="0.15" stroke="#10b981" />
+<text x="600" y="52.7" text-anchor="middle" font-size="13" fill="currentColor">Keycloak auth.acme.com</text>
+<line x1="100" y1="74.8" x2="100" y2="510.0" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4" />
+<line x1="350" y1="74.8" x2="350" y2="510.0" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4" />
+<line x1="600" y1="74.8" x2="600" y2="510.0" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4" />
+<g data-step="1">
+<line x1="100" y1="119.0" x2="346" y2="119.0" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc19-a-arrow)" />
+<text x="225" y="108.8" text-anchor="middle" font-size="13" fill="currentColor">1. mở link trong email</text>
+<line x1="350" y1="161.5" x2="596" y2="161.5" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc19-a-arrow)" />
+<text x="475" y="151.3" text-anchor="middle" font-size="13" fill="currentColor">2. GET trang login thật</text>
+<line x1="100" y1="212.5" x2="346" y2="212.5" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc19-a-arrow)" />
+<text x="225" y="202.3" text-anchor="middle" font-size="13" fill="currentColor">3. username + mật khẩu</text>
+<line x1="350" y1="246.5" x2="596" y2="246.5" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc19-a-arrow)" />
+<text x="475" y="236.3" text-anchor="middle" font-size="13" fill="currentColor">3'. chuyển tiếp nguyên văn</text>
+</g>
+<g data-step="2">
+<line x1="596" y1="297.5" x2="104" y2="297.5" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc19-a-arrow)" />
+<text x="350" y="287.3" text-anchor="middle" font-size="13" fill="currentColor">4. form OTP (qua proxy)</text>
+<line x1="100" y1="348.5" x2="346" y2="348.5" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc19-a-arrow)" />
+<text x="225" y="338.3" text-anchor="middle" font-size="13" fill="currentColor">5. mã 605458</text>
+<line x1="350" y1="382.5" x2="596" y2="382.5" stroke="#f43f5e" stroke-width="2" marker-end="url(#kc19-a-arrow)" />
+<text x="475" y="372.3" text-anchor="middle" font-size="13" fill="currentColor">5'. 605458, gửi ngay</text>
+</g>
+<g data-step="3">
+<line x1="596" y1="433.5" x2="354" y2="433.5" stroke="#f43f5e" stroke-width="2" marker-end="url(#kc19-a-arrow)" />
+<text x="475" y="423.3" text-anchor="middle" font-size="13" fill="currentColor">6. 302 + cookie phiên</text>
+<line x1="100" y1="484.5" x2="596" y2="484.5" stroke="currentColor" stroke-opacity="0.4" stroke-width="1.5" stroke-dasharray="6 3" marker-end="url(#kc19-a-arrow)" />
+<text x="350" y="474.3" text-anchor="middle" font-size="13" fill="currentColor">7. bob gửi lại 605458: Invalid authenticator code (mã đã dùng)</text>
+<rect x="20" y="516.8" width="660" height="51.0" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="#f59e0b" />
+<text x="350" y="549.1" text-anchor="middle" font-size="13" fill="currentColor">mã = HMAC(secret, floor(t/30)): không chứa domain nào, Keycloak không phân biệt được bob với proxy</text>
+</g>
 </svg>
+<step-note data-step="1">Proxy nằm giữa hai domain, chuyển tiếp form thật.</step-note>
+<step-note data-step="2">Mật khẩu và OTP không ràng buộc origin nên đều chuyển tiếp được.</step-note>
+<step-note data-step="3">Cookie đã tới proxy; từ chối dùng lại mã không cứu được phiên.</step-note>
+</step-flow>
 
 | Mối đe doạ | OTP mặc định chặn? | Vì sao |
 |---|---|---|

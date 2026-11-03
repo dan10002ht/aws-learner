@@ -161,47 +161,65 @@ Thêm hai giới hạn từ docs: V2 chỉ đổi token nội bộ sang token ch
 
 > **Nguồn.** Bốn cửa, use-case (1), không tạo session, chưa có `resource` ([token-exchange](https://www.keycloak.org/securing-apps/token-exchange)). Feature flag từ 26.2.0 ([upgrading](https://www.keycloak.org/docs/latest/upgrading/index.html#supported-standard-token-exchange)). Hỗ trợ một phần: *"Token exchange V2 only supports the internal to internal use-case, so the specification is only partially supported now."* ([specifications](https://www.keycloak.org/securing-apps/specifications)). JWT Authorization Grant ([release_notes](https://www.keycloak.org/docs/latest/release_notes/index.html)).
 
-<svg viewBox="0 0 760 450" role="img" aria-labelledby="kc13-a-t kc13-a-d" style="width:100%;height:auto">
+<step-flow>
+<svg viewBox="0 0 760 790" role="img" aria-labelledby="kc13-a-t kc13-a-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto">
 <title id="kc13-a-t">Chuỗi token exchange gateway, orders, payments</title>
 <desc id="kc13-a-d">Sơ đồ sequence: web gửi AT1 tới gateway; gateway đổi AT1 ở Keycloak lấy AT2 có aud orders; orders đổi AT2 lấy AT3 có aud payments; cả ba token cùng sub alice và cùng sid.</desc>
-<defs><marker id="kc13-a-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
-<rect x="20" y="20" width="80" height="30" rx="8" fill="#64748b" fill-opacity="0.25"/>
-<text x="60" y="40" text-anchor="middle" font-size="11" fill="currentColor">web</text>
-<rect x="160" y="20" width="80" height="30" rx="8" fill="#3b82f6" fill-opacity="0.25"/>
-<text x="200" y="40" text-anchor="middle" font-size="11" fill="currentColor">gateway</text>
-<rect x="300" y="20" width="80" height="30" rx="8" fill="#3b82f6" fill-opacity="0.25"/>
-<text x="340" y="40" text-anchor="middle" font-size="11" fill="currentColor">orders</text>
-<rect x="440" y="20" width="80" height="30" rx="8" fill="#84cc16" fill-opacity="0.25"/>
-<text x="480" y="40" text-anchor="middle" font-size="11" fill="currentColor">payments</text>
-<rect x="630" y="20" width="100" height="30" rx="8" fill="#f59e0b" fill-opacity="0.25"/>
-<text x="680" y="40" text-anchor="middle" font-size="11" fill="currentColor">Keycloak</text>
-<line x1="60" y1="50" x2="60" y2="340" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-<line x1="200" y1="50" x2="200" y2="340" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-<line x1="340" y1="50" x2="340" y2="340" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-<line x1="480" y1="50" x2="480" y2="340" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-<line x1="680" y1="50" x2="680" y2="340" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4"/>
-<line x1="60" y1="90" x2="198" y2="90" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc13-a-arrow)"/>
-<text x="130" y="84" text-anchor="middle" font-size="11" fill="currentColor">1. AT1</text>
-<line x1="200" y1="130" x2="678" y2="130" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc13-a-arrow)"/>
-<text x="440" y="124" text-anchor="middle" font-size="11" fill="currentColor">2. token exchange: subject_token=AT1, audience=orders</text>
-<line x1="680" y1="170" x2="202" y2="170" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" stroke-dasharray="6 3" marker-end="url(#kc13-a-arrow)"/>
-<text x="440" y="164" text-anchor="middle" font-size="11" fill="currentColor">3. AT2 (sub=alice, azp=gateway, aud=orders)</text>
-<line x1="200" y1="210" x2="338" y2="210" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc13-a-arrow)"/>
-<text x="270" y="204" text-anchor="middle" font-size="11" fill="currentColor">4. AT2</text>
-<line x1="340" y1="250" x2="678" y2="250" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc13-a-arrow)"/>
-<text x="510" y="244" text-anchor="middle" font-size="11" fill="currentColor">5. exchange AT2, audience=payments</text>
-<line x1="680" y1="290" x2="342" y2="290" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" stroke-dasharray="6 3" marker-end="url(#kc13-a-arrow)"/>
-<text x="510" y="284" text-anchor="middle" font-size="11" fill="currentColor">6. AT3 (azp=orders, aud=payments)</text>
-<line x1="340" y1="330" x2="478" y2="330" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc13-a-arrow)"/>
-<text x="410" y="324" text-anchor="middle" font-size="11" fill="currentColor">7. AT3</text>
-<rect x="20" y="360" width="235" height="30" rx="6" fill="#64748b" fill-opacity="0.2"/>
-<text x="137" y="379" text-anchor="middle" font-size="11" fill="currentColor">AT1: azp=web, aud=gateway,account</text>
-<rect x="265" y="360" width="235" height="30" rx="6" fill="#3b82f6" fill-opacity="0.2"/>
-<text x="382" y="379" text-anchor="middle" font-size="11" fill="currentColor">AT2: azp=gateway, aud=orders</text>
-<rect x="510" y="360" width="235" height="30" rx="6" fill="#84cc16" fill-opacity="0.2"/>
-<text x="627" y="379" text-anchor="middle" font-size="11" fill="currentColor">AT3: azp=orders, aud=payments</text>
-<text x="380" y="420" text-anchor="middle" font-size="11" fill="currentColor">Cả ba: cùng sub (alice), cùng sid, không có act; exp = lúc cấp + 300 s</text>
+<defs>
+<marker id="kc13-a-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+<path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+</marker>
+</defs>
+<rect x="20" y="34.0" width="80" height="51.0" rx="8" fill="#14b8a6" fill-opacity="0.15" stroke="#14b8a6" />
+<text x="60" y="68.0" text-anchor="middle" font-size="13" fill="currentColor">web</text>
+<rect x="160" y="34.0" width="80" height="51.0" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6" />
+<text x="200" y="68.0" text-anchor="middle" font-size="13" fill="currentColor">gateway</text>
+<rect x="300" y="34.0" width="80" height="51.0" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6" />
+<text x="340" y="68.0" text-anchor="middle" font-size="13" fill="currentColor">orders</text>
+<rect x="440" y="34.0" width="80" height="51.0" rx="8" fill="#10b981" fill-opacity="0.15" stroke="#10b981" />
+<text x="480" y="68.0" text-anchor="middle" font-size="13" fill="currentColor">payments</text>
+<rect x="630" y="34.0" width="100" height="51.0" rx="8" fill="#f59e0b" fill-opacity="0.15" stroke="#f59e0b" />
+<text x="680" y="68.0" text-anchor="middle" font-size="13" fill="currentColor">Keycloak</text>
+<line x1="60" y1="85.0" x2="60" y2="578.0" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4" />
+<line x1="200" y1="85.0" x2="200" y2="578.0" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4" />
+<line x1="340" y1="85.0" x2="340" y2="578.0" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4" />
+<line x1="480" y1="85.0" x2="480" y2="578.0" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4" />
+<line x1="680" y1="85.0" x2="680" y2="578.0" stroke="currentColor" stroke-opacity="0.3" stroke-dasharray="4 4" />
+<g data-step="1">
+<line x1="60" y1="153.0" x2="198" y2="153.0" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc13-a-arrow)" />
+<text x="130" y="142.8" text-anchor="middle" font-size="13" fill="currentColor">1. AT1</text>
+<line x1="200" y1="221.0" x2="678" y2="221.0" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc13-a-arrow)" />
+<text x="440" y="210.8" text-anchor="middle" font-size="13" fill="currentColor">2. token exchange: subject_token=AT1, audience=orders</text>
+</g>
+<g data-step="2">
+<line x1="680" y1="289.0" x2="202" y2="289.0" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" stroke-dasharray="6 3" marker-end="url(#kc13-a-arrow)" />
+<text x="440" y="278.8" text-anchor="middle" font-size="13" fill="currentColor">3. AT2 (sub=alice, azp=gateway, aud=orders)</text>
+<line x1="200" y1="357.0" x2="338" y2="357.0" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc13-a-arrow)" />
+<text x="270" y="346.8" text-anchor="middle" font-size="13" fill="currentColor">4. AT2</text>
+</g>
+<g data-step="3">
+<line x1="340" y1="425.0" x2="678" y2="425.0" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc13-a-arrow)" />
+<text x="510" y="414.8" text-anchor="middle" font-size="13" fill="currentColor">5. exchange AT2, audience=payments</text>
+<line x1="680" y1="493.0" x2="342" y2="493.0" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" stroke-dasharray="6 3" marker-end="url(#kc13-a-arrow)" />
+<text x="510" y="482.8" text-anchor="middle" font-size="13" fill="currentColor">6. AT3 (azp=orders, aud=payments)</text>
+</g>
+<g data-step="4">
+<line x1="340" y1="561.0" x2="478" y2="561.0" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc13-a-arrow)" />
+<text x="410" y="550.8" text-anchor="middle" font-size="13" fill="currentColor">7. AT3</text>
+<rect x="20" y="612.0" width="235" height="51.0" rx="6" fill="#14b8a6" fill-opacity="0.15" stroke="#14b8a6" />
+<text x="137" y="644.3" text-anchor="middle" font-size="13" fill="currentColor">AT1: azp=web, aud=gateway,account</text>
+<rect x="265" y="612.0" width="235" height="51.0" rx="6" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6" />
+<text x="382" y="644.3" text-anchor="middle" font-size="13" fill="currentColor">AT2: azp=gateway, aud=orders</text>
+<rect x="510" y="612.0" width="235" height="51.0" rx="6" fill="#10b981" fill-opacity="0.15" stroke="#10b981" />
+<text x="627" y="644.3" text-anchor="middle" font-size="13" fill="currentColor">AT3: azp=orders, aud=payments</text>
+<text x="380" y="714.0" text-anchor="middle" font-size="13" fill="currentColor">Cả ba: cùng sub (alice), cùng sid, không có act; exp = lúc cấp + 300 s</text>
+</g>
 </svg>
+<step-note data-step="1">Token chỉ tới gateway vì audience giới hạn người nhận.</step-note>
+<step-note data-step="2">Keycloak kiểm requester trước khi đổi; sub và sid giữ nguyên.</step-note>
+<step-note data-step="3">Orders cần token riêng vì token đầu không cấp cho orders.</step-note>
+<step-note data-step="4">Payments nhận danh tính user đã được Keycloak ký.</step-note>
+</step-flow>
 
 ### 3.4 Không có `act`: impersonation hay delegation
 

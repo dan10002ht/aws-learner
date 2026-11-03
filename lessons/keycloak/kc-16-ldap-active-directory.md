@@ -89,42 +89,57 @@ Server tự sinh thêm thuộc tính vận hành: `entryUUID` (không đổi khi
 
 Keycloak dùng hai danh tính với LDAP: **bind DN** của provider (lab: `cn=admin,dc=example,dc=com`) là tài khoản dịch vụ để tìm user; danh tính của user chỉ dùng để bind thử bằng mật khẩu vừa gõ.
 
-<svg viewBox="0 0 720 370" role="img" aria-labelledby="kc16-a-t kc16-a-d" style="width:100%;height:auto">
+<step-flow>
+<svg viewBox="0 0 720 654" role="img" aria-labelledby="kc16-a-t kc16-a-d" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto">
 <title id="kc16-a-t">Login user LDAP đã import, theo access log</title>
 <desc id="kc16-a-d">Sequence năm bước: client gửi mật khẩu tới Keycloak, Keycloak tìm user trong DB của mình, bind bằng tài khoản dịch vụ và search theo entryUUID, rồi bind bằng DN và mật khẩu của user, cuối cùng phát token với thuộc tính lấy từ bản import trong DB.</desc>
-<defs><marker id="kc16-a-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
-<rect x="20" y="15" width="120" height="34" rx="8" fill="#64748b" fill-opacity="0.25"/>
-<text x="80" y="37" text-anchor="middle" font-size="11" fill="currentColor">Client / app</text>
-<rect x="220" y="15" width="120" height="34" rx="8" fill="#3b82f6" fill-opacity="0.25"/>
-<text x="280" y="37" text-anchor="middle" font-size="11" fill="currentColor">Keycloak</text>
-<rect x="390" y="15" width="120" height="34" rx="8" fill="#8b5cf6" fill-opacity="0.25"/>
-<text x="450" y="37" text-anchor="middle" font-size="11" fill="currentColor">DB Keycloak</text>
-<rect x="570" y="15" width="130" height="34" rx="8" fill="#84cc16" fill-opacity="0.25"/>
-<text x="635" y="37" text-anchor="middle" font-size="11" fill="currentColor">LDAP / AD</text>
-<line x1="80" y1="49" x2="80" y2="335" stroke="currentColor" stroke-opacity="0.3" stroke-width="1"/>
-<line x1="280" y1="49" x2="280" y2="335" stroke="currentColor" stroke-opacity="0.3" stroke-width="1"/>
-<line x1="450" y1="49" x2="450" y2="335" stroke="currentColor" stroke-opacity="0.3" stroke-width="1"/>
-<line x1="635" y1="49" x2="635" y2="335" stroke="currentColor" stroke-opacity="0.3" stroke-width="1"/>
-<line x1="80" y1="80" x2="278" y2="80" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc16-a-arrow)"/>
-<text x="180" y="73" text-anchor="middle" font-size="11" fill="currentColor">1. username + password</text>
-<line x1="280" y1="115" x2="448" y2="115" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc16-a-arrow)"/>
-<text x="365" y="108" text-anchor="middle" font-size="11" fill="currentColor">2. tìm user cục bộ</text>
-<line x1="450" y1="140" x2="282" y2="140" stroke="currentColor" stroke-opacity="0.4" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#kc16-a-arrow)"/>
-<text x="365" y="155" text-anchor="middle" font-size="10" fill="currentColor">bản import, federationLink</text>
-<line x1="280" y1="185" x2="633" y2="185" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc16-a-arrow)"/>
-<text x="457" y="178" text-anchor="middle" font-size="11" fill="currentColor">3. bind cn=admin, search (entryUUID=...)</text>
-<line x1="635" y1="208" x2="282" y2="208" stroke="currentColor" stroke-opacity="0.4" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#kc16-a-arrow)"/>
-<text x="540" y="222" text-anchor="middle" font-size="10" fill="currentColor">entriesReturned=1: còn tồn tại</text>
-<line x1="280" y1="252" x2="633" y2="252" stroke="#ef4444" stroke-opacity="0.8" stroke-width="1.5" marker-end="url(#kc16-a-arrow)"/>
-<text x="457" y="245" text-anchor="middle" font-size="11" fill="currentColor">4. bind uid=jdoe + mật khẩu user gõ</text>
-<line x1="635" y1="275" x2="282" y2="275" stroke="currentColor" stroke-opacity="0.4" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#kc16-a-arrow)"/>
-<text x="540" y="289" text-anchor="middle" font-size="10" fill="currentColor">resultCode 0 hoặc 49</text>
-<line x1="278" y1="315" x2="82" y2="315" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc16-a-arrow)"/>
-<text x="180" y="308" text-anchor="middle" font-size="11" fill="currentColor">5. token (claim từ DB)</text>
-<text x="360" y="358" text-anchor="middle" font-size="11" fill="currentColor">Mật khẩu chỉ xuất hiện ở bước 1 và 4. DB Keycloak không có bản sao hay hash của nó.</text>
+<defs>
+<marker id="kc16-a-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+<path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+</marker>
+</defs>
+<rect x="20" y="25.5" width="120" height="57.8" rx="8" fill="#14b8a6" fill-opacity="0.15" stroke="#14b8a6" />
+<text x="80" y="62.9" text-anchor="middle" font-size="13" fill="currentColor">Client / app</text>
+<rect x="220" y="25.5" width="120" height="57.8" rx="8" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6" />
+<text x="280" y="62.9" text-anchor="middle" font-size="13" fill="currentColor">Keycloak</text>
+<rect x="390" y="25.5" width="120" height="57.8" rx="8" fill="#8b5cf6" fill-opacity="0.15" stroke="#8b5cf6" />
+<text x="450" y="62.9" text-anchor="middle" font-size="13" fill="currentColor">DB Keycloak</text>
+<rect x="570" y="25.5" width="130" height="57.8" rx="8" fill="#10b981" fill-opacity="0.15" stroke="#10b981" />
+<text x="635" y="62.9" text-anchor="middle" font-size="13" fill="currentColor">LDAP / AD</text>
+<line x1="80" y1="83.3" x2="80" y2="569.5" stroke="currentColor" stroke-opacity="0.3" stroke-width="1" />
+<line x1="280" y1="83.3" x2="280" y2="569.5" stroke="currentColor" stroke-opacity="0.3" stroke-width="1" />
+<line x1="450" y1="83.3" x2="450" y2="569.5" stroke="currentColor" stroke-opacity="0.3" stroke-width="1" />
+<line x1="635" y1="83.3" x2="635" y2="569.5" stroke="currentColor" stroke-opacity="0.3" stroke-width="1" />
+<g data-step="1">
+<line x1="80" y1="136.0" x2="278" y2="136.0" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc16-a-arrow)" />
+<text x="180" y="124.1" text-anchor="middle" font-size="13" fill="currentColor">1. username + password</text>
+<line x1="280" y1="195.5" x2="448" y2="195.5" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc16-a-arrow)" />
+<text x="365" y="183.6" text-anchor="middle" font-size="13" fill="currentColor">2. tìm user cục bộ</text>
+<line x1="450" y1="238.0" x2="282" y2="238.0" stroke="currentColor" stroke-opacity="0.4" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#kc16-a-arrow)" />
+<text x="365" y="263.5" text-anchor="middle" font-size="13" fill="currentColor">bản import, federationLink</text>
+</g>
+<g data-step="2">
+<line x1="280" y1="314.5" x2="633" y2="314.5" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc16-a-arrow)" />
+<text x="457" y="302.6" text-anchor="middle" font-size="13" fill="currentColor">3. bind cn=admin, search (entryUUID=...)</text>
+<line x1="635" y1="353.6" x2="282" y2="353.6" stroke="currentColor" stroke-opacity="0.4" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#kc16-a-arrow)" />
+<text x="540" y="377.4" text-anchor="middle" font-size="13" fill="currentColor">entriesReturned=1: còn tồn tại</text>
+<line x1="280" y1="428.4" x2="633" y2="428.4" stroke="#f43f5e" stroke-opacity="0.8" stroke-width="1.5" marker-end="url(#kc16-a-arrow)" />
+<text x="457" y="416.5" text-anchor="middle" font-size="13" fill="currentColor">4. bind uid=jdoe + mật khẩu user gõ</text>
+<line x1="635" y1="467.5" x2="282" y2="467.5" stroke="currentColor" stroke-opacity="0.4" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#kc16-a-arrow)" />
+<text x="540" y="491.3" text-anchor="middle" font-size="13" fill="currentColor">resultCode 0 hoặc 49</text>
+</g>
+<g data-step="3">
+<line x1="278" y1="535.5" x2="82" y2="535.5" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5" marker-end="url(#kc16-a-arrow)" />
+<text x="180" y="523.6" text-anchor="middle" font-size="13" fill="currentColor">5. token (claim từ DB)</text>
+<text x="360" y="608.6" text-anchor="middle" font-size="13" fill="currentColor">Mật khẩu chỉ xuất hiện ở bước 1 và 4. DB Keycloak không có bản sao hay hash của nó.</text>
+</g>
 </svg>
+<step-note data-step="1">DB được tra trước provider ngoài, không chứa hash mật khẩu LDAP.</step-note>
+<step-note data-step="2">Bind dịch vụ chỉ tìm entry; chưa chứng minh mật khẩu user đúng.</step-note>
+<step-note data-step="3">Bind bằng mật khẩu vừa gõ mới là phép xác thực.</step-note>
+</step-flow>
 
-Bước 2 đi trước LDAP vì Keycloak luôn tra DB của mình trước mọi provider ngoài. Bước 3 chỉ hỏi "entry có UUID này còn không". LDAP đã xoá user thì login thất bại, nhưng bản import bị xoá hay không còn tuỳ cache user của Keycloak. Lab gốc (`bnguyen` chưa từng login, bị `ldapdelete`): `invalid_grant`, event `error="user_not_found"`, số user 5 xuống 4. Critic lặp lại với user vừa login thành công (còn trong cache): search trả `entriesReturned=0`, vẫn `invalid_grant` nhưng event `invalid_user_credentials`, bản import ở lại; gọi `clear-user-cache` của realm rồi login lại mới ra `user_not_found`, count giảm 1. Bước 4 là phép kiểm mật khẩu duy nhất. Không bước nào chép thuộc tính từ entry vừa search vào bản import, nên email mới nằm trong response bước 3 mà không vào token: đáp án (b).
+Bước 3 kiểm entry theo UUID. LDAP đã xoá user thì login thất bại, nhưng bản import bị xoá hay không còn tuỳ cache user của Keycloak. Lab gốc (`bnguyen` chưa từng login, bị `ldapdelete`): `invalid_grant`, event `error="user_not_found"`, số user 5 xuống 4. Critic lặp lại với user vừa login thành công (còn trong cache): search trả `entriesReturned=0`, vẫn `invalid_grant` nhưng event `invalid_user_credentials`, bản import ở lại; gọi `clear-user-cache` của realm rồi login lại mới ra `user_not_found`, count giảm 1. Search không chép thuộc tính vào bản import: email mới có ở response bước 3 nhưng không vào token, đáp án (b).
 
 > **Suy luận.** Docs không mô tả từng request LDAP của một lần login. Thứ tự bind/search ở trên đọc từ access log của lab (bước 3, 5, 7 trong `RESULTS.txt`), và việc bước 3 không cập nhật thuộc tính là kết luận từ quan sát "search trả entry mới nhưng claim vẫn cũ, đến khi chạy sync mới đổi". Kiểm bằng: đổi một thuộc tính trong LDAP, login lại, so claim với `ldapsearch`.
 

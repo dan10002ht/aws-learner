@@ -231,11 +231,11 @@ Rút kinh nghiệm, team sửa `orders-api` cho đúng: kiểm `aud` **chứa `o
 
 ### 3.5 Bản sai: "API kiểm `aud` là xong"
 
-Bản sai đáng tin vì kiểm `aud` là lời khuyên của mọi checklist JWT (sec-05). Ở dạng thô nhất nó chạy: `orders-api` kiểm `aud` = `account`, mọi request hợp lệ qua, ID token gửi nhầm (`aud:"spa"`) bị chặn.
+Kiểm `aud` được khuyên ở sec-05. Nhưng `orders-api` kiểm `aud` = `account` chỉ chặn ID token gửi nhầm (`aud:"spa"`), còn mọi request hợp lệ đều qua.
 
 **Gãy lần 1: `account` có trong token của mọi client.** Lab 1: token của `spa` (authorization code), của `test-direct` (password grant) và token client credentials của `api-client` đều có `account` trong `aud`. Kiểm `aud` = `account` chỉ loại được ID token, không phân biệt API này với API khác, tức không làm được việc RFC 9700 giao cho `aud`. Tệ hơn: `account` có mặt chỉ vì default roles và Full Scope Allowed (bài 8). Ngày admin tắt Full Scope Allowed trên một client, token của client đó mất hẳn claim `aud` (hộp đo ở cuối phần sửa) và API từ chối mọi người dùng client đó.
 
-**Gãy lần 2: kiểm đúng tên API, nhưng `aud` đi theo user.** Đáp án ⏸ #3 là **(b)**. Ghép ba dữ kiện: Audience Resolve đưa vào `aud` mọi client có client role trong token; Full Scope Allowed bật thì token của client nào cũng chứa mọi role của user; nhân viên kho có `orders.read`. Token của `timesheet` vì thế có `orders-api` trong `aud`. Kiểm `aud` lúc này chỉ chứng minh "user có role của `orders-api`", không chứng minh "token cấp để gọi `orders-api`". Lộ token của app ít giá trị nhất là gọi được API giá trị nhất, đúng kịch bản `aud` sinh ra để chặn.
+**Gãy lần 2: kiểm đúng tên API, nhưng `aud` đi theo user.** Đáp án ⏸ #3 là **(b)**. Ghép ba dữ kiện: Audience Resolve đưa vào `aud` mọi client có client role trong token; Full Scope Allowed bật thì token của client nào cũng chứa mọi role của user; nhân viên kho có `orders.read`. Token của `timesheet` vì thế có `orders-api` trong `aud`. Kiểm `aud` lúc này chỉ chứng minh "user có role của `orders-api`", không chứng minh "token cấp để gọi `orders-api`". Token lộ từ app ít giá trị có thể gọi API giá trị cao.
 
 > **Đo trên lab (critic, 26.8.1).** Alice có `orders-api: orders.read`; client `timesheet` để mặc định. Token password grant qua `timesheet`: `aud` = `[orders-api, account]`, 1.357 byte; `orders-api` introspect ra `active:true`, `azp` = `timesheet`. Đúng cơ chế docs: *"The mapper checks for clients that have at least one client role available for the current token."* Lệnh ở 4.4.
 
@@ -245,59 +245,79 @@ Bản sai đáng tin vì kiểm `aud` là lời khuyên của mọi checklist JW
 2. Khai **role scope mapping** cho client: chỉ role client đó cần mới vào token. Đặt trong dedicated scope, hoặc trong client scope dùng chung để nhiều client tái dùng.
 3. Với client thật sự gọi API, thêm audience mapper trỏ tới API.
 
-Sau ba bước, token `timesheet` không còn role của `orders-api`, Audience Resolve không có gì để thêm. Token của client đơn hàng có `orders-api` vì admin đã khai.
+
 
 > **Đo trên lab (critic, 26.8.1).** Tắt Full Scope trên `timesheet`: token mất hẳn `aud`, `resource_access` và cả `realm_access`, 1.357 xuống 1.022 byte; `orders-api` introspect nhận `{"active":false}`; log hết dòng WARN `full-scope-allowed` cho `timesheet`. Client đóng vai `orders-ui` (Full Scope tắt, role scope mapping `orders.read`): `"aud":"orders-api"`, 1.129 byte. Audience Resolve đã tự thêm `orders-api`; audience mapper thêm sau không đổi byte nào vì `aud` không lặp giá trị.
 
-**Gãy lần 3: chẳng ai kiểm cả.** Lab 2: Spring Boot chỉ cấu hình `issuer-uri` cho qua token `aud` = `account` ở một API chẳng liên quan `account`. Chữ ký và `iss` được kiểm (token sửa chữ ký bị `401`), `aud` thì không. Cách bật validator `aud` trong Spring để bài 12.
+**Gãy lần 3: không kiểm.** Lab 2: Spring Boot chỉ cấu hình `issuer-uri` cho qua token `aud` = `account` ở một API chẳng liên quan `account`. Chữ ký và `iss` được kiểm (token sửa chữ ký bị `401`), `aud` thì không. Cách bật validator `aud` trong Spring để bài 12.
 
-<svg viewBox="0 0 800 300" role="img" aria-labelledby="kc9-b-t kc9-b-d" style="width:100%;height:auto">
-<title id="kc9-b-t">aud đi theo user hay đi theo client</title>
-<desc id="kc9-b-d">Bên trái, Full Scope Allowed bật: role orders.read của user đi vào token của client timesheet, Audience Resolve thêm orders-api vào aud, orders-api nhận token lộ. Bên phải, Full Scope tắt cộng role scope mapping và audience mapper: chỉ client orders-ui mang orders-api trong aud.</desc>
-<defs>
-<marker id="kc9-b-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-<path d="M0,0 L10,5 L0,10 z" fill="currentColor" fill-opacity="0.6"/>
-</marker>
-</defs>
-<text x="200" y="22" text-anchor="middle" font-size="12" fill="currentColor" font-weight="bold">Full Scope ON: aud theo role của user</text>
-<text x="600" y="22" text-anchor="middle" font-size="12" fill="currentColor" font-weight="bold">Full Scope OFF: aud theo cấu hình client</text>
-<line x1="400" y1="35" x2="400" y2="285" stroke="currentColor" stroke-opacity="0.3" stroke-width="1" stroke-dasharray="4 3"/>
-<rect x="20" y="45" width="160" height="50" rx="8" fill="#64748b" fill-opacity="0.2"/>
-<text x="100" y="66" text-anchor="middle" font-size="11" fill="currentColor">User: orders.read</text>
-<text x="100" y="84" text-anchor="middle" font-size="11" fill="currentColor">(client role orders-api)</text>
-<rect x="220" y="45" width="160" height="50" rx="8" fill="#ef4444" fill-opacity="0.2"/>
-<text x="300" y="66" text-anchor="middle" font-size="11" fill="currentColor">Client timesheet</text>
-<text x="300" y="84" text-anchor="middle" font-size="11" fill="currentColor">không lọc role nào</text>
-<rect x="60" y="130" width="280" height="56" rx="8" fill="#f59e0b" fill-opacity="0.2"/>
-<text x="200" y="153" text-anchor="middle" font-size="11" fill="currentColor">Token: resource_access.orders-api</text>
-<text x="200" y="172" text-anchor="middle" font-size="11" fill="currentColor">Audience Resolve: aud chứa orders-api</text>
-<rect x="60" y="220" width="280" height="50" rx="8" fill="#ef4444" fill-opacity="0.25"/>
-<text x="200" y="242" text-anchor="middle" font-size="11" fill="currentColor">orders-api kiểm aud: QUA</text>
-<text x="200" y="260" text-anchor="middle" font-size="11" fill="currentColor">token lộ từ app chấm công dùng được</text>
-<line x1="100" y1="95" x2="160" y2="128" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5" marker-end="url(#kc9-b-arrow)"/>
-<line x1="300" y1="95" x2="240" y2="128" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5" marker-end="url(#kc9-b-arrow)"/>
-<line x1="200" y1="186" x2="200" y2="218" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5" marker-end="url(#kc9-b-arrow)"/>
-<rect x="420" y="45" width="170" height="70" rx="8" fill="#64748b" fill-opacity="0.2"/>
-<text x="505" y="66" text-anchor="middle" font-size="11" fill="currentColor">Client timesheet</text>
-<text x="505" y="84" text-anchor="middle" font-size="11" fill="currentColor">mapping: không có</text>
-<text x="505" y="102" text-anchor="middle" font-size="11" fill="currentColor">role orders-api</text>
-<rect x="610" y="45" width="175" height="70" rx="8" fill="#84cc16" fill-opacity="0.2"/>
-<text x="697" y="66" text-anchor="middle" font-size="11" fill="currentColor">Client orders-ui</text>
-<text x="697" y="84" text-anchor="middle" font-size="11" fill="currentColor">mapping: orders.read</text>
-<text x="697" y="102" text-anchor="middle" font-size="11" fill="currentColor">+ audience mapper</text>
-<rect x="420" y="150" width="170" height="50" rx="8" fill="#84cc16" fill-opacity="0.2"/>
-<text x="505" y="172" text-anchor="middle" font-size="11" fill="currentColor">Token: không role,</text>
-<text x="505" y="190" text-anchor="middle" font-size="11" fill="currentColor">aud không có orders-api</text>
-<rect x="610" y="150" width="175" height="50" rx="8" fill="#84cc16" fill-opacity="0.2"/>
-<text x="697" y="172" text-anchor="middle" font-size="11" fill="currentColor">Token: orders.read,</text>
-<text x="697" y="190" text-anchor="middle" font-size="11" fill="currentColor">aud = orders-api</text>
-<rect x="420" y="225" width="365" height="45" rx="8" fill="#3b82f6" fill-opacity="0.2"/>
-<text x="602" y="244" text-anchor="middle" font-size="11" fill="currentColor">orders-api kiểm aud: chỉ token của orders-ui qua</text>
-<text x="602" y="262" text-anchor="middle" font-size="11" fill="currentColor">vẫn phải kiểm role: aud không phải phân quyền</text>
-<line x1="505" y1="115" x2="505" y2="148" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5" marker-end="url(#kc9-b-arrow)"/>
-<line x1="697" y1="115" x2="697" y2="148" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5" marker-end="url(#kc9-b-arrow)"/>
-<line x1="697" y1="200" x2="660" y2="223" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5" marker-end="url(#kc9-b-arrow)"/>
+<ab-toggle data-labels="Full Scope ON|Full Scope OFF">
+<svg viewBox="0 0 520 492" role="img" aria-labelledby="kc9-med-0-t kc9-med-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="kc9-med-0-t">Role lan sang client khác</title>
+<desc id="kc9-med-0-d">Hai đường token tới cùng API. Khi lọc scope, nhánh timesheet bị chặn còn orders-ui đi qua.</desc>
+<text x="260" y="23" text-anchor="middle" font-size="13" fill="currentColor">User: orders-api / orders.read</text>
+<text x="260" y="44" text-anchor="middle" font-size="13" fill="currentColor">Full Scope ON: không lọc role</text>
+<rect x="55" y="70" width="170" height="38" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<text x="140" y="94" text-anchor="middle" font-size="13" fill="currentColor">timesheet</text>
+<path d="M260 49 L140 70" fill="none" stroke="#3b82f6" stroke-width="2"/>
+<path d="M140 108 L140 160" fill="none" stroke="#3b82f6" stroke-width="2"/>
+<rect x="43" y="160" width="194" height="90" rx="5" fill="#f59e0b" fill-opacity="0.15" stroke="#f59e0b"/>
+<text x="140" y="183" text-anchor="middle" font-size="13" fill="currentColor">Token</text>
+<text x="140" y="207" text-anchor="middle" font-size="13" fill="currentColor">orders.read</text>
+<text x="140" y="232" text-anchor="middle" font-size="13" fill="currentColor">aud: orders-api</text>
+<path d="M140 250 L140 357" fill="none" stroke="#f43f5e" stroke-width="2"/>
+<text x="184" y="305" text-anchor="middle" font-size="13" fill="currentColor">QUA</text>
+<rect x="295" y="70" width="170" height="38" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<text x="380" y="94" text-anchor="middle" font-size="13" fill="currentColor">orders-ui</text>
+<path d="M260 49 L380 70" fill="none" stroke="#3b82f6" stroke-width="2"/>
+<path d="M380 108 L380 160" fill="none" stroke="#3b82f6" stroke-width="2"/>
+<rect x="283" y="160" width="194" height="90" rx="5" fill="#f59e0b" fill-opacity="0.15" stroke="#f59e0b"/>
+<text x="380" y="183" text-anchor="middle" font-size="13" fill="currentColor">Token</text>
+<text x="380" y="207" text-anchor="middle" font-size="13" fill="currentColor">orders.read</text>
+<text x="380" y="232" text-anchor="middle" font-size="13" fill="currentColor">aud: orders-api</text>
+<path d="M380 250 L380 357" fill="none" stroke="#f43f5e" stroke-width="2"/>
+<text x="424" y="305" text-anchor="middle" font-size="13" fill="currentColor">QUA</text>
+<rect x="55" y="357" width="410" height="42" rx="5" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/>
+<text x="260" y="383" text-anchor="middle" font-size="13" fill="currentColor">orders-api · kiểm aud</text>
+<text x="260" y="430" text-anchor="middle" font-size="13" fill="currentColor">ON: mọi role của user vào token của mọi client</text>
+<text x="260" y="450" text-anchor="middle" font-size="13" fill="currentColor">Audience Resolve theo role nên aud cũng đi theo user</text>
 </svg>
+<svg viewBox="0 0 520 492" role="img" aria-labelledby="kc9-med-1-t kc9-med-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="kc9-med-1-t">Audience theo cấu hình client</title>
+<desc id="kc9-med-1-d">Hai đường token tới cùng API. Khi lọc scope, nhánh timesheet bị chặn còn orders-ui đi qua.</desc>
+<text x="260" y="23" text-anchor="middle" font-size="13" fill="currentColor">User: orders-api / orders.read</text>
+<text x="260" y="44" text-anchor="middle" font-size="13" fill="currentColor">Full Scope OFF + mapping</text>
+<rect x="55" y="70" width="170" height="38" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<text x="140" y="94" text-anchor="middle" font-size="13" fill="currentColor">timesheet</text>
+<path d="M260 49 L140 70" fill="none" stroke="#3b82f6" stroke-width="2"/>
+<path d="M140 108 L140 160" fill="none" stroke="#3b82f6" stroke-width="2"/>
+<rect x="43" y="160" width="194" height="90" rx="5" fill="#f59e0b" fill-opacity="0.15" stroke="#f59e0b"/>
+<text x="140" y="183" text-anchor="middle" font-size="13" fill="currentColor">Token</text>
+<text x="140" y="207" text-anchor="middle" font-size="13" fill="currentColor">không role orders-api</text>
+<text x="140" y="232" text-anchor="middle" font-size="13" fill="currentColor">không aud orders-api</text>
+<path d="M140 250 L140 305" fill="none" stroke="#10b981" stroke-width="2" stroke-dasharray="5 4"/>
+<path d="M127 283 L153 283" fill="none" stroke="#10b981" stroke-width="2"/>
+<path d="M127 289 L153 289" fill="none" stroke="#10b981" stroke-width="2"/>
+<text x="140" y="330" text-anchor="middle" font-size="13" fill="currentColor">CHẶN</text>
+<rect x="295" y="70" width="170" height="38" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<text x="380" y="94" text-anchor="middle" font-size="13" fill="currentColor">orders-ui</text>
+<path d="M260 49 L380 70" fill="none" stroke="#3b82f6" stroke-width="2"/>
+<path d="M380 108 L380 160" fill="none" stroke="#3b82f6" stroke-width="2"/>
+<rect x="283" y="160" width="194" height="90" rx="5" fill="#f59e0b" fill-opacity="0.15" stroke="#f59e0b"/>
+<text x="380" y="183" text-anchor="middle" font-size="13" fill="currentColor">Token</text>
+<text x="380" y="207" text-anchor="middle" font-size="13" fill="currentColor">orders.read</text>
+<text x="380" y="232" text-anchor="middle" font-size="13" fill="currentColor">aud: orders-api</text>
+<path d="M380 250 L380 357" fill="none" stroke="#10b981" stroke-width="2"/>
+<text x="424" y="305" text-anchor="middle" font-size="13" fill="currentColor">QUA</text>
+<rect x="55" y="357" width="410" height="42" rx="5" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/>
+<text x="260" y="383" text-anchor="middle" font-size="13" fill="currentColor">orders-api · kiểm aud</text>
+<text x="260" y="430" text-anchor="middle" font-size="13" fill="currentColor">OFF: timesheet không mapping; orders-ui có orders.read</text>
+<text x="260" y="450" text-anchor="middle" font-size="13" fill="currentColor">+ audience mapper; Audience Resolve theo role trong token</text>
+<text x="260" y="475" text-anchor="middle" font-size="13" fill="currentColor">aud không thay thế kiểm quyền nghiệp vụ</text>
+</svg>
+<ab-note>Role lan vào token timesheet; token lộ từ app chấm công qua được aud của orders-api.</ab-note>
+<ab-note>Lọc role scope và khai audience cho client cần gọi API; tắt Full Scope thôi là chưa đủ.</ab-note>
+</ab-toggle>
 
 > **Nguồn.** Full Scope Allowed bật cho client mới, deprecated ([_full_scope_disabled_policy](https://www.keycloak.org/docs/latest/server_admin/index.html#_full_scope_disabled_policy), [_role_scope_mappings](https://www.keycloak.org/docs/latest/server_admin/index.html#_role_scope_mappings)). Spring không kiểm `aud` mặc định: ghi chú lab 2 mục A (`tmp/sources/kc-lab-spi-cluster.md`).
 

@@ -66,42 +66,102 @@ Hash, MFA, brute force, reset, audit đều co về một chỗ. Nhưng (c), câ
 
 Phép đếm còn một bẫy: Keycloak **có** đủ sáu chức năng, nhưng realm mới tạo trên lab đọc ra `bruteForceProtected: false`, `passwordPolicy: null` (mọi chuỗi đều là mật khẩu hợp lệ), `eventsEnabled: false`. Gom về IdP cho bạn **một chỗ để bật**, không cho bạn trạng thái đã bật.
 
-<svg viewBox="0 0 720 300" role="img" aria-labelledby="kc1-a-t kc1-a-d" style="width:100%;height:auto">
-<title id="kc1-a-t">Năm app tự giữ identity so với năm app dùng chung một IdP</title>
-<desc id="kc1-a-d">Bên trái, năm app mỗi app tự cài sáu chức năng identity, tổng ba mươi chỗ. Bên phải, sáu chức năng nằm ở Keycloak một lần, năm app chỉ còn kiểm token và tự phân quyền.</desc>
-<text x="180" y="22" text-anchor="middle" font-size="12" font-weight="bold" fill="currentColor">Trước: mỗi app tự làm login</text>
-<rect x="20" y="40" width="320" height="32" rx="6" fill="#ef4444" fill-opacity="0.18"/>
-<text x="180" y="60" text-anchor="middle" font-size="11" fill="currentColor">Admin: 6 chức năng identity + phân quyền</text>
-<rect x="20" y="80" width="320" height="32" rx="6" fill="#ef4444" fill-opacity="0.18"/>
-<text x="180" y="100" text-anchor="middle" font-size="11" fill="currentColor">CRM: 6 chức năng identity + phân quyền</text>
-<rect x="20" y="120" width="320" height="32" rx="6" fill="#ef4444" fill-opacity="0.18"/>
-<text x="180" y="140" text-anchor="middle" font-size="11" fill="currentColor">Billing: 6 chức năng identity + phân quyền</text>
-<rect x="20" y="160" width="320" height="32" rx="6" fill="#ef4444" fill-opacity="0.18"/>
-<text x="180" y="180" text-anchor="middle" font-size="11" fill="currentColor">Ticket: 6 chức năng identity + phân quyền</text>
-<rect x="20" y="200" width="320" height="32" rx="6" fill="#ef4444" fill-opacity="0.18"/>
-<text x="180" y="220" text-anchor="middle" font-size="11" fill="currentColor">Dashboard: 6 chức năng identity + phân quyền</text>
-<text x="180" y="262" text-anchor="middle" font-size="11" font-weight="bold" fill="currentColor">5 x 6 = 30 chỗ cài identity</text>
-<text x="180" y="282" text-anchor="middle" font-size="11" fill="currentColor">phân quyền: 5 chỗ</text>
-<line x1="360" y1="30" x2="360" y2="290" stroke="currentColor" stroke-opacity="0.25" stroke-width="1"/>
-<text x="540" y="22" text-anchor="middle" font-size="12" font-weight="bold" fill="currentColor">Sau: một IdP</text>
-<rect x="400" y="40" width="280" height="52" rx="8" fill="#3b82f6" fill-opacity="0.25"/>
-<text x="540" y="62" text-anchor="middle" font-size="11" font-weight="bold" fill="currentColor">Keycloak (realm của công ty)</text>
-<text x="540" y="80" text-anchor="middle" font-size="11" fill="currentColor">hash, brute force, MFA, reset, khoá, audit</text>
-<line x1="540" y1="92" x2="540" y2="118" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5"/>
-<line x1="420" y1="118" x2="660" y2="118" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5"/>
-<rect x="380" y="130" width="140" height="30" rx="6" fill="#84cc16" fill-opacity="0.22"/>
-<text x="450" y="149" text-anchor="middle" font-size="10" fill="currentColor">Admin: token + quyền</text>
-<rect x="560" y="130" width="140" height="30" rx="6" fill="#84cc16" fill-opacity="0.22"/>
-<text x="630" y="149" text-anchor="middle" font-size="10" fill="currentColor">CRM: token + quyền</text>
-<rect x="380" y="168" width="140" height="30" rx="6" fill="#84cc16" fill-opacity="0.22"/>
-<text x="450" y="187" text-anchor="middle" font-size="10" fill="currentColor">Billing: token + quyền</text>
-<rect x="560" y="168" width="140" height="30" rx="6" fill="#84cc16" fill-opacity="0.22"/>
-<text x="630" y="187" text-anchor="middle" font-size="10" fill="currentColor">Ticket: token + quyền</text>
-<rect x="455" y="206" width="170" height="30" rx="6" fill="#84cc16" fill-opacity="0.22"/>
-<text x="540" y="225" text-anchor="middle" font-size="10" fill="currentColor">Dashboard: token + quyền</text>
-<text x="540" y="262" text-anchor="middle" font-size="11" font-weight="bold" fill="currentColor">6 chỗ ở IdP + 5 chỗ kiểm token</text>
-<text x="540" y="282" text-anchor="middle" font-size="11" fill="currentColor">phân quyền: vẫn 5 chỗ</text>
+<ab-toggle data-labels="Tự giữ identity|IdP chung">
+<svg viewBox="0 0 520 435" role="img" aria-labelledby="kc1-med-0-t kc1-med-0-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="kc1-med-0-t">Identity phân tán</title>
+<desc id="kc1-med-0-d">Số ô mã hoá số bản cài đặt. Đường nối gom identity về một IdP; ô quyền vẫn ở từng app.</desc>
+<text x="260" y="22" text-anchor="middle" font-size="13" fill="currentColor">Identity: 30 bản cài đặt → 6 ở IdP</text>
+<text x="260" y="43" text-anchor="middle" font-size="13" fill="currentColor">Phân quyền nghiệp vụ vẫn nằm trong từng app</text>
+<text x="66" y="97" text-anchor="middle" font-size="13" fill="currentColor">Admin</text>
+<rect x="133" y="80" width="25" height="30" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="168" y="80" width="25" height="30" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="203" y="80" width="25" height="30" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="238" y="80" width="25" height="30" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="273" y="80" width="25" height="30" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="308" y="80" width="25" height="30" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="355" y="80" width="90" height="30" rx="5" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/>
+<text x="400" y="100" text-anchor="middle" font-size="13" fill="currentColor">quyền</text>
+<text x="66" y="145" text-anchor="middle" font-size="13" fill="currentColor">CRM</text>
+<rect x="133" y="128" width="25" height="30" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="168" y="128" width="25" height="30" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="203" y="128" width="25" height="30" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="238" y="128" width="25" height="30" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="273" y="128" width="25" height="30" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="308" y="128" width="25" height="30" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="355" y="128" width="90" height="30" rx="5" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/>
+<text x="400" y="148" text-anchor="middle" font-size="13" fill="currentColor">quyền</text>
+<text x="66" y="193" text-anchor="middle" font-size="13" fill="currentColor">Billing</text>
+<rect x="133" y="176" width="25" height="30" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="168" y="176" width="25" height="30" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="203" y="176" width="25" height="30" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="238" y="176" width="25" height="30" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="273" y="176" width="25" height="30" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="308" y="176" width="25" height="30" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="355" y="176" width="90" height="30" rx="5" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/>
+<text x="400" y="196" text-anchor="middle" font-size="13" fill="currentColor">quyền</text>
+<text x="66" y="241" text-anchor="middle" font-size="13" fill="currentColor">Ticket</text>
+<rect x="133" y="224" width="25" height="30" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="168" y="224" width="25" height="30" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="203" y="224" width="25" height="30" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="238" y="224" width="25" height="30" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="273" y="224" width="25" height="30" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="308" y="224" width="25" height="30" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="355" y="224" width="90" height="30" rx="5" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/>
+<text x="400" y="244" text-anchor="middle" font-size="13" fill="currentColor">quyền</text>
+<text x="66" y="289" text-anchor="middle" font-size="13" fill="currentColor">Dashboard</text>
+<rect x="133" y="272" width="25" height="30" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="168" y="272" width="25" height="30" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="203" y="272" width="25" height="30" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="238" y="272" width="25" height="30" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="273" y="272" width="25" height="30" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="308" y="272" width="25" height="30" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<rect x="355" y="272" width="90" height="30" rx="5" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/>
+<text x="400" y="292" text-anchor="middle" font-size="13" fill="currentColor">quyền</text>
+<text x="260" y="345" text-anchor="middle" font-size="13" fill="currentColor">Mỗi ô xanh = một chức năng identity</text>
+<text x="260" y="368" text-anchor="middle" font-size="13" fill="currentColor">hash · brute force · MFA · reset · khoá · audit</text>
+<text x="260" y="393" text-anchor="middle" font-size="13" fill="currentColor">5 app × 6 chức năng = 30 chỗ</text>
+<text x="260" y="416" text-anchor="middle" font-size="13" fill="currentColor">Phân quyền: 5 chỗ</text>
 </svg>
+<svg viewBox="0 0 520 435" role="img" aria-labelledby="kc1-med-1-t kc1-med-1-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto">
+<title id="kc1-med-1-t">Identity tập trung</title>
+<desc id="kc1-med-1-d">Số ô mã hoá số bản cài đặt. Đường nối gom identity về một IdP; ô quyền vẫn ở từng app.</desc>
+<text x="260" y="22" text-anchor="middle" font-size="13" fill="currentColor">Identity: 30 bản cài đặt → 6 ở IdP</text>
+<text x="260" y="43" text-anchor="middle" font-size="13" fill="currentColor">Phân quyền nghiệp vụ vẫn nằm trong từng app</text>
+<text x="66" y="97" text-anchor="middle" font-size="13" fill="currentColor">Admin</text>
+<path d="M220 69 L220 98" fill="none" stroke="#3b82f6" stroke-width="2"/>
+<path d="M220 98 L300 98" fill="none" stroke="#3b82f6" stroke-width="2"/>
+<rect x="305" y="80" width="140" height="31" rx="5" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/>
+<text x="375" y="100" text-anchor="middle" font-size="13" fill="currentColor">token + quyền</text>
+<text x="66" y="145" text-anchor="middle" font-size="13" fill="currentColor">CRM</text>
+<path d="M220 69 L220 146" fill="none" stroke="#3b82f6" stroke-width="2"/>
+<path d="M220 146 L300 146" fill="none" stroke="#3b82f6" stroke-width="2"/>
+<rect x="305" y="128" width="140" height="31" rx="5" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/>
+<text x="375" y="148" text-anchor="middle" font-size="13" fill="currentColor">token + quyền</text>
+<text x="66" y="193" text-anchor="middle" font-size="13" fill="currentColor">Billing</text>
+<path d="M220 69 L220 194" fill="none" stroke="#3b82f6" stroke-width="2"/>
+<path d="M220 194 L300 194" fill="none" stroke="#3b82f6" stroke-width="2"/>
+<rect x="305" y="176" width="140" height="31" rx="5" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/>
+<text x="375" y="196" text-anchor="middle" font-size="13" fill="currentColor">token + quyền</text>
+<text x="66" y="241" text-anchor="middle" font-size="13" fill="currentColor">Ticket</text>
+<path d="M220 69 L220 242" fill="none" stroke="#3b82f6" stroke-width="2"/>
+<path d="M220 242 L300 242" fill="none" stroke="#3b82f6" stroke-width="2"/>
+<rect x="305" y="224" width="140" height="31" rx="5" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/>
+<text x="375" y="244" text-anchor="middle" font-size="13" fill="currentColor">token + quyền</text>
+<text x="66" y="289" text-anchor="middle" font-size="13" fill="currentColor">Dashboard</text>
+<path d="M220 69 L220 290" fill="none" stroke="#3b82f6" stroke-width="2"/>
+<path d="M220 290 L300 290" fill="none" stroke="#3b82f6" stroke-width="2"/>
+<rect x="305" y="272" width="140" height="31" rx="5" fill="#10b981" fill-opacity="0.15" stroke="#10b981"/>
+<text x="375" y="292" text-anchor="middle" font-size="13" fill="currentColor">token + quyền</text>
+<rect x="130" y="49" width="180" height="26" rx="5" fill="#3b82f6" fill-opacity="0.15" stroke="#3b82f6"/>
+<text x="220" y="67" text-anchor="middle" font-size="13" fill="currentColor">Keycloak · realm công ty</text>
+<text x="260" y="345" text-anchor="middle" font-size="13" fill="currentColor">Mỗi ô xanh = một chức năng identity</text>
+<text x="260" y="368" text-anchor="middle" font-size="13" fill="currentColor">hash · brute force · MFA · reset · khoá · audit</text>
+<text x="260" y="393" text-anchor="middle" font-size="13" fill="currentColor">6 ở IdP + 5 kiểm token</text>
+<text x="260" y="416" text-anchor="middle" font-size="13" fill="currentColor">Phân quyền: 5 chỗ</text>
+</svg>
+<ab-note>Sáu chức năng lặp ở cả năm app; database yếu nhất có thể làm lộ mật khẩu dùng chung.</ab-note>
+<ab-note>Keycloak giữ sáu chức năng một lần; mỗi app vẫn kiểm token và tự quyết quyền nghiệp vụ.</ab-note>
+</ab-toggle>
 
 > **Suy luận.** Phép đếm 30 → 6 + 5 là mô hình của bài, không phải số liệu từ nguồn. Nó dựa trên hai dữ kiện lab: realm Keycloak có tham số cho đủ sáu chức năng (đọc qua `kc get realms/demo`), và app nhận token chỉ còn kiểm chữ ký, `iss`, `aud`, `exp` (bài 4). Năm chỗ kiểm token vẫn cấu hình sai được, nhưng đó là cấu hình thư viện resource server, không phải viết lại luồng đăng nhập. **Kiểm bằng:** liệt kê mọi cột chứa hash trong năm database trước và sau khi chuyển.
 
