@@ -19,30 +19,51 @@ Bạn on-call cho hệ e-commerce **ShopX**. Kiến trúc: một Postgres **prim
 CREATE INDEX idx_orders_status ON orders (status);
 ```
 
-Một dòng. Trông vô hại. Nhưng nó châm ngòi cho một chuỗi sụp đổ dây chuyền trong 12 phút. Đây là **timeline** của sự cố:
+Một dòng. Trông vô hại. Nhưng nó châm ngòi cho một chuỗi sụp đổ dây chuyền trong 12 phút. Đây là **timeline** của tình huống minh họa (số liệu dùng để luyện chẩn đoán, không phải số đo lab):
 
-<svg viewBox="0 0 720 300" role="img" aria-labelledby="tl-t tl-d" style="width:100%;max-width:700px;height:auto;display:block;margin:1.25rem auto">
-<title id="tl-t">Timeline sự cố data-layer</title>
-<desc id="tl-d">Từ lệnh CREATE INDEX lúc 14:00 dẫn tới lock ghi, WAL flood, replica lag, stale read, query bị cancel, pool cạn và app timeout hàng loạt</desc>
-<line x1="60" y1="40" x2="60" y2="270" stroke="currentColor" stroke-width="2"/>
-<circle cx="60" cy="55" r="5" fill="#3b82f6"/>
-<text x="80" y="52" font-size="12" fill="currentColor">14:00 — CREATE INDEX chạy trên primary (SHARE lock)</text>
-<text x="80" y="68" font-size="10" fill="currentColor">quét 800M dòng: disk IO bão hoà, buffer cache bị evict</text>
-<circle cx="60" cy="95" r="5" fill="#f59e0b"/>
-<text x="80" y="92" font-size="12" fill="currentColor">14:02 — INSERT/UPDATE orders bị chặn ghi → p99 API tăng vọt</text>
-<text x="80" y="108" font-size="10" fill="currentColor">WAL sinh ồ ạt từ việc build index, ship sang replica</text>
-<circle cx="60" cy="135" r="5" fill="#f43f5e"/>
-<text x="80" y="132" font-size="12" fill="currentColor">14:04 — Replica replay đơn luồng không kịp → lag nhảy lên 40 phút</text>
-<text x="80" y="148" font-size="10" fill="currentColor">read replica trả dữ liệu cũ: user thấy đơn hàng "biến mất"</text>
-<circle cx="60" cy="175" r="5" fill="#8b5cf6"/>
-<text x="80" y="172" font-size="12" fill="currentColor">14:06 — Query đọc trên replica bị CANCEL (conflict with recovery)</text>
-<text x="80" y="188" font-size="10" fill="currentColor">app retry dồn dập, mỗi request giữ connection lâu hơn</text>
-<circle cx="60" cy="215" r="5" fill="#f43f5e"/>
-<text x="80" y="212" font-size="12" fill="currentColor">14:08 — Connection pool CẠN → app timeout hàng loạt (5xx)</text>
-<text x="80" y="228" font-size="10" fill="currentColor">checkout không đặt được đơn, doanh thu về 0</text>
-<circle cx="60" cy="255" r="5" fill="#10b981"/>
-<text x="80" y="252" font-size="12" fill="currentColor">14:12 — On-call kill migration, hệ bắt đầu hồi phục</text>
+<step-flow>
+<svg viewBox="0 0 760 655" role="img" aria-labelledby="dstcapfix-path-t dstcapfix-path-d" style="width:100%;max-width:760px;height:auto;display:block;margin:1.25rem auto">
+<title id="dstcapfix-path-t">Timeline sự cố trên bốn lifeline cố định</title>
+<desc id="dstcapfix-path-d">App và pool, primary orders 800 triệu dòng, hai replica. Các mốc thời gian gắn với thao tác hoặc thông điệp trên lifeline tương ứng; backlog WAL nằm cạnh đường gửi, không bị đường xuyên qua.</desc>
+<rect x="15.0" y="15" width="140" height="38" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="85" y="39" font-size="13" text-anchor="middle" fill="currentColor">App / pool</text>
+<path d="M85 54 V635" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 5"/>
+<rect x="275.0" y="15" width="130" height="38" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="340" y="39" font-size="13" text-anchor="middle" fill="currentColor">Primary</text>
+<path d="M340 54 V635" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 5"/>
+<rect x="475.0" y="15" width="120" height="38" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="535" y="39" font-size="13" text-anchor="middle" fill="currentColor">Replica 1</text>
+<path d="M535 54 V635" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 5"/>
+<rect x="630.0" y="15" width="120" height="38" rx="5" fill="#3b82f6" fill-opacity="0.14" stroke="#3b82f6"/>
+<text x="690" y="39" font-size="13" text-anchor="middle" fill="currentColor">Replica 2</text>
+<path d="M690 54 V635" stroke="currentColor" stroke-opacity="0.35" stroke-dasharray="4 5"/>
+<g data-step="1">
+<rect x="330" y="80" width="20" height="60" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="365" y="91" font-size="13" text-anchor="start" fill="currentColor">14:00 INDEX</text><text x="365" y="112" font-size="13" text-anchor="start" fill="currentColor">orders: 800M</text><text x="365" y="133" font-size="13" text-anchor="start" fill="currentColor">IO 100% · cache evict</text>
+</g>
+<g data-step="2">
+<path d="M85 190 H330" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dstcapfix-path-arrow)"/><text x="208" y="167" font-size="13" text-anchor="middle" fill="currentColor">14:02: ghi bị chặn</text><path d="M321 178 V202 M328 178 V202" stroke="#f43f5e" stroke-width="3"/>
+</g>
+<g data-step="3">
+<path d="M350 250 H535" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dstcapfix-path-arrow)"/><path d="M350 310 H690" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#dstcapfix-path-arrow)"/><text x="437" y="233" font-size="13" text-anchor="middle" fill="currentColor">WAL → replica</text><text x="520" y="293" font-size="13" text-anchor="middle" fill="currentColor">WAL → replica</text><rect x="375" y="333" width="16" height="18" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><rect x="397" y="333" width="16" height="18" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><rect x="419" y="333" width="16" height="18" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><rect x="441" y="333" width="16" height="18" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><rect x="463" y="333" width="16" height="18" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><rect x="485" y="333" width="16" height="18" rx="5" fill="#f59e0b" fill-opacity="0.14" stroke="#f59e0b"/><text x="510" y="372" font-size="13" text-anchor="middle" fill="currentColor">14:04: replay chậm, lag ~40 giây</text><path d="M535 310 V357" stroke="#f59e0b" stroke-width="1.5"/><text x="439" y="405" font-size="13" text-anchor="middle" fill="currentColor">Backlog WAL (đã nhận/flush)</text>
+</g>
+<g data-step="4">
+<path d="M535 443 H85" fill="none" stroke="#f43f5e" stroke-width="1.5" marker-end="url(#dstcapfix-path-arrow)"/><text x="310" y="431" font-size="13" text-anchor="middle" fill="currentColor">14:06: cancel → app retry</text><path d="M690 485 H85" fill="none" stroke="#f43f5e" stroke-width="1.5" marker-end="url(#dstcapfix-path-arrow)"/><text x="440" y="473" font-size="13" text-anchor="middle" fill="currentColor">Replica 2: cùng rủi ro recovery conflict</text>
+</g>
+<g data-step="5">
+<rect x="20" y="510" width="130" height="67" rx="5" fill="#f43f5e" fill-opacity="0.14" stroke="#f43f5e"/><text x="85" y="530" font-size="13" text-anchor="middle" fill="currentColor">14:08: timeout</text><text x="85" y="550" font-size="13" text-anchor="middle" fill="currentColor">100/100 pool</text><rect x="30" y="558" width="110" height="9" rx="3" fill="#f43f5e" fill-opacity="0.65"/><text x="85" y="598" font-size="13" text-anchor="middle" fill="currentColor">5xx · ~38% lỗi</text>
+</g>
+<g data-step="6">
+<rect x="330" y="535" width="20" height="20" rx="5" fill="#10b981" fill-opacity="0.14" stroke="#10b981"/><text x="365" y="546" font-size="13" text-anchor="start" fill="currentColor">14:12: kill migration</text><text x="365" y="570" font-size="13" text-anchor="start" fill="currentColor">14:14: ghi thông</text><text x="365" y="594" font-size="13" text-anchor="start" fill="currentColor">14:19: replica lag &lt;1s</text>
+</g>
+<defs><marker id="dstcapfix-path-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 Z" fill="currentColor"/></marker></defs>
 </svg>
+<step-note data-step="1">Build index thường giữ SHARE lock, quét bảng và tranh disk/cache.</step-note>
+<step-note data-step="2">Ghi orders xếp hàng; p99 tăng từ 80ms tới 12s trong tình huống.</step-note>
+<step-note data-step="3">WAL đã tới/flush nhanh nhưng replay chậm: backlog tăng, đọc có thể stale. Khoảng 40 giây sau bốn phút là khả thi.</step-note>
+<step-note data-step="4">Recovery conflict hủy query đọc; retry thiếu backoff khuếch đại tải.</step-note>
+<step-note data-step="5">Connection giữ lâu làm cạn pool, khoảng 38% checkout lỗi, không phải doanh thu bằng 0.</step-note>
+<step-note data-step="6">Dừng build nhả lock và giảm nguồn WAL; ghi thông lúc 14:14, replica bắt kịp lúc 14:19.</step-note>
+</step-flow>
 
 Điểm cốt lõi để nhớ suốt bài: **một nguyên nhân gốc, năm triệu chứng khác nhau**. Nếu bạn chỉ nhìn "pool cạn" mà tăng `max_connections`, hoặc chỉ nhìn "lag cao" mà thêm replica, bạn **chữa ngọn** và sự cố quay lại ngay lập tức.
 
@@ -54,12 +75,12 @@ Nguyên tắc on-call: **đọc số liệu trước, hành động sau**. Đi t
 
 ### 3.1 Đọc dashboard — bức tranh lớn
 
-Ba đường đầu tiên phải nhìn, và chúng khớp nhau một cách đáng ngờ:
+Bốn đường đầu tiên phải nhìn, và chúng khớp nhau một cách đáng ngờ:
 
 | Metric | Bình thường | Lúc sự cố | Nói lên điều gì |
 |--------|-------------|-----------|-----------------|
 | **Disk IOPS / throughput (primary)** | ~30% | **bão hoà 100%** | Có gì đó đang quét cả bảng |
-| **Replication lag (replica)** | < 1s | **40 phút và tăng** | Replica không replay kịp WAL |
+| **Replication lag (replica)** | < 1s | **40 giây và tăng** | Replica không replay kịp WAL |
 | **Active connections (app pool)** | ~40/100 | **100/100, hàng đợi dài** | Connection bị giữ, không trả về pool |
 | **p99 API latency** | 80ms | **12s → timeout** | Ghi bị chặn + đọc bị cancel |
 
@@ -122,11 +143,11 @@ FROM pg_stat_replication;
 ```
  client_addr | state     | replay_lag_bytes | write_lag | flush_lag | replay_lag
 -------------+-----------+------------------+-----------+-----------+-------------
- 10.0.1.21   | streaming |      8_900_000_000 | 00:00:00.1| 00:00:00.2| 00:41:12
- 10.0.1.22   | streaming |      8_700_000_000 | 00:00:00.1| 00:00:00.2| 00:40:05
+ 10.0.1.21   | streaming |      8_900_000_000 | 00:00:00.1| 00:00:00.2| 00:00:41.12
+ 10.0.1.22   | streaming |      8_700_000_000 | 00:00:00.1| 00:00:00.2| 00:00:40.05
 ```
 
-Cực kỳ quan trọng — đọc kỹ ba cột lag: `write_lag` và `flush_lag` **rất nhỏ** (mạng và ghi WAL bình thường), nhưng `replay_lag` = **41 phút**. Nghĩa là WAL **đã tới replica và đã ghi xuống đĩa**, chỉ là **replay không kịp**. Đây là chữ ký kinh điển của **single-threaded WAL replay** (Bài 22): replica replay tuần tự một luồng, còn primary sinh WAL từ việc build index nhanh gấp nhiều lần tốc độ replay → khoảng cách phình theo thời gian.
+Cực kỳ quan trọng — đọc kỹ ba cột lag: `write_lag` và `flush_lag` **rất nhỏ** (mạng và ghi WAL bình thường), nhưng `replay_lag` = **41 giây**. Nghĩa là WAL **đã tới replica và đã ghi xuống đĩa**, chỉ là **replay không kịp**. Đây là chữ ký kinh điển của **single-threaded WAL replay** (Bài 22): replica replay tuần tự một luồng, còn primary sinh WAL từ việc build index nhanh gấp nhiều lần tốc độ replay → khoảng cách phình theo thời gian.
 
 Và trên replica, log đầy dòng này:
 
@@ -171,7 +192,7 @@ Bức tranh khép kín. Đọc bị chậm (replica bận replay) + đọc bị 
 
 ## 4. Root cause — một câu, đủ sâu
 
-> **Root cause:** `CREATE INDEX` (không `CONCURRENTLY`) trên `orders` (800M dòng) chạy giờ cao điểm đã (1) chiếm **SHARE lock chặn ghi**, (2) **quét cả bảng** làm bão hoà disk IO và evict buffer cache, (3) sinh **WAL ồ ạt** mà replica **replay đơn luồng** không kịp → lag 40 phút + **cancel query đọc**. Việc đọc/ghi đều chậm/lỗi khiến **connection bị giữ rất lâu**, làm **pool cạn** và app timeout hàng loạt. Bốn triệu chứng, một gốc.
+> **Root cause:** `CREATE INDEX` (không `CONCURRENTLY`) trên `orders` (800M dòng) chạy giờ cao điểm đã (1) chiếm **SHARE lock chặn ghi**, (2) **quét cả bảng** làm bão hoà disk IO và evict buffer cache, (3) sinh **WAL ồ ạt** mà replica **replay đơn luồng** không kịp → lag khoảng 40 giây + **cancel query đọc**. Việc đọc/ghi đều chậm/lỗi khiến **connection bị giữ rất lâu**, làm **pool cạn** và app timeout hàng loạt. Bốn triệu chứng, một gốc.
 
 Phân biệt rạch ròi để không nhầm khi viết postmortem:
 - **Trigger** (mồi lửa): lệnh `CREATE INDEX` không `CONCURRENTLY`.
@@ -191,7 +212,7 @@ SELECT pg_cancel_backend(8123);
 -- Nếu không dừng, mới terminate hẳn
 SELECT pg_terminate_backend(8123);
 ```
-Ngay khi 8123 chết: SHARE lock nhả → hàng đợi INSERT/UPDATE thoát, ghi thông trở lại, WAL ngừng phình. Đây là hành động **có tác động lớn nhất, rủi ro thấp nhất** — index đang build dở sẽ bị đánh dấu `INVALID`, dọn sau. **Làm cái này trước tiên.**
+Ngay khi 8123 chết: SHARE lock nhả → hàng đợi INSERT/UPDATE thoát, ghi thông trở lại, WAL ngừng phình. Đây là hành động **có tác động lớn nhất, rủi ro thấp nhất** — build index thường bị rollback, không mặc nhiên để lại `INVALID`. Build `CONCURRENTLY` thất bại mới có thể để lại index invalid cần kiểm tra/dọn. **Làm cái này trước tiên.**
 
 **B. Để replica bắt kịp.** Sau khi kill, primary ngừng sinh WAL nặng, replay đơn luồng dần đuổi kịp; lag tụt về 0 sau vài phút. Giám sát `replay_lag` cho tới khi < 1s **trước khi** tuyên bố hết sự cố — nếu tuyên bố sớm, user vẫn còn thấy stale read.
 
@@ -218,8 +239,9 @@ SET lock_timeout = '3s';
 -- 2) Build KHÔNG chặn ghi (quét bảng 2 lần, chậm hơn nhưng an toàn)
 CREATE INDEX CONCURRENTLY idx_orders_status ON orders (status);
 
--- 3) Nếu lỡ fail, index để lại trạng thái INVALID — dọn rồi làm lại
-DROP INDEX CONCURRENTLY IF EXISTS idx_orders_status;
+-- Không chạy DROP sau build thành công. Chỉ nếu build fail, kiểm tra indisvalid
+-- trong pg_index; nếu index INVALID mới chạy riêng lệnh dọn và thử lại:
+-- DROP INDEX CONCURRENTLY IF EXISTS idx_orders_status;
 ```
 
 Với bảng cực lớn hoặc thao tác nặng hơn (đổi kiểu, thêm cột có rewrite, backfill dữ liệu), hãy **chia batch nhỏ và tự throttle theo replication lag** thay vì tin vào một lệnh DDL duy nhất. Lưu ý: `gh-ost`/`pt-online-schema-change` là công cụ của **MySQL** — với **Postgres** dùng `CREATE INDEX CONCURRENTLY` cho index, còn rewrite nặng thì dùng `pg_repack` hoặc `pgroll`/`pg-osc` (online schema change kiểu expand–contract):
@@ -251,14 +273,14 @@ Sự cố chỉ có giá trị nếu biến thành phòng ngừa. Mẫu postmort
 
 **Tiêu đề:** Gián đoạn đặt hàng 12 phút do CREATE INDEX chặn ghi trên `orders`
 
-**Impact:** 14:02–14:14, p99 API 80ms → 12s; ~38% request checkout lỗi 5xx; ~4.100 đơn không đặt được; read replica trả stale read tối đa 40 phút khiến user thấy đơn "biến mất".
+**Impact:** 14:02–14:14, p99 API 80ms → 12s; ~38% request checkout lỗi 5xx; ~4.100 đơn không đặt được; read replica trả stale read khoảng 40 giây (hai mẫu replay_lag khoảng 40–41 giây) khiến user thấy đơn "biến mất".
 
 **Timeline (giờ thực):**
 | Thời điểm | Sự kiện |
 |-----------|---------|
 | 14:00 | `CREATE INDEX` (no CONCURRENTLY) chạy trên primary |
 | 14:02 | Alert p99 API; ghi `orders` bị chặn |
-| 14:04 | Replication lag alert: 40 phút |
+| 14:04 | Replication lag alert: 40 giây |
 | 14:06 | Query đọc trên replica bị cancel; app retry tăng |
 | 14:08 | Connection pool cạn; 5xx hàng loạt |
 | 14:10 | On-call xác định PID qua `pg_stat_activity` |

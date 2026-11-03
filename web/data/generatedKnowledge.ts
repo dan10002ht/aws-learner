@@ -1458,13 +1458,13 @@ const k1: Question[] = [
     "options": [
       "READ COMMITTED — vẫn cho phép non-repeatable read và phantom read",
       "SERIALIZABLE — không cho phép hiện tượng lỗi nào",
-      "READ UNCOMMITTED — cho phép cả dirty read",
-      "REPEATABLE READ — chỉ cho phép phantom read"
+      "READ UNCOMMITTED — PostgreSQL thực thi như READ COMMITTED",
+      "REPEATABLE READ — PostgreSQL chặn cả phantom trong cùng snapshot"
     ],
     "correctIndices": [
       0
     ],
-    "explanation": "PostgreSQL mặc định READ COMMITTED, chặn dirty read nhưng còn lọt non-repeatable và phantom.\n✓ READ COMMITTED là mặc định và vẫn cho phép non-repeatable read lẫn phantom read.\n✗ SERIALIZABLE chặn mọi hiện tượng nhưng không phải mặc định.\n✗ READ UNCOMMITTED cho dirty read và không phải mặc định của PostgreSQL.\n✗ REPEATABLE READ không phải mức mặc định."
+    "explanation": "PostgreSQL mặc định READ COMMITTED: chặn dirty read nhưng có thể non-repeatable read và phantom giữa các câu lệnh. READ UNCOMMITTED được xử lý như READ COMMITTED nên cũng không có dirty read, nhưng không phải tên mức mặc định. REPEATABLE READ PostgreSQL chặn phantom trong cùng snapshot nhưng vẫn có thể write skew. SERIALIZABLE không phải mặc định và có thể yêu cầu retry do serialization failure."
   },
   {
     "id": "sql-q-069",
@@ -7126,7 +7126,7 @@ const k1: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Bạn đang sửa dở tính năng A (code ngổn ngang, chưa muốn commit) thì cần chuyển nhánh gấp, nhưng Git không cho chuyển vì bàn làm việc bừa bộn. Cách gọn nhất?",
+    "question": "Bạn đang sửa dở tính năng A (code ngổn ngang, chưa muốn commit) thì cần chuyển nhánh gấp, nhưng Git báo thay đổi local sẽ bị ghi đè khi chuyển nhánh. Cách gọn nhất?",
     "options": [
       "git stash push -m \"dở dang A\" rồi git switch sang nhánh kia",
       "git reset --hard HEAD rồi git switch",
@@ -8656,7 +8656,7 @@ const k2: Question[] = [
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Sắp xếp đúng thứ tự browser xử lý sau khi nhận HTML để hiển thị trang?",
+    "question": "Trong pipeline render nhập môn, thứ tự phụ thuộc nào phù hợp để hiển thị trang?",
     "options": [
       "Paint → Layout → parse HTML thành DOM → chạy JS",
       "Parse HTML thành DOM → phân tích CSS → Layout → Paint",
@@ -8666,7 +8666,7 @@ const k2: Question[] = [
     "correctIndices": [
       1
     ],
-    "explanation": "Browser parse HTML thành DOM trước, rồi phân tích CSS, tính Layout (vị trí/kích thước), rồi Paint (vẽ ra điểm ảnh).\n✓ Parse HTML thành DOM → phân tích CSS → Layout → Paint: đúng thứ tự trong bài.\n✗ Paint → Layout → parse HTML...: sai, không thể vẽ trước khi dựng DOM và tính layout.\n✗ Layout → Paint → parse HTML...: sai, phải có DOM trước mới layout được.\n✗ Chạy JS → Paint → Layout...: sai, DOM phải được dựng trước khi mọi bước khác diễn ra."
+    "explanation": "Pipeline nhập môn dựng DOM từ HTML và CSSOM từ CSS, rồi tính layout trước paint. HTML/CSS có thể được xử lý xen kẽ; đây không phải lịch tuần tự tuyệt đối của mọi công việc browser. JavaScript có thể chạy ngay khi HTML còn parse. Các lựa chọn paint trước layout hoặc layout trước dữ liệu cây cần thiết là sai; không phải JS bắt buộc đợi toàn bộ DOM hay đợi paint."
   },
   {
     "id": "web-q-014",
@@ -9752,7 +9752,7 @@ const k2: Question[] = [
     "type": "multi",
     "question": "Khi gọi fetch trong một hàm async, những phát biểu nào sau đây ĐÚNG theo bài?",
     "options": [
-      "await chỉ dùng được bên trong hàm có async",
+      "Trong thân hàm, await cần hàm async; ngoài hàm có thể dùng top-level await trong ES module",
       "Có hai chỗ cần await: một cho fetch() và một cho .json()",
       "response trả về chưa phải là dữ liệu, mà là 'cái phong bì' chứa thông tin phản hồi",
       "fetch() trả về dữ liệu JSON đã được parse sẵn thành object",
@@ -9763,7 +9763,7 @@ const k2: Question[] = [
       1,
       2
     ],
-    "explanation": "Bài nêu await cần async, có hai chỗ await, và response là 'phong bì' chứ chưa phải dữ liệu.\n✓ await chỉ dùng trong hàm async là quy tắc bài nêu.\n✓ Cần await cho cả fetch() lẫn .json() là đúng.\n✓ response là phong bì chứa thông tin, phải gọi .json() mới lấy nội dung.\n✗ fetch không tự parse JSON; phải gọi response.json().\n✗ response.status là con số (như 200), còn response.ok mới là true/false."
+    "explanation": "Trong thân hàm, await cần async; ES module còn hỗ trợ top-level await. Với ví dụ đọc JSON, await fetch() lấy Response và await response.json() đọc/parse body. Response là đối tượng chứa status/header/body, không phải JSON đã parse; status là số còn ok là boolean. fetch() không tự parse JSON. Không nhất thiết mọi cách viết phải có hai từ await: có thể tổ chức bằng Promise chain, nhưng hai thao tác đều bất đồng bộ."
   },
   {
     "id": "web-q-065",
@@ -10178,7 +10178,7 @@ const k2: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Virtual DOM hoạt động như thế nào để vẫn cho phép viết kiểu \"vẽ lại tất cả\" mà nhanh?",
+    "question": "Virtual DOM hỗ trợ cách viết khai báo như thế nào?",
     "options": [
       "Tạo cây object JS mới, so sánh (diff) với cây cũ, rồi chỉ patch những node DOM thật thực sự đổi",
       "Lưu toàn bộ DOM thật vào localStorage rồi khôi phục khi cần",
@@ -10188,7 +10188,7 @@ const k2: Question[] = [
     "correctIndices": [
       0
     ],
-    "explanation": "Virtual DOM dựng cây object JS mới, diff với cây cũ và chỉ patch phần DOM thật khác biệt.\n✓ Diff cây object rồi patch tối thiểu lên DOM thật đúng quy trình Virtual DOM.\n✗ Virtual DOM không liên quan localStorage.\n✗ Việc diffing diễn ra ở client bằng JS, không nhờ server.\n✗ Không tắt JS; chính JS tính toán phần khác biệt."
+    "explanation": "Virtual DOM tạo cây object JS, diff với cây cũ theo heuristic rồi áp cập nhật cần thiết lên DOM thật. Không bảo đảm edit script tối thiểu hay luôn nhanh hơn mọi cách thao tác DOM; hiệu năng còn phụ thuộc render/diff và thay đổi thực tế. Không lưu DOM vào localStorage, không cần server tính diff cho quy trình này, và không tắt JavaScript."
   },
   {
     "id": "web-q-085",
@@ -10652,9 +10652,9 @@ const k2: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Vì sao CPU bắt buộc phải LOAD hai số từ RAM vào register trước khi cộng chúng?",
+    "question": "Trong mô hình ISA load/store, vì sao cần LOAD các toán hạng từ RAM vào register trước lệnh cộng?",
     "options": [
-      "Register là nơi duy nhất CPU có thể trực tiếp thực hiện phép tính",
+      "Lệnh cộng trong mô hình load/store nhận toán hạng ở register, không trực tiếp nhận toán hạng bộ nhớ",
       "RAM không thể lưu số nguyên, chỉ lưu được chuỗi",
       "Phép cộng chỉ chạy được trên dữ liệu trong cache L3",
       "Bus không cho phép đọc hai ô RAM cùng lúc"
@@ -10662,7 +10662,7 @@ const k2: Question[] = [
     "correctIndices": [
       0
     ],
-    "explanation": "Mọi phép tính ADD/SUB/CMP đều thao tác trên register, đó là chỗ duy nhất CPU tính trực tiếp.\n✓ Register nằm trong CPU và là nơi duy nhất thực hiện phép tính.\n✗ RAM lưu được mọi loại dữ liệu kể cả số nguyên.\n✗ Cache L3 không phải nơi thực thi phép tính, register mới là.\n✗ Lý do là về nơi tính toán, không phải giới hạn đọc đồng thời của bus."
+    "explanation": "Trong mô hình load/store, LOAD đưa toán hạng vào register để lệnh số học xử lý; đây là quy tắc mô hình, không phải mọi ISA. x86 có lệnh số học với toán hạng bộ nhớ. RAM vẫn lưu được số nguyên, cache L3 không phải nơi thực thi phép cộng, và giới hạn bus đọc đồng thời không phải lý do của quy tắc này."
   },
   {
     "id": "cs-q-016",
@@ -10738,7 +10738,7 @@ const k2: Question[] = [
     "type": "single",
     "question": "Vì sao duyệt toàn bộ một std::vector (array) thường nhanh hơn duyệt một std::list (linked list) cùng N phần tử, dù cả hai đều O(N)?",
     "options": [
-      "Array nằm liền nhau nên spatial locality tốt; linked list cấp phát rải rác trên heap nên mỗi node thường là một cache miss",
+      "Array liền nhau thường có spatial locality tốt hơn linked list cấp phát rải rác, nhất là khi working set lớn hơn cache và ít tái sử dụng",
       "Linked list phải tính lại Big-O ở mỗi bước nên chậm",
       "Array chạy trên register còn linked list chạy trên RAM",
       "Linked list luôn có nhiều phần tử hơn array khi cùng N"
@@ -10746,7 +10746,7 @@ const k2: Question[] = [
     "correctIndices": [
       0
     ],
-    "explanation": "Array liền mạch trong RAM tận dụng cache line, còn node linked list rải rác khắp heap nên mỗi `node->next` là một cú nhảy random.\n✓ Array liền nhau cho locality tốt; linked list rải rác gây miss gần như mỗi bước.\n✗ Big-O là phân tích tĩnh, không được tính lại lúc chạy.\n✗ Cả hai đều nằm trong RAM; không cấu trúc nào duyệt trực tiếp trên register.\n✗ Cùng N thì số phần tử như nhau, khác biệt là cách bố trí bộ nhớ."
+    "explanation": "Array liền nhau tận dụng cache line và prefetch. Linked list rải rác có pointer chasing, dễ miss khi working set lớn hơn cache và ít tái sử dụng; không bảo đảm mỗi bước đều miss, node có thể đã nằm trong cache hoặc được cấp phát gần nhau. Cả hai vẫn có N phần tử và độ phức tạp duyệt O(N); Big-O không được tính lại lúc chạy. Khác biệt không phải một cấu trúc ở register còn cấu trúc kia ở RAM."
   },
   {
     "id": "cs-q-020",
@@ -12144,7 +12144,7 @@ const k2: Question[] = [
     "correctIndices": [
       0
     ],
-    "explanation": "Amortized O(1) nói về chi phí trung bình trải đều, không phải bảo đảm từng lần.\n✓ Một lần append cá biệt vẫn có thể tốn O(n) khi mảng đầy và phải copy sang vùng gấp đôi.\n✗ Tổng thêm n phần tử đúng là ~O(n) (khoảng 2n thao tác copy) — đây là điều amortized bảo đảm.\n✗ Trung bình trải đều mỗi append là O(1) — đúng theo định nghĩa amortized.\n✗ Đa số lần append rẻ là đúng; chỉ thưa thớt có lần resize đắt."
+    "explanation": "Amortized O(1) không bảo đảm từng append O(1): một lần resize có thể copy O(n) phần tử. Trong mô hình sức chứa ban đầu 1 và nhân đôi, n lần append có tổng copies <2n cộng n lần ghi phần tử, nên tổng O(n) và chi phí trải đều O(1). Đây không phải cam kết mọi thư viện luôn nhân đôi. Đa số append trong mô hình tăng trưởng hình học không phải resize nên rẻ."
   },
   {
     "id": "dsa-q-008",
@@ -17531,9 +17531,9 @@ const k3: Question[] = [
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Vì sao bài khuyên 'nhận SIGTERM xong đợi vài giây (sleep 5-10s) rồi mới đóng listener'?",
+    "question": "Trong Kubernetes, vì sao có thể cần một khoảng drain trước khi đóng listener khi Pod termination bắt đầu?",
     "options": [
-      "Vì deregistration ở LB là eventual — vài giây sau SIGTERM LB vẫn có thể đẩy request tới",
+      "Để thay đổi readiness/EndpointSlice và routing kịp lan truyền, giảm request tới Pod đang dừng",
       "Vì kernel cần thời gian giải phóng port",
       "Vì cần chờ DB pool tự khởi tạo lại",
       "Vì SIGTERM cần được xác nhận hai lần mới hợp lệ"
@@ -17541,7 +17541,7 @@ const k3: Question[] = [
     "correctIndices": [
       0
     ],
-    "explanation": "Đây là 'race giữa LB và app' — một trong ba lỗi shutdown kinh điển.\n✓ Deregistration là eventual: LB còn có thể gửi request vài giây sau SIGTERM, nên đợi rồi mới đóng listener để không từ chối request hợp lệ.\n✗ Không phải vấn đề kernel giải phóng port.\n✗ Khi shutdown ta đóng pool chứ không khởi tạo lại.\n✗ SIGTERM không cần xác nhận hai lần."
+    "explanation": "Khi Pod termination bắt đầu, thay đổi readiness/EndpointSlice và routing có thể mất thời gian lan truyền. Có thể dùng preStop/drain phù hợp, vẫn phục vụ request đang tới trước khi đóng listener; cần đo và tính vào terminationGracePeriodSeconds, không mặc định sleep 5–10s luôn đủ. ECS+ALB có trình tự deregistration/drain riêng trước stop container, không áp máy móc khoảng chờ sau SIGTERM này. Không phải kernel giải phóng port, khởi tạo lại DB pool hay xác nhận SIGTERM hai lần."
   },
   {
     "id": "be-q-090",
@@ -17580,7 +17580,7 @@ const k3: Question[] = [
     "question": "Để 'deploy giữa giờ cao điểm mà error rate không nhúc nhích' trên ECS + ALB, bài yêu cầu cấu hình đúng những mắt xích nào? Chọn tất cả đáp án đúng.",
     "options": [
       "App bắt SIGTERM và drain connection/job đang dở trước khi exit 0",
-      "Readiness chủ động fail khi shutdown để LB ngừng gửi request (ALB deregistration)",
+      "ECS thực hiện ALB target deregistration/drain trong lifecycle; readiness app không tự gọi deregistration",
       "Grace period (ECS stopTimeout) phải dài hơn thời gian drain của app",
       "Bật sticky session trên ALB để giữ user ở instance cũ",
       "Nhét check DB vào liveness để restart sớm khi DB chậm"
@@ -17590,7 +17590,7 @@ const k3: Question[] = [
       1,
       2
     ],
-    "explanation": "Graceful shutdown là hợp đồng 3 bên: LB ngừng gửi, app drain, orchestrator chờ đủ lâu.\n✓ App bắt SIGTERM, drain rồi exit 0 trước khi bị SIGKILL.\n✓ Readiness fail khi shutdown để ALB deregister và ngừng gửi request mới.\n✓ stopTimeout/grace period phải dài hơn thời gian drain (và deregistration delay).\n✗ Sticky session phá rolling deploy — instance dính user không giết được để thay.\n✗ Check DB trong liveness gây cascading failure (restart cả fleet khi DB chậm), trái với quy tắc liveness chỉ kiểm tra bản thân process."
+    "explanation": "ECS+ALB quản lý target deregistration/drain trước khi stop container. App vẫn phải bắt SIGTERM, hoàn tất/huỷ an toàn connection và job còn lại rồi exit trước SIGKILL. stopTimeout tính từ SIGTERM tới SIGKILL, phải đủ cho drain còn lại của app, không cộng nguyên deregistration delay vào nó. Readiness app không tự gọi ALB deregistration. Sticky session không thay thế drain hay bảo đảm deploy an toàn. Liveness phụ thuộc DB dễ gây restart dây chuyền khi DB chậm. Không có cấu hình nào tự hứa error rate tuyệt đối không đổi."
   },
   {
     "id": "be-q-092",
@@ -18391,11 +18391,11 @@ const k3: Question[] = [
     ],
     "difficulty": "hard",
     "type": "multi",
-    "question": "Những trường hợp nào khiến một component RE-RENDER? (chọn tất cả đúng)",
+    "question": "Những trường hợp nào có thể khiến component re-render? (chọn tất cả đúng)",
     "options": [
       "State của component thay đổi qua setState",
-      "Component cha re-render",
-      "Props truyền vào component thay đổi",
+      "Component cha re-render; con mặc định render theo nhưng memo có thể bỏ qua nếu props không đổi",
+      "Context mà component đang đọc thay đổi",
       "Một biến cục bộ thường (let) trong hàm bị gán lại",
       "Gọi console.log trong thân component"
     ],
@@ -18404,7 +18404,7 @@ const k3: Question[] = [
       1,
       2
     ],
-    "explanation": "Re-render xảy ra do state đổi, cha re-render, hoặc props đổi.\n✓ setState đổi state là nguyên nhân kinh điển gây re-render.\n✓ Cha re-render kéo theo con render lại.\n✓ Props thay đổi cũng khiến con render lại.\n✗ Gán lại một biến let thường không phải state, không kích hoạt re-render.\n✗ console.log chỉ in log, không gây re-render."
+    "explanation": "State thay đổi có thể schedule re-render; React có thể bỏ qua nếu giá trị không đổi theo cơ chế so sánh. Khi cha render, con mặc định render theo; props mới thường đi từ đường này và memo có thể bỏ qua nếu props không đổi. Context component đang đọc thay đổi cũng có thể làm nó render, kể cả memo. Gán biến let hay gọi console.log không tự schedule render."
   },
   {
     "id": "fe-q-026",
@@ -22872,7 +22872,7 @@ const k3: Question[] = [
       "Startup nhỏ có thể có hạ tầng ngang tập đoàn mà chỉ trả vài đô khi ít người dùng",
       "Bắt buộc phải trả trước một khoản vốn lớn để dùng cloud",
       "Nhờ economies of scale, nhà cung cấp mua phần cứng số lượng lớn nên giá rẻ hơn tự mua",
-      "Với hầu hết dịch vụ, tắt máy là ngừng tính tiền",
+      "Dừng EC2 instance ngừng phí compute On-Demand của instance đó, nhưng EBS và tài nguyên giữ lại vẫn có thể tính phí",
       "Pay-as-you-go nghĩa là chi phí luôn cố định mỗi tháng bất kể mức dùng"
     ],
     "correctIndices": [
@@ -22880,7 +22880,7 @@ const k3: Question[] = [
       2,
       3
     ],
-    "explanation": "OpEx + pay-as-you-go: không cần vốn lớn, trả theo mức dùng, hưởng economies of scale.\n✓ Startup nhỏ có hạ tầng ngang tập đoàn, chỉ trả ít khi dùng ít, đúng tinh thần OpEx.\n✓ Economies of scale giúp giá rẻ hơn tự mua phần cứng.\n✓ Tắt máy là ngừng tính tiền với hầu hết dịch vụ.\n✗ Không bắt buộc trả trước vốn lớn; đó chính là đặc trưng CapEx mà cloud loại bỏ.\n✗ Pay-as-you-go là dùng bao nhiêu trả bấy nhiêu, không phải chi phí cố định bất kể mức dùng."
+    "explanation": "OpEx + pay-as-you-go: không cần vốn lớn, trả theo mức dùng, hưởng economies of scale.\n✓ Startup nhỏ có hạ tầng ngang tập đoàn, chỉ trả ít khi dùng ít, đúng tinh thần OpEx.\n✓ Economies of scale giúp giá rẻ hơn tự mua phần cứng.\n✓ Dừng EC2 instance ngừng phí compute On-Demand tương ứng; EBS, tài nguyên giữ lại và cam kết tính phí vẫn cần xét riêng.\n✗ Không bắt buộc trả trước vốn lớn; đó chính là đặc trưng CapEx mà cloud loại bỏ.\n✗ Pay-as-you-go là dùng bao nhiêu trả bấy nhiêu, không phải chi phí cố định bất kể mức dùng."
   },
   {
     "id": "fnd-q-039",
@@ -23513,7 +23513,7 @@ const k3: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một tầng web stateless cần chuyển traffic gần như tức thì khi một máy chết và muốn tận dụng mọi máy lúc bình thường. Mô hình dự phòng nào phù hợp nhất?",
+    "question": "Một tầng web stateless cần giảm thời gian chuyển traffic khi một máy chết và muốn tận dụng mọi máy lúc bình thường. Mô hình dự phòng nào phù hợp nhất?",
     "options": [
       "Active-passive với một standby ngủ chờ",
       "Active-active sau load balancer",
@@ -23523,7 +23523,7 @@ const k3: Question[] = [
     "correctIndices": [
       1
     ],
-    "explanation": "Web stateless hợp với active-active vì không có xung đột ghi dữ liệu.\n✓ Active-active sau load balancer: mọi máy cùng phục vụ (tận dụng tài nguyên), khi một máy chết LB chỉ ngừng gửi tới máy đó nên chuyển đổi gần như tức thì.\n✗ Active-passive có độ trễ failover (giây đến phút) và standby không phục vụ lúc bình thường.\n✗ Một server + backup đêm không có dự phòng nóng, downtime lớn.\n✗ DNS failover region có độ trễ failover dài, không \"tức thì\"."
+    "explanation": "Web stateless hợp với active-active vì không có xung đột ghi dữ liệu.\n✓ Active-active sau load balancer: mọi máy cùng phục vụ (tận dụng tài nguyên), khi một máy chết LB loại máy lỗi sau khi phát hiện; thời gian gián đoạn còn phụ thuộc health check, lan truyền routing và retry, không tự bằng 0.\n✗ Active-passive có độ trễ failover (giây đến phút) và standby không phục vụ lúc bình thường.\n✗ Một server + backup đêm không có dự phòng nóng, downtime lớn.\n✗ DNS failover region có độ trễ failover dài, không \"tức thì\"."
   },
   {
     "id": "fnd-q-069",
@@ -24332,7 +24332,7 @@ const k3: Question[] = [
     "type": "single",
     "question": "Một bạn nói: \"Hệ của tôi chọn CA, không cần lo Partition tolerance.\" Đánh giá đúng nhất là gì?",
     "options": [
-      "Sai, vì trong hệ phân tán partition chắc chắn xảy ra nên không thể bỏ P",
+      "Không thể bỏ qua partition trong mô hình đảm bảo: khi partition xảy ra không thể đồng thời giữ C và A theo CAP",
       "Đúng, nếu hạ tầng mạng đủ tốt thì partition không bao giờ xảy ra",
       "Đúng, CA là cấu hình mạnh nhất nên nên dùng mặc định",
       "Sai, vì CA chỉ áp dụng cho hệ thống AP"
@@ -24340,7 +24340,7 @@ const k3: Question[] = [
     "correctIndices": [
       0
     ],
-    "explanation": "Partition là điều không tránh khỏi (cable đứt, switch hỏng, AZ mất kết nối) nên không được chọn bỏ P.\n✓ Sai vì partition chắc chắn xảy ra: đúng tinh thần bài học.\n✗ Mạng đủ tốt thì không partition: không có hạ tầng nào loại bỏ hoàn toàn partition.\n✗ CA mạnh nhất nên dùng mặc định: CA không khả thi trong hệ phân tán.\n✗ CA chỉ áp dụng cho AP: vô nghĩa, AP và CA không phải quan hệ đó."
+    "explanation": "Hệ nhiều node có thể cung cấp C+A khi không có partition. Khi partition xảy ra, CAP không cho giữ đồng thời linearizability và availability theo định nghĩa của định lý. Mạng tốt không loại bỏ hoàn toàn rủi ro partition; nhãn CA không phải cấu hình mạnh nhất hay một dạng AP."
   },
   {
     "id": "fnd-q-107",
@@ -24435,17 +24435,17 @@ const k3: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Vì sao Kafka/MSK với cấu hình mặc định acks=all được xếp vào nhóm CP?",
+    "question": "Kafka/MSK dùng acks=all, min.insync.replicas=2 và RF=3 đánh đổi khả năng ghi thế nào khi ISR chỉ còn một replica?",
     "options": [
-      "Producer chờ ISR ack; nếu mất quorum thì reject write, hy sinh availability để giữ consistency",
-      "Producer không cần ack nên luôn available, hy sinh consistency",
+      "Producer chờ ISR xác nhận; khi ISR nhỏ hơn min.insync.replicas thì ghi bị từ chối",
+      "Producer không cần ack nên luôn ghi thành công",
       "Vì Kafka chỉ chạy trên một AZ duy nhất nên không có partition",
       "Vì Kafka dùng last-writer-wins giống Global Tables"
     ],
     "correctIndices": [
       0
     ],
-    "explanation": "acks=all buộc producer chờ in-sync replicas xác nhận; mất quorum thì từ chối ghi.\n✓ Chờ ISR ack, mất quorum thì reject write: đúng, ưu tiên consistency hơn availability nên là CP.\n✗ Không cần ack nên luôn available: đó là acks=0/1, không phải mặc định acks=all.\n✗ Chạy một AZ nên không partition: sai, Kafka phân tán nhiều broker.\n✗ Last-writer-wins: đó là cơ chế AP của Global Tables, không phải Kafka."
+    "explanation": "Với acks=all, producer chờ các replica trong ISR xác nhận; min.insync.replicas=2 đặt ngưỡng chấp nhận ghi. ISR chỉ còn một thì ghi bị từ chối, ưu tiên bảo đảm replication hơn khả năng ghi. ISR là tập động, không phải majority cố định; không thể xếp mọi cấu hình Kafka vào CP chỉ từ acks=all. Kafka không chỉ chạy một AZ và không dùng LWW để giải quyết log như Global Tables MREC."
   },
   {
     "id": "fnd-q-112",
@@ -24500,7 +24500,7 @@ const k3: Question[] = [
     "type": "single",
     "question": "Đề SAA: \"Cần Multi-Region active-active với strong consistency trên DynamoDB Global Tables.\" Phản hồi đúng là gì?",
     "options": [
-      "Yêu cầu này không khả thi; Global Tables là eventual + conflict resolution (last-writer-wins)",
+      "Có thể chọn Global Tables MRSC nếu region và tính năng yêu cầu được hỗ trợ; MREC vẫn eventual + LWW",
       "Khả thi, chỉ cần bật strongly consistent read trên mọi region",
       "Khả thi nếu dùng write quorum 4/6 giữa các region",
       "Khả thi nếu chuyển sang Aurora Global Database active-active"
@@ -24508,7 +24508,7 @@ const k3: Question[] = [
     "correctIndices": [
       0
     ],
-    "explanation": "Global Tables active-active vốn là AP, không cung cấp strong consistency cross-region.\n✓ Không khả thi, là eventual + conflict resolution: đúng cạm bẫy đề thi, đáp án thường là eventual với last-writer-wins.\n✗ Bật strongly consistent read mọi region: strongly consistent read chỉ trong region, không cross-region.\n✗ Write quorum 4/6 giữa region: không phải cơ chế của Global Tables.\n✗ Aurora Global Database active-active: chỉ region chính write, region phụ read-only, không phải active-active strong."
+    "explanation": "Global Tables hỗ trợ MREC (eventual, last-writer-wins) và MRSC (multi-Region strong consistency) tại các region/tính năng được hỗ trợ. Chỉ bật strong read trên bảng MREC không chuyển mode replication thành MRSC. Không có tham số write quorum 4/6 cho người dùng chọn. Aurora Global Database vẫn có một primary region ghi, không phải lời giải active-active write ở mọi region."
   },
   {
     "id": "fnd-q-115",
@@ -24524,7 +24524,7 @@ const k3: Question[] = [
       "RDS Multi-AZ",
       "Aurora",
       "MemoryDB",
-      "DynamoDB Global Tables",
+      "DynamoDB Global Tables MREC",
       "DynamoDB với eventually consistent reads (mặc định)"
     ],
     "correctIndices": [
@@ -24532,7 +24532,7 @@ const k3: Question[] = [
       1,
       2
     ],
-    "explanation": "CP ưu tiên consistency, chịu mất availability khi sự cố.\n✓ RDS Multi-AZ: CP, unavailable trong lúc failover.\n✓ Aurora: CP-leaning, ưu tiên consistency với quorum.\n✓ MemoryDB: CP nhờ synchronous Multi-AZ transaction log.\n✗ DynamoDB Global Tables: AP, multi-region active-active last-writer-wins.\n✗ DynamoDB eventually consistent reads mặc định: AP, consistency hội tụ sau."
+    "explanation": "Theo cách phân nhóm giản lược của bài: RDS Multi-AZ, Aurora và MemoryDB ưu tiên bảo đảm dữ liệu; có thể giảm availability khi failover hoặc không đủ điều kiện phục vụ. MemoryDB strong read ở primary, replica vẫn eventual. Global Tables MREC là eventual + LWW; MRSC là mode khác hỗ trợ strong cross-region. Eventually consistent read của DynamoDB không bảo đảm phiên bản mới nhất; không suy nhãn CAP cho toàn service chỉ từ một API."
   },
   {
     "id": "fnd-q-116",
@@ -24570,14 +24570,14 @@ const k3: Question[] = [
     "question": "Đề SAA nhắc: \"financial, no data loss, strong consistency.\" Theo quy tắc nhanh trong bài, nên chọn nhóm nào?",
     "options": [
       "CP — Aurora Multi-AZ, RDS Multi-AZ, DynamoDB strongly consistent reads",
-      "AP — DynamoDB Global Tables, S3 Cross-Region Replication",
+      "AP — DynamoDB Global Tables MREC, replication bất đồng bộ như S3 Cross-Region Replication",
       "AP — Cassandra với tunable quorum ưu tiên availability",
       "CA — RDS Single-AZ không partition"
     ],
     "correctIndices": [
       0
     ],
-    "explanation": "Yêu cầu tài chính, không mất dữ liệu, strong consistency khớp với CP.\n✓ Aurora Multi-AZ, RDS Multi-AZ, DynamoDB strongly consistent reads: đúng quy tắc nhanh cho CP.\n✗ DynamoDB Global Tables, S3 CRR: là AP, dành cho low latency global eventual.\n✗ Cassandra ưu tiên availability: AP, không đảm bảo strong consistency.\n✗ RDS Single-AZ CA: không phân tán, một node sập là mất, không phù hợp no data loss."
+    "explanation": "Trong quy tắc nhanh của bài, yêu cầu strong consistency hướng tới các cấu hình ưu tiên consistency như Aurora/RDS Multi-AZ hoặc DynamoDB strong read. Nhãn CP riêng nó không chứng minh no data loss: còn phải xét durability, failure model và DR. Global Tables MREC và S3 CRR có replication bất đồng bộ; Global Tables MRSC hỗ trợ strong cross-region với giới hạn riêng. Cassandra cấu hình ưu tiên availability không tự cho strong read. RDS Single-AZ không đáp ứng yêu cầu HA chỉ bằng nhãn CA."
   },
   {
     "id": "fnd-q-118",
@@ -24609,9 +24609,9 @@ const k3: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Theo bài học, khi đi từ strong xuống eventual consistency thì điều gì xảy ra?",
+    "question": "Khi cân nhắc strong và eventual consistency, nhận định nào đúng?",
     "options": [
-      "Độ chính xác giảm dần, latency và availability tăng dần",
+      "Eventual nới bảo đảm đọc mới nhất; đánh đổi latency/availability tùy thiết kế và tình huống, không phải thang đo độ chính xác dữ liệu",
       "Độ chính xác tăng dần, latency và availability giảm dần",
       "Cả độ chính xác lẫn availability đều tăng",
       "Mọi thứ giữ nguyên, chỉ khác tên gọi"
@@ -24619,7 +24619,7 @@ const k3: Question[] = [
     "correctIndices": [
       0
     ],
-    "explanation": "Bài nêu rõ từ trên (strong) xuống dưới (eventual): độ chính xác giảm dần, latency và availability tăng dần — không có 'tốt nhất', chỉ có phù hợp use case.\n✓ Chính xác giảm, đổi lại latency thấp hơn và availability cao hơn — đúng trade-off.\n✗ Chính xác tăng khi đi xuống eventual là ngược lại bản chất.\n✗ Chính xác và availability cùng tăng phủ nhận sự đánh đổi cốt lõi.\n✗ Nếu chỉ khác tên thì sẽ không có trade-off nào để cân nhắc."
+    "explanation": "Strong và eventual là các hợp đồng quan sát dữ liệu. Eventual có thể trả phiên bản cũ trong lúc hội tụ; không đồng nghĩa dữ liệu kém chính xác vĩnh viễn. Việc nới bảo đảm có thể giúp latency/availability, nhưng không có quy luật tăng giảm tuyệt đối cho mọi hệ. Vì thế các lựa chọn khẳng định mọi thứ cùng tăng, tăng giảm cố định hoặc chỉ khác tên đều không đúng."
   },
   {
     "id": "fnd-q-120",
@@ -24651,17 +24651,17 @@ const k3: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một câu hỏi thi yêu cầu: 'cần scale read NHƯNG vẫn strong consistency trên RDS'. Theo bài, lựa chọn nào KHÔNG phải là cách giải hợp lý mà đề thường đưa ra?",
+    "question": "Sau khi một write trên RDS primary đã commit, cách nào KHÔNG bảo đảm đọc được write đó?",
     "options": [
-      "Đọc từ RDS Read Replica để vẫn giữ strong consistency",
-      "Chấp nhận eventual với Read Replica",
-      "Chuyển sang DynamoDB strongly consistent read",
-      "Dùng ElastiCache để giảm tải primary"
+      "Đọc từ Read Replica bất kỳ mà không kiểm tra nó đã replay tới write vừa commit",
+      "Đọc lại từ primary trong một transaction mới với snapshot phù hợp",
+      "Chờ Read Replica replay tới token của write rồi mở snapshot mới để đọc, nếu engine hỗ trợ",
+      "Bỏ qua cache có thể stale và đọc primary với snapshot mới"
     ],
     "correctIndices": [
       0
     ],
-    "explanation": "Bài nói thẳng: trong RDS KHÔNG có lời giải vừa scale read vừa strong; Read Replica luôn eventual.\n✓ Đọc từ Read Replica mà vẫn strong là điều bất khả — replica có lag, đây chính là phương án sai cần chọn.\n✗ Chấp nhận eventual với Read Replica là một trong các đáp án hợp lệ bài liệt kê.\n✗ Chuyển sang DynamoDB strongly consistent read là cách bài đề xuất.\n✗ Dùng ElastiCache để giảm tải primary cũng là cách bài đề xuất."
+    "explanation": "Replica bất đồng bộ có thể chưa nhận write nên chọn replica bất kỳ không bảo đảm read-your-writes. Có thể đọc primary với snapshot phù hợp hoặc chờ replica replay tới token write trước khi mở snapshot mới; hỗ trợ và chi phí tùy engine. Sticky replica hay cache không tự tạo strong consistency. Không phủ định mọi cách scale read có điều phối consistency trên RDS."
   },
   {
     "id": "fnd-q-122",
@@ -24716,15 +24716,15 @@ const k3: Question[] = [
     "type": "single",
     "question": "Bạn cần triển khai counter đếm 'like' chạy multi-region active-active với DynamoDB Global Tables, và KHÔNG được mất update khi hai region tăng cùng lúc. Cách đúng là gì?",
     "options": [
-      "Dùng atomic counter UpdateItem ADD (CRDT-style) thay vì PUT",
+      "Chọn Global Tables MRSC tại region được hỗ trợ, dùng atomic ADD và retry các write conflict đúng cách",
       "Dùng PUT ghi đè giá trị mới với Last-Writer-Wins",
-      "Bật strongly consistent read cross-region trên Global Tables",
+      "Giữ MREC rồi chỉ bật strongly consistent read để tự merge counter cross-region",
       "Dùng Multi-AZ standby để phục vụ ghi từ region thứ hai"
     ],
     "correctIndices": [
       0
     ],
-    "explanation": "Với LWW của Global Tables, hai write gần nhau sẽ làm một bên biến mất; counter cần atomic ADD (CRDT-style) để auto-merge.\n✓ UpdateItem ADD merge tự động các phần tăng, không mất update — đúng cho counter multi-region.\n✗ PUT với LWW sẽ khiến một update biến mất không cảnh báo nếu clock lệch.\n✗ Global Tables không có strong consistency cross-region; bật strongly consistent read cross-region là bất khả.\n✗ Multi-AZ standby không phục vụ traffic và không liên quan ghi multi-region."
+    "explanation": "MRSC hỗ trợ strong cross-region; atomic ADD cùng xử lý conflict/retry đúng cách phù hợp yêu cầu counter không mất increment do LWW. Với MREC, ADD chỉ atomic tại region nhận ghi, không phải CRDT tự merge giữa region: concurrent update cùng item vẫn có thể bị LWW ghi đè. Bật strong read trên MREC không đổi cơ chế replication. Multi-AZ standby của RDS DB instance không phục vụ ghi đa region. Phương án khác là một writer cho mỗi item hoặc tách counter theo region và tổng hợp."
   },
   {
     "id": "fnd-q-125",
@@ -24758,7 +24758,7 @@ const k3: Question[] = [
     "type": "single",
     "question": "User báo: 'Tôi vừa update profile trên RDS (có 3 Read Replica) mà refresh không thấy thay đổi'. Cách fix nào KHỚP với pattern session consistency mà bài đề xuất?",
     "options": [
-      "Trong N giây sau write, route read của user đó về primary (hoặc sticky cùng replica)",
+      "Đọc primary với snapshot mới, hoặc chờ replica replay tới token của write rồi mới đọc",
       "Tăng số Read Replica lên để giảm lag",
       "Bật Multi-AZ standby để standby phục vụ read mới nhất",
       "Chuyển toàn bộ read sang Aurora Reader Endpoint cho strong consistency"
@@ -24766,7 +24766,7 @@ const k3: Question[] = [
     "correctIndices": [
       0
     ],
-    "explanation": "Nguyên nhân là replication lag: refresh trúng replica chưa kịp nhận write. Fix theo session consistency: read-your-writes bằng cách route user về primary trong N giây hoặc sticky session cùng replica.\n✓ Route về primary trong N giây sau write đảm bảo user đọc được chính write của mình — đúng read-your-writes.\n✗ Thêm replica không loại bỏ lag, vẫn có thể đọc dữ liệu cũ.\n✗ Multi-AZ standby không phục vụ read, không giúp được.\n✗ Aurora Reader Endpoint vẫn eventual, không cho strong consistency."
+    "explanation": "Replication lag khiến replica có thể chưa nhận write. Đọc primary với snapshot phù hợp hoặc chờ replica replay tới token write rồi mở snapshot mới mới bảo vệ read-your-writes. Ghim N giây chỉ đủ nếu có bound lag tương ứng; sticky replica chưa nhận write không bảo đảm. Thêm replica không loại lag. Standby của RDS Multi-AZ DB instance không serve read; Multi-AZ DB cluster có reader. Aurora Reader Endpoint bất kỳ không tự bảo đảm replica đã nhận write."
   },
   {
     "id": "fnd-q-127",
@@ -24801,8 +24801,8 @@ const k3: Question[] = [
     "question": "Theo mục 'Cạm bẫy đề thi (SAA)', những phát biểu nào là SAI?",
     "options": [
       "DynamoDB GSI hỗ trợ strongly consistent read",
-      "Multi-AZ standby có thể scale read",
-      "Global Tables cung cấp strong consistency cross-region",
+      "Standby của RDS Multi-AZ DB instance có thể scale read",
+      "Global Tables MREC cung cấp strong consistency cross-region",
       "IAM policy change có hiệu lực ngay lập tức",
       "S3 read-after-write cho PUT key mới là strong (sau Dec 2020)"
     ],
@@ -24812,7 +24812,7 @@ const k3: Question[] = [
       2,
       3
     ],
-    "explanation": "Bài liệt kê các bẫy SAI: GSI luôn eventual, standby không serve read, Global Tables chỉ eventual, IAM change là eventual.\n✓ GSI hỗ trợ strong read là sai — GSI luôn eventual.\n✓ Multi-AZ standby scale read là sai — standby không serve traffic.\n✓ Global Tables strong cross-region là sai — chỉ eventual.\n✓ IAM policy change hiệu lực ngay là sai — eventual, đôi khi cần retry.\n✗ S3 read-after-write cho PUT mới là strong sau Dec 2020 là phát biểu ĐÚNG, không phải bẫy."
+    "explanation": "Các phát biểu sai là: GSI hỗ trợ strong read (GSI chỉ eventual); standby của Multi-AZ DB instance scale read (standby không phục vụ đọc); MREC strong cross-region (MRSC mới hỗ trợ); IAM policy thay đổi có hiệu lực tức thì (cần tính tới propagation). Multi-AZ DB cluster có hai reader, khác DB instance. S3 GET sau PUT thành công và LIST có strong consistency trong cùng bucket; phát biểu S3 trong câu là đúng."
   },
   {
     "id": "fnd-q-129",
@@ -24857,7 +24857,7 @@ const k3: Question[] = [
     "correctIndices": [
       0
     ],
-    "explanation": "Audit log cần ordered append-only không mất event → Kinesis/Kafka rồi S3 + Athena, không overwrite.\n✓ Append-only có thứ tự, không overwrite, đảm bảo monotonic và không mất event — đúng.\n✗ Global Tables LWW có thể làm mất write khi ghi đồng thời, sai yêu cầu 'không mất event'.\n✗ Read Replica sticky session phục vụ read-your-writes chứ không đảm bảo append-only bền vững cho log.\n✗ ElastiCache Redis là cache dễ mất dữ liệu, không phù hợp lưu audit log."
+    "explanation": "Ordered append-only qua Kinesis/Kafka rồi lưu S3 để Athena truy vấn là phương án phù hợp nhất trong các lựa chọn. Muốn không mất event còn cần cấu hình durability/ACK, retry, dedup và retention phù hợp; thứ tự chỉ trong shard/partition. Global Tables MREC LWW có thể ghi đè concurrent update cùng item, nhưng không nên khái quát cho MRSC hay mọi mô hình event riêng. Sticky RDS Read Replica chưa nhận write không bảo đảm read-your-writes và không tự tạo audit log append-only. Cache TTL ngắn không phải kho audit bền vững."
   },
   {
     "id": "fnd-q-131",
@@ -24889,17 +24889,17 @@ const k3: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Công thức bảo đảm read luôn thấy được write mới nhất (strong consistency) trong quorum là gì?",
+    "question": "Với cùng một tập N replica cố định, điều kiện tổng quát nào buộc mọi read quorum R giao với mọi write quorum W?",
     "options": [
       "W + R > N",
       "W + R < N",
-      "W = R = N",
+      "W = R = N là điều kiện bắt buộc duy nhất",
       "W + R = N / 2"
     ],
     "correctIndices": [
       0
     ],
-    "explanation": "Khi W + R > N, mọi write quorum và read quorum đều có ít nhất 1 node giao nhau giữ giá trị mới nhất.\n✓ W + R > N bảo đảm giao điểm nên đọc luôn thấy write mới.\n✗ W + R < N không bảo đảm giao điểm, có thể đọc dữ liệu cũ.\n✗ W = R = N quá đắt và không phải điều kiện tổng quát.\n✗ W + R = N/2 hoàn toàn không bảo đảm giao điểm."
+    "explanation": "W + R > N buộc hai tập có giao điểm. Đây là điều kiện giao nhau, chưa đủ tự chứng minh linearizability: còn cần replica bền vững, version ordering, reconciliation, xử lý concurrent write và failure model đúng. W+R<N hoặc W+R=N/2 không bảo đảm giao điểm. W=R=N cũng tạo giao điểm nhưng không phải điều kiện bắt buộc duy nhất hay điều kiện tổng quát cần chọn."
   },
   {
     "id": "fnd-q-133",
@@ -24975,7 +24975,7 @@ const k3: Question[] = [
     "type": "single",
     "question": "Game leaderboard global 100M user cần latency thấp ở mọi region và chấp nhận dữ liệu trễ vài giây. Lựa chọn replication phù hợp nhất là gì?",
     "options": [
-      "DynamoDB Global Tables (multi-leader, LWW), counter dùng ADD để tránh mất update",
+      "DynamoDB Global Tables MREC (multi-leader, LWW); counter tách theo region rồi tổng hợp hoặc định tuyến mỗi item về một writer",
       "Aurora Multi-AZ single region với quorum 4/6",
       "RDS Multi-AZ + nhiều Read Replica cross-region",
       "MSK với acks=all và min.insync.replicas=2"
@@ -24983,7 +24983,7 @@ const k3: Question[] = [
     "correctIndices": [
       0
     ],
-    "explanation": "Yêu cầu latency thấp đa region + chấp nhận eventual → multi-leader giữa các region.\n✓ DynamoDB Global Tables là multi-leader LWW cho latency thấp mọi region; ADD (CRDT) tránh mất update counter.\n✗ Aurora Multi-AZ 1 region không cho latency thấp ở mọi region toàn cầu.\n✗ RDS + Read Replica vẫn single-writer, không tối ưu ghi đa region.\n✗ MSK là pipeline streaming, không phải store cho leaderboard truy vấn."
+    "explanation": "Đa region, latency thấp và chấp nhận eventual phù hợp Global Tables MREC. ADD chỉ atomic trong region, không tự merge concurrent increment cùng item cross-region; dùng một writer cho mỗi item hoặc counter tách theo region rồi tổng hợp. MRSC là lựa chọn khác khi cần strong cross-region. Aurora single region và RDS single-writer không tối ưu ghi đa region; MSK là streaming pipeline, không phải store truy vấn leaderboard."
   },
   {
     "id": "fnd-q-137",
@@ -25123,11 +25123,11 @@ const k3: Question[] = [
     ],
     "difficulty": "medium",
     "type": "multi",
-    "question": "Những phát biểu nào về DynamoDB replication trong 1 region (N=3) là ĐÚNG?",
+    "question": "Những phát biểu nào về DynamoDB trong một region là ĐÚNG?",
     "options": [
-      "Eventually consistent read dùng R=1, có thể đọc replica chưa sync, tốn 0.5 RCU",
-      "Strongly consistent read thực chất đọc từ leader của partition, tốn 1 RCU",
-      "Write dùng W=2 (leader + 1 follower sync, follower thứ 3 async)",
+      "Eventually consistent read có thể trả phiên bản cũ, tốn 0.5 RCU cho item tới 4 KB",
+      "Strongly consistent read trả write mới nhất đã thành công, tốn 1 RCU cho item tới 4 KB",
+      "Replication được DynamoDB quản lý; giá RCU không cho phép suy số replica được đọc",
       "Mọi read trong DynamoDB đều strong consistency mặc định",
       "DynamoDB cần W=3 cho mọi write để bảo đảm durability"
     ],
@@ -25136,7 +25136,7 @@ const k3: Question[] = [
       1,
       2
     ],
-    "explanation": "DynamoDB partition có 3 replica: eventual R=1, strong đọc leader, write W=2.\n✓ Eventual read R=1 đọc replica có thể chưa sync, 0.5 RCU.\n✓ Strong read đọc từ leader partition, 1 RCU.\n✓ Write W=2: leader + 1 follower sync, follower thứ 3 async.\n✗ Read mặc định là eventual, không phải strong.\n✗ Write không cần W=3; W=2 là đủ theo mô hình."
+    "explanation": "Eventual read có thể stale và tốn 0.5 RCU; strong read bảo đảm phản ánh write thành công trước đó và tốn 1 RCU cho item tới 4 KB. Đây là hợp đồng API, không phải tham số R do người dùng chọn; không suy số replica đọc từ giá RCU. Paper DynamoDB mô tả leader/majority cho replication nhưng không nên gắn cứng internals vào giá read mode. Read mặc định là eventual, và phát biểu mọi write bắt buộc W=3 là sai."
   },
   {
     "id": "fnd-q-144",
@@ -25426,17 +25426,17 @@ const k3: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Một dataset 50TB không vừa với 1 instance, và bạn cũng cần 100k QPS vượt IOPS của 1 node. Bạn đề xuất chỉ thêm replica để giải quyết. Nhận định nào đúng?",
+    "question": "Một dataset 50TB không vừa với 1 instance, và bạn cũng cần 100k write QPS vượt IOPS của 1 node. Bạn đề xuất chỉ thêm replica để giải quyết. Nhận định nào đúng?",
     "options": [
       "Replication một mình giải quyết cả vấn đề dung lượng và throughput ghi",
-      "Replication không giải quyết storage lẫn throughput vì mỗi replica vẫn giữ trọn dataset; cần partition để chia dữ liệu",
+      "Replication một mình không giải quyết dataset vượt dung lượng mỗi node và throughput ghi; cần partition để chia dữ liệu",
       "Chỉ cần replication là đủ vì mỗi replica giữ một phần dataset",
       "Replication làm tăng dung lượng tổng vì mỗi replica giữ phần khác nhau"
     ],
     "correctIndices": [
       1
     ],
-    "explanation": "Replication tạo nhiều bản copy của CÙNG dataset nên không giảm kích thước mỗi node; partition mới chia dữ liệu ra.\n✓ Mỗi replica giữ trọn dataset → không giải quyết storage/throughput ghi, phải partition.\n✗ Cho rằng replication giải quyết storage/throughput là sai vì dataset không bị chia nhỏ.\n✗ Cho rằng mỗi replica giữ một phần dataset là nhầm replication với partition.\n✗ Replica không giữ phần khác nhau; chúng là bản sao giống hệt."
+    "explanation": "Replica đầy đủ giữ cùng dataset nên không giảm dung lượng cần trên mỗi node; chúng có thể scale tải đọc, nhưng không tự chia tải ghi của dataset này. Với 50 TB không vừa một node và 100k write QPS, cần partition/sharding phù hợp. Các lựa chọn cho rằng mỗi replica giữ phần khác nhau đang nhầm replication với partition."
   },
   {
     "id": "fnd-q-158",
@@ -26321,7 +26321,7 @@ const k4: Question[] = [
     "correctIndices": [
       0
     ],
-    "explanation": "SSH từ chối hoạt động khi private key có quyền quá rộng; key cần chỉ chủ sở hữu đọc.\n✓ Đặt quyền r-------- (chỉ chủ đọc) đúng chuẩn bắt buộc cho file .pem.\n✗ Mở toàn quyền cho mọi người càng khiến key kém an toàn, SSH vẫn từ chối.\n✗ Thêm quyền execute không liên quan, không giải quyết quyền quá rộng.\n✗ Đổi chủ sở hữu không thu hẹp quyền group/other gây ra cảnh báo."
+    "explanation": "SSH từ chối hoạt động khi private key có quyền quá rộng; key cần chỉ chủ sở hữu đọc.\n✓ Đặt quyền r-------- (chỉ chủ đọc) là cấu hình hợp lệ cho file .pem; chmod 600 cũng hợp lệ vì group/other không được truy cập.\n✗ Mở toàn quyền cho mọi người càng khiến key kém an toàn, SSH vẫn từ chối.\n✗ Thêm quyền execute không liên quan, không giải quyết quyền quá rộng.\n✗ Đổi chủ sở hữu không thu hẹp quyền group/other gây ra cảnh báo."
   },
   {
     "id": "eng-q-004",
@@ -27304,7 +27304,7 @@ const k4: Question[] = [
     "correctIndices": [
       0
     ],
-    "explanation": "Passkey ràng credential với domain/origin, người dùng muốn bị lừa cũng không kích hoạt nhầm được.\n✓ Trang giả arnazon.com không bao giờ kích hoạt passkey của amazon.com — đó là điểm phishing-resistant.\n✗ Passkey không phải password dài, nó là cặp khoá bất đối xứng.\n✗ TOTP có vòng đời ngắn nhưng vẫn bị lừa gõ vào trang giả, đó mới là điểm yếu so với passkey.\n✗ Private key không bao giờ rời thiết bị; chỉ chữ ký challenge mới gửi lên server."
+    "explanation": "Passkey ràng credential với domain/origin, người dùng muốn bị lừa cũng không kích hoạt nhầm được.\n✓ Trang giả arnazon.com không bao giờ kích hoạt passkey của amazon.com — đó là điểm phishing-resistant.\n✗ Passkey không phải password dài, nó là cặp khoá bất đối xứng.\n✗ TOTP có vòng đời ngắn nhưng vẫn bị lừa gõ vào trang giả, đó mới là điểm yếu so với passkey.\n✗ Private key do authenticator quản lý: device-bound giữ trên thiết bị, synced passkey có thể đồng bộ mã hóa giữa thiết bị. Website chỉ nhận public key/chữ ký, không nhận private key."
   },
   {
     "id": "eng-q-050",
@@ -28444,7 +28444,7 @@ const k4: Question[] = [
       0,
       1
     ],
-    "explanation": "Bài nêu hai cách lock hợp lệ: DynamoDB truyền thống và S3 lockfile từ Terraform 1.10+.\n✓ S3 + DynamoDB với LockID là cách lock chuẩn lâu nay\n✓ S3 lockfile `use_lockfile = true` từ 1.10+ nhờ conditional writes, không bắt buộc DynamoDB\n✗ Commit state vào Git làm rò rỉ secret, không hề là cơ chế lock\n✗ Không có biến môi trường `TF_LOCK` như vậy\n✗ Gửi state qua Slack không phải cơ chế lock và rất rủi ro"
+    "explanation": "Bài nêu hai cách lock hợp lệ: DynamoDB truyền thống và S3 lockfile từ Terraform 1.10+.\n✓ S3 + DynamoDB với LockID vẫn hợp lệ cho cấu hình cũ nhưng đã deprecated; cấu hình mới khuyến nghị S3 lockfile\n✓ S3 lockfile `use_lockfile = true` từ 1.10+ nhờ conditional writes, không bắt buộc DynamoDB\n✗ Commit state vào Git làm rò rỉ secret, không hề là cơ chế lock\n✗ Không có biến môi trường `TF_LOCK` như vậy\n✗ Gửi state qua Slack không phải cơ chế lock và rất rủi ro"
   },
   {
     "id": "ops-q-025",
@@ -29568,11 +29568,11 @@ const k4: Question[] = [
     ],
     "difficulty": "hard",
     "type": "multi",
-    "question": "Theo mô hình mối đe doạ trong bài, vì sao cần CẢ scan, hạ quyền runtime, và signing+SBOM (không cái nào thay được cái nào)? Chọn các phát biểu ĐÚNG.",
+    "question": "Vì sao scan, hạ quyền runtime, signing, SBOM và build provenance bổ sung cho nhau? Chọn các phát biểu ĐÚNG.",
     "options": [
       "Scan chỉ tìm lỗ hổng đã biết",
       "Hạ quyền runtime giới hạn thiệt hại của lỗ hổng chưa biết",
-      "Signing + SBOM trả lời câu image này từ đâu ra, có đúng thứ tôi build không",
+      "SBOM kê thành phần; chữ ký xác thực digest/người ký; build provenance riêng mô tả builder, đầu vào và quá trình build",
       "Signing tự động vá mọi CVE trong image",
       "Scan đảm bảo phát hiện cả zero-day chưa được công bố"
     ],
@@ -29581,7 +29581,7 @@ const k4: Question[] = [
       1,
       2
     ],
-    "explanation": "Ba lớp phòng thủ bổ sung cho nhau, không thay thế.\n✓ Scan chỉ bắt được lỗ hổng đã biết.\n✓ Hạ quyền runtime giới hạn thiệt hại của lỗ hổng chưa biết.\n✓ Signing + SBOM xác minh nguồn gốc và nội dung image.\n✗ Signing không vá CVE, chỉ chứng minh nguồn gốc.\n✗ Scan không phát hiện được zero-day chưa công bố."
+    "explanation": "Trong mô hình CVE scanning của bài, scan tìm lỗ hổng đã biết; hạ quyền runtime giới hạn thiệt hại nếu bị khai thác. SBOM là inventory thành phần, chữ ký xác thực artifact theo digest/người ký tin cậy, build provenance là attestation riêng về quá trình build và đầu vào. Ký SBOM không tự biến nó thành provenance, chữ ký cũng không tự vá CVE. Scan không bảo đảm phát hiện mọi zero-day."
   },
   {
     "id": "ops-q-078",
@@ -31128,7 +31128,7 @@ const k4: Question[] = [
     "correctIndices": [
       1
     ],
-    "explanation": "Rollback bất khả thi là dấu hiệu thiết kế cần sửa bằng multi-phase migration.\n✓ Expand/contract: thêm cột, ghi cả hai, backfill, đổi đọc, rồi mới contract giúp mọi bước rollback an toàn\n✗ Gộp migration và code làm chính là nguyên nhân rollback bất khả thi\n✗ Forward fix chỉ chữa triệu chứng, không giải quyết thiết kế không quay lui được\n✗ Khóa bảng không giúp bản cũ chạy lại sau khi cột đã bị đổi tên"
+    "explanation": "Rollback bất khả thi là dấu hiệu thiết kế cần sửa bằng multi-phase migration.\n✓ Expand/contract: thêm cột, ghi cả hai, backfill, đổi đọc, rồi mới contract sau khi hết cửa sổ rollback về code cần cột cũ; sau Contract có thể cần phục hồi schema/data hoặc roll forward\n✗ Gộp migration và code làm chính là nguyên nhân rollback bất khả thi\n✗ Forward fix chỉ chữa triệu chứng, không giải quyết thiết kế không quay lui được\n✗ Khóa bảng không giúp bản cũ chạy lại sau khi cột đã bị đổi tên"
   },
   {
     "id": "sre-q-072",
@@ -31955,17 +31955,17 @@ const k4: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Một dịch vụ rút gọn link thương mại muốn ĐẾM CHÍNH XÁC mọi click và có thể đổi đích về sau. Nên dùng mã redirect nào và vì sao?",
+    "question": "Một dịch vụ rút gọn link muốn ghi nhận click tại origin và đổi đích về sau; thiết kế chọn không cache redirect ở browser/CDN. Phương án nào phù hợp nhất?",
     "options": [
       "301, vì browser cache mạnh giúp giảm tải server",
-      "302, vì browser không cache nên mọi click đều chạm server, đếm đủ và đổi đích dễ",
+      "302 kèm Cache-Control: no-store, ghi nhận các request tới origin để hỗ trợ analytics và đổi đích",
       "301, vì nó cho phép đổi đích linh hoạt hơn 302",
       "302, vì nó giảm read QPS thật xuống mức thấp nhất"
     ],
     "correctIndices": [
       1
     ],
-    "explanation": "302 không cache nên mỗi click gọi lại server, cho phép đếm đủ click và đổi đích dễ.\n✓ 302 đảm bảo mọi click chạm hệ thống, đếm chính xác và luôn hỏi lại server nên đổi đích dễ.\n✗ 301 cache mạnh nên mất click sau lần đầu, không đếm đủ.\n✗ 301 khiến đổi đích KHÓ vì client đã cache đích cũ.\n✗ 302 làm TĂNG tải/read QPS thật chứ không giảm; giảm tải là ưu điểm của 301."
+    "explanation": "302 là redirect tạm thời nhưng vẫn có thể được cache nếu có freshness; cần Cache-Control: no-store để yêu cầu không lưu response. Phương án này hỗ trợ đổi đích và analytics tại origin, không tự bảo đảm đếm mọi click của người dùng khi có lỗi mạng hay mất event. 301 có thể bị cache lâu, gây khó đổi đích. Nếu chủ động cache tại CDN thì origin chỉ thấy cache miss; cần bổ sung edge log cho analytics. Không thể suy mức giảm QPS chỉ từ mã 301/302."
   },
   {
     "id": "sd-q-033",
@@ -32032,7 +32032,7 @@ const k4: Question[] = [
     "correctIndices": [
       1
     ],
-    "explanation": "Analytics phải bất đồng bộ (fire-and-forget) để không chậm redirect và tránh hot-key ghi.\n✓ Trả 302 ngay rồi emit event qua queue, stream processor aggregate ngoài đường nóng.\n✗ Ghi +1 trực tiếp vào DB chính mỗi click là hot-key, sẽ nghẽn và làm chậm user.\n✗ Chỉ đếm khi gọi stats thì không có dữ liệu để tổng hợp, sai bản chất.\n✗ Redis là cache, không phải analytics store; mất event là chấp nhận được nên không làm nguồn chính."
+    "explanation": "Analytics nên xử lý bất đồng bộ để giảm việc trên đường redirect và tránh hot-key ghi. Origin chỉ ghi nhận request tới origin; nếu cache ở CDN cần thêm edge log để thống kê CDN hit. Fire-and-forget có thể mất event, không bảo đảm đếm đủ.\n✓ Trả 302 ngay rồi emit event qua queue, stream processor aggregate ngoài đường nóng.\n✗ Ghi +1 trực tiếp vào DB chính mỗi click là hot-key, sẽ nghẽn và làm chậm user.\n✗ Chỉ đếm khi gọi stats thì không có dữ liệu để tổng hợp, sai bản chất.\n✗ Redis là cache, không phải analytics store; mất event là chấp nhận được nên không làm nguồn chính."
   },
   {
     "id": "sd-q-036",
@@ -32410,17 +32410,17 @@ const k4: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Tại sao bài học khuyến nghị KHÔNG dùng SSE (Server-Sent Events) làm transport chính cho ứng dụng chat?",
+    "question": "Vì sao bài học chọn WebSocket làm transport chính cho chat thay vì SSE kết hợp HTTP POST?",
     "options": [
       "SSE có độ trễ rất cao, ngang với short polling",
-      "SSE chỉ đẩy một chiều (server → client), trong khi chat cần kênh gửi 2 chiều",
+      "WebSocket gom gửi và nhận hai chiều trên một kết nối; SSE chỉ nhận nên cần HTTP POST riêng để gửi",
       "SSE không hoạt động trên mạng doanh nghiệp có proxy",
       "SSE tốn server hơn cả WebSocket vì giữ kết nối stateful"
     ],
     "correctIndices": [
       1
     ],
-    "explanation": "Chat cần client vừa gửi vừa nhận realtime, mà SSE chỉ đẩy một chiều từ server.\n✓ SSE đẩy 1 chiều server→client nên không đủ cho nhu cầu gửi tin 2 chiều của chat\n✗ SSE thực tế có độ trễ thấp, không cao như short polling\n✗ Việc bị proxy chặn là vấn đề của WebSocket, không phải lý do loại SSE\n✗ SSE nhẹ về tải; nó bị loại vì một chiều, không phải vì tốn hơn WebSocket"
+    "explanation": "WebSocket phù hợp khi muốn gom hai chiều trên một kết nối. SSE chỉ đẩy server → client, nhưng kết hợp HTTP POST để gửi vẫn có thể xây chat hợp lệ. Không phải SSE luôn có latency cao, không dùng được trên mobile hay bắt buộc cấm HTTP/2."
   },
   {
     "id": "sd-q-054",
@@ -34303,9 +34303,9 @@ const k4: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Tính năng \"nhập ảnh từ URL\" chạy `requests.get(url)` với url do user nhập. Attacker nhập `http://169.254.169.254/latest/meta-data/iam/security-credentials/<role>`. Hậu quả nguy hiểm nhất là gì?",
+    "question": "Tính năng nhập ảnh gọi requests.get(url) rồi lưu nguyên response để user tải lại. Server EC2 có IAM role và cho phép IMDSv1. Attacker nhập http://169.254.169.254/latest/meta-data/iam/security-credentials/<role>. Rủi ro nguy hiểm nhất là gì?",
     "options": [
-      "Server gọi metadata endpoint và trả về credential IAM tạm thời — attacker chiếm quyền hệ thống (SSRF)",
+      "SSRF tới metadata lấy IAM credential tạm thời; attacker đọc lại response đã lưu và có thể lạm dụng quyền của role",
       "Server bị XSS vì URL chứa script",
       "Server bị SQL injection qua tham số url",
       "Chỉ tải về một ảnh hỏng, không có rủi ro"
@@ -34313,7 +34313,7 @@ const k4: Question[] = [
     "correctIndices": [
       0
     ],
-    "explanation": "Đây là SSRF kinh điển tới metadata endpoint trong cloud.\n✓ Server fetch 169.254.169.254 trả về credential IAM tạm thời cho attacker.\n✗ Không phải XSS — đây là server-side fetch, không render script ở trình duyệt.\n✗ Không có truy vấn SQL nào liên quan.\n✗ Hoàn toàn không vô hại — đây là một trong những SSRF nguy hiểm nhất."
+    "explanation": "Với giả định IMDSv1 được phép và EC2 có IAM role, server có thể fetch credential tạm thời từ metadata. Việc lưu nguyên response cho user đọc lại tạo đường exfiltration; fetch đơn thuần không tự chứng minh attacker nhận được credential. Quyền chiếm dụng bị giới hạn bởi role, không mặc định toàn hệ thống. Đây là SSRF, không phải XSS hay SQL injection; không thể coi là chỉ ảnh hỏng."
   },
   {
     "id": "sec-q-038",
@@ -34326,7 +34326,7 @@ const k4: Question[] = [
     "type": "single",
     "question": "Khi chống SSRF cho hàm fetch URL của user, theo bài đâu là cách tiếp cận đúng và mạnh nhất?",
     "options": [
-      "Allowlist scheme/domain, resolve DNS rồi kiểm tra IP đích, và allow_redirects=False",
+      "Allowlist scheme/host/port; kiểm tất cả A/AAAA, pin kết nối vào IP đã duyệt, giữ Host/SNI/TLS đúng, chặn redirect và kiểm soát egress",
       "Blocklist các IP nội bộ trên chuỗi hostname trước khi gọi",
       "Cho phép mọi http/https nhưng đặt timeout ngắn",
       "Chỉ chặn scheme file:// là đủ"
@@ -34334,7 +34334,7 @@ const k4: Question[] = [
     "correctIndices": [
       0
     ],
-    "explanation": "Allowlist + kiểm tra IP sau khi resolve DNS + chặn redirect là phòng thủ đúng.\n✓ Phải allowlist và kiểm IP đích SAU khi resolve DNS, đồng thời chặn redirect (redirect có thể trỏ về IP nội bộ).\n✗ Blocklist trên chuỗi hostname dễ bị vượt qua (0x, octal, [::], DNS rebinding); phải kiểm tra IP sau resolve.\n✗ Timeout không ngăn được việc gọi tới metadata.\n✗ Chặn mỗi file:// không ngăn được fetch tới IP nội bộ qua http."
+    "explanation": "Phải kiểm địa chỉ A/AAAA sau resolve và ràng buộc kết nối vào IP đã duyệt, vẫn giữ hostname cho Host/SNI và xác minh TLS; nếu HTTP client resolve lại có thể bị DNS rebinding. Chặn redirect hoặc kiểm từng hop; thêm allowlist, egress, timeout và giới hạn response. Chỉ block chuỗi hostname, chỉ timeout hay chỉ chặn file:// không đủ. Requests mặc định không hỗ trợ file://; đó không phải lớp phòng thủ SSRF đầy đủ."
   },
   {
     "id": "sec-q-039",
@@ -34871,7 +34871,7 @@ const k5: Question[] = [
     "correctIndices": [
       0
     ],
-    "explanation": "WebAuthn ký challenge gắn với origin; trang giả không lấy được chữ ký hợp lệ và không có mã để user nhập nhầm.\n✓ \"Chữ ký gắn với origin, không có mã để nhập nhầm\" đúng lý do chống phishing.\n✗ Passkey không gửi mật khẩu; nó dùng public-key crypto, không phải kênh mã hoá mạnh hơn.\n✗ Việc đổi mã 30 giây là TOTP và vẫn bị phish; không phải đặc tính passkey.\n✗ Private key nằm trên thiết bị (Secure Enclave/TPM), server chỉ giữ public key."
+    "explanation": "WebAuthn ký challenge gắn với origin; trang giả không lấy được chữ ký hợp lệ và không có mã để user nhập nhầm.\n✓ \"Chữ ký gắn với origin, không có mã để nhập nhầm\" đúng lý do chống phishing.\n✗ Passkey không gửi mật khẩu; nó dùng public-key crypto, không phải kênh mã hoá mạnh hơn.\n✗ Việc đổi mã 30 giây là TOTP và vẫn bị phish; không phải đặc tính passkey.\n✗ Private key do authenticator quản lý: device-bound có thể dùng Secure Enclave/TPM, synced passkey có thể đồng bộ mã hóa giữa thiết bị. Website chỉ giữ public key, không nhận private key."
   },
   {
     "id": "sec-q-064",
@@ -34969,9 +34969,9 @@ const k5: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Công ty bạn có private package `@acme/utils`. Attacker publish `@acme/utils` lên public registry với version cao hơn, resolver mặc định kéo bản public về. Biện pháp phòng đúng là gì?",
+    "question": "Công ty dùng private package @acme/utils qua proxy gộp registry nội bộ/public. Proxy cho phép fallback public và chọn version cao hơn trong dải cho phép; attacker publish bản public cao hơn. Biện pháp phòng đúng là gì?",
     "options": [
-      "Khóa scope @acme về registry nội bộ trong .npmrc",
+      "Khóa scope @acme vào registry nội bộ trong .npmrc và cấu hình proxy cấm public/fallback cho scope đó",
       "Tăng version private package lên cao hơn public",
       "Chạy `npm install --ignore-scripts`",
       "Chỉ chạy `npm audit --audit-level=high` mỗi lần build"
@@ -34979,7 +34979,7 @@ const k5: Question[] = [
     "correctIndices": [
       0
     ],
-    "explanation": "Đây là dependency confusion; khóa scope về registry nội bộ là cách phòng đúng.\n✓ Cấu hình @acme:registry trỏ về registry nội bộ buộc mọi package scope đó lấy từ nguồn nội bộ, không đi public.\n✗ Đua version với attacker không bền vì attacker luôn có thể tăng cao hơn.\n✗ Tắt lifecycle script chống malware lúc cài nhưng không ngăn resolver chọn nguồn public.\n✗ SCA chỉ thấy lỗ hổng đã biết, không chặn việc kéo nhầm package từ public."
+    "explanation": "npm gắn mỗi scope với một registry, không mặc định trộn mọi registry rồi chọn version public cao hơn. Trong tình huống proxy gộp nguồn, cần khóa scope vào nguồn nội bộ và cấm public/fallback tại proxy cho scope nội bộ. Chỉ .npmrc chưa đủ nếu proxy vẫn gộp public. Đua version không bền; ignore-scripts không ngăn chọn sai nguồn; npm audit không chặn dependency confusion chỉ vì package chưa có CVE."
   },
   {
     "id": "sec-q-069",
@@ -36152,14 +36152,14 @@ const k5: Question[] = [
     "question": "Team đẩy các event của cùng một đơn hàng lên Kafka mà **không đặt key** (key = null) và than phiền 'event của order cứ ra lộn xộn'. Nguyên nhân gốc là gì?",
     "options": [
       "Số partition quá ít nên phải tăng partition để có thứ tự",
-      "Key = null khiến Kafka rải message xoay vòng khắp các partition → không còn đảm bảo thứ tự giữa chúng",
+      "Key null: producer Kafka hiện đại mặc định dùng sticky partitioning theo batch rồi đổi partition, không bảo đảm thứ tự cross-partition",
       "Consumer group có quá nhiều consumer nên phải giảm xuống một",
       "Visibility timeout quá ngắn gây redelivery đảo thứ tự"
     ],
     "correctIndices": [
       1
     ],
-    "explanation": "Kafka chỉ đảm bảo thứ tự trong từng partition; muốn cùng order giữ thứ tự thì phải cho chúng vào cùng partition qua key.\n✓ Không đặt key → Kafka rải xoay vòng khắp partition → các event của cùng order nằm ở nhiều partition → mất đảm bảo thứ tự. Sửa: key = orderId.\n✗ Tăng partition không giúp; ngược lại càng phân tán khi không có key.\n✗ Giảm consumer không sửa gốc nếu message đã nằm rải nhiều partition.\n✗ Đây là lỗi thiếu partition key, không phải do timeout/redelivery."
+    "explanation": "Kafka chỉ bảo đảm thứ tự trong từng partition. Null key với producer hiện đại mặc định dùng sticky partitioning theo batch rồi đổi partition, không phải xoay vòng từng message. Event của cùng order có thể sang nhiều partition; dùng key=orderId để cùng partition khi topology/partitioner ổn định. Tăng partition, giảm consumer hay chỉnh timeout không sửa nguyên nhân thiếu key."
   },
   {
     "id": "msg-q-019",
@@ -36892,7 +36892,7 @@ const k5: Question[] = [
     "correctIndices": [
       1
     ],
-    "explanation": "requeue=True trả message về ngay lập tức; nếu lỗi vẫn còn thì lặp nóng ngốn CPU.\n✓ Poison message quay vòng liên tục tạo hot loop — đúng cạm bẫy của requeue thẳng.\n✗ Muốn vào parking lot phải nack requeue=False (dead-letter), không phải requeue=True.\n✗ Requeue thẳng không gắn TTL, message không tự biến mất.\n✗ Broker không tự đổi hành vi nack; đó là quyết định của code consumer."
+    "explanation": "requeue=True trả message về ngay lập tức; nếu lỗi vẫn còn thì lặp nóng ngốn CPU.\n✓ Poison message quay vòng liên tục tạo hot loop — đúng cạm bẫy của requeue thẳng.\n✗ Với DLX→retry trong bài, nack(requeue=False) vẫn tới retry queue. Muốn parking phải publish sang orders.parking với persistent message, mandatory và publisher confirm; chỉ ack gốc sau confirm, có dedup cho crash giữa confirm/ack.\n✗ Requeue thẳng không gắn TTL, message không tự biến mất.\n✗ Broker không tự đổi hành vi nack; đó là quyết định của code consumer."
   },
   {
     "id": "msg-q-053",
@@ -37029,11 +37029,11 @@ const k5: Question[] = [
     ],
     "difficulty": "hard",
     "type": "multi",
-    "question": "Những phát biểu nào ĐÚNG về việc đếm số lần retry / chặn poison message quay vòng trong RabbitMQ?",
+    "question": "Trong topology DLX → retry queue có TTL → queue gốc của bài, những phát biểu nào ĐÚNG về retry và parking lot trong RabbitMQ?",
     "options": [
-      "RabbitMQ ghi lịch sử dead-letter vào header `x-death`, consumer đọc tổng count để quyết định khi nào ngừng retry",
-      "Quorum queue có `x-delivery-limit` tự đếm redelivery và tự dead-letter khi vượt ngưỡng, khỏi phải parse `x-death`",
-      "Khi vượt ngưỡng retry nên nack message sang parking lot để điều tra thay vì retry tiếp",
+      "Lọc x-death theo queue=orders.new và reason=rejected; attempt hiện tại bằng count đó + 1",
+      "Quorum queue có delivery-limit cho redelivery riêng; cơ chế này không thay thế cách đếm retry qua DLX/TTL",
+      "Đến ngưỡng, publish persistent sang parking với mandatory và confirm, rồi mới ack bản gốc",
       "Publisher confirms chịu trách nhiệm đếm số lần retry của consumer",
       "Muốn ngừng retry, cách duy nhất là đặt auto_ack=True"
     ],
@@ -37042,7 +37042,7 @@ const k5: Question[] = [
       1,
       2
     ],
-    "explanation": "Có hai cách đếm retry (tự đọc x-death hoặc dùng x-delivery-limit của quorum queue) và khi vượt ngưỡng thì đẩy sang parking lot.\n✓ x-death là mảng lịch sử dead-letter, đọc count để biết đã chết bao nhiêu lần — đúng.\n✓ Quorum queue có x-delivery-limit tự đếm và tự dead-letter, khỏi parse x-death — đúng.\n✓ Vượt ngưỡng thì đưa vào parking lot để điều tra, tránh quay vòng vô tận — đúng.\n✗ Publisher confirms là chuyện producer→broker, không đếm retry của consumer.\n✗ auto_ack=True làm mất message khi consumer chết, không phải cách ngừng retry an toàn."
+    "explanation": "x-death gom lịch sử theo queue/reason; chỉ lấy count của orders.new/rejected, không cộng expired ở retry queue; attempt=count+1. Quorum delivery-limit theo dõi redelivery riêng, không phải header x-delivery-limit thay thế mọi retry. Với DLX→retry của bài, nack(false) vẫn đi retry. Ở lần 5 vẫn fail, publish persistent vào orders.parking với mandatory/confirm; chỉ ack gốc sau confirm. Publish lỗi thì giữ/redeliver gốc; crash sau confirm trước ack có thể trùng nên cần dedup. Confirms xác nhận publish, không đếm retry; auto_ack có thể mất message."
   },
   {
     "id": "msg-q-060",
@@ -38847,7 +38847,7 @@ const k5: Question[] = [
       0,
       1
     ],
-    "explanation": "BACKWARD yêu cầu reader mới đọc được data cũ; default là chiếc phao cứu sinh.\n✓ Thêm field CÓ default: reader mới đọc data cũ thiếu field thì điền default → an toàn.\n✓ Xoá field CÓ default: reader mới thiếu field thì dùng default khi đọc data cũ → an toàn backward.\n✗ Thêm field KHÔNG default phá backward: reader mới đọc data cũ không biết điền gì.\n✗ Đổi kiểu int → string luôn nguy hiểm: byte giải mã sai hoàn toàn.\n✗ Đổi tên Avro trực tiếp = xoá field cũ + thêm field mới, phá compatibility; phải dùng aliases."
+    "explanation": "BACKWARD yêu cầu reader mới đọc được data cũ; default là chiếc phao cứu sinh.\n✓ Thêm field CÓ default: reader mới đọc data cũ thiếu field thì điền default → an toàn.\n✓ Xoá field: reader mới bỏ qua field cũ khi đọc data cũ nên backward-safe; nếu schema cũ có default, reader cũ dùng default của chính nó khi đọc data mới thiếu field (forward).\n✗ Thêm field KHÔNG default phá backward: reader mới đọc data cũ không biết điền gì.\n✗ Đổi kiểu int → string luôn nguy hiểm: byte giải mã sai hoàn toàn.\n✗ Đổi tên Avro trực tiếp = xoá field cũ + thêm field mới, phá compatibility; phải dùng aliases."
   },
   {
     "id": "msg-q-144",
@@ -43366,17 +43366,17 @@ const k6: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Pod A đặt requests = limits cho cả CPU lẫn memory ở mọi container. QoS class của nó là gì và điều đó có ý nghĩa gì khi node cạn RAM?",
+    "question": "Pod A đặt requests = limits, đều dương, cho cả CPU lẫn memory ở mọi container. QoS và ý nghĩa dưới memory pressure là gì?",
     "options": [
       "BestEffort — bị evict đầu tiên",
       "Burstable — bị evict ở giữa",
-      "Guaranteed — được giữ lâu nhất, evict cuối cùng",
-      "Guaranteed — nhưng vẫn bị evict trước BestEffort"
+      "Guaranteed — thường được bảo vệ khi trong request; eviction còn xét usage/request và Pod Priority",
+      "Guaranteed — luôn bị evict trước mọi BestEffort bất kể Priority"
     ],
     "correctIndices": [
       2
     ],
-    "explanation": "requests = limits cho cả CPU và memory ở mọi container cho ra QoS Guaranteed, được ưu ái nhất khi evict.\n✓ Guaranteed được giữ lâu nhất, bị evict sau cùng khi node ngộp\n✗ BestEffort là khi không đặt request/limit nào, không phải trường hợp này\n✗ Burstable là có request nhưng không thoả điều kiện Guaranteed\n✗ Guaranteed luôn được giữ sau BestEffort và Burstable, không bị đuổi trước"
+    "explanation": "Mọi container có request=limit dương cho CPU và memory cho QoS Guaranteed. Với memory pressure, kubelet xét usage có vượt request không, Pod Priority rồi mức dùng so với request; QoS không phải thứ tự tuyệt đối. BestEffort thiếu CPU/memory requests và limits; Burstable không đủ điều kiện Guaranteed. Không thể khẳng định Guaranteed luôn đầu/cuối chỉ từ QoS."
   },
   {
     "id": "cn-q-126",
@@ -46172,14 +46172,14 @@ const k6: Question[] = [
     "question": "Một hệ được quảng cáo là \"CA\" (từ chối P). Theo bài, điều này thực chất nghĩa là gì?",
     "options": [
       "Đó là một hệ phân tán tối ưu, vừa nhất quán vừa sẵn sàng",
-      "Đó thực chất là một RDBMS single-node, không phải hệ phân tán, vì giả định mạng không bao giờ mất message",
+      "Hệ loại partition khỏi mô hình đảm bảo; nhiều node vẫn có thể C+A khi không partition, nhưng phải xác định hành vi khi partition xảy ra",
       "Đó là hệ AP có thêm cơ chế hoà giải mạnh",
       "Đó là hệ dùng consensus để đạt cả 3 thuộc tính"
     ],
     "correctIndices": [
       1
     ],
-    "explanation": "\"Bỏ P\" nghĩa là giả định mạng không bao giờ mất message — chỉ đúng khi chạy trên một máy duy nhất.\n✓ Một hệ \"CA\" từ chối P thực chất là RDBMS single-node, không phải hệ phân tán.\n✗ Không có hệ phân tán nào có được cả 3 khi partition.\n✗ AP là chuyện khác; \"CA\" không phải AP có hoà giải.\n✗ Consensus vẫn phải hy sinh A khi partition, không thoát khỏi CAP."
+    "explanation": "Bỏ P nghĩa là loại partition khỏi mô hình đảm bảo, không chứng minh mạng thật không bao giờ hỏng. Single-node chỉ là một ví dụ không có partition giữa replica; nhiều node vẫn có thể đạt C+A khi mạng liên lạc được. Khi partition xảy ra, consensus không giúp giữ cả C và A theo CAP. CA cũng không phải AP cộng cơ chế hòa giải."
   },
   {
     "id": "ds-q-040",
@@ -46318,9 +46318,9 @@ const k6: Question[] = [
     "type": "multi",
     "question": "Những phát biểu nào ĐÚNG về việc \"P là thứ bắt buộc phải chịu\" trong hệ phân tán? (chọn tất cả đáp án đúng)",
     "options": [
-      "Trong hệ có ≥2 node giao tiếp qua mạng thật, partition chắc chắn sẽ xảy ra (đứt cáp, switch treo, GC pause dài...)",
+      "Hệ có ít nhất hai node giao tiếp qua mạng thật phải tính tới rủi ro partition; GC pause cũng có thể gây quan sát timeout tương tự",
       "Một node không phân biệt được \"peer đã chết\" với \"message tới peer bị mất\"",
-      "Bỏ P đồng nghĩa giả định mạng không bao giờ mất message, chỉ đúng khi chạy trên một máy duy nhất",
+      "Bỏ P là loại partition khỏi mô hình đảm bảo; single-node là một ví dụ, nhiều node có thể C+A khi không partition",
       "Có thể loại bỏ P bằng cách dùng mạng đủ nhanh và ổn định",
       "Partition là thứ bạn chủ động lựa chọn khi thiết kế"
     ],
@@ -46329,7 +46329,7 @@ const k6: Question[] = [
       1,
       2
     ],
-    "explanation": "P bị áp lên mọi hệ chạy qua mạng thật; chỉ còn chọn CP hay AP khi partition xảy ra.\n✓ Với ≥2 node qua mạng thật, partition chắc chắn xảy ra do đủ loại sự cố.\n✓ Đây là partial failure: node không phân biệt được peer chết hay message mất.\n✓ Bỏ P = giả định mạng không mất message, chỉ đúng với single-node.\n✗ Mạng nhanh/ổn định cũng không loại bỏ được partition; nó vẫn chắc chắn xảy ra.\n✗ Partition xảy tới với bạn, không phải thứ bạn chọn."
+    "explanation": "Mạng thật có thể mất hoặc trì hoãn message nên thiết kế phải tính tới partition. Một node không thể phân biệt chắc chắn peer chết với message bị mất chỉ qua timeout. Single-node không có partition giữa replica, nhưng nhiều node cũng có thể đạt C+A khi không partition. Mạng nhanh không loại bỏ hoàn toàn rủi ro; P không phải tùy chọn tự bật/tắt. GC pause có thể gây quan sát timeout tương tự partition dù không nhất thiết là lỗi mạng."
   },
   {
     "id": "ds-q-047",
@@ -46717,7 +46717,7 @@ const k6: Question[] = [
     "correctIndices": [
       0
     ],
-    "explanation": "SI đọc snapshot đông cứng và mỗi transaction ghi hàng khác nhau nên không xung đột ghi, dẫn tới write skew; phải dùng Serializable hoặc khóa tường minh.\n✓ SI không chống được write skew nên cần Serializable hoặc SELECT ... FOR UPDATE — đúng cái bẫy bài nhấn mạnh.\n✗ Chặn được lost update KHÔNG kéo theo chặn write skew; đây chính là hiểu sai phổ biến.\n✗ Dù Repeatable Read cấm phantom ở Postgres, nó vẫn để lọt write skew.\n✗ Hạ xuống Read Committed còn yếu hơn SI, không thể chống write skew."
+    "explanation": "SI đọc snapshot đông cứng và mỗi transaction ghi hàng khác nhau nên không xung đột ghi, dẫn tới write skew; phải dùng Serializable hoặc khóa tường minh.\n✓ SI không chống được write skew nên cần Serializable hoặc khóa tường minh đủ mọi hàng/range bảo vệ invariant; SELECT ... FOR UPDATE chỉ trên hàng mình ghi chưa đủ — đúng cái bẫy bài nhấn mạnh.\n✗ Chặn được lost update KHÔNG kéo theo chặn write skew; đây chính là hiểu sai phổ biến.\n✗ Dù Repeatable Read cấm phantom ở Postgres, nó vẫn để lọt write skew.\n✗ Hạ xuống Read Committed còn yếu hơn SI, không thể chống write skew."
   },
   {
     "id": "ds-q-065",
@@ -46770,13 +46770,13 @@ const k6: Question[] = [
     ],
     "difficulty": "medium",
     "type": "multi",
-    "question": "Theo bài, những phát biểu nào ĐÚNG về Snapshot Isolation (SI) qua MVCC?",
+    "question": "Theo bài, những phát biểu nào ĐÚNG về SI chuẩn và PostgreSQL Repeatable Read dựa trên MVCC?",
     "options": [
       "SI loại được dirty read, non-repeatable read và (ở Postgres) phantom",
       "SI chặn được lost update nhờ cơ chế first-committer-wins / abort khi ghi chồng",
       "SI KHÔNG chống được write skew",
       "SI đảm bảo strict serializability và tôn trọng real-time order",
-      "Mỗi transaction đọc từ một snapshot đông cứng tại thời điểm nó bắt đầu"
+      "Transaction đọc từ snapshot cố định; PostgreSQL Repeatable Read lấy snapshot ở câu lệnh đầu tiên cần snapshot"
     ],
     "correctIndices": [
       0,
@@ -46784,7 +46784,7 @@ const k6: Question[] = [
       2,
       4
     ],
-    "explanation": "SI mạnh hơn Read Committed nhiều, chặn lost update nhưng vẫn để lọt write skew, và đọc từ snapshot đông cứng.\n✓ SI loại dirty read, non-repeatable read và (Postgres) phantom — đúng.\n✓ SI chặn lost update nhờ first-committer-wins / abort khi ghi chồng.\n✓ SI không chống write skew là điểm bẫy trung tâm của bài.\n✗ SI không hề đảm bảo strict serializability; nó thậm chí không bằng serializable.\n✓ Đọc từ snapshot đông cứng tại thời điểm transaction bắt đầu là bản chất MVCC."
+    "explanation": "SI chuẩn loại dirty read, non-repeatable read và phantom trong các lần đọc cùng snapshot; chặn/abort xung đột cập nhật cùng hàng nhưng vẫn có write skew. SI không bảo đảm strict serializability. PostgreSQL Repeatable Read cố định snapshot từ câu lệnh đầu tiên cần snapshot, không nhất thiết ngay BEGIN. MVCC là cơ chế nhiều phiên bản; không phải mọi MVCC hay mọi mức tên Repeatable Read có cùng bảo đảm SI, đặc biệt locking/current read của InnoDB."
   },
   {
     "id": "ds-q-068",
@@ -48065,7 +48065,7 @@ const k6: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Trong đoạn code, `get_node` dùng `bisect_right` trên mảng điểm đã sort rồi nếu `idx == len(self._sorted)` thì đặt `idx = 0`. Dòng reset về 0 phục vụ điều gì?",
+    "question": "Trong đoạn code, `get_node` dùng `bisect_left` trên mảng điểm đã sort rồi nếu `idx == len(self._sorted)` thì đặt `idx = 0`. Dòng reset về 0 phục vụ điều gì?",
     "options": [
       "Xử lý trường hợp ring rỗng để tránh chia cho 0",
       "Đảm bảo ngữ nghĩa vòng tròn: key nằm sau điểm cuối cùng thì quay về node đầu vòng",
@@ -52569,8 +52569,8 @@ const k7: Question[] = [
     "type": "multi",
     "question": "Chọn TẤT CẢ phát biểu ĐÚNG về Sentinel và tính bền vững của ghi trong replication async.",
     "options": [
-      "Nên chạy >=3 Sentinel số lẻ và dùng quorum để chống split-brain khi mạng bị phân mảnh",
-      "WAIT numreplicas timeout chặn client tới khi ghi đã tới đủ số replica, nhưng chỉ là 'chờ tốt nhất', không phải commit đồng bộ thật",
+      "Nên chạy ít nhất 3 Sentinel số lẻ; majority cho phép failover nhưng không tự fencing master cũ",
+      "WAIT numreplicas timeout chờ đủ ACK replica hoặc hết timeout; caller phải kiểm số replica trả về, không phải commit đồng bộ",
       "min-replicas-to-write cho phép master TỪ CHỐI ghi khi không còn đủ replica khỏe, giảm rủi ro mất dữ liệu",
       "Quorum quyết định khi nào tuyên bố ODOWN; nhưng để THỰC HIỆN failover vẫn cần đa số Sentinel bầu ra một leader",
       "WAIT biến replication của Redis thành consistency mạnh, đảm bảo không bao giờ mất ghi"
@@ -52581,7 +52581,7 @@ const k7: Question[] = [
       2,
       3
     ],
-    "explanation": "Sentinel và các cơ chế WAIT/min-replicas chỉ giảm nhẹ chứ không cho consistency mạnh.\n✓ >=3 Sentinel số lẻ + quorum: chỉ phía giữ đa số mới được failover, chống split-brain.\n✓ WAIT chỉ chờ tốt nhất có thể tới khi đủ replica nhận, không phải commit đồng bộ thật sự.\n✓ min-replicas-to-write cho master từ chối ghi khi thiếu replica khỏe → an toàn hơn.\n✓ Quorum quyết định ODOWN, còn thực hiện failover cần đa số Sentinel bầu leader (Raft-lite).\n✗ WAIT KHÔNG biến Redis thành consistency mạnh và không chống split-brain hoàn toàn."
+    "explanation": "Sentinel dùng quorum để tuyên bố ODOWN và cần majority Sentinel để cho phép failover/bầu leader. Cơ chế này không tự fencing master cũ khi partition và không nên gọi là Raft-lite. WAIT chờ replica xác nhận nhưng timeout có thể trả số replica thấp hơn yêu cầu; caller phải kiểm kết quả, không có commit đồng bộ bảo đảm không mất ghi. min-replicas-to-write giảm rủi ro bằng cách từ chối ghi khi thiếu replica khỏe, không loại bỏ mọi split-brain/mất dữ liệu."
   },
   {
     "id": "dst-q-061",
@@ -53066,7 +53066,7 @@ const k7: Question[] = [
     "type": "multi",
     "question": "Về write-through, những phát biểu nào ĐÚNG theo bài?",
     "options": [
-      "Cache luôn khớp DB với dữ liệu vừa ghi, không bị stale so với bản mới nhất",
+      "Cache khớp write vừa hoàn tất nếu mọi writer theo protocol và xử lý đúng race/failure",
       "Write latency thấp hơn cache-aside vì chỉ ghi RAM",
       "Dữ liệu bền ngay vì đã nằm ở DB khi báo thành công",
       "Ghi mọi thứ vào cache kể cả dữ liệu hiếm đọc, có thể phí RAM (giảm bằng TTL)",
@@ -53077,7 +53077,7 @@ const k7: Question[] = [
       2,
       3
     ],
-    "explanation": "Write-through ghi cache và DB đồng bộ, chỉ OK khi cả hai xong: luôn đúng, bền ngay, nhưng chậm và phí RAM.\n✓ Cache luôn khớp dữ liệu vừa ghi, không stale so với bản mới nhất — đúng ưu điểm.\n✓ Dữ liệu bền ngay vì đã ghi xuống DB trước khi ack — đúng.\n✓ Ghi cả dữ liệu hiếm đọc gây phí RAM, giảm bằng TTL — đúng nhược điểm.\n✗ Write latency của write-through CAO hơn (phải chờ cả hai), không thấp; latency rất thấp là đặc trưng write-behind.\n✗ Rủi ro mất dữ liệu khi crash trước flush là của write-behind, không phải write-through (write-through đã ghi DB rồi)."
+    "explanation": "Write-through chỉ báo thành công sau khi cập nhật DB/cache theo protocol. Khi mọi writer đi cùng đường và race/failure được xử lý đúng, cache phản ánh write vừa hoàn tất; không bảo đảm luôn mới nhất vô điều kiện. Dữ liệu đã ghi bền ở DB trước ACK và cache cả dữ liệu hiếm đọc có thể phí RAM. Nó phải chờ ghi DB nên không có ưu thế latency của chỉ ghi RAM. Rủi ro cache crash trước flush là của write-behind."
   },
   {
     "id": "dst-q-084",
@@ -53203,7 +53203,7 @@ const k7: Question[] = [
     "correctIndices": [
       1
     ],
-    "explanation": "Ý tưởng là cache không bao giờ thật sự trống: quá hạn logic thì vẫn trả data cũ, chỉ một request refresh nền.\n✓ Lưu hạn logic trong value, TTL vật lý dài hơn, trả data cũ + refresh nền: đúng cơ chế loại bỏ cửa sổ trống.\n✗ TTL vật lý ngắn hơn hạn logic: ngược lại, sẽ tạo lại cửa sổ trống nguy hiểm.\n✗ Chặn mọi request đến khi query xong: đó là hành vi lock đồng bộ, không phải early recompute (vốn trả data cũ ngay).\n✗ Xoá key khi quá hạn logic: làm cache trống, tái tạo đúng stampede."
+    "explanation": "Khi value cũ còn tồn tại, hạn logic nằm trong value và TTL vật lý dài hơn cho phép trả stale rồi refresh nền. Lease/single-flight hợp lệ giới hạn một tác vụ refresh trong thời hạn lease. Cold miss, eviction hoặc TTL vật lý hết vẫn có thể làm cache trống, cần single-flight và giới hạn tải. TTL vật lý ngắn hơn hạn logic hay xóa ngay khi hết hạn logic tái tạo cửa sổ trống; chặn mọi request chờ DB không phải hành vi trả stale của kỹ thuật này."
   },
   {
     "id": "dst-q-090",
@@ -53874,7 +53874,7 @@ const k7: Question[] = [
       2,
       4
     ],
-    "explanation": "Bài liệt kê unbounded array, massive document, query không index, lạm dụng $lookup và shard key cardinality thấp là các anti-pattern.\n✓ Unbounded array phình quá 16 MB, nên reference tách collection riêng\n✓ Massive document tải cả doc lớn dù chỉ đọc 1 field, nên tách và chỉ embed phần đọc cùng nhau\n✓ Query không index gây COLLSCAN chậm tuyến tính, nên explain() rồi tạo index theo ESR\n✓ Shard key cardinality thấp dồn 1 shard, nên chọn key cardinality cao khớp query pattern\n✗ Tạo index cho mọi trường là sai: index làm ghi chậm, tốn RAM/đĩa; chỉ tạo index phục vụ query thật"
+    "explanation": "Bài liệt kê unbounded array, massive document, query không index, lạm dụng $lookup và shard key cardinality thấp là các anti-pattern.\n✓ Unbounded array phình quá 16 MB, nên reference tách collection riêng\n✓ Massive document có thể truyền cả doc nếu không projection; projection giảm mạng nhưng document lớn vẫn tốn tài nguyên đọc/lưu trữ, nên tách và chỉ embed phần đọc cùng nhau\n✓ Query không index gây COLLSCAN chậm tuyến tính, nên explain() rồi tạo index theo ESR\n✓ Shard key cardinality thấp dồn 1 shard, nên chọn key cardinality cao khớp query pattern\n✗ Tạo index cho mọi trường là sai: index làm ghi chậm, tốn RAM/đĩa; chỉ tạo index phục vụ query thật"
   },
   {
     "id": "dst-q-121",
@@ -54744,7 +54744,7 @@ const k7: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Vì sao số primary shard KHÔNG thể đổi sau khi tạo index, mà phải reindex?",
+    "question": "Vì sao không thể cập nhật trực tiếp số primary shard bằng setting trên index Elasticsearch hiện tại?",
     "options": [
       "Vì replica shard bị khóa cùng lúc với primary",
       "Vì routing dùng `hash(_routing) % number_of_primary_shards`; đổi mẫu số sẽ khiến hàm hash trỏ sai shard",
@@ -54754,7 +54754,7 @@ const k7: Question[] = [
     "correctIndices": [
       1
     ],
-    "explanation": "Công thức routing lấy số primary làm mẫu số nên đổi nó sẽ phá ánh xạ document→shard.\n✓ `shard = hash(_routing) % number_of_primary_shards`; đổi số primary làm hàm hash trỏ sai, nên phải reindex sang index mới — đúng lý do.\n✗ Replica đổi được động, không liên quan việc khóa primary.\n✗ `refresh_interval` là độ trễ near-real-time, không phụ thuộc số shard.\n✗ ILM quản lý vòng đời index theo tuổi/kích thước, không phải lý do cố định số shard."
+    "explanation": "Số primary tham gia ánh xạ routing nên không cập nhật trực tiếp trên index hiện tại. Muốn đổi có thể reindex sang index mới, hoặc split/shrink khi đủ điều kiện; không phải chỉ có reindex. Replica count có thể đổi động; refresh_interval và ILM không phải lý do cố định primary count."
   },
   {
     "id": "dst-q-162",
@@ -56296,17 +56296,17 @@ const k7: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Câu hỏi kinh điển: 'Master migrate thì slave có bị ảnh hưởng không?' Câu trả lời đúng theo bài là gì?",
+    "question": "Với PostgreSQL physical streaming replication qua WAL, ALTER/build index nặng trên primary ảnh hưởng replica thế nào?",
     "options": [
       "Không — schema chỉ tồn tại ở master, slave giữ nguyên schema cũ",
-      "Có — slave chắc chắn cũng đổi schema, nhưng phải replay/chạy lại chính công việc nặng đó nên replication lag phình ra, có stale read và (Postgres) có thể huỷ query đọc",
+      "Replica replay WAL gồm thay đổi schema/index; tốn IO, có thể tăng lag và gây xung đột khiến query đọc bị hủy",
       "Có — nhưng slave chỉ nhận metadata schema, không tốn IO gì",
-      "Không — trừ khi bạn thủ công chạy lại ALTER trên từng slave"
+      "PostgreSQL physical replication không truyền thay đổi schema; bắt buộc chạy ALTER tay trên từng replica"
     ],
     "correctIndices": [
       1
     ],
-    "explanation": "Replica bắt buộc cùng schema với master, nhưng nó không miễn phí: phải replay/chạy lại việc nặng nên lag phình.\n✓ Slave chắc chắn đổi schema nhưng phải gánh lại công việc nặng → lag tăng, stale read, Postgres có thể huỷ query đọc\n✗ Schema không thể chỉ tồn tại ở master; replica cuối cùng phải đồng bộ schema\n✗ Với DDL nặng (rewrite/build index) replica tốn IO thật khi replay, không chỉ metadata\n✗ Không cần chạy tay trên từng slave — DDL lan qua WAL/binlog tự động"
+    "explanation": "Physical streaming replica replay WAL của schema/data/index nên công việc nặng ở primary có thể tạo IO, lag và recovery conflict làm hủy query đọc ở replica; không chỉ nhận metadata miễn phí. Không cần tự chạy ALTER trên physical replica. Phải phân biệt PostgreSQL logical replication: DDL không được tự replicate, cần quản lý schema subscriber riêng. Không khái quát cơ chế cho mọi loại replication."
   },
   {
     "id": "dst-q-234",
@@ -56407,14 +56407,14 @@ const k7: Question[] = [
     "question": "Trong pattern expand–migrate–contract để đổi một cột đang được code dùng, thứ tự và tinh thần đúng là gì?",
     "options": [
       "Đổi tại chỗ cột cũ rồi deploy code mới cùng lúc (big bang) cho gọn",
-      "Expand (thêm cột mới + dual-write) → Backfill (copy dữ liệu cũ theo batch) → Migrate (code đọc/ghi cột mới) → Contract (xoá cột cũ ở release sau), mỗi bước tương thích ngược và rollback được",
+      "Expand → Backfill → Migrate → Contract ở release sau; chỉ xóa cột cũ khi hết cửa sổ rollback về code cần cột đó",
       "Contract trước (xoá cột cũ) rồi mới Expand thêm cột mới",
       "Chỉ cần thêm cột mới rồi xoá cột cũ ngay trong cùng một deploy"
     ],
     "correctIndices": [
       1
     ],
-    "explanation": "Tách thành các bước độc lập, mỗi bước tương thích ngược, deploy riêng và rollback được — không big bang.\n✓ Expand → Backfill → Migrate → Contract, mỗi bước tương thích ngược, deploy riêng và rollback được\n✗ Nguyên tắc là KHÔNG bao giờ đổi tại chỗ cột đang dùng theo kiểu big bang\n✗ Không thể Contract (xoá cột cũ) trước khi Expand — sẽ hỏng code đang dùng cột đó\n✗ Thêm rồi xoá ngay trong cùng deploy phá vỡ tính tương thích ngược và khả năng rollback"
+    "explanation": "Expand thêm cột/dual-write, backfill theo batch, migrate đọc/ghi cột mới; duy trì tương thích để rollback trong các pha đầu. Trước Contract phải bỏ mọi phụ thuộc cột cũ và hết cửa sổ rollback về bản cần cột đó. Sau khi xóa cột, rollback có thể cần phục hồi schema/data hoặc roll forward. Big bang, Contract trước Expand hay thêm/xóa cùng deploy đều phá tính tương thích."
   },
   {
     "id": "dst-q-239",
@@ -56556,15 +56556,15 @@ const k7: Question[] = [
     "type": "single",
     "question": "Bạn cần build một index lớn trên bảng orders đang phục vụ traffic online 24/7, ưu tiên KHÔNG chặn ghi. Lựa chọn nào đúng, và đánh đổi kèm theo là gì?",
     "options": [
-      "Dùng CREATE INDEX CONCURRENTLY: không khoá ghi, nhưng chạy đơn luồng nên lâu hơn",
+      "CREATE INDEX CONCURRENTLY cho phép ghi tiếp nhưng cần thêm scan/chờ transaction, thường lâu hơn; scan đầu có thể parallel",
       "Dùng CREATE INDEX thường với max_parallel_maintenance_workers=4: nhanh hơn và cũng không khoá ghi",
-      "Dùng CREATE INDEX CONCURRENTLY kèm parallel workers để vừa không khoá vừa nhanh nhất",
+      "CREATE INDEX CONCURRENTLY luôn dùng mọi worker cho cả hai scan và chắc chắn nhanh nhất",
       "Dùng VACUUM FULL trước rồi CREATE INDEX thường để tránh bloat ngay từ đầu"
     ],
     "correctIndices": [
       0
     ],
-    "explanation": "Yêu cầu \"không chặn ghi\" trên bảng đang phục vụ chỉ có CONCURRENTLY đáp ứng, đổi lại tốc độ.\n✓ CREATE INDEX CONCURRENTLY không khoá ghi nhưng luôn đơn luồng nên lâu hơn.\n✗ CREATE INDEX thường (kể cả có parallel) vẫn KHOÁ ghi — không thoả yêu cầu online.\n✗ Parallel build CHỈ áp dụng cho CREATE INDEX thường; CONCURRENTLY luôn đơn luồng nên không thể ghép cả hai.\n✗ VACUUM FULL khoá ACCESS EXCLUSIVE, còn tệ hơn cho bảng đang phục vụ."
+    "explanation": "CREATE INDEX CONCURRENTLY cho phép DML tiếp tục, đổi lại hai scan và các pha chờ transaction nên thường lâu hơn. PostgreSQL có thể dùng parallel workers cho scan đầu tùy loại index/cấu hình; không phải luôn đơn luồng và không bảo đảm nhanh nhất. CREATE INDEX thường vẫn chặn ghi kể cả có parallel workers. VACUUM FULL dùng ACCESS EXCLUSIVE nên không phù hợp yêu cầu online."
   },
   {
     "id": "dst-q-246",
@@ -56693,7 +56693,7 @@ const k7: Question[] = [
       1,
       2
     ],
-    "explanation": "Build index tốn IO ở cả sort, ghi index và WAL, và ảnh hưởng lan sang replica.\n✓ Tràn maintenance_work_mem chuyển sang external merge sort ghi run ra temp file, nhân đôi IO và có thể lấp đầy temp tablespace.\n✓ Build được ghi WAL và ship sang replica để replay, nên gây replica lag.\n✓ Nâng maintenance_work_mem cho session cho phép sort nhiều key trong RAM, giảm tràn đĩa.\n✗ CONCURRENTLY luôn chạy ĐƠN luồng; parallel chỉ áp dụng cho CREATE INDEX thường.\n✗ Full scan đọc giá trị cột ở mọi dòng còn sống từ HEAP, không phải chỉ đọc index cũ."
+    "explanation": "Build index tốn IO ở cả sort, ghi index và WAL, và ảnh hưởng lan sang replica.\n✓ Tràn maintenance_work_mem chuyển sang external merge sort ghi run ra temp file, nhân đôi IO và có thể lấp đầy temp tablespace.\n✓ Build được ghi WAL và ship sang replica để replay, nên gây replica lag.\n✓ Nâng maintenance_work_mem cho session cho phép sort nhiều key trong RAM, giảm tràn đĩa.\n✗ CONCURRENTLY có thể parallel ở scan đầu tùy index/cấu hình, nhưng thêm scan/chờ nên không bảo đảm nhanh hơn build thường.\n✗ Full scan đọc giá trị cột ở mọi dòng còn sống từ HEAP, không phải chỉ đọc index cũ."
   },
   {
     "id": "dst-q-252",
@@ -56953,7 +56953,7 @@ const k7: Question[] = [
       2,
       4
     ],
-    "explanation": "Cả hai đều append/ghi bản mới thay vì xoá tại chỗ và đều cần tiến trình dọn nền; điểm khác là B-tree tối ưu read/space, LSM tối ưu write.\n✓ Không xoá tại chỗ — B-tree để dead tuple, LSM để bản cũ + tombstone\n✓ Đều cần dọn nền: VACUUM cho B-tree, compaction cho LSM\n✓ B-tree tối ưu read/space, LSM tối ưu write với cái giá là amplification\n✓ UPDATE ở cả hai đều tạo dữ liệu mới chiếm chỗ, không ghi đè bản cũ ngay\n✗ Ngược hẳn: B-tree mới update tại chỗ (random write), LSM mới append tuần tự"
+    "explanation": "Cả hai đều append/ghi bản mới thay vì xoá tại chỗ và đều cần tiến trình dọn nền; điểm khác là B-tree tối ưu read/space, LSM tối ưu write.\n✓ Không xoá tại chỗ — B-tree để dead tuple, LSM để bản cũ + tombstone\n✓ Đều cần dọn nền: VACUUM cho B-tree, compaction cho LSM\n✓ B-tree tối ưu read/space, LSM tối ưu write với cái giá là amplification\n✓ UPDATE ở cả hai đều tạo dữ liệu mới chiếm chỗ, không ghi đè bản cũ ngay\n✗ Sai: PostgreSQL MVCC tạo tuple mới khi UPDATE; B-tree sửa page/index entry không đồng nghĩa ghi đè tại chỗ phiên bản hàng cũ. LSM ghi phiên bản mới rồi compaction"
   },
   {
     "id": "dst-q-264",
@@ -57807,7 +57807,7 @@ const k7: Question[] = [
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Trên pg_stat_replication, một replica cho thấy write_lag và flush_lag đều rất nhỏ (~0.1-0.2s) nhưng replay_lag = 41 phút. Kết luận đúng là gì?",
+    "question": "Trên pg_stat_replication, một replica cho thấy write_lag và flush_lag đều rất nhỏ (~0.1-0.2s) nhưng replay_lag = khoảng 41 giây. Kết luận đúng là gì?",
     "options": [
       "Mạng giữa primary và replica đang nghẽn nặng",
       "WAL chưa được gửi tới replica nên nó chưa nhận được dữ liệu",
@@ -58571,7 +58571,7 @@ const k7: Question[] = [
     "correctIndices": [
       0
     ],
-    "explanation": "Chuỗi private → public là hàm một chiều có cửa sập dựa trên ECDLP: tính k·G rất dễ nhưng tìm lại k gần như bất khả.\n✓ ECDLP không có thuật toán nhanh để đảo ngược — đúng bản chất trapdoor.\n✗ Public key không được mã hóa AES; nó vốn công khai.\n✗ Blockchain không lưu private key ở bất kỳ server nào — không có mật khẩu tài khoản.\n✗ Verify không xóa gì và không liên quan đến việc bảo vệ private key."
+    "explanation": "Public key K=k·G tính được dễ từ private key k. Tìm k từ K và G là ECDLP, chưa có thuật toán cổ điển hiệu quả trên đường cong phù hợp; không phải có một cửa sập giúp đảo phép nhân. Public key không được AES mã hóa; blockchain không giữ private key trên server; verify không xóa dữ liệu. An toàn còn phụ thuộc thuật toán, nonce và triển khai đúng."
   },
   {
     "id": "bc-q-027",
@@ -58624,7 +58624,7 @@ const k7: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Để triệt tiêu rủi ro nonce trong ECDSA, ví hiện đại dùng cách nào?",
+    "question": "Để giảm rủi ro nonce do nguồn ngẫu nhiên yếu trong ECDSA, ví hiện đại dùng cách nào?",
     "options": [
       "RFC 6979 — sinh nonce tất định từ chính message và private key",
       "Tăng độ dài private key lên 512-bit",
@@ -58634,7 +58634,7 @@ const k7: Question[] = [
     "correctIndices": [
       0
     ],
-    "explanation": "RFC 6979 sinh nonce tất định (deterministic) từ message + private key, loại bỏ nguồn ngẫu nhiên yếu — nguyên nhân gốc của nonce reuse.\n✓ RFC 6979 sinh nonce tất định từ message và private key — đúng giải pháp.\n✗ Kéo dài private key không giải quyết vấn đề nonce.\n✗ Nonce phải bí mật; công khai nó còn nguy hiểm hơn.\n✗ Nonce cố định chính là lỗi crack PS3 — tuyệt đối tránh."
+    "explanation": "RFC 6979 sinh nonce tất định (deterministic) từ message + private key, giảm phụ thuộc nguồn ngẫu nhiên khi ký. Vẫn phải triển khai đúng, chống side-channel và không dùng lại nonce cho message khác.\n✓ RFC 6979 sinh nonce tất định từ message và private key — đúng giải pháp.\n✗ Kéo dài private key không giải quyết vấn đề nonce.\n✗ Nonce phải bí mật; công khai nó còn nguy hiểm hơn.\n✗ Nonce cố định chính là lỗi crack PS3 — tuyệt đối tránh."
   },
   {
     "id": "bc-q-030",
@@ -58692,11 +58692,11 @@ const k7: Question[] = [
     "type": "multi",
     "question": "Chọn TẤT CẢ điểm khiến EdDSA (Ed25519) thường được chuỗi mới ưa chuộng hơn ECDSA.",
     "options": [
-      "Nonce tất định, sinh từ key+message — không có lớp lỗi nonce reuse",
-      "Verify nhanh hơn và dễ batch-verify",
-      "Được thiết kế sẵn để kháng side-channel",
+      "Nonce tất định từ key+message giảm phụ thuộc nguồn ngẫu nhiên khi ký, nhưng vẫn cần triển khai đúng",
+      "Có triển khai verify hiệu quả và hỗ trợ batch-verify; tốc độ thực tế tùy triển khai",
+      "Thiết kế thuận lợi cho triển khai constant-time, không tự bảo đảm miễn side-channel",
       "Nó không cần public key khi verify",
-      "Nó là bản thiết kế lại sạch hơn, loại bỏ hầu hết cạm bẫy triển khai"
+      "Thiết kế giảm một số cạm bẫy, nhưng không loại bỏ lỗi triển khai"
     ],
     "correctIndices": [
       0,
@@ -58704,7 +58704,7 @@ const k7: Question[] = [
       2,
       4
     ],
-    "explanation": "EdDSA là bản thiết kế lại sạch của ý tưởng ECDSA: nonce tất định, nhanh, kháng side-channel theo mặc định.\n✓ Nonce tất định triệt tiêu lỗi nonce reuse — ưu điểm lớn nhất.\n✓ Verify nhanh hơn, dễ batch-verify.\n✓ Thiết kế sẵn để chống side-channel.\n✓ Là bản thiết kế lại sạch hơn, ít cạm bẫy triển khai.\n✗ Mọi chữ ký khóa công khai đều cần public key để verify — EdDSA không ngoại lệ."
+    "explanation": "Ed25519 dùng nonce tất định, giảm phụ thuộc RNG khi ký; thiết kế thuận lợi cho constant-time và có các triển khai verify/batch-verify hiệu quả. Những ưu điểm này không bảo đảm mọi triển khai nhanh hơn ECDSA, không miễn lỗi nonce hay side-channel. Thiết kế giảm một số cạm bẫy, vẫn phải triển khai và dùng thư viện đúng. Verify vẫn cần public key, nên lựa chọn không cần public key là sai."
   },
   {
     "id": "bc-q-033",
@@ -58715,7 +58715,7 @@ const k7: Question[] = [
     ],
     "difficulty": "hard",
     "type": "single",
-    "question": "Trong opcode ecrecover của Solidity (contract VerifySig), vì sao có dòng require(signer != address(0), ...)?",
+    "question": "Trong contract VerifySig, hàm Solidity ecrecover gọi precompile. Vì sao cần require(signer != address(0), ...)?",
     "options": [
       "Vì ecrecover trả về address(0) khi chữ ký không hợp lệ, cần chặn để không nhầm là ký hợp lệ",
       "Vì address(0) là địa chỉ của attacker phổ biến nhất",
@@ -58738,7 +58738,7 @@ const k7: Question[] = [
     "type": "single",
     "question": "Trong công thức chữ ký ECDSA s = k⁻¹·(z + r·d) mod n, các ký hiệu d và k lần lượt là gì?",
     "options": [
-      "d là private key, k là nonce ngẫu nhiên bí mật sinh mới mỗi lần ký",
+      "d là private key; k là nonce bí mật sinh ngẫu nhiên an toàn hoặc tất định theo RFC 6979",
       "d là nonce mỗi lần ký, k là private key cố định",
       "d là public key, k là message hash",
       "d và k đều là public key ở hai định dạng khác nhau"
@@ -58746,7 +58746,7 @@ const k7: Question[] = [
     "correctIndices": [
       0
     ],
-    "explanation": "Theo ký hiệu chuẩn ECDSA, d là private key (số bí mật cố định), còn k là nonce sinh mới mỗi lần ký; r suy từ k·G.\n✓ d là private key, k là nonce bí mật mỗi lần ký — đúng vai trò.\n✗ Đảo vai trò d và k là sai; k không phải khóa cố định.\n✗ d không phải public key; z mới là message hash, không phải k.\n✗ Cả d lẫn k đều bí mật, không phải public key."
+    "explanation": "d là private key, k là nonce bí mật của phép ký và r suy từ k·G. k có thể sinh bằng RNG an toàn hoặc tất định từ key/message theo RFC 6979; không được tái dùng cho message khác. d không phải public key; z mới là message hash; cả d và k đều bí mật. Nonce tất định không đồng nghĩa một nonce cố định dùng cho mọi message."
   },
   {
     "id": "bc-q-035",
@@ -58970,14 +58970,14 @@ const k7: Question[] = [
     "question": "Kẻ tấn công muốn lật ngược một giao dịch đã nằm sâu 6 block trong chuỗi thật. Node lương thiện luôn theo chuỗi nào, và điều kiện để chuỗi giả thắng là gì?",
     "options": [
       "Node theo chuỗi dài nhất về số block; chỉ cần đào thêm 1 block là thắng",
-      "Node theo chuỗi có tổng công việc lớn nhất (heaviest); kẻ tấn công cần >50% hashpower để đuổi kịp và vượt",
+      "Node theo chuỗi hợp lệ có chainwork tích lũy lớn nhất; chuỗi giả phải vượt chainwork, dưới 50% hashpower vẫn có xác suất thành công",
       "Node theo chuỗi có timestamp mới nhất; chỉ cần đặt timestamp tương lai",
       "Node theo chuỗi của miner có phí giao dịch cao nhất"
     ],
     "correctIndices": [
       1
     ],
-    "explanation": "Node chọn chuỗi có tổng công việc lớn nhất (heaviest chain); trong khi kẻ tấn công đào lại chuỗi cũ, mạng lương thiện vẫn kéo dài chuỗi thật bằng toàn bộ hashpower.\n✓ Node theo chuỗi có tổng công việc lớn nhất và cần >50% hashpower để chuỗi giả vượt — đó là tấn công 51%.\n✗ 'Chỉ cần đào thêm 1 block là thắng' là sai — kẻ tấn công phải đào lại cả 6 block trong khi mạng thật vẫn tiến lên.\n✗ Theo timestamp mới nhất là sai — mạng chọn theo tổng công việc, không theo timestamp; timestamp còn bị ràng buộc biên độ.\n✗ Theo phí giao dịch cao nhất là sai — quy tắc chọn chain dựa trên proof-of-work tích lũy, không phải phí."
+    "explanation": "Node chọn chuỗi hợp lệ có tổng công việc tích lũy lớn nhất. Attacker phải đào chuỗi thay thế vượt chainwork trong khi mạng thật tiếp tục tiến lên. Dưới 50% hashpower vẫn có xác suất đuổi kịp, giảm theo độ sâu xác nhận; trên 50% có lợi thế tăng trưởng dài hạn, không phải điều kiện bắt buộc cho mọi reorg. Số block đơn thuần, timestamp mới nhất hay phí miner không thay thế quy tắc chainwork."
   },
   {
     "id": "bc-q-046",
@@ -59505,7 +59505,7 @@ const k7: Question[] = [
     "type": "single",
     "question": "Đột phá cốt lõi của Nakamoto consensus (2008) so với BFT cổ điển là gì?",
     "options": [
-      "Đổi luật đếm phiếu từ 'một node một phiếu' sang 'một đơn vị tài nguyên (công/stake) một phiếu'",
+      "Đổi từ đếm danh tính node sang trọng số bằng proof-of-work khan hiếm để chống Sybil trong mạng mở",
       "Tăng tốc PBFT để chạy nhanh hơn trên cùng số node",
       "Giảm ngưỡng an toàn từ 1/2 xuống 1/3 tài nguyên",
       "Loại bỏ hoàn toàn nhu cầu về finality"
@@ -59513,7 +59513,7 @@ const k7: Question[] = [
     "correctIndices": [
       0
     ],
-    "explanation": "Bài nhấn: đột phá của Nakamoto KHÔNG phải BFT nhanh hơn mà là đổi luật đếm phiếu sang tài nguyên khan hiếm bên ngoài.\n✓ Đổi 'một node một phiếu' thành 'một đơn vị công/stake một phiếu' — chống Sybil, mở, khích lệ kinh tế.\n✗ Không phải làm PBFT nhanh hơn — đó là hiểu sai bài chỉ ra.\n✗ Nakamoto có ngưỡng an toàn < 1/2 tài nguyên (cao hơn 1/3 của BFT), không giảm xuống 1/3.\n✗ Nakamoto vẫn có finality (xác suất), không loại bỏ."
+    "explanation": "Nakamoto consensus của Bitcoin 2008 dùng proof-of-work để chống Sybil và chọn chain theo công tích lũy; không phải làm PBFT nhanh hơn. Stake thuộc các thiết kế PoS khác, không phải Bitcoin dùng stake. So sánh ngưỡng 1/2 tài nguyên với 1/3 validator của BFT cần đúng giả định; không phải giảm ngưỡng xuống 1/3. Finality của Bitcoin mang tính xác suất, không bị loại bỏ."
   },
   {
     "id": "bc-q-071",
@@ -62309,14 +62309,14 @@ const k8: Question[] = [
     "question": "Bạn gửi 100 USDC vào một vault ERC-4626 và nhận 100 shares. Sau đó vault kiếm lãi, tổng asset lên 110 USDC (số shares tổng không đổi). Bây giờ bạn redeem 100 shares thì nhận về bao nhiêu?",
     "options": [
       "Vẫn đúng 100 USDC vì shares không đổi",
-      "110 USDC — vì tỷ giá share/asset tăng dần theo lãi",
+      "110 USDC — vì số asset trên mỗi share (asset/share) tăng theo lãi",
       "100 shares (share được trả lại chứ không phải asset)",
       "10 USDC tiền lãi, còn gốc phải withdraw riêng"
     ],
     "correctIndices": [
       1
     ],
-    "explanation": "Cơ chế sinh lời của 4626 là tỷ giá share/asset tăng dần: cùng số shares redeem được nhiều asset hơn khi vault có lãi.\n✓ 100 shares là toàn bộ share, tổng asset thành 110 nên redeem nhận về 110 USDC.\n✗ Số shares không đổi nhưng giá trị mỗi share tăng, nên không phải vẫn 100 USDC.\n✗ redeem đốt shares và trả asset, không trả lại shares.\n✗ Không tách gốc/lãi — redeem toàn bộ shares nhận trọn 110 USDC."
+    "explanation": "Cơ chế sinh lời của 4626 là tỷ giá asset/share tăng dần: cùng số shares redeem được nhiều asset hơn khi vault có lãi.\n✓ 100 shares là toàn bộ share, tổng asset thành 110 nên redeem nhận về 110 USDC.\n✗ Số shares không đổi nhưng giá trị mỗi share tăng, nên không phải vẫn 100 USDC.\n✗ redeem đốt shares và trả asset, không trả lại shares.\n✗ Không tách gốc/lãi — redeem toàn bộ shares nhận trọn 110 USDC."
   },
   {
     "id": "bc-q-201",
@@ -63498,7 +63498,7 @@ const k8: Question[] = [
     "question": "Bản vá reentrancy trong bài dùng hai lớp phòng thủ độc lập. Chọn các phát biểu ĐÚNG về chúng.",
     "options": [
       "Checks-Effects-Interactions yêu cầu cập nhật state trước khi gọi ra ngoài",
-      "nonReentrant khoá mutex khiến mọi lời gọi lồng nhau vào hàm cùng contract đều revert",
+      "nonReentrant chặn lời gọi lồng nhau vào các hàm dùng chung guard; không tự khóa mọi hàm trong contract",
       "CEI chỉ cần áp dụng trong đúng hàm bị gọi, không cần nhất quán toàn contract",
       "Sau khi có nonReentrant thì không cần CEI nữa",
       "Có cross-function và read-only reentrancy nên CEI phải áp dụng nhất quán toàn contract"
@@ -63508,7 +63508,7 @@ const k8: Question[] = [
       1,
       4
     ],
-    "explanation": "Bài đề xuất CEI làm gốc + nonReentrant làm lưới, và cảnh báo reentrancy xuyên hàm / read-only.\n✓ CEI cập nhật state trước khi gọi ngoài — đúng định nghĩa\n✓ nonReentrant khoá mutex, lời gọi lồng nhau revert — đúng\n✓ Có cross-function và read-only reentrancy nên CEI phải nhất quán toàn contract — đúng cảnh báo trong bài\n✗ CEI chỉ cần trong đúng hàm bị gọi — sai, phải nhất quán toàn contract\n✗ Có guard là bỏ CEI — sai, bài nói dùng CEI làm gốc, guard làm lưới an toàn"
+    "explanation": "Bài đề xuất CEI làm gốc + nonReentrant làm lưới, và cảnh báo reentrancy xuyên hàm / read-only.\n✓ CEI cập nhật state trước khi gọi ngoài — đúng định nghĩa\n✓ nonReentrant dùng mutex chung để chặn gọi lồng vào các hàm cùng guard; hàm không gắn guard không tự được bảo vệ\n✓ Có cross-function và read-only reentrancy nên CEI phải nhất quán toàn contract — đúng cảnh báo trong bài\n✗ CEI chỉ cần trong đúng hàm bị gọi — sai, phải nhất quán toàn contract\n✗ Có guard là bỏ CEI — sai, bài nói dùng CEI làm gốc, guard làm lưới an toàn"
   },
   {
     "id": "bc-q-256",
@@ -63564,14 +63564,14 @@ const k8: Question[] = [
     "question": "Một game on-chain yêu cầu người chơi gửi lời giải để nhận thưởng, đáp án gửi dạng plaintext qua submitAnswer. Cách phòng chống front-running phù hợp nhất là gì?",
     "options": [
       "Tăng gas limit cho hàm submitAnswer",
-      "Dùng commit-reveal: giai đoạn 1 gửi hash(answer, nonce), giai đoạn 2 mới reveal",
+      "Commit-reveal: commit hash(contract, chainId, roundId, sender, answer, nonce), chỉ reveal sau khi đóng pha commit",
       "Đổi transfer thành call để forward hết gas",
       "Thêm modifier onlyOwner cho hàm submitAnswer"
     ],
     "correctIndices": [
       1
     ],
-    "explanation": "Đáp án plaintext lộ trong mempool nên bot front-run nẫng thưởng; commit-reveal giấu nội dung ở giai đoạn commit.\n✓ Commit-reveal gửi hash trước rồi reveal sau — đúng cách chống lộ mempool\n✗ Tăng gas limit — không giấu được nội dung, vô ích\n✗ Đổi transfer thành call — không liên quan front-running\n✗ onlyOwner — game cho nhiều người chơi, không thể giới hạn owner"
+    "explanation": "Commit giấu answer bằng nonce bí mật đủ mạnh và bind sender cùng domain (contract/chain/round), tránh sao chép commit để nhận thưởng thay người khác. Reveal phải ở pha sau khi commit đã đóng, kiểm lại hash và quyền nhận thưởng. Tăng gas, đổi transfer thành call hay chỉOwner không giải quyết việc giấu lời giải trong game mở cho nhiều người."
   },
   {
     "id": "bc-q-259",
@@ -65015,7 +65015,7 @@ const k8: Question[] = [
     "correctIndices": [
       1
     ],
-    "explanation": "Flash loan khai thác atomicity của EVM: cả tx thành công toàn bộ hoặc revert toàn bộ.\n✓ Nếu người vay không hoàn trả gốc + phí trong cùng tx thì mọi thay đổi bị rollback, pool không mất tiền\n✗ Flash loan mở cho bất kỳ ai, không cần credit score\n✗ Không có tài sản nào bị giữ lại làm bảo đảm — chính vì vậy gọi là vay không thế chấp\n✗ Không cần khoá tài sản trước; toàn bộ diễn ra gọn trong một tx"
+    "explanation": "Flash loan khai thác atomicity của EVM: cả tx thành công toàn bộ hoặc revert toàn bộ.\n✓ Nếu người vay không hoàn trả gốc + phí trong cùng tx và protocol kiểm tra hoàn trả đúng, state trong phạm vi tx revert nên khoản vay không được giữ lại; gas đã dùng và nonce giao dịch của người gửi không được hoàn nguyên\n✗ Flash loan mở cho bất kỳ ai, không cần credit score\n✗ Không có tài sản nào bị giữ lại làm bảo đảm — chính vì vậy gọi là vay không thế chấp\n✗ Không cần khoá tài sản trước; toàn bộ diễn ra gọn trong một tx"
   },
   {
     "id": "bc-q-326",
@@ -68057,7 +68057,7 @@ const k8: Question[] = [
     "type": "multi",
     "question": "Những phát biểu nào ĐÚNG về lý do Move an toàn hơn Solidity cho tài sản?",
     "options": [
-      "Bảo toàn tài sản trở thành bất biến ngôn ngữ: \"in tiền từ hư không\" hay \"mất tiền âm thầm\" không biên dịch được",
+      "Resource thiếu copy/drop không được sao chép hay bỏ ngầm; quyền mint/burn và bảo toàn value vẫn cần logic module đúng",
       "Move loại bỏ hoàn toàn mọi lỗi, kể cả lỗi logic nghiệp vụ và oracle sai",
       "Move không cho callback tuỳ ý vào code người ngoài giữa lúc cập nhật state theo kiểu để lộ trạng thái nửa vời như re-entrancy DAO",
       "Hệ sinh thái Move có Move Prover cho phép formal verification bằng đặc tả",
@@ -68068,7 +68068,7 @@ const k8: Question[] = [
       2,
       3
     ],
-    "explanation": "Move nâng bất biến kinh tế lên tầng type, chặn re-entrancy kiểu DAO và có công cụ chứng minh hình thức.\n✓ Thiếu copy/drop biến bảo toàn tài sản thành bất biến ngôn ngữ, chặn in tiền/mất tiền tại compile-time\n✓ Không có callback tuỳ ý giữa chừng theo kiểu để lộ trạng thái nửa vời như re-entrancy DAO\n✓ Move Prover cho phép viết đặc tả và chứng minh hàm thoả bất biến\n✗ Move KHÔNG xoá mọi lỗi — lỗi logic nghiệp vụ, oracle sai, quản trị key kém vẫn gây hại\n✗ `signer` là capability KHÔNG giả mạo được, ngược với phát biểu"
+    "explanation": "Move kiểm soát copy/drop resource ở tầng type, không tự chứng minh mọi bất biến kinh tế. Module định nghĩa type vẫn có thể mint, unpack và sửa value; quyền mint/burn và tổng cung phải được thiết kế đúng. Mô hình hạn chế reentrancy kiểu DAO và có Move Prover để chứng minh theo đặc tả, không loại mọi lỗi logic/oracle. signer là capability không thể giả mạo như một địa chỉ do caller tự điền."
   },
   {
     "id": "bc-q-468",
@@ -69851,7 +69851,7 @@ const k9: Question[] = [
     "question": "Chọn TẤT CẢ phát biểu ĐÚNG về order flow auction (OFA) so với mempool công khai.",
     "options": [
       "OFA đấu giá quyền được thực thi luồng lệnh của user thay vì phơi bày lệnh ra mempool",
-      "Phần thắng thầu (chính là phần MEV) được hoàn (rebate) về cho user hoặc ví",
+      "Một phần khoản bid thắng có thể được rebate cho user/ví theo cơ chế OFA; bid không đồng nhất tổng MEV",
       "OFA nội hoá MEV thành khoản đấu giá minh bạch thay vì để bị lấy lén",
       "Mempool công khai bảo vệ user tốt hơn vì mọi searcher đều thấy lệnh và cạnh tranh công bằng",
       "OFA là bước lùi của tư duy PBS vì che giấu hoàn toàn giao dịch khỏi mọi bên"
@@ -69861,7 +69861,7 @@ const k9: Question[] = [
       1,
       2
     ],
-    "explanation": "OFA đấu giá quyền thực thi order flow, hoàn MEV về user/ví, nội hoá MEV minh bạch — là bước tiến của tư duy PBS.\n✓ Đấu giá quyền thực thi luồng lệnh thay cho phơi bày mempool là đúng.\n✓ Phần thắng thầu (MEV) được rebate về user/ví là đúng.\n✓ OFA nội hoá MEV thành đấu giá minh bạch là đúng.\n✗ Mempool công khai để lộ lệnh dẫn tới sandwich/frontrun, không bảo vệ user tốt hơn.\n✗ OFA là bước tiến (không phải bước lùi) của PBS, và không nhằm che giấu mọi bên."
+    "explanation": "OFA đấu giá quyền thực thi order flow, có thể chia sẻ giá trị bằng rebate cho user/ví tùy cơ chế. Tổng MEV, bid thắng và rebate là các đại lượng khác nhau; searcher còn chi phí/lợi nhuận và rebate không mặc định bằng toàn bộ MEV. Đấu giá nội hóa một phần giá trị minh bạch hơn việc trích xuất lén. Mempool công khai vẫn lộ lệnh cho sandwich/front-running; OFA không phải che giao dịch khỏi mọi bên hay mặc nhiên là bước lùi PBS."
   },
   {
     "id": "bc-q-551",
@@ -72329,9 +72329,9 @@ const k9: Question[] = [
     ],
     "difficulty": "medium",
     "type": "single",
-    "question": "Bạn muốn CHẮC CHẮN giữ lại 100% các trace bị lỗi hoặc chậm hơn 1s để điều tra sự cố, dù chỉ lưu tổng thể một tỉ lệ nhỏ trace. Chiến lược sampling nào phù hợp?",
+    "question": "Bạn muốn ưu tiên giữ trace lỗi hoặc chậm hơn 1s mà chỉ lưu một tỉ lệ nhỏ trace. SDK gửi đầy đủ span; collector gom theo trace-id và được cấp buffer/cửa sổ phù hợp. Chiến lược nào phù hợp nhất?",
     "options": [
-      "Tail-based: buffer full trace ở collector rồi áp luật error/latency",
+      "Tail-based: gom span theo trace-id trong cửa sổ chờ ở collector rồi áp policy error/latency",
       "Head-based 1% ở root span",
       "Head-based 100% ở root, giảm dần theo tải",
       "Tắt hẳn sampling, lưu mọi trace"
@@ -72339,7 +72339,7 @@ const k9: Question[] = [
     "correctIndices": [
       0
     ],
-    "explanation": "Chỉ tail-based mới quyết định sau khi có full trace nên biết được trace có lỗi/chậm hay không rồi mới giữ.\n✓ Buffer toàn bộ span rồi xét luật error=true hoặc duration>1s để giữ đúng 100% trace đáng điều tra\n✗ Head 1% quyết định mù ở root trước khi biết kết quả, đúng những trace lỗi hiếm lại thường bị vứt\n✗ Head 100% giảm theo tải vẫn quyết định trước khi biết kết quả, không đảm bảo giữ trace lỗi\n✗ Lưu mọi trace bất khả thi về chi phí ở quy mô lớn, trái yêu cầu chỉ lưu tỉ lệ nhỏ"
+    "explanation": "Tail-based sampling gom span trong một cửa sổ rồi áp policy error/latency, phù hợp mục tiêu chọn theo kết quả. Không bảo đảm 100%: giới hạn decision_wait, num_traces, span tới muộn, mất dữ liệu hay quá tải có thể làm thiếu trace. Head 1% hoặc giảm head theo tải có thể bỏ trace trước khi biết lỗi/chậm. Lưu mọi trace trái yêu cầu chỉ lưu một tỉ lệ nhỏ."
   },
   {
     "id": "sre-q-108",
@@ -72352,8 +72352,8 @@ const k9: Question[] = [
     "type": "multi",
     "question": "Những phát biểu nào ĐÚNG về tail-based sampling so với head-based?",
     "options": [
-      "Quyết định giữ/bỏ sau khi đã thu đủ toàn bộ span của trace",
-      "Giữ được gần như 100% trace lỗi và trace chậm",
+      "Quyết định giữ/bỏ sau cửa sổ gom span, có thể chưa nhận đủ span nếu tới muộn hoặc mất",
+      "Ưu tiên giữ trace lỗi/chậm theo policy trong tập span đã nhận, phụ thuộc routing, buffer và cửa sổ chờ",
       "Đòi hỏi mọi span của một trace tới cùng một collector instance (LB theo trace-id)",
       "Rẻ hơn và không cần buffer bộ nhớ",
       "Quyết định được ghi vào flag sampled ở root và truyền xuống downstream"
@@ -72363,7 +72363,7 @@ const k9: Question[] = [
       1,
       2
     ],
-    "explanation": "Tail-based buffer full trace ở collector rồi mới quyết định, nên giữ được trace lỗi/chậm nhưng tốn RAM và cần LB theo trace-id.\n✓ Nó chờ đủ span (hết span hoặc timeout) rồi mới áp luật\n✓ Chính điểm mạnh: giữ đúng thứ đáng điều tra là trace lỗi và chậm\n✓ Vì phải gom mọi span của một trace vào cùng chỗ để xét, cần load-balancing theo trace-id\n✗ Rẻ và không buffer là đặc điểm của head-based, không phải tail-based\n✗ Ghi flag sampled ở root rồi truyền xuống là cơ chế head-based đảm bảo nhất quán, không phải tail-based"
+    "explanation": "Tail-based gom span theo trace-id và quyết định sau cửa sổ chờ, không biết chắc đã có mọi span. Nó ưu tiên lỗi/chậm theo policy trong tập nhận được; decision_wait, num_traces, span tới muộn, mất dữ liệu và head sampling trước đó giới hạn độ đầy đủ. Cần routing cùng trace tới cùng collector instance cho quyết định đầy đủ. Tốn buffer, không rẻ hơn một cách mặc định. Flag sampled ở root là quyết định head-based, không phải tail decision sau cùng."
   },
   {
     "id": "sre-q-109",
@@ -72482,17 +72482,17 @@ const k9: Question[] = [
     ],
     "difficulty": "easy",
     "type": "single",
-    "question": "Chiến lược sampling nào được mô tả là \"thực dụng phổ biến nhất\" trong bài?",
+    "question": "Khi kết hợp head-based ở SDK và tail-based ở collector, nhận định nào đúng?",
     "options": [
-      "Kết hợp: head-based ở SDK giảm tải mạng, rồi tail-based ở collector chắt lọc giữ 100% lỗi/chậm",
-      "Chỉ head-based 1% ở SDK cho đơn giản",
-      "Chỉ tail-based, bỏ hoàn toàn head-based",
-      "Không sampling, giữ 100% mọi trace"
+      "Head giảm tải mạng; tail chỉ lọc trong tập trace đã qua head, không khôi phục trace đã bị head bỏ",
+      "Head-based 1% luôn giữ được mọi trace lỗi",
+      "Tail-based khôi phục được trace đã bị SDK bỏ",
+      "Kết hợp head và tail tự bảo đảm 100% trace lỗi/chậm của toàn traffic"
     ],
     "correctIndices": [
       0
     ],
-    "explanation": "Bài khuyên kết hợp: head-based ở SDK giảm tải mạng, tail-based ở collector chắt lọc giữ 100% lỗi/chậm.\n✓ Đây là chiến lược thực dụng, tránh để head 1% mù là dây chuyền duy nhất\n✗ Chỉ head 1% mù dễ mất đúng những trace cần khi sự cố xảy ra\n✗ Chỉ tail-based tốn RAM và hạ tầng, bỏ head làm tăng tải mạng không cần thiết\n✗ Giữ 100% mọi trace bất khả thi về chi phí ở quy mô lớn"
+    "explanation": "Head sampling giảm tải bằng cách bỏ trace từ SDK; collector không thể khôi phục span chưa được gửi. Tail chỉ xét tập đã qua head và nhận được trong cửa sổ/buffer. Muốn ưu tiên lỗi/chậm của toàn traffic cần gửi đầy đủ span tới collector, sizing phù hợp; vẫn còn giới hạn do span tới muộn, buffer hoặc mất dữ liệu. Vì vậy các lựa chọn hứa giữ/khôi phục mọi lỗi/chậm đều sai."
   },
   {
     "id": "sre-q-115",
