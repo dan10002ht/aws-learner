@@ -157,42 +157,7 @@ Truy cập AWS service từ private subnet **không qua Internet/NAT**.
 
 So sánh đường đi data từ private subnet để gọi S3/DynamoDB — cùng một request, hai chi phí khác hẳn nhau:
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Đường đi traffic và chi phí — NAT Gateway so với S3/DynamoDB Gateway Endpoint</title>
-  <desc>Hai luồng song song từ app trong private subnet gọi S3 hoặc DynamoDB. Luồng trên đi qua NAT Gateway rồi ra Internet, tốn 0.045 đô la mỗi GB data processing cộng phí giờ. Luồng dưới đi qua Gateway Endpoint, chỉ là một entry trong route table, không qua NAT, không qua Internet, hoàn toàn miễn phí.</desc>
-  <defs>
-    <marker id="costArr" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0 0 L7 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
-  </defs>
-  <text x="16" y="22" font-size="14" font-weight="700" fill="currentColor">Private subnet gọi S3/DynamoDB — hai đường, hai chi phí</text>
-  <!-- App node (shared start) -->
-  <rect x="16" y="120" width="120" height="58" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="76" y="144" font-size="12" font-weight="700" text-anchor="middle" fill="currentColor">App</text>
-  <text x="76" y="162" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.8">private subnet</text>
-  <!-- TOP path: via NAT GW (expensive, amber/red) -->
-  <line x1="136" y1="135" x2="178" y2="92" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#costArr)"/>
-  <rect x="182" y="60" width="150" height="56" rx="9" fill="#f59e0b" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.28"/>
-  <text x="257" y="82" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">NAT Gateway</text>
-  <text x="257" y="100" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.85">$0.045/GB + $/giờ</text>
-  <line x1="332" y1="88" x2="374" y2="88" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#costArr)"/>
-  <rect x="378" y="60" width="120" height="56" rx="9" fill="#f59e0b" fill-opacity="0.12" stroke="currentColor" stroke-opacity="0.28"/>
-  <text x="438" y="92" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">Internet</text>
-  <line x1="498" y1="88" x2="540" y2="88" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#costArr)"/>
-  <rect x="544" y="60" width="160" height="56" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="624" y="92" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">S3 / DynamoDB</text>
-  <rect x="182" y="124" width="316" height="22" rx="11" fill="#f59e0b" fill-opacity="0.18" stroke="currentColor" stroke-opacity="0.2"/>
-  <text x="340" y="139" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">50 TB/tháng × $0.045 = ~$2,250 data processing</text>
-  <!-- BOTTOM path: via Gateway Endpoint (free, green) -->
-  <line x1="136" y1="163" x2="178" y2="218" stroke="#10b981" stroke-opacity="0.7" marker-end="url(#costArr)"/>
-  <rect x="182" y="206" width="190" height="56" rx="9" fill="#10b981" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.28"/>
-  <text x="277" y="228" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">S3/DDB Gateway Endpoint</text>
-  <text x="277" y="246" font-size="10" text-anchor="middle" fill="currentColor" opacity="0.85">chỉ là route table entry</text>
-  <line x1="372" y1="234" x2="540" y2="234" stroke="#10b981" stroke-opacity="0.7" marker-end="url(#costArr)"/>
-  <rect x="544" y="206" width="160" height="56" rx="9" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="624" y="238" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">S3 / DynamoDB</text>
-  <rect x="182" y="272" width="316" height="22" rx="11" fill="#10b981" fill-opacity="0.2" stroke="currentColor" stroke-opacity="0.2"/>
-  <text x="340" y="287" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor">không qua NAT · không qua Internet · FREE ($0)</text>
-  <text x="438" y="190" font-size="10.5" font-weight="700" text-anchor="middle" fill="currentColor" opacity="0.8">cùng request → khác đường → khác tiền</text>
-</svg>
+<svg viewBox="0 0 520 414" role="img" aria-labelledby="c06e-t c06e-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif"><title id="c06e-t">Private subnet gọi S3/DynamoDB: qua NAT Gateway hay qua Gateway Endpoint</title><desc id="c06e-d">App trong private subnet gọi S3 hoặc DynamoDB theo hai đường. Đường trên đi qua NAT Gateway ở public subnet rồi Internet Gateway ra ngoài, tốn 0,045 đô la mỗi GB data processing cộng phí giờ: 50 TB/tháng là khoảng 2.250 đô la. Đường dưới đi qua S3/DynamoDB Gateway Endpoint, chỉ là một entry trong route table, không qua NAT, không qua Internet, miễn phí.</desc><defs><marker id="c06e-m" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs><rect x="12" y="30" width="320" height="330" rx="10" fill="#3b82f6" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.4" stroke-dasharray="6 4"/><use href="#aws-group-virtual-private-cloud-vpc" x="12" y="30" width="24" height="24"/><text x="42" y="47" font-size="13" font-weight="700" fill="currentColor">VPC</text><rect x="28" y="64" width="170" height="120" rx="8" fill="#10b981" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.35"/><text x="36" y="82" font-size="13" fill="currentColor" opacity="0.8">public subnet</text><rect x="28" y="200" width="170" height="140" rx="8" fill="#3b82f6" fill-opacity="0.08" stroke="currentColor" stroke-opacity="0.35"/><text x="36" y="218" font-size="13" fill="currentColor" opacity="0.8">private subnet</text><use href="#aws-ec2" x="90" y="236" width="44" height="44"/><text x="112" y="300" font-size="13" text-anchor="middle" font-weight="700" fill="currentColor">App</text><use href="#aws-nat-gateway" x="90" y="94" width="44" height="44"/><text x="112" y="156" font-size="13" text-anchor="middle" font-weight="700" fill="currentColor">NAT Gateway</text><use href="#aws-internet-gateway" x="308" y="94" width="44" height="44"/><text x="330" y="156" font-size="13" text-anchor="middle" font-weight="700" fill="currentColor">Internet Gateway</text><use href="#aws-res-vpc-endpoints" x="308" y="248" width="44" height="44"/><text x="330" y="310" font-size="13" text-anchor="middle" font-weight="700" fill="currentColor">Gateway Endpoint</text><text x="330" y="328" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">route table entry</text><rect x="424" y="120" width="88" height="180" rx="10" fill="#3b82f6" fill-opacity="0.06" stroke="currentColor" stroke-opacity="0.35"/><use href="#aws-s3" x="448" y="132" width="40" height="40"/><use href="#aws-dynamodb" x="448" y="210" width="40" height="40"/><text x="468" y="270" font-size="13" text-anchor="middle" font-weight="700" fill="currentColor">S3 /</text><text x="468" y="288" font-size="13" text-anchor="middle" font-weight="700" fill="currentColor">DynamoDB</text><line x1="112" y1="234" x2="112" y2="158" stroke="#f59e0b" stroke-width="2.2" marker-end="url(#c06e-m)"/><line x1="136" y1="116" x2="304" y2="116" stroke="#f59e0b" stroke-width="2.2" marker-end="url(#c06e-m)"/><text x="220" y="106" font-size="13" text-anchor="middle" font-weight="700" fill="#f59e0b">$0.045/GB + $/giờ</text><path d="M352 116 H396 V170 H420" fill="none" stroke="#f59e0b" stroke-width="2.2" marker-end="url(#c06e-m)"/><line x1="136" y1="270" x2="304" y2="270" stroke="#10b981" stroke-width="2.4" marker-end="url(#c06e-m)"/><text x="220" y="260" font-size="13" text-anchor="middle" font-weight="700" fill="#10b981">miễn phí</text><path d="M352 270 H396 V240 H420" fill="none" stroke="#10b981" stroke-width="2.4" marker-end="url(#c06e-m)"/><text x="16" y="382" font-size="13" font-weight="700" fill="#f59e0b">50 TB/tháng qua NAT: × $0.045 ≈ $2,250</text><text x="16" y="402" font-size="13" font-weight="700" fill="#10b981">Qua Gateway Endpoint: $0, không qua NAT, không ra Internet</text></svg>
 
 ### 2.8 VPC Peering
 - 1-1 connection giữa 2 VPC (same/diff region/account).

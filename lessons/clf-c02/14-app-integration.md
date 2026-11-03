@@ -87,46 +87,7 @@ Nếu image processor chết / overload → web app cũng chết theo. Bấm qua
 
 ### 2.3 SNS → SQS Fan-out pattern (đề hay hỏi)
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 300" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>SNS → SQS fan-out với DLQ riêng cho mỗi queue</title>
-  <desc>Một sự kiện image uploaded publish vào SNS topic, fan-out đến ba SQS queue A, B, C; mỗi queue có DLQ riêng và đẩy sang một Lambda xử lý song song độc lập: Lambda A resize image, Lambda B extract metadata, Lambda C virus scan.</desc>
-  <defs>
-    <marker id="foArr" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 L8 3 L0 6 z" fill="currentColor" fill-opacity="0.6"/></marker>
-  </defs>
-  <rect x="16" y="118" width="120" height="60" rx="10" fill="#f59e0b" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="76" y="142" font-size="12.5" font-weight="700" text-anchor="middle" fill="currentColor">SNS topic</text>
-  <text x="76" y="160" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.78">"image uploaded"</text>
-  <g stroke="currentColor" stroke-opacity="0.5" fill="none">
-    <path d="M136 148 C 180 148, 190 50, 232 50" marker-end="url(#foArr)"/>
-    <path d="M136 148 L 232 148" marker-end="url(#foArr)"/>
-    <path d="M136 148 C 180 148, 190 246, 232 246" marker-end="url(#foArr)"/>
-  </g>
-  <text x="180" y="40" font-size="9.5" text-anchor="middle" fill="currentColor" opacity="0.7">fan-out</text>
-  <!-- Row A -->
-  <rect x="236" y="28" width="92" height="44" rx="9" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="282" y="48" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">SQS A</text>
-  <text x="282" y="63" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">+ DLQ A</text>
-  <line x1="328" y1="50" x2="416" y2="50" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#foArr)"/>
-  <rect x="420" y="28" width="284" height="44" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="436" y="48" font-size="11.5" font-weight="700" fill="currentColor">Lambda A</text>
-  <text x="436" y="63" font-size="10" fill="currentColor" opacity="0.78">resize image</text>
-  <!-- Row B -->
-  <rect x="236" y="126" width="92" height="44" rx="9" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="282" y="146" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">SQS B</text>
-  <text x="282" y="161" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">+ DLQ B</text>
-  <line x1="328" y1="148" x2="416" y2="148" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#foArr)"/>
-  <rect x="420" y="126" width="284" height="44" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="436" y="146" font-size="11.5" font-weight="700" fill="currentColor">Lambda B</text>
-  <text x="436" y="161" font-size="10" fill="currentColor" opacity="0.78">extract metadata</text>
-  <!-- Row C -->
-  <rect x="236" y="224" width="92" height="44" rx="9" fill="#8b5cf6" fill-opacity="0.16" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="282" y="244" font-size="11.5" font-weight="700" text-anchor="middle" fill="currentColor">SQS C</text>
-  <text x="282" y="259" font-size="9" text-anchor="middle" fill="currentColor" opacity="0.7">+ DLQ C</text>
-  <line x1="328" y1="246" x2="416" y2="246" stroke="currentColor" stroke-opacity="0.5" marker-end="url(#foArr)"/>
-  <rect x="420" y="224" width="284" height="44" rx="9" fill="#10b981" fill-opacity="0.15" stroke="currentColor" stroke-opacity="0.25"/>
-  <text x="436" y="244" font-size="11.5" font-weight="700" fill="currentColor">Lambda C</text>
-  <text x="436" y="259" font-size="10" fill="currentColor" opacity="0.78">virus scan</text>
-</svg>
+<svg viewBox="0 0 520 360" role="img" aria-labelledby="c14f-t c14f-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif"><title id="c14f-t">SNS → SQS fan-out với DLQ riêng cho mỗi queue</title><desc id="c14f-d">Sự kiện image uploaded publish vào một SNS topic, fan-out tới ba SQS queue A, B, C; mỗi queue có DLQ riêng và đẩy sang một Lambda xử lý song song, độc lập: Lambda A resize image, Lambda B extract metadata, Lambda C virus scan.</desc><defs><marker id="c14f-m" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs><use href="#aws-sns" x="44" y="140" width="52" height="52"/><text x="70" y="212" font-size="13" text-anchor="middle" font-weight="700" fill="currentColor">SNS topic</text><text x="70" y="230" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.8">“image uploaded”</text><path d="M98 166 C 136 166, 136 52, 172 52" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#c14f-m)"/><use href="#aws-sqs" x="178" y="30" width="44" height="44"/><text x="200" y="92" font-size="13" text-anchor="middle" font-weight="700" fill="currentColor">SQS A</text><use href="#aws-sqs" x="236" y="60" width="24" height="24"/><text x="264" y="78" font-size="13" fill="currentColor" opacity="0.8">DLQ A</text><line x1="224" y1="52" x2="314" y2="52" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#c14f-m)"/><use href="#aws-lambda" x="320" y="30" width="44" height="44"/><text x="372" y="50" font-size="13" font-weight="700" fill="currentColor">Lambda A</text><text x="372" y="68" font-size="13" fill="currentColor" opacity="0.8">resize image</text><path d="M98 166 C 136 166, 136 168, 172 168" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#c14f-m)"/><use href="#aws-sqs" x="178" y="146" width="44" height="44"/><text x="200" y="208" font-size="13" text-anchor="middle" font-weight="700" fill="currentColor">SQS B</text><use href="#aws-sqs" x="236" y="176" width="24" height="24"/><text x="264" y="194" font-size="13" fill="currentColor" opacity="0.8">DLQ B</text><line x1="224" y1="168" x2="314" y2="168" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#c14f-m)"/><use href="#aws-lambda" x="320" y="146" width="44" height="44"/><text x="372" y="166" font-size="13" font-weight="700" fill="currentColor">Lambda B</text><text x="372" y="184" font-size="13" fill="currentColor" opacity="0.8">extract metadata</text><path d="M98 166 C 136 166, 136 284, 172 284" fill="none" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#c14f-m)"/><use href="#aws-sqs" x="178" y="262" width="44" height="44"/><text x="200" y="324" font-size="13" text-anchor="middle" font-weight="700" fill="currentColor">SQS C</text><use href="#aws-sqs" x="236" y="292" width="24" height="24"/><text x="264" y="310" font-size="13" fill="currentColor" opacity="0.8">DLQ C</text><line x1="224" y1="284" x2="314" y2="284" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.6" marker-end="url(#c14f-m)"/><use href="#aws-lambda" x="320" y="262" width="44" height="44"/><text x="372" y="282" font-size="13" font-weight="700" fill="currentColor">Lambda C</text><text x="372" y="300" font-size="13" fill="currentColor" opacity="0.8">virus scan</text><text x="130" y="30" font-size="13" text-anchor="middle" fill="currentColor" opacity="0.75">fan-out</text></svg>
 
 1 sự kiện "image uploaded" → SNS publish → 3 SQS nhận đồng thời → 3 processor chạy song song độc lập.
 
