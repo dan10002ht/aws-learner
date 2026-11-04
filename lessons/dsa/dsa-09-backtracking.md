@@ -452,54 +452,109 @@ Ba "ổ cắm" cần điền cho mọi bài:
 
 Bài N-queens là đại diện kinh điển của nhóm **constraint**: đặt `n` quân hậu lên bàn `n×n` sao cho không hai quân nào ăn nhau. Ta đặt **mỗi hàng đúng một quân** (nên không cần lo trùng hàng), rồi với mỗi hàng thử lần lượt từng **cột**. Mấu chốt là kiểm tra một ô có an toàn không thật nhanh: một quân hậu khống chế **cột** của nó, đường chéo **`\`** (mọi ô cùng `r - c`) và đường chéo **`/`** (mọi ô cùng `r + c`). Lưu ba `set` — cột đã chiếm, `r-c` đã chiếm, `r+c` đã chiếm — thì kiểm tra an toàn chỉ còn **O(1)**, và nếu ô không an toàn ta **cắt nhánh ngay** thay vì đặt rồi mới phát hiện xung đột.
 
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
-  <title>Bàn cờ N-queens: cột, chéo r-c và r+c bị một quân hậu khống chế</title>
-  <desc>Bàn cờ 5 nhân 5 với một quân hậu ở hàng 1 cột 2. Các ô bị khống chế gồm cả cột (c=2), đường chéo xuôi r-c và đường chéo ngược r+c. Lưu ba tập cột, r-c, r+c giúp kiểm tra an toàn trong O(1).</desc>
-  <g font-size="11" fill="currentColor" opacity="0.7" text-anchor="middle">
-    <text x="60" y="32">c=0</text><text x="120" y="32">c=1</text><text x="180" y="32">c=2</text><text x="240" y="32">c=3</text><text x="300" y="32">c=4</text>
-  </g>
-  <g font-size="11" fill="currentColor" opacity="0.7" text-anchor="end">
-    <text x="26" y="68">r=0</text><text x="26" y="128">r=1</text><text x="26" y="188">r=2</text><text x="26" y="248">r=3</text><text x="26" y="308">r=4</text>
-  </g>
-  <g stroke="currentColor" stroke-opacity="0.25">
-    <rect x="30" y="42" width="300" height="300" fill="none"/>
-    <line x1="90" y1="42" x2="90" y2="342"/><line x1="150" y1="42" x2="150" y2="342"/><line x1="210" y1="42" x2="210" y2="342"/><line x1="270" y1="42" x2="270" y2="342"/>
-    <line x1="30" y1="102" x2="330" y2="102"/><line x1="30" y1="162" x2="330" y2="162"/><line x1="30" y1="222" x2="330" y2="222"/><line x1="30" y1="282" x2="330" y2="282"/>
-  </g>
-  <g>
-    <rect x="150" y="102" width="60" height="60" fill="#8b5cf6" fill-opacity="0.14"/>
-    <rect x="150" y="162" width="60" height="60" fill="#8b5cf6" fill-opacity="0.14"/>
-    <rect x="150" y="222" width="60" height="60" fill="#8b5cf6" fill-opacity="0.14"/>
-    <rect x="150" y="282" width="60" height="60" fill="#8b5cf6" fill-opacity="0.14"/>
-    <rect x="210" y="102" width="60" height="60" fill="#3b82f6" fill-opacity="0.14"/>
-    <rect x="270" y="162" width="60" height="60" fill="#3b82f6" fill-opacity="0.14"/>
-    <rect x="90" y="102" width="60" height="60" fill="#f59e0b" fill-opacity="0.14"/>
-    <rect x="30" y="162" width="60" height="60" fill="#f59e0b" fill-opacity="0.14"/>
-  </g>
-  <g>
-    <rect x="150" y="42" width="60" height="60" fill="#10b981" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.4"/>
-    <text x="180" y="80" font-size="26" text-anchor="middle" fill="currentColor">Q</text>
-  </g>
-  <g font-size="12" fill="currentColor">
-    <rect x="378" y="60" width="20" height="14" rx="3" fill="#8b5cf6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="406" y="71">cột (c = 2) → set cols</text>
-    <rect x="378" y="92" width="20" height="14" rx="3" fill="#3b82f6" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="406" y="103">chéo \ (r − c không đổi) → set diag1</text>
-    <rect x="378" y="124" width="20" height="14" rx="3" fill="#f59e0b" fill-opacity="0.14" stroke="currentColor" stroke-opacity="0.3"/>
-    <text x="406" y="135">chéo / (r + c không đổi) → set diag2</text>
-    <rect x="378" y="156" width="20" height="14" rx="3" fill="#10b981" fill-opacity="0.22" stroke="currentColor" stroke-opacity="0.4"/>
-    <text x="406" y="167">quân hậu vừa đặt (r=0, c=2)</text>
-  </g>
-  <g font-size="11.5" fill="currentColor">
-    <text x="378" y="210" font-weight="700">An toàn? — kiểm tra O(1):</text>
-    <text x="378" y="232" font-family="ui-monospace, monospace" opacity="0.85">c ∉ cols  và  (r−c) ∉ diag1  và  (r+c) ∉ diag2</text>
-    <text x="378" y="262" font-weight="700">Pruning:</text>
-    <text x="378" y="284" opacity="0.85">ô bị khống chế → bỏ qua ngay,</text>
-    <text x="378" y="302" opacity="0.85">không đặt, không đệ quy xuống hàng kế.</text>
-    <text x="378" y="324" opacity="0.85">Đặt mỗi hàng 1 quân → tự khỏi lo</text>
-    <text x="378" y="342" opacity="0.85">trùng hàng; cây thu còn O(n!) đã prune.</text>
-  </g>
+Ba tập ở cạnh bàn cờ cập nhật cùng thao tác đặt/gỡ; ô thử bị từ chối không trở thành quân hậu. Ví dụ 5×5 của hình cũ: hậu ở (0,2) chiếm cột 2, chéo r−c=−2 và r+c=2; một ô an toàn khi cả ba khoá đều chưa có trong các tập tương ứng.
+
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 350" role="img" aria-labelledby="dsg09-queen-t dsg09-queen-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsg09-queen-t">4-Queens: thử cột, cắt nhánh, quay lui</title>
+<desc id="dsg09-queen-d">Một bàn cờ cố định; hậu bị gỡ và các giá trị tập cũ biến mất. Đi hết nhánh cột 0 trước khi tìm nghiệm cột [1,3,0,2].</desc>
+<defs><marker id="dsg09-queen-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<text x="260.0" y="24" text-anchor="middle" font-size="16" fill="currentColor">4-Queens: thử cột, cắt nhánh, quay lui</text>
+<text x="155" y="52" text-anchor="middle" font-size="13" fill="currentColor">Cột c</text>
+<text x="380" y="52" text-anchor="middle" font-size="14" fill="currentColor">Tập đã chiếm</text><text x="71" y="65" text-anchor="middle" font-size="13" fill="currentColor">0</text><text x="123" y="65" text-anchor="middle" font-size="13" fill="currentColor">1</text><text x="175" y="65" text-anchor="middle" font-size="13" fill="currentColor">2</text><text x="227" y="65" text-anchor="middle" font-size="13" fill="currentColor">3</text>
+<text x="22" y="99" text-anchor="middle" font-size="14" fill="currentColor">0</text>
+<rect x="45" y="70" width="52" height="52" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<rect x="97" y="70" width="52" height="52" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<rect x="149" y="70" width="52" height="52" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<rect x="201" y="70" width="52" height="52" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="22" y="151" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+<rect x="45" y="122" width="52" height="52" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<rect x="97" y="122" width="52" height="52" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<rect x="149" y="122" width="52" height="52" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<rect x="201" y="122" width="52" height="52" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="22" y="203" text-anchor="middle" font-size="14" fill="currentColor">2</text>
+<rect x="45" y="174" width="52" height="52" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<rect x="97" y="174" width="52" height="52" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<rect x="149" y="174" width="52" height="52" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<rect x="201" y="174" width="52" height="52" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="22" y="255" text-anchor="middle" font-size="14" fill="currentColor">3</text>
+<rect x="45" y="226" width="52" height="52" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<rect x="97" y="226" width="52" height="52" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<rect x="149" y="226" width="52" height="52" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<rect x="201" y="226" width="52" height="52" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="155" y="307" text-anchor="middle" font-size="13" fill="currentColor">Q: hậu đã đặt · đỏ: bị tấn công</text>
+<text x="155" y="329" text-anchor="middle" font-size="13" fill="currentColor">Viền vàng: ô đang thử</text>
+<g data-step="2" data-until="10"><text x="71" y="104" text-anchor="middle" font-size="25" fill="currentColor">Q</text></g>
+<g data-step="12"><rect x="46" y="71" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="12"><text x="123" y="104" text-anchor="middle" font-size="25" fill="currentColor">Q</text></g>
+<g data-step="2" data-until="10"><rect x="98" y="71" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="2" data-until="10"><rect x="150" y="71" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="12"><rect x="150" y="71" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="2" data-until="10"><rect x="202" y="71" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="12"><rect x="202" y="71" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="2" data-until="10"><rect x="46" y="123" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="12"><rect x="46" y="123" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="2" data-until="10"><rect x="98" y="123" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="12"><rect x="98" y="123" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="3" data-until="4"><text x="175" y="156" text-anchor="middle" font-size="25" fill="currentColor">Q</text></g>
+<g data-step="6" data-until="9"><rect x="150" y="123" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="12"><rect x="150" y="123" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="6" data-until="9"><text x="227" y="156" text-anchor="middle" font-size="25" fill="currentColor">Q</text></g>
+<g data-step="14"><text x="227" y="156" text-anchor="middle" font-size="25" fill="currentColor">Q</text></g>
+<g data-step="3" data-until="4"><rect x="202" y="123" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="15"><text x="71" y="208" text-anchor="middle" font-size="25" fill="currentColor">Q</text></g>
+<g data-step="2" data-until="10"><rect x="46" y="175" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="7" data-until="8"><text x="123" y="208" text-anchor="middle" font-size="25" fill="currentColor">Q</text></g>
+<g data-step="3" data-until="4"><rect x="98" y="175" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="12"><rect x="98" y="175" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="2" data-until="10"><rect x="150" y="175" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="14"><rect x="150" y="175" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="3" data-until="4"><rect x="202" y="175" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="6" data-until="9"><rect x="202" y="175" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="12"><rect x="202" y="175" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="2" data-until="10"><rect x="46" y="227" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="15"><rect x="46" y="227" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="6" data-until="9"><rect x="98" y="227" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="12"><rect x="98" y="227" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="16"><text x="175" y="260" text-anchor="middle" font-size="25" fill="currentColor">Q</text></g>
+<g data-step="3" data-until="4"><rect x="150" y="227" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="7" data-until="8"><rect x="150" y="227" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="2" data-until="10"><rect x="202" y="227" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="14"><rect x="202" y="227" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="1" data-until="1"><text x="280" y="95" text-anchor="start" font-size="14" fill="currentColor">cols = {}</text><text x="280" y="150" text-anchor="start" font-size="14" fill="currentColor">r-c = {}</text><text x="280" y="205" text-anchor="start" font-size="14" fill="currentColor">r+c = {}</text><text x="280" y="265" text-anchor="start" font-size="14" fill="currentColor">path = []</text></g>
+<g data-step="2" data-until="2"><text x="280" y="95" text-anchor="start" font-size="14" fill="currentColor">cols = {0}</text><text x="280" y="150" text-anchor="start" font-size="14" fill="currentColor">r-c = {0}</text><text x="280" y="205" text-anchor="start" font-size="14" fill="currentColor">r+c = {0}</text><text x="280" y="265" text-anchor="start" font-size="14" fill="currentColor">path = [0]</text></g>
+<g data-step="3" data-until="3"><text x="280" y="95" text-anchor="start" font-size="14" fill="currentColor">cols = {0,2}</text><text x="280" y="150" text-anchor="start" font-size="14" fill="currentColor">r-c = {-1,0}</text><text x="280" y="205" text-anchor="start" font-size="14" fill="currentColor">r+c = {0,3}</text><text x="280" y="265" text-anchor="start" font-size="14" fill="currentColor">path = [0,2]</text></g>
+<g data-step="4" data-until="4"><text x="280" y="95" text-anchor="start" font-size="14" fill="currentColor">cols = {0,2}</text><text x="280" y="150" text-anchor="start" font-size="14" fill="currentColor">r-c = {-1,0}</text><text x="280" y="205" text-anchor="start" font-size="14" fill="currentColor">r+c = {0,3}</text><text x="280" y="265" text-anchor="start" font-size="14" fill="currentColor">path = [0,2]</text><rect x="100" y="177" width="46" height="46" fill="none" stroke="#f59e0b" stroke-width="4"/></g>
+<g data-step="5" data-until="5"><text x="280" y="95" text-anchor="start" font-size="14" fill="currentColor">cols = {0}</text><text x="280" y="150" text-anchor="start" font-size="14" fill="currentColor">r-c = {0}</text><text x="280" y="205" text-anchor="start" font-size="14" fill="currentColor">r+c = {0}</text><text x="280" y="265" text-anchor="start" font-size="14" fill="currentColor">path = [0]</text></g>
+<g data-step="6" data-until="6"><text x="280" y="95" text-anchor="start" font-size="14" fill="currentColor">cols = {0,3}</text><text x="280" y="150" text-anchor="start" font-size="14" fill="currentColor">r-c = {-2,0}</text><text x="280" y="205" text-anchor="start" font-size="14" fill="currentColor">r+c = {0,4}</text><text x="280" y="265" text-anchor="start" font-size="14" fill="currentColor">path = [0,3]</text></g>
+<g data-step="7" data-until="7"><text x="280" y="95" text-anchor="start" font-size="14" fill="currentColor">cols = {0,1,3}</text><text x="280" y="150" text-anchor="start" font-size="14" fill="currentColor">r-c = {-2,0,1}</text><text x="280" y="205" text-anchor="start" font-size="14" fill="currentColor">r+c = {0,3,4}</text><text x="280" y="265" text-anchor="start" font-size="14" fill="currentColor">path = [0,3,1]</text></g>
+<g data-step="8" data-until="8"><text x="280" y="95" text-anchor="start" font-size="14" fill="currentColor">cols = {0,1,3}</text><text x="280" y="150" text-anchor="start" font-size="14" fill="currentColor">r-c = {-2,0,1}</text><text x="280" y="205" text-anchor="start" font-size="14" fill="currentColor">r+c = {0,3,4}</text><text x="280" y="265" text-anchor="start" font-size="14" fill="currentColor">path = [0,3,1]</text><rect x="152" y="229" width="46" height="46" fill="none" stroke="#f59e0b" stroke-width="4"/></g>
+<g data-step="9" data-until="9"><text x="280" y="95" text-anchor="start" font-size="14" fill="currentColor">cols = {0,3}</text><text x="280" y="150" text-anchor="start" font-size="14" fill="currentColor">r-c = {-2,0}</text><text x="280" y="205" text-anchor="start" font-size="14" fill="currentColor">r+c = {0,4}</text><text x="280" y="265" text-anchor="start" font-size="14" fill="currentColor">path = [0,3]</text></g>
+<g data-step="10" data-until="10"><text x="280" y="95" text-anchor="start" font-size="14" fill="currentColor">cols = {0}</text><text x="280" y="150" text-anchor="start" font-size="14" fill="currentColor">r-c = {0}</text><text x="280" y="205" text-anchor="start" font-size="14" fill="currentColor">r+c = {0}</text><text x="280" y="265" text-anchor="start" font-size="14" fill="currentColor">path = [0]</text></g>
+<g data-step="11" data-until="11"><text x="280" y="95" text-anchor="start" font-size="14" fill="currentColor">cols = {}</text><text x="280" y="150" text-anchor="start" font-size="14" fill="currentColor">r-c = {}</text><text x="280" y="205" text-anchor="start" font-size="14" fill="currentColor">r+c = {}</text><text x="280" y="265" text-anchor="start" font-size="14" fill="currentColor">path = []</text></g>
+<g data-step="12" data-until="12"><text x="280" y="95" text-anchor="start" font-size="14" fill="currentColor">cols = {1}</text><text x="280" y="150" text-anchor="start" font-size="14" fill="currentColor">r-c = {-1}</text><text x="280" y="205" text-anchor="start" font-size="14" fill="currentColor">r+c = {1}</text><text x="280" y="265" text-anchor="start" font-size="14" fill="currentColor">path = [1]</text></g>
+<g data-step="13" data-until="13"><text x="280" y="95" text-anchor="start" font-size="14" fill="currentColor">cols = {1}</text><text x="280" y="150" text-anchor="start" font-size="14" fill="currentColor">r-c = {-1}</text><text x="280" y="205" text-anchor="start" font-size="14" fill="currentColor">r+c = {1}</text><text x="280" y="265" text-anchor="start" font-size="14" fill="currentColor">path = [1]</text><rect x="48" y="125" width="46" height="46" fill="none" stroke="#f59e0b" stroke-width="4"/></g>
+<g data-step="14" data-until="14"><text x="280" y="95" text-anchor="start" font-size="14" fill="currentColor">cols = {1,3}</text><text x="280" y="150" text-anchor="start" font-size="14" fill="currentColor">r-c = {-2,-1}</text><text x="280" y="205" text-anchor="start" font-size="14" fill="currentColor">r+c = {1,4}</text><text x="280" y="265" text-anchor="start" font-size="14" fill="currentColor">path = [1,3]</text></g>
+<g data-step="15" data-until="15"><text x="280" y="95" text-anchor="start" font-size="14" fill="currentColor">cols = {0,1,3}</text><text x="280" y="150" text-anchor="start" font-size="14" fill="currentColor">r-c = {-2,-1,2}</text><text x="280" y="205" text-anchor="start" font-size="14" fill="currentColor">r+c = {1,2,4}</text><text x="280" y="265" text-anchor="start" font-size="14" fill="currentColor">path = [1,3,0]</text></g>
+<g data-step="16"><text x="280" y="95" text-anchor="start" font-size="14" fill="currentColor">cols = {0,1,2,3}</text><text x="280" y="150" text-anchor="start" font-size="14" fill="currentColor">r-c = {-2,-1,1,2}</text><text x="280" y="205" text-anchor="start" font-size="14" fill="currentColor">r+c = {1,2,4,5}</text><text x="280" y="265" text-anchor="start" font-size="14" fill="currentColor">path = [1,3,0,2]</text></g>
 </svg>
+<step-note data-step="1">Hàng/cột đánh số 0..3. Mỗi hàng đặt một hậu; ô màu đỏ nhạt bị các hậu hiện tại tấn công.</step-note>
+<step-note data-step="2">Đặt Q tại (0,0); thêm c=0, r-c=0, r+c=0 vào ba tập.</step-note>
+<step-note data-step="3">Hàng 1 bỏ cột 0,1 vì xung đột; đặt tại cột 2, lựa chọn an toàn đầu tiên.</step-note>
+<step-note data-step="4">Hàng 2 không có cột an toàn: ô thử (2,1) có r+c=3 trùng hậu (1,2). Cắt nhánh, không đặt hậu vào ô thử.</step-note>
+<step-note data-step="5">Gỡ Q(1,2), đồng thời xoá 2, -1, 3 khỏi ba tập. Thử cột kế tiếp ở hàng 1.</step-note>
+<step-note data-step="6">Đặt Q(1,3), rồi đi sâu xuống hàng 2.</step-note>
+<step-note data-step="7">Đặt Q(2,1), lựa chọn an toàn đầu tiên ở hàng 2.</step-note>
+<step-note data-step="8">Hàng 3 hết chỗ: (3,2) trùng r-c=1 với (2,1); các cột khác cũng bị tấn công.</step-note>
+<step-note data-step="9">Gỡ Q(2,1); các cột còn lại của hàng 2 cũng xung đột nên trả về.</step-note>
+<step-note data-step="10">Gỡ Q(1,3); hàng 1 không còn cột để thử.</step-note>
+<step-note data-step="11">Gỡ Q(0,0): cả nhánh bắt đầu cột 0 đã thất bại, ba tập rỗng trở lại.</step-note>
+<step-note data-step="12">Hàng 0 chuyển sang cột 1, bắt đầu nhánh mới.</step-note>
+<step-note data-step="13">Thử (1,0): r+c=1 trùng (0,1); cột 1 và 2 cũng không hợp lệ. Kiểm tra set trung bình O(1).</step-note>
+<step-note data-step="14">Đặt Q(1,3), cột an toàn duy nhất tại hàng 1.</step-note>
+<step-note data-step="15">Đặt Q(2,0); ba tập không có xung đột.</step-note>
+<step-note data-step="16">Đặt Q(3,2), đủ 4 hàng: ghi nhận nghiệm [1,3,0,2]. Nếu cần mọi nghiệm thì tiếp tục undo sau khi copy.</step-note>
+</step-flow>
 
 Khi đặt xong một quân ở `(r, c)`, ta thêm `c`, `r-c`, `r+c` vào ba set (choose), đệ quy sang hàng `r+1`, rồi **gỡ cả ba ra** (unchoose) trước khi thử cột kế — đúng khung choose–explore–unchoose. Nhờ pruning bằng ba set, cây từ `n^n` ô co lại còn cỡ `O(n!)` và thực tế nhỏ hơn nhiều.
 

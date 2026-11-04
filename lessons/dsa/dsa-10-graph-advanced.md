@@ -904,6 +904,32 @@ std::vector<int> findOrder(int numCourses, std::vector<std::vector<int>>& prereq
 
 **Ý tưởng / vì sao.** Thêm cạnh `(u, v)`: nếu u và v **đã cùng nhóm** thì nối thêm sẽ **tạo chu trình** → đây chính là cạnh thừa. DSU `union(u, v)` trả `false` đúng lúc đó. Vì duyệt cạnh theo thứ tự input và trả cạnh đầu tiên gây chu trình, ta tự động lấy được cạnh xuất hiện sau (cạnh khép vòng).
 
+Ví dụ <code>edges=[[1,2],[2,3],[1,3]]</code>: tìm cạnh bị từ chối, không nhầm cạnh graph với con trỏ parent của DSU.
+
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 330" role="img" aria-labelledby="dsg10-cycle-t dsg10-cycle-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsg10-cycle-t">DSU: cạnh đầu tiên khép chu trình</title>
+<desc id="dsg10-cycle-d">DSU: cạnh đầu tiên khép chu trình</desc>
+<defs><marker id="dsg10-cycle-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<text x="260.0" y="24" text-anchor="middle" font-size="16" fill="currentColor">DSU: cạnh đầu tiên khép chu trình</text>
+<rect x="88" y="68" width="44" height="44" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="110" y="95" text-anchor="middle" font-size="18" fill="currentColor">1</text>
+<rect x="388" y="68" width="44" height="44" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="410" y="95" text-anchor="middle" font-size="18" fill="currentColor">2</text>
+<rect x="238" y="208" width="44" height="44" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="260" y="235" text-anchor="middle" font-size="18" fill="currentColor">3</text>
+<g data-step="1"><path d="M135 90 L385 90" fill="none" stroke="currentColor"/></g>
+<g data-step="2"><path d="M390 110 L280 210" fill="none" stroke="currentColor"/></g>
+<g data-step="3"><path d="M130 110 L240 210" fill="none" stroke="#f43f5e" stroke-width="3" stroke-dasharray="6 4"/></g>
+<g data-step="1" data-until="1"><text x="260" y="300" text-anchor="middle" font-size="14" fill="currentColor">union(1,2): gốc 1 ≠ 2 → gộp</text></g>
+<g data-step="2" data-until="2"><text x="260" y="300" text-anchor="middle" font-size="14" fill="currentColor">union(2,3): gốc 1 ≠ 3 → gộp</text></g>
+<g data-step="3"><text x="260" y="300" text-anchor="middle" font-size="14" fill="currentColor">union(1,3): gốc 1 = 1 → từ chối</text></g>
+</svg>
+<step-note data-step="1">Duyệt edges=[[1,2],[2,3],[1,3]] theo thứ tự; gộp hai đỉnh đầu vào cùng tập.</step-note>
+<step-note data-step="2">Nối 2 với 3, cả ba đỉnh đã cùng một thành phần liên thông.</step-note>
+<step-note data-step="3">Hai đầu cạnh [1,3] có cùng root; không union thêm, trả cạnh này. Nét đứt đỏ là cạnh input bị từ chối, không phải liên kết parent.</step-note>
+</step-flow>
+
 ```python
 def findRedundantConnection(edges):
     n = len(edges)
@@ -1157,7 +1183,7 @@ int networkDelayTime(std::vector<std::vector<int>>& times, int n, int k) {
 
 **Độ phức tạp.** Thời gian **O((V + E) log V)**, bộ nhớ **O(V + E)**.
 
-**Bẫy.** (1) Đỉnh đánh số **1..n** — cấp mảng `n+1` và kiểm tra reachable kỹ. (2) Đáp án là **max** của các khoảng cách, không phải tổng. (3) Bản "lazy" cho phép phần tử cũ trong heap; **luôn so `d > dist[u]` để bỏ bản cũ**, nếu không sẽ duyệt cạnh thừa và mất bảo đảm độ phức tạp.
+**Bẫy.** (1) Đỉnh đánh số **1..n** — cấp mảng `n+1` và kiểm tra reachable kỹ. (2) Đáp án là **max** của các khoảng cách, không phải tổng. (3) Bản "lazy" cho phép phần tử cũ trong heap. Trong code trên, `dist` chỉ chứa đỉnh đã chốt nên dùng **`if u in dist: continue`** để bỏ bản cũ; còn template mục 4.2 dùng mảng khoảng cách tạm và kiểm `d > dist[u]`. Cả hai đều tránh duyệt lại cạnh từ một đỉnh đã chốt.
 
 ## 7. Sai lầm thường gặp & cách tránh
 

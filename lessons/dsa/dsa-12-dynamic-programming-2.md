@@ -130,6 +130,49 @@ int dp2dTemplate(const string& A, const string& B) {
 | Hình vuông/CN con | Tìm hình vuông toàn số 1 lớn nhất | `dp[r][c] = 1 + min(trên, trái, chéo)` nếu ô = 1 | O(mn) / O(n) | Maximal Square (LC 221) |
 | Đi với rào cản | Có ô cấm (obstacle) | Như đếm đường nhưng `dp=0` tại ô cấm | O(mn) | Unique Paths II (LC 63) |
 
+Ví dụ không có ô cấm: bắt đầu (0,0), chỉ đi phải hoặc xuống tới (2,2).
+
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 320" role="img" aria-labelledby="dsg12-grid-t dsg12-grid-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsg12-grid-t">Unique Paths: điền lưới 3×3</title>
+<desc id="dsg12-grid-d">Unique Paths: điền lưới 3×3</desc>
+<defs><marker id="dsg12-grid-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<text x="260.0" y="24" text-anchor="middle" font-size="16" fill="currentColor">Unique Paths: điền lưới 3×3</text>
+<rect x="150" y="65" width="60" height="48" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<g data-step="1"><text x="180" y="95" text-anchor="middle" font-size="18" fill="currentColor">1</text></g>
+<rect x="224" y="65" width="60" height="48" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<g data-step="2"><text x="254" y="95" text-anchor="middle" font-size="18" fill="currentColor">1</text></g>
+<rect x="298" y="65" width="60" height="48" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<g data-step="3"><text x="328" y="95" text-anchor="middle" font-size="18" fill="currentColor">1</text></g>
+<rect x="150" y="130" width="60" height="48" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<g data-step="4"><text x="180" y="160" text-anchor="middle" font-size="18" fill="currentColor">1</text></g>
+<rect x="224" y="130" width="60" height="48" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<g data-step="5"><text x="254" y="160" text-anchor="middle" font-size="18" fill="currentColor">2</text></g>
+<g data-step="5" data-until="5"><path d="M254 113 L254 128" fill="none" stroke="currentColor" marker-end="url(#dsg12-grid-a)"/><path d="M210 154 L222 154" fill="none" stroke="currentColor" marker-end="url(#dsg12-grid-a)"/></g>
+<rect x="298" y="130" width="60" height="48" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<g data-step="6"><text x="328" y="160" text-anchor="middle" font-size="18" fill="currentColor">3</text></g>
+<g data-step="6" data-until="6"><path d="M328 113 L328 128" fill="none" stroke="currentColor" marker-end="url(#dsg12-grid-a)"/><path d="M284 154 L296 154" fill="none" stroke="currentColor" marker-end="url(#dsg12-grid-a)"/></g>
+<rect x="150" y="195" width="60" height="48" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<g data-step="7"><text x="180" y="225" text-anchor="middle" font-size="18" fill="currentColor">1</text></g>
+<rect x="224" y="195" width="60" height="48" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<g data-step="8"><text x="254" y="225" text-anchor="middle" font-size="18" fill="currentColor">3</text></g>
+<g data-step="8" data-until="8"><path d="M254 178 L254 193" fill="none" stroke="currentColor" marker-end="url(#dsg12-grid-a)"/><path d="M210 219 L222 219" fill="none" stroke="currentColor" marker-end="url(#dsg12-grid-a)"/></g>
+<rect x="298" y="195" width="60" height="48" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<g data-step="9"><text x="328" y="225" text-anchor="middle" font-size="18" fill="currentColor">6</text></g>
+<g data-step="9"><path d="M328 178 L328 193" fill="none" stroke="currentColor" marker-end="url(#dsg12-grid-a)"/><path d="M284 219 L296 219" fill="none" stroke="currentColor" marker-end="url(#dsg12-grid-a)"/></g>
+<text x="260" y="292" text-anchor="middle" font-size="14" fill="currentColor">dp[2][2]=6 đường đi · O(số hàng × số cột)</text>
+</svg>
+<step-note data-step="1">Ô biên (0,0) có đúng 1 đường đi từ (0,0); chỉ sang phải hoặc xuống.</step-note>
+<step-note data-step="2">Ô biên (0,1) có đúng 1 đường đi từ (0,0); chỉ sang phải hoặc xuống.</step-note>
+<step-note data-step="3">Ô biên (0,2) có đúng 1 đường đi từ (0,0); chỉ sang phải hoặc xuống.</step-note>
+<step-note data-step="4">Ô biên (1,0) có đúng 1 đường đi từ (0,0); chỉ sang phải hoặc xuống.</step-note>
+<step-note data-step="5">dp[1][1] = 1 (trên) + 1 (trái) = 2: hai hướng bước cuối không trùng nhau.</step-note>
+<step-note data-step="6">dp[1][2] = 1 (trên) + 2 (trái) = 3: hai hướng bước cuối không trùng nhau.</step-note>
+<step-note data-step="7">Ô biên (2,0) có đúng 1 đường đi từ (0,0); chỉ sang phải hoặc xuống.</step-note>
+<step-note data-step="8">dp[2][1] = 2 (trên) + 1 (trái) = 3: hai hướng bước cuối không trùng nhau.</step-note>
+<step-note data-step="9">dp[2][2] = 3 (trên) + 3 (trái) = 6: hai hướng bước cuối không trùng nhau.</step-note>
+</step-flow>
+
 ### 3.2. String DP — hai chuỗi
 
 | Dạng | Dấu hiệu nhận biết | Hướng làm | Độ phức tạp | Bài kinh điển |
@@ -148,7 +191,45 @@ int dp2dTemplate(const string& A, const string& B) {
 | Gộp/cắt tốn phí | "Chia/gộp dãy, chi phí phụ thuộc cách chia" | `dp[i][j] = min/max over k (dp[i][k] + dp[k+1][j] + cost)` | O(n³) | Matrix Chain, Stone Game, Burst Balloons (LC 312) |
 | Điểm chia tối ưu | "Nổ/ghép phần tử theo thứ tự chọn" | duyệt điểm `k` cuối cùng trong khoảng | O(n³) | Burst Balloons (LC 312) |
 
-> Ghi nhớ: Dấu hiệu **interval DP** rất đặc trưng — có một vòng lặp `k` *bên trong* `(i, j)` để duyệt "điểm chia/điểm cuối cùng". Đó là điểm phân biệt với string DP (chỉ có 2 vòng `i, j`). Vì có 3 vòng lồng nhau, interval DP thường là **O(n³)**.
+> Ghi nhớ: Với **interval DP dạng chia/gộp**, có một vòng lặp `k` *bên trong* `(i, j)` để duyệt "điểm chia/điểm cuối cùng", nên thường là **O(n³)**. Riêng palindrome chỉ cần khoảng trong `dp[i+1][j-1]`, không duyệt `k`, nên **O(n²)**. Ý nghĩa hai chỉ số (hai đầu một khoảng) mới là dấu hiệu phân biệt với string DP trên hai chuỗi.
+
+Ví dụ palindrome substring <code>s="aba"</code>: <code>dp[i][j] = s[i]==s[j] and (j-i&lt;2 or dp[i+1][j-1])</code>.
+
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 330" role="img" aria-labelledby="dsg12-interval-t dsg12-interval-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsg12-interval-t">Interval DP: từ khoảng ngắn tới dài</title>
+<desc id="dsg12-interval-d">Interval DP: từ khoảng ngắn tới dài</desc>
+<defs><marker id="dsg12-interval-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<text x="260.0" y="24" text-anchor="middle" font-size="16" fill="currentColor">Interval DP: từ khoảng ngắn tới dài</text>
+<text x="260" y="50" text-anchor="middle" font-size="14" fill="currentColor">s="aba" · dp[i][j]: s[i..j] đối xứng</text>
+<text x="160" y="75" text-anchor="middle" font-size="13" fill="currentColor">0:a</text>
+<text x="90" y="117" text-anchor="middle" font-size="13" fill="currentColor">0:a</text>
+<text x="230" y="75" text-anchor="middle" font-size="13" fill="currentColor">1:b</text>
+<text x="90" y="177" text-anchor="middle" font-size="13" fill="currentColor">1:b</text>
+<text x="300" y="75" text-anchor="middle" font-size="13" fill="currentColor">2:a</text>
+<text x="90" y="237" text-anchor="middle" font-size="13" fill="currentColor">2:a</text>
+<rect x="130" y="88" width="60" height="48" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<rect x="200" y="88" width="60" height="48" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<rect x="270" y="88" width="60" height="48" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<rect x="200" y="148" width="60" height="48" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<rect x="270" y="148" width="60" height="48" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<rect x="270" y="208" width="60" height="48" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<g data-step="1"><text x="160" y="118" text-anchor="middle" font-size="17" fill="currentColor">T</text></g>
+<g data-step="2"><text x="230" y="178" text-anchor="middle" font-size="17" fill="currentColor">T</text></g>
+<g data-step="3"><text x="300" y="238" text-anchor="middle" font-size="17" fill="currentColor">T</text></g>
+<g data-step="4"><text x="230" y="118" text-anchor="middle" font-size="17" fill="currentColor">F</text></g>
+<g data-step="5"><text x="300" y="178" text-anchor="middle" font-size="17" fill="currentColor">F</text></g>
+<g data-step="6"><text x="300" y="118" text-anchor="middle" font-size="17" fill="currentColor">T</text></g>
+<g data-step="6"><path d="M230 148 L285 128" fill="none" stroke="currentColor" marker-end="url(#dsg12-interval-a)"/></g>
+<text x="260" y="300" text-anchor="middle" font-size="14" fill="currentColor">Thứ tự độ dài: 1 → 2 → 3 · O(n²)</text>
+</svg>
+<step-note data-step="1">Độ dài 1: dp[0][0]=True, mọi ký tự đơn là palindrome.</step-note>
+<step-note data-step="2">Độ dài 1: dp[1][1]=True, mọi ký tự đơn là palindrome.</step-note>
+<step-note data-step="3">Độ dài 1: dp[2][2]=True, mọi ký tự đơn là palindrome.</step-note>
+<step-note data-step="4">Độ dài 2: hai đầu khác nhau nên dp[0][1]=False.</step-note>
+<step-note data-step="5">Độ dài 2: hai đầu khác nhau nên dp[1][2]=False.</step-note>
+<step-note data-step="6">Độ dài 3: s[0]=s[2]=a và dp[1][1]=True đã tính, nên dp[0][2]=True. Không điền theo hàng từ trên xuống.</step-note>
+</step-flow>
 
 ## 4. Bài mẫu giải chi tiết
 

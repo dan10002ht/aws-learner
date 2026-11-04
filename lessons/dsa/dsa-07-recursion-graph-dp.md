@@ -121,6 +121,97 @@ backtrack(trạng_thái):
 
 Bài điển hình: liệt kê mọi hoán vị của một mảng. Ý tưởng: ở mỗi vị trí, thử lần lượt từng phần tử *chưa dùng*.
 
+Với <code>nums=[1,2,3]</code>, viền vàng là lời gọi hiện tại; các nhánh khác là lựa chọn có thể thử. F/T tương ứng False/True.
+
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 450" role="img" aria-labelledby="dsg07-perm-t dsg07-perm-d" style="width:100%;max-width:720px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsg07-perm-t">Hoán vị [1,2,3]: chọn → đi sâu → gỡ</title>
+<desc id="dsg07-perm-d">Cây đủ sáu lá; viền vàng đánh dấu lời gọi hiện tại. Trạng thái cũ biến mất tại cùng toạ độ khi undo.</desc>
+<defs><marker id="dsg07-perm-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<text x="360.0" y="24" text-anchor="middle" font-size="16" fill="currentColor">Hoán vị [1,2,3]: chọn → đi sâu → gỡ</text>
+<rect x="317" y="49" width="86" height="32" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="360" y="70" text-anchor="middle" font-size="13" fill="currentColor">[]</text>
+<path d="M360 81 L125 126" fill="none" stroke="currentColor" marker-end="url(#dsg07-perm-a)"/>
+<rect x="82" y="127" width="86" height="32" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="125" y="148" text-anchor="middle" font-size="13" fill="currentColor">[1]</text>
+<path d="M360 81 L360 126" fill="none" stroke="currentColor" marker-end="url(#dsg07-perm-a)"/>
+<rect x="317" y="127" width="86" height="32" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="360" y="148" text-anchor="middle" font-size="13" fill="currentColor">[2]</text>
+<path d="M360 81 L595 126" fill="none" stroke="currentColor" marker-end="url(#dsg07-perm-a)"/>
+<rect x="552" y="127" width="86" height="32" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="595" y="148" text-anchor="middle" font-size="13" fill="currentColor">[3]</text>
+<path d="M125 159 L65 204" fill="none" stroke="currentColor" marker-end="url(#dsg07-perm-a)"/>
+<rect x="22" y="205" width="86" height="32" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="65" y="226" text-anchor="middle" font-size="13" fill="currentColor">[1,2]</text>
+<path d="M125 159 L183 204" fill="none" stroke="currentColor" marker-end="url(#dsg07-perm-a)"/>
+<rect x="140" y="205" width="86" height="32" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="183" y="226" text-anchor="middle" font-size="13" fill="currentColor">[1,3]</text>
+<path d="M360 159 L301 204" fill="none" stroke="currentColor" marker-end="url(#dsg07-perm-a)"/>
+<rect x="258" y="205" width="86" height="32" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="301" y="226" text-anchor="middle" font-size="13" fill="currentColor">[2,1]</text>
+<path d="M360 159 L419 204" fill="none" stroke="currentColor" marker-end="url(#dsg07-perm-a)"/>
+<rect x="376" y="205" width="86" height="32" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="419" y="226" text-anchor="middle" font-size="13" fill="currentColor">[2,3]</text>
+<path d="M595 159 L537 204" fill="none" stroke="currentColor" marker-end="url(#dsg07-perm-a)"/>
+<rect x="494" y="205" width="86" height="32" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="537" y="226" text-anchor="middle" font-size="13" fill="currentColor">[3,1]</text>
+<path d="M595 159 L655 204" fill="none" stroke="currentColor" marker-end="url(#dsg07-perm-a)"/>
+<rect x="612" y="205" width="86" height="32" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="655" y="226" text-anchor="middle" font-size="13" fill="currentColor">[3,2]</text>
+<path d="M65 237 L65 282" fill="none" stroke="currentColor" marker-end="url(#dsg07-perm-a)"/>
+<rect x="22" y="283" width="86" height="32" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="65" y="304" text-anchor="middle" font-size="13" fill="currentColor">[1,2,3]</text>
+<path d="M183 237 L183 282" fill="none" stroke="currentColor" marker-end="url(#dsg07-perm-a)"/>
+<rect x="140" y="283" width="86" height="32" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="183" y="304" text-anchor="middle" font-size="13" fill="currentColor">[1,3,2]</text>
+<path d="M301 237 L301 282" fill="none" stroke="currentColor" marker-end="url(#dsg07-perm-a)"/>
+<rect x="258" y="283" width="86" height="32" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="301" y="304" text-anchor="middle" font-size="13" fill="currentColor">[2,1,3]</text>
+<path d="M419 237 L419 282" fill="none" stroke="currentColor" marker-end="url(#dsg07-perm-a)"/>
+<rect x="376" y="283" width="86" height="32" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="419" y="304" text-anchor="middle" font-size="13" fill="currentColor">[2,3,1]</text>
+<path d="M537 237 L537 282" fill="none" stroke="currentColor" marker-end="url(#dsg07-perm-a)"/>
+<rect x="494" y="283" width="86" height="32" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="537" y="304" text-anchor="middle" font-size="13" fill="currentColor">[3,1,2]</text>
+<path d="M655 237 L655 282" fill="none" stroke="currentColor" marker-end="url(#dsg07-perm-a)"/>
+<rect x="612" y="283" width="86" height="32" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="655" y="304" text-anchor="middle" font-size="13" fill="currentColor">[3,2,1]</text>
+<rect x="35" y="365" width="650" height="64" rx="5" fill="#14b8a6" fill-opacity=".14" stroke="#14b8a6"/>
+<text x="55" y="390" text-anchor="start" font-size="13" fill="currentColor">Trạng thái hiện tại</text>
+<g data-step="1" data-until="1"><rect x="313" y="45" width="94" height="40" rx="6" fill="none" stroke="#f59e0b" stroke-width="3"/><text x="210" y="411" text-anchor="middle" font-size="15" fill="currentColor">path=[]</text><text x="495" y="411" text-anchor="middle" font-size="15" fill="currentColor">used=[F,F,F]</text></g>
+<g data-step="2" data-until="2"><rect x="78" y="123" width="94" height="40" rx="6" fill="none" stroke="#f59e0b" stroke-width="3"/><text x="210" y="411" text-anchor="middle" font-size="15" fill="currentColor">path=[1]</text><text x="495" y="411" text-anchor="middle" font-size="15" fill="currentColor">used=[T,F,F]</text></g>
+<g data-step="3" data-until="3"><rect x="18" y="201" width="94" height="40" rx="6" fill="none" stroke="#f59e0b" stroke-width="3"/><text x="210" y="411" text-anchor="middle" font-size="15" fill="currentColor">path=[1,2]</text><text x="495" y="411" text-anchor="middle" font-size="15" fill="currentColor">used=[T,T,F]</text></g>
+<g data-step="4" data-until="4"><rect x="18" y="279" width="94" height="40" rx="6" fill="none" stroke="#f59e0b" stroke-width="3"/><text x="210" y="411" text-anchor="middle" font-size="15" fill="currentColor">path=[1,2,3]</text><text x="495" y="411" text-anchor="middle" font-size="15" fill="currentColor">used=[T,T,T]</text></g>
+<g data-step="5" data-until="5"><rect x="18" y="201" width="94" height="40" rx="6" fill="none" stroke="#f59e0b" stroke-width="3"/><text x="210" y="411" text-anchor="middle" font-size="15" fill="currentColor">path=[1,2]</text><text x="495" y="411" text-anchor="middle" font-size="15" fill="currentColor">used=[T,T,F]</text></g>
+<g data-step="6" data-until="6"><rect x="78" y="123" width="94" height="40" rx="6" fill="none" stroke="#f59e0b" stroke-width="3"/><text x="210" y="411" text-anchor="middle" font-size="15" fill="currentColor">path=[1]</text><text x="495" y="411" text-anchor="middle" font-size="15" fill="currentColor">used=[T,F,F]</text></g>
+<g data-step="7" data-until="7"><rect x="136" y="201" width="94" height="40" rx="6" fill="none" stroke="#f59e0b" stroke-width="3"/><text x="210" y="411" text-anchor="middle" font-size="15" fill="currentColor">path=[1,3]</text><text x="495" y="411" text-anchor="middle" font-size="15" fill="currentColor">used=[T,F,T]</text></g>
+<g data-step="8" data-until="8"><rect x="136" y="279" width="94" height="40" rx="6" fill="none" stroke="#f59e0b" stroke-width="3"/><text x="210" y="411" text-anchor="middle" font-size="15" fill="currentColor">path=[1,3,2]</text><text x="495" y="411" text-anchor="middle" font-size="15" fill="currentColor">used=[T,T,T]</text></g>
+<g data-step="9" data-until="9"><rect x="136" y="201" width="94" height="40" rx="6" fill="none" stroke="#f59e0b" stroke-width="3"/><text x="210" y="411" text-anchor="middle" font-size="15" fill="currentColor">path=[1,3]</text><text x="495" y="411" text-anchor="middle" font-size="15" fill="currentColor">used=[T,F,T]</text></g>
+<g data-step="10" data-until="10"><rect x="78" y="123" width="94" height="40" rx="6" fill="none" stroke="#f59e0b" stroke-width="3"/><text x="210" y="411" text-anchor="middle" font-size="15" fill="currentColor">path=[1]</text><text x="495" y="411" text-anchor="middle" font-size="15" fill="currentColor">used=[T,F,F]</text></g>
+<g data-step="11" data-until="11"><rect x="313" y="45" width="94" height="40" rx="6" fill="none" stroke="#f59e0b" stroke-width="3"/><text x="210" y="411" text-anchor="middle" font-size="15" fill="currentColor">path=[]</text><text x="495" y="411" text-anchor="middle" font-size="15" fill="currentColor">used=[F,F,F]</text></g>
+<g data-step="12" data-until="12"><rect x="313" y="123" width="94" height="40" rx="6" fill="none" stroke="#f59e0b" stroke-width="3"/><text x="210" y="411" text-anchor="middle" font-size="15" fill="currentColor">path=[2]</text><text x="495" y="411" text-anchor="middle" font-size="15" fill="currentColor">used=[F,T,F]</text></g>
+<g data-step="13" data-until="13"><rect x="254" y="201" width="94" height="40" rx="6" fill="none" stroke="#f59e0b" stroke-width="3"/><text x="210" y="411" text-anchor="middle" font-size="15" fill="currentColor">path=[2,1]</text><text x="495" y="411" text-anchor="middle" font-size="15" fill="currentColor">used=[T,T,F]</text></g>
+<g data-step="14" data-until="14"><rect x="254" y="279" width="94" height="40" rx="6" fill="none" stroke="#f59e0b" stroke-width="3"/><text x="210" y="411" text-anchor="middle" font-size="15" fill="currentColor">path=[2,1,3]</text><text x="495" y="411" text-anchor="middle" font-size="15" fill="currentColor">used=[T,T,T]</text></g>
+<g data-step="15"><rect x="313" y="45" width="94" height="40" rx="6" fill="none" stroke="#f59e0b" stroke-width="3"/><text x="210" y="411" text-anchor="middle" font-size="15" fill="currentColor">path=[]</text><text x="495" y="411" text-anchor="middle" font-size="15" fill="currentColor">used=[F,F,F]</text></g>
+<g data-step="15"><rect x="20" y="281" width="90" height="36" rx="5" fill="none" stroke="#10b981" stroke-width="2"/><rect x="138" y="281" width="90" height="36" rx="5" fill="none" stroke="#10b981" stroke-width="2"/><rect x="256" y="281" width="90" height="36" rx="5" fill="none" stroke="#10b981" stroke-width="2"/><rect x="374" y="281" width="90" height="36" rx="5" fill="none" stroke="#10b981" stroke-width="2"/><rect x="492" y="281" width="90" height="36" rx="5" fill="none" stroke="#10b981" stroke-width="2"/><rect x="610" y="281" width="90" height="36" rx="5" fill="none" stroke="#10b981" stroke-width="2"/><text x="360" y="348" text-anchor="middle" font-size="14" fill="currentColor">res: 6 bản sao = 6 lá của cây</text></g>
+</svg>
+<step-note data-step="1">Bắt đầu với path rỗng; cả ba phần tử đều chưa dùng.</step-note>
+<step-note data-step="2">Chọn 1: used[0]=True rồi path.append(1); đi sâu vào nhánh 1.</step-note>
+<step-note data-step="3">Bỏ qua 1 đã dùng, chọn 2 rồi đi sâu.</step-note>
+<step-note data-step="4">Chọn 3, đủ độ dài: lưu bản copy [1,2,3], không lưu tham chiếu path.</step-note>
+<step-note data-step="5">Return: used[2]=False và path.pop(); 3 lại dùng được.</step-note>
+<step-note data-step="6">Hết lựa chọn ở [1,2], tiếp tục gỡ 2; trở về [1].</step-note>
+<step-note data-step="7">Thử lựa chọn kế tiếp 3 ở cùng cấp, rồi đi sâu.</step-note>
+<step-note data-step="8">Chọn 2: lưu lá thứ hai [1,3,2].</step-note>
+<step-note data-step="9">Gỡ 2 sau khi lưu nghiệm; trở về [1,3].</step-note>
+<step-note data-step="10">Hết nhánh [1,3], gỡ 3: lùi tầng thứ nhất.</step-note>
+<step-note data-step="11">Nhánh bắt đầu bằng 1 đã xong; gỡ 1: lùi tầng thứ hai tới gốc.</step-note>
+<step-note data-step="12">Chọn 2 ở gốc. Undo đã trả used về toàn False nên 1 có thể dùng lại.</step-note>
+<step-note data-step="13">Đi sâu, chọn 1 trong nhánh bắt đầu bằng 2.</step-note>
+<step-note data-step="14">Chọn 3, lưu [2,1,3]. Các nhánh còn lại chạy cùng khung.</step-note>
+<step-note data-step="15">Sau khi duyệt hết, path rỗng và used toàn False; res giữ đủ 6 bản copy. Tổng chi phí O(n × n!).</step-note>
+</step-flow>
+
 ```python
 def permutations(nums):
     res, used, path = [], [False] * len(nums), []
@@ -233,6 +324,110 @@ Bài N-queens: đặt `N` quân hậu lên bàn cờ `N×N` sao cho không quân
 
 Mẹo phỏng vấn: dùng `set` để kiểm tra xung đột đường chéo trong O(1) thay vì quét cả bàn cờ — đây chính là chỗ kiến thức hash set của bài trước phát huy.
 
+Bấm từng bước để thấy hậu bị gỡ khi một hàng không còn ô an toàn.
+
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 350" role="img" aria-labelledby="dsg07-queen-t dsg07-queen-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsg07-queen-t">4-Queens: thử cột, cắt nhánh, quay lui</title>
+<desc id="dsg07-queen-d">Một bàn cờ cố định; hậu bị gỡ và các giá trị tập cũ biến mất. Đi hết nhánh cột 0 trước khi tìm nghiệm cột [1,3,0,2].</desc>
+<defs><marker id="dsg07-queen-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<text x="260.0" y="24" text-anchor="middle" font-size="16" fill="currentColor">4-Queens: thử cột, cắt nhánh, quay lui</text>
+<text x="155" y="52" text-anchor="middle" font-size="13" fill="currentColor">Cột c</text>
+<text x="380" y="52" text-anchor="middle" font-size="14" fill="currentColor">Tập đã chiếm</text><text x="71" y="65" text-anchor="middle" font-size="13" fill="currentColor">0</text><text x="123" y="65" text-anchor="middle" font-size="13" fill="currentColor">1</text><text x="175" y="65" text-anchor="middle" font-size="13" fill="currentColor">2</text><text x="227" y="65" text-anchor="middle" font-size="13" fill="currentColor">3</text>
+<text x="22" y="99" text-anchor="middle" font-size="14" fill="currentColor">0</text>
+<rect x="45" y="70" width="52" height="52" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<rect x="97" y="70" width="52" height="52" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<rect x="149" y="70" width="52" height="52" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<rect x="201" y="70" width="52" height="52" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="22" y="151" text-anchor="middle" font-size="14" fill="currentColor">1</text>
+<rect x="45" y="122" width="52" height="52" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<rect x="97" y="122" width="52" height="52" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<rect x="149" y="122" width="52" height="52" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<rect x="201" y="122" width="52" height="52" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="22" y="203" text-anchor="middle" font-size="14" fill="currentColor">2</text>
+<rect x="45" y="174" width="52" height="52" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<rect x="97" y="174" width="52" height="52" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<rect x="149" y="174" width="52" height="52" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<rect x="201" y="174" width="52" height="52" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="22" y="255" text-anchor="middle" font-size="14" fill="currentColor">3</text>
+<rect x="45" y="226" width="52" height="52" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<rect x="97" y="226" width="52" height="52" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<rect x="149" y="226" width="52" height="52" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<rect x="201" y="226" width="52" height="52" rx="5" fill="currentColor" fill-opacity="0.04" stroke="currentColor" stroke-opacity="0.3"/>
+<text x="155" y="307" text-anchor="middle" font-size="13" fill="currentColor">Q: hậu đã đặt · đỏ: bị tấn công</text>
+<text x="155" y="329" text-anchor="middle" font-size="13" fill="currentColor">Viền vàng: ô đang thử</text>
+<g data-step="2" data-until="10"><text x="71" y="104" text-anchor="middle" font-size="25" fill="currentColor">Q</text></g>
+<g data-step="12"><rect x="46" y="71" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="12"><text x="123" y="104" text-anchor="middle" font-size="25" fill="currentColor">Q</text></g>
+<g data-step="2" data-until="10"><rect x="98" y="71" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="2" data-until="10"><rect x="150" y="71" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="12"><rect x="150" y="71" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="2" data-until="10"><rect x="202" y="71" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="12"><rect x="202" y="71" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="2" data-until="10"><rect x="46" y="123" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="12"><rect x="46" y="123" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="2" data-until="10"><rect x="98" y="123" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="12"><rect x="98" y="123" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="3" data-until="4"><text x="175" y="156" text-anchor="middle" font-size="25" fill="currentColor">Q</text></g>
+<g data-step="6" data-until="9"><rect x="150" y="123" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="12"><rect x="150" y="123" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="6" data-until="9"><text x="227" y="156" text-anchor="middle" font-size="25" fill="currentColor">Q</text></g>
+<g data-step="14"><text x="227" y="156" text-anchor="middle" font-size="25" fill="currentColor">Q</text></g>
+<g data-step="3" data-until="4"><rect x="202" y="123" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="15"><text x="71" y="208" text-anchor="middle" font-size="25" fill="currentColor">Q</text></g>
+<g data-step="2" data-until="10"><rect x="46" y="175" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="7" data-until="8"><text x="123" y="208" text-anchor="middle" font-size="25" fill="currentColor">Q</text></g>
+<g data-step="3" data-until="4"><rect x="98" y="175" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="12"><rect x="98" y="175" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="2" data-until="10"><rect x="150" y="175" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="14"><rect x="150" y="175" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="3" data-until="4"><rect x="202" y="175" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="6" data-until="9"><rect x="202" y="175" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="12"><rect x="202" y="175" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="2" data-until="10"><rect x="46" y="227" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="15"><rect x="46" y="227" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="6" data-until="9"><rect x="98" y="227" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="12"><rect x="98" y="227" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="16"><text x="175" y="260" text-anchor="middle" font-size="25" fill="currentColor">Q</text></g>
+<g data-step="3" data-until="4"><rect x="150" y="227" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="7" data-until="8"><rect x="150" y="227" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="2" data-until="10"><rect x="202" y="227" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="14"><rect x="202" y="227" width="50" height="50" fill="#f43f5e" fill-opacity="0.35"/></g>
+<g data-step="1" data-until="1"><text x="280" y="95" text-anchor="start" font-size="14" fill="currentColor">cols = {}</text><text x="280" y="150" text-anchor="start" font-size="14" fill="currentColor">r-c = {}</text><text x="280" y="205" text-anchor="start" font-size="14" fill="currentColor">r+c = {}</text><text x="280" y="265" text-anchor="start" font-size="14" fill="currentColor">path = []</text></g>
+<g data-step="2" data-until="2"><text x="280" y="95" text-anchor="start" font-size="14" fill="currentColor">cols = {0}</text><text x="280" y="150" text-anchor="start" font-size="14" fill="currentColor">r-c = {0}</text><text x="280" y="205" text-anchor="start" font-size="14" fill="currentColor">r+c = {0}</text><text x="280" y="265" text-anchor="start" font-size="14" fill="currentColor">path = [0]</text></g>
+<g data-step="3" data-until="3"><text x="280" y="95" text-anchor="start" font-size="14" fill="currentColor">cols = {0,2}</text><text x="280" y="150" text-anchor="start" font-size="14" fill="currentColor">r-c = {-1,0}</text><text x="280" y="205" text-anchor="start" font-size="14" fill="currentColor">r+c = {0,3}</text><text x="280" y="265" text-anchor="start" font-size="14" fill="currentColor">path = [0,2]</text></g>
+<g data-step="4" data-until="4"><text x="280" y="95" text-anchor="start" font-size="14" fill="currentColor">cols = {0,2}</text><text x="280" y="150" text-anchor="start" font-size="14" fill="currentColor">r-c = {-1,0}</text><text x="280" y="205" text-anchor="start" font-size="14" fill="currentColor">r+c = {0,3}</text><text x="280" y="265" text-anchor="start" font-size="14" fill="currentColor">path = [0,2]</text><rect x="100" y="177" width="46" height="46" fill="none" stroke="#f59e0b" stroke-width="4"/></g>
+<g data-step="5" data-until="5"><text x="280" y="95" text-anchor="start" font-size="14" fill="currentColor">cols = {0}</text><text x="280" y="150" text-anchor="start" font-size="14" fill="currentColor">r-c = {0}</text><text x="280" y="205" text-anchor="start" font-size="14" fill="currentColor">r+c = {0}</text><text x="280" y="265" text-anchor="start" font-size="14" fill="currentColor">path = [0]</text></g>
+<g data-step="6" data-until="6"><text x="280" y="95" text-anchor="start" font-size="14" fill="currentColor">cols = {0,3}</text><text x="280" y="150" text-anchor="start" font-size="14" fill="currentColor">r-c = {-2,0}</text><text x="280" y="205" text-anchor="start" font-size="14" fill="currentColor">r+c = {0,4}</text><text x="280" y="265" text-anchor="start" font-size="14" fill="currentColor">path = [0,3]</text></g>
+<g data-step="7" data-until="7"><text x="280" y="95" text-anchor="start" font-size="14" fill="currentColor">cols = {0,1,3}</text><text x="280" y="150" text-anchor="start" font-size="14" fill="currentColor">r-c = {-2,0,1}</text><text x="280" y="205" text-anchor="start" font-size="14" fill="currentColor">r+c = {0,3,4}</text><text x="280" y="265" text-anchor="start" font-size="14" fill="currentColor">path = [0,3,1]</text></g>
+<g data-step="8" data-until="8"><text x="280" y="95" text-anchor="start" font-size="14" fill="currentColor">cols = {0,1,3}</text><text x="280" y="150" text-anchor="start" font-size="14" fill="currentColor">r-c = {-2,0,1}</text><text x="280" y="205" text-anchor="start" font-size="14" fill="currentColor">r+c = {0,3,4}</text><text x="280" y="265" text-anchor="start" font-size="14" fill="currentColor">path = [0,3,1]</text><rect x="152" y="229" width="46" height="46" fill="none" stroke="#f59e0b" stroke-width="4"/></g>
+<g data-step="9" data-until="9"><text x="280" y="95" text-anchor="start" font-size="14" fill="currentColor">cols = {0,3}</text><text x="280" y="150" text-anchor="start" font-size="14" fill="currentColor">r-c = {-2,0}</text><text x="280" y="205" text-anchor="start" font-size="14" fill="currentColor">r+c = {0,4}</text><text x="280" y="265" text-anchor="start" font-size="14" fill="currentColor">path = [0,3]</text></g>
+<g data-step="10" data-until="10"><text x="280" y="95" text-anchor="start" font-size="14" fill="currentColor">cols = {0}</text><text x="280" y="150" text-anchor="start" font-size="14" fill="currentColor">r-c = {0}</text><text x="280" y="205" text-anchor="start" font-size="14" fill="currentColor">r+c = {0}</text><text x="280" y="265" text-anchor="start" font-size="14" fill="currentColor">path = [0]</text></g>
+<g data-step="11" data-until="11"><text x="280" y="95" text-anchor="start" font-size="14" fill="currentColor">cols = {}</text><text x="280" y="150" text-anchor="start" font-size="14" fill="currentColor">r-c = {}</text><text x="280" y="205" text-anchor="start" font-size="14" fill="currentColor">r+c = {}</text><text x="280" y="265" text-anchor="start" font-size="14" fill="currentColor">path = []</text></g>
+<g data-step="12" data-until="12"><text x="280" y="95" text-anchor="start" font-size="14" fill="currentColor">cols = {1}</text><text x="280" y="150" text-anchor="start" font-size="14" fill="currentColor">r-c = {-1}</text><text x="280" y="205" text-anchor="start" font-size="14" fill="currentColor">r+c = {1}</text><text x="280" y="265" text-anchor="start" font-size="14" fill="currentColor">path = [1]</text></g>
+<g data-step="13" data-until="13"><text x="280" y="95" text-anchor="start" font-size="14" fill="currentColor">cols = {1}</text><text x="280" y="150" text-anchor="start" font-size="14" fill="currentColor">r-c = {-1}</text><text x="280" y="205" text-anchor="start" font-size="14" fill="currentColor">r+c = {1}</text><text x="280" y="265" text-anchor="start" font-size="14" fill="currentColor">path = [1]</text><rect x="48" y="125" width="46" height="46" fill="none" stroke="#f59e0b" stroke-width="4"/></g>
+<g data-step="14" data-until="14"><text x="280" y="95" text-anchor="start" font-size="14" fill="currentColor">cols = {1,3}</text><text x="280" y="150" text-anchor="start" font-size="14" fill="currentColor">r-c = {-2,-1}</text><text x="280" y="205" text-anchor="start" font-size="14" fill="currentColor">r+c = {1,4}</text><text x="280" y="265" text-anchor="start" font-size="14" fill="currentColor">path = [1,3]</text></g>
+<g data-step="15" data-until="15"><text x="280" y="95" text-anchor="start" font-size="14" fill="currentColor">cols = {0,1,3}</text><text x="280" y="150" text-anchor="start" font-size="14" fill="currentColor">r-c = {-2,-1,2}</text><text x="280" y="205" text-anchor="start" font-size="14" fill="currentColor">r+c = {1,2,4}</text><text x="280" y="265" text-anchor="start" font-size="14" fill="currentColor">path = [1,3,0]</text></g>
+<g data-step="16"><text x="280" y="95" text-anchor="start" font-size="14" fill="currentColor">cols = {0,1,2,3}</text><text x="280" y="150" text-anchor="start" font-size="14" fill="currentColor">r-c = {-2,-1,1,2}</text><text x="280" y="205" text-anchor="start" font-size="14" fill="currentColor">r+c = {1,2,4,5}</text><text x="280" y="265" text-anchor="start" font-size="14" fill="currentColor">path = [1,3,0,2]</text></g>
+</svg>
+<step-note data-step="1">Hàng/cột đánh số 0..3. Mỗi hàng đặt một hậu; ô màu đỏ nhạt bị các hậu hiện tại tấn công.</step-note>
+<step-note data-step="2">Đặt Q tại (0,0); thêm c=0, r-c=0, r+c=0 vào ba tập.</step-note>
+<step-note data-step="3">Hàng 1 bỏ cột 0,1 vì xung đột; đặt tại cột 2, lựa chọn an toàn đầu tiên.</step-note>
+<step-note data-step="4">Hàng 2 không có cột an toàn: ô thử (2,1) có r+c=3 trùng hậu (1,2). Cắt nhánh, không đặt hậu vào ô thử.</step-note>
+<step-note data-step="5">Gỡ Q(1,2), đồng thời xoá 2, -1, 3 khỏi ba tập. Thử cột kế tiếp ở hàng 1.</step-note>
+<step-note data-step="6">Đặt Q(1,3), rồi đi sâu xuống hàng 2.</step-note>
+<step-note data-step="7">Đặt Q(2,1), lựa chọn an toàn đầu tiên ở hàng 2.</step-note>
+<step-note data-step="8">Hàng 3 hết chỗ: (3,2) trùng r-c=1 với (2,1); các cột khác cũng bị tấn công.</step-note>
+<step-note data-step="9">Gỡ Q(2,1); các cột còn lại của hàng 2 cũng xung đột nên trả về.</step-note>
+<step-note data-step="10">Gỡ Q(1,3); hàng 1 không còn cột để thử.</step-note>
+<step-note data-step="11">Gỡ Q(0,0): cả nhánh bắt đầu cột 0 đã thất bại, ba tập rỗng trở lại.</step-note>
+<step-note data-step="12">Hàng 0 chuyển sang cột 1, bắt đầu nhánh mới.</step-note>
+<step-note data-step="13">Thử (1,0): r+c=1 trùng (0,1); cột 1 và 2 cũng không hợp lệ. Kiểm tra set trung bình O(1).</step-note>
+<step-note data-step="14">Đặt Q(1,3), cột an toàn duy nhất tại hàng 1.</step-note>
+<step-note data-step="15">Đặt Q(2,0); ba tập không có xung đột.</step-note>
+<step-note data-step="16">Đặt Q(3,2), đủ 4 hàng: ghi nhận nghiệm [1,3,0,2]. Nếu cần mọi nghiệm thì tiếp tục undo sau khi copy.</step-note>
+</step-flow>
+
 ## 3. Graph — đồ thị
 
 ### 3.1. Khái niệm & biểu diễn
@@ -240,6 +435,28 @@ Mẹo phỏng vấn: dùng `set` để kiểm tra xung đột đường chéo tr
 Graph gồm các **node (đỉnh)** nối với nhau bằng **edge (cạnh)**. Nó mô hình hoá *quan hệ*: mạng xã hội (ai theo dõi ai), bản đồ đường đi, dependency giữa các task, đồ thị gọi hàm... Rất nhiều bài "thực tế" thực ra là bài graph trá hình.
 
 Cách biểu diễn thực dụng nhất là **adjacency list (danh sách kề)**: với mỗi node, lưu danh sách các node mà nó nối tới. Tốn **O(V + E)** bộ nhớ (V = số đỉnh, E = số cạnh), gọn hơn nhiều so với adjacency matrix `O(V²)` khi đồ thị thưa.
+
+
+
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 240" role="img" aria-labelledby="dsg07-edge-t dsg07-edge-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsg07-edge-t">Một cạnh vô hướng: hai lần append</title>
+<desc id="dsg07-edge-d">Một cạnh vô hướng: hai lần append</desc>
+<defs><marker id="dsg07-edge-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<text x="260.0" y="24" text-anchor="middle" font-size="16" fill="currentColor">Một cạnh vô hướng: hai lần append</text>
+<text x="260" y="53" text-anchor="middle" font-size="14" fill="currentColor">Cạnh vô hướng: add_edge(0,1)</text>
+<rect x="60" y="100" width="60" height="50" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="90" y="132" text-anchor="middle" font-size="18" fill="currentColor">0</text>
+<rect x="210" y="100" width="60" height="50" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="240" y="132" text-anchor="middle" font-size="18" fill="currentColor">1</text>
+<text x="340" y="117" text-anchor="middle" font-size="14" fill="currentColor">graph[0]</text>
+<text x="340" y="187" text-anchor="middle" font-size="14" fill="currentColor">graph[1]</text>
+<g data-step="1"><path d="M120 125 L207 125" fill="none" stroke="currentColor" marker-end="url(#dsg07-edge-a)"/><text x="430" y="117" text-anchor="middle" font-size="16" fill="currentColor">[1]</text></g>
+<g data-step="2"><path d="M210 139 L123 139" fill="none" stroke="currentColor" marker-end="url(#dsg07-edge-a)"/><text x="430" y="187" text-anchor="middle" font-size="16" fill="currentColor">[0]</text></g>
+</svg>
+<step-note data-step="1">Thêm v=1 vào graph[0]; chiều 0 → 1 đã có trong danh sách kề.</step-note>
+<step-note data-step="2">Thêm u=0 vào graph[1] để có chiều ngược lại. Một cạnh vô hướng được lưu hai lần; tổng bộ nhớ O(V+E).</step-note>
+</step-flow>
 
 ```python
 from collections import defaultdict
@@ -811,6 +1028,49 @@ long long fibTab(int n) {                        // tabulation
 ### 4.3. Climbing stairs
 
 Có `n` bậc thang, mỗi bước leo 1 hoặc 2 bậc. Hỏi có bao nhiêu cách leo lên đỉnh? Để tới bậc `n`, bạn vừa ở bậc `n-1` (rồi bước 1) hoặc bậc `n-2` (rồi bước 2). Vậy `ways(n) = ways(n-1) + ways(n-2)` — chính là **Fibonacci**! Đây là ví dụ tuyệt vời cho thấy nhiều bài DP nhập môn cùng một bộ xương: tìm **công thức truy hồi (recurrence)** rồi điền bảng.
+
+
+
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 300" role="img" aria-labelledby="dsg07-stairs-t dsg07-stairs-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsg07-stairs-t">Climbing stairs: ways(n−1) + ways(n−2)</title>
+<desc id="dsg07-stairs-d">Hai bậc viền vàng là hai trạng thái đầu vào; số cách xuất hiện lần lượt trên mỗi bậc.</desc>
+<defs><marker id="dsg07-stairs-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<text x="260.0" y="24" text-anchor="middle" font-size="16" fill="currentColor">Climbing stairs: ways(n−1) + ways(n−2)</text>
+<rect x="45" y="240" width="65" height="30" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="77" y="262" text-anchor="middle" font-size="13" fill="currentColor">n=0</text>
+<g data-step="1"><text x="77" y="228" text-anchor="middle" font-size="16" fill="currentColor">1</text></g>
+<rect x="121" y="210" width="65" height="60" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="153" y="232" text-anchor="middle" font-size="13" fill="currentColor">n=1</text>
+<g data-step="2"><text x="153" y="198" text-anchor="middle" font-size="16" fill="currentColor">1</text></g>
+<rect x="197" y="180" width="65" height="90" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="229" y="202" text-anchor="middle" font-size="13" fill="currentColor">n=2</text>
+<g data-step="3"><text x="229" y="168" text-anchor="middle" font-size="16" fill="currentColor">2</text></g>
+<rect x="273" y="150" width="65" height="120" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="305" y="172" text-anchor="middle" font-size="13" fill="currentColor">n=3</text>
+<g data-step="4"><text x="305" y="138" text-anchor="middle" font-size="16" fill="currentColor">3</text></g>
+<rect x="349" y="120" width="65" height="150" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="381" y="142" text-anchor="middle" font-size="13" fill="currentColor">n=4</text>
+<g data-step="5"><text x="381" y="108" text-anchor="middle" font-size="16" fill="currentColor">5</text></g>
+<rect x="425" y="90" width="65" height="180" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="457" y="112" text-anchor="middle" font-size="13" fill="currentColor">n=5</text>
+<g data-step="6"><text x="457" y="78" text-anchor="middle" font-size="16" fill="currentColor">8</text></g>
+<g data-step="3" data-until="3"><rect x="43" y="238" width="69" height="34" rx="5" fill="none" stroke="#f59e0b" stroke-width="3"/></g>
+<g data-step="3" data-until="3"><rect x="119" y="208" width="69" height="64" rx="5" fill="none" stroke="#f59e0b" stroke-width="3"/></g>
+<g data-step="4" data-until="4"><rect x="119" y="208" width="69" height="64" rx="5" fill="none" stroke="#f59e0b" stroke-width="3"/></g>
+<g data-step="4" data-until="4"><rect x="195" y="178" width="69" height="94" rx="5" fill="none" stroke="#f59e0b" stroke-width="3"/></g>
+<g data-step="5" data-until="5"><rect x="195" y="178" width="69" height="94" rx="5" fill="none" stroke="#f59e0b" stroke-width="3"/></g>
+<g data-step="5" data-until="5"><rect x="271" y="148" width="69" height="124" rx="5" fill="none" stroke="#f59e0b" stroke-width="3"/></g>
+<g data-step="6"><rect x="271" y="148" width="69" height="124" rx="5" fill="none" stroke="#f59e0b" stroke-width="3"/></g>
+<g data-step="6"><rect x="347" y="118" width="69" height="154" rx="5" fill="none" stroke="#f59e0b" stroke-width="3"/></g>
+</svg>
+<step-note data-step="1">Quy ước ways(0)=1: một cách không bước nào, làm base case.</step-note>
+<step-note data-step="2">ways(1)=1: chỉ có bước dài 1.</step-note>
+<step-note data-step="3">ways(2)=1+1=2: bước cuối dài 1 hoặc 2, hai nhóm rời nhau.</step-note>
+<step-note data-step="4">ways(3)=ways(2)+ways(1)=2+1=3.</step-note>
+<step-note data-step="5">ways(4)=3+2=5; hai trạng thái nhỏ hơn đã được tính.</step-note>
+<step-note data-step="6">ways(5)=5+3=8. Điền lần lượt O(n), giữ hai giá trị gần nhất thì O(1) bộ nhớ.</step-note>
+</step-flow>
 
 ### 4.4. Coin change — bài toán điển hình
 

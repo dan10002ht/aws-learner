@@ -831,6 +831,36 @@ std::vector<std::vector<std::string>> groupAnagrams(const std::vector<std::strin
 
 **Hướng giải.** Bước một là pattern **count** thuần: map `giá trị → số lần`. Bước hai chọn K khoá có count lớn nhất — đơn giản nhất là sort theo count rồi lấy K cái đầu (O(n log n)); nhanh hơn dùng heap kích thước K (O(n log K), học ở bài heap). Đây là khung xương của "top sản phẩm bán chạy", "từ khoá hot nhất".
 
+Ví dụ <code>nums=[1,1,1,2,2,3], k=2</code>: số lần lặp quyết định thứ hạng.
+
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 300" role="img" aria-labelledby="dsg03-top-t dsg03-top-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsg03-top-t">Top-K: đếm rồi chọn theo count</title>
+<desc id="dsg03-top-d">Top-K: đếm rồi chọn theo count</desc>
+<defs><marker id="dsg03-top-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<text x="260.0" y="24" text-anchor="middle" font-size="16" fill="currentColor">Top-K: đếm rồi chọn theo count</text>
+<rect x="74.0" y="85" width="59" height="45" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="105.0" y="72" text-anchor="middle" font-size="13" fill="currentColor">0</text>
+<rect x="136.0" y="85" width="59" height="45" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="167.0" y="72" text-anchor="middle" font-size="13" fill="currentColor">1</text>
+<rect x="198.0" y="85" width="59" height="45" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="229.0" y="72" text-anchor="middle" font-size="13" fill="currentColor">2</text>
+<rect x="260.0" y="85" width="59" height="45" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="291.0" y="72" text-anchor="middle" font-size="13" fill="currentColor">3</text>
+<rect x="322.0" y="85" width="59" height="45" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="353.0" y="72" text-anchor="middle" font-size="13" fill="currentColor">4</text>
+<rect x="384.0" y="85" width="59" height="45" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="415.0" y="72" text-anchor="middle" font-size="13" fill="currentColor">5</text>
+<text x="260" y="150" text-anchor="middle" font-size="13" fill="currentColor">Vàng: vị trí / đoạn đang xét</text>
+<g data-step="1" data-until="1"><rect x="74.0" y="85" width="59" height="45" rx="5" fill="#f59e0b" fill-opacity=".16" stroke="#f59e0b" stroke-width="3"/><rect x="136.0" y="85" width="59" height="45" rx="5" fill="#f59e0b" fill-opacity=".16" stroke="#f59e0b" stroke-width="3"/><rect x="198.0" y="85" width="59" height="45" rx="5" fill="#f59e0b" fill-opacity=".16" stroke="#f59e0b" stroke-width="3"/><text x="105.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">1</text><text x="167.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">1</text><text x="229.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">1</text><text x="291.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">2</text><text x="353.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">2</text><text x="415.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">3</text><text x="260" y="190" text-anchor="middle" font-size="14" fill="currentColor">count[1] = 3</text></g>
+<g data-step="2" data-until="2"><rect x="260.0" y="85" width="59" height="45" rx="5" fill="#f59e0b" fill-opacity=".16" stroke="#f59e0b" stroke-width="3"/><rect x="322.0" y="85" width="59" height="45" rx="5" fill="#f59e0b" fill-opacity=".16" stroke="#f59e0b" stroke-width="3"/><text x="105.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">1</text><text x="167.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">1</text><text x="229.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">1</text><text x="291.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">2</text><text x="353.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">2</text><text x="415.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">3</text><text x="260" y="190" text-anchor="middle" font-size="14" fill="currentColor">count = {1:3, 2:2, 3:1}</text></g>
+<g data-step="3"><rect x="74.0" y="85" width="59" height="45" rx="5" fill="#f59e0b" fill-opacity=".16" stroke="#f59e0b" stroke-width="3"/><rect x="136.0" y="85" width="59" height="45" rx="5" fill="#f59e0b" fill-opacity=".16" stroke="#f59e0b" stroke-width="3"/><rect x="198.0" y="85" width="59" height="45" rx="5" fill="#f59e0b" fill-opacity=".16" stroke="#f59e0b" stroke-width="3"/><rect x="260.0" y="85" width="59" height="45" rx="5" fill="#f59e0b" fill-opacity=".16" stroke="#f59e0b" stroke-width="3"/><rect x="322.0" y="85" width="59" height="45" rx="5" fill="#f59e0b" fill-opacity=".16" stroke="#f59e0b" stroke-width="3"/><text x="105.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">1</text><text x="167.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">1</text><text x="229.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">1</text><text x="291.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">2</text><text x="353.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">2</text><text x="415.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">3</text><text x="260" y="190" text-anchor="middle" font-size="14" fill="currentColor">k=2: chọn khoá 1 và 2</text><text x="260" y="218" text-anchor="middle" font-size="14" fill="currentColor">Xếp theo count: 3 &gt; 2 &gt; 1</text></g>
+</svg>
+<step-note data-step="1">Đếm mọi lần xuất hiện, không xếp hạng theo giá trị của key.</step-note>
+<step-note data-step="2">Hoàn tất lượt đếm O(n); có ba key phân biệt.</step-note>
+<step-note data-step="3">Chọn hai key có count lớn nhất, không phải hai giá trị lớn nhất. Sort tốn O(m log m) với m key.</step-note>
+</step-flow>
+
 ```python
 from collections import Counter
 
@@ -905,6 +935,50 @@ std::vector<int> topK(const std::vector<int>& nums, int k) {
 > Cho một chuỗi, trả về **chỉ số của ký tự đầu tiên không lặp lại**. Ví dụ `"leetcode"` → `0` (chữ `l`); `"loveleetcode"` → `2` (chữ `v`); không có thì trả `-1`.
 
 **Hướng giải.** Hai lượt duyệt. Lượt một: đếm tần suất mỗi ký tự (pattern count). Lượt hai: duyệt chuỗi **theo thứ tự gốc**, trả về chỉ số đầu tiên có count bằng 1. Mấu chốt: lượt hai phải đi theo thứ tự chuỗi gốc chứ không phải theo thứ tự map (đây là chỗ thứ tự duyệt map không đáng tin — ta lấy thứ tự từ chuỗi).
+
+
+
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 300" role="img" aria-labelledby="dsg03-unique-t dsg03-unique-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsg03-unique-t">First Unique: loveleetcode</title>
+<desc id="dsg03-unique-d">First Unique: loveleetcode</desc>
+<defs><marker id="dsg03-unique-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<text x="260.0" y="24" text-anchor="middle" font-size="16" fill="currentColor">First Unique: loveleetcode</text>
+<rect x="40.0" y="85" width="33.666666666666664" height="45" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="58.33333333333333" y="72" text-anchor="middle" font-size="13" fill="currentColor">0</text>
+<rect x="76.66666666666666" y="85" width="33.666666666666664" height="45" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="94.99999999999999" y="72" text-anchor="middle" font-size="13" fill="currentColor">1</text>
+<rect x="113.33333333333333" y="85" width="33.666666666666664" height="45" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="131.66666666666666" y="72" text-anchor="middle" font-size="13" fill="currentColor">2</text>
+<rect x="150.0" y="85" width="33.666666666666664" height="45" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="168.33333333333334" y="72" text-anchor="middle" font-size="13" fill="currentColor">3</text>
+<rect x="186.66666666666666" y="85" width="33.666666666666664" height="45" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="205.0" y="72" text-anchor="middle" font-size="13" fill="currentColor">4</text>
+<rect x="223.33333333333331" y="85" width="33.666666666666664" height="45" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="241.66666666666666" y="72" text-anchor="middle" font-size="13" fill="currentColor">5</text>
+<rect x="260.0" y="85" width="33.666666666666664" height="45" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="278.3333333333333" y="72" text-anchor="middle" font-size="13" fill="currentColor">6</text>
+<rect x="296.66666666666663" y="85" width="33.666666666666664" height="45" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="314.99999999999994" y="72" text-anchor="middle" font-size="13" fill="currentColor">7</text>
+<rect x="333.3333333333333" y="85" width="33.666666666666664" height="45" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="351.66666666666663" y="72" text-anchor="middle" font-size="13" fill="currentColor">8</text>
+<rect x="370.0" y="85" width="33.666666666666664" height="45" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="388.3333333333333" y="72" text-anchor="middle" font-size="13" fill="currentColor">9</text>
+<rect x="406.66666666666663" y="85" width="33.666666666666664" height="45" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="424.99999999999994" y="72" text-anchor="middle" font-size="13" fill="currentColor">10</text>
+<rect x="443.3333333333333" y="85" width="33.666666666666664" height="45" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="461.66666666666663" y="72" text-anchor="middle" font-size="13" fill="currentColor">11</text>
+<text x="260" y="150" text-anchor="middle" font-size="13" fill="currentColor">Vàng: vị trí / đoạn đang xét</text>
+<g data-step="1" data-until="1"><text x="58.33333333333333" y="114" text-anchor="middle" font-size="15" fill="currentColor">l</text><text x="94.99999999999999" y="114" text-anchor="middle" font-size="15" fill="currentColor">o</text><text x="131.66666666666666" y="114" text-anchor="middle" font-size="15" fill="currentColor">v</text><text x="168.33333333333334" y="114" text-anchor="middle" font-size="15" fill="currentColor">e</text><text x="205.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">l</text><text x="241.66666666666666" y="114" text-anchor="middle" font-size="15" fill="currentColor">e</text><text x="278.3333333333333" y="114" text-anchor="middle" font-size="15" fill="currentColor">e</text><text x="314.99999999999994" y="114" text-anchor="middle" font-size="15" fill="currentColor">t</text><text x="351.66666666666663" y="114" text-anchor="middle" font-size="15" fill="currentColor">c</text><text x="388.3333333333333" y="114" text-anchor="middle" font-size="15" fill="currentColor">o</text><text x="424.99999999999994" y="114" text-anchor="middle" font-size="15" fill="currentColor">d</text><text x="461.66666666666663" y="114" text-anchor="middle" font-size="15" fill="currentColor">e</text><text x="260" y="190" text-anchor="middle" font-size="14" fill="currentColor">Lượt 1: l:2, o:2, v:1, e:4</text><text x="260" y="218" text-anchor="middle" font-size="14" fill="currentColor">t:1, c:1, d:1</text></g>
+<g data-step="2" data-until="2"><rect x="40.0" y="85" width="33.666666666666664" height="45" rx="5" fill="#f59e0b" fill-opacity=".16" stroke="#f59e0b" stroke-width="3"/><text x="58.33333333333333" y="114" text-anchor="middle" font-size="15" fill="currentColor">l</text><text x="94.99999999999999" y="114" text-anchor="middle" font-size="15" fill="currentColor">o</text><text x="131.66666666666666" y="114" text-anchor="middle" font-size="15" fill="currentColor">v</text><text x="168.33333333333334" y="114" text-anchor="middle" font-size="15" fill="currentColor">e</text><text x="205.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">l</text><text x="241.66666666666666" y="114" text-anchor="middle" font-size="15" fill="currentColor">e</text><text x="278.3333333333333" y="114" text-anchor="middle" font-size="15" fill="currentColor">e</text><text x="314.99999999999994" y="114" text-anchor="middle" font-size="15" fill="currentColor">t</text><text x="351.66666666666663" y="114" text-anchor="middle" font-size="15" fill="currentColor">c</text><text x="388.3333333333333" y="114" text-anchor="middle" font-size="15" fill="currentColor">o</text><text x="424.99999999999994" y="114" text-anchor="middle" font-size="15" fill="currentColor">d</text><text x="461.66666666666663" y="114" text-anchor="middle" font-size="15" fill="currentColor">e</text><text x="260" y="190" text-anchor="middle" font-size="14" fill="currentColor">Lượt 2: s[0]=l, count=2 → bỏ qua</text></g>
+<g data-step="3" data-until="3"><rect x="76.66666666666666" y="85" width="33.666666666666664" height="45" rx="5" fill="#f59e0b" fill-opacity=".16" stroke="#f59e0b" stroke-width="3"/><text x="58.33333333333333" y="114" text-anchor="middle" font-size="15" fill="currentColor">l</text><text x="94.99999999999999" y="114" text-anchor="middle" font-size="15" fill="currentColor">o</text><text x="131.66666666666666" y="114" text-anchor="middle" font-size="15" fill="currentColor">v</text><text x="168.33333333333334" y="114" text-anchor="middle" font-size="15" fill="currentColor">e</text><text x="205.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">l</text><text x="241.66666666666666" y="114" text-anchor="middle" font-size="15" fill="currentColor">e</text><text x="278.3333333333333" y="114" text-anchor="middle" font-size="15" fill="currentColor">e</text><text x="314.99999999999994" y="114" text-anchor="middle" font-size="15" fill="currentColor">t</text><text x="351.66666666666663" y="114" text-anchor="middle" font-size="15" fill="currentColor">c</text><text x="388.3333333333333" y="114" text-anchor="middle" font-size="15" fill="currentColor">o</text><text x="424.99999999999994" y="114" text-anchor="middle" font-size="15" fill="currentColor">d</text><text x="461.66666666666663" y="114" text-anchor="middle" font-size="15" fill="currentColor">e</text><text x="260" y="190" text-anchor="middle" font-size="14" fill="currentColor">s[1]=o, count=2 → bỏ qua</text></g>
+<g data-step="4"><rect x="113.33333333333333" y="85" width="33.666666666666664" height="45" rx="5" fill="#f59e0b" fill-opacity=".16" stroke="#f59e0b" stroke-width="3"/><text x="58.33333333333333" y="114" text-anchor="middle" font-size="15" fill="currentColor">l</text><text x="94.99999999999999" y="114" text-anchor="middle" font-size="15" fill="currentColor">o</text><text x="131.66666666666666" y="114" text-anchor="middle" font-size="15" fill="currentColor">v</text><text x="168.33333333333334" y="114" text-anchor="middle" font-size="15" fill="currentColor">e</text><text x="205.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">l</text><text x="241.66666666666666" y="114" text-anchor="middle" font-size="15" fill="currentColor">e</text><text x="278.3333333333333" y="114" text-anchor="middle" font-size="15" fill="currentColor">e</text><text x="314.99999999999994" y="114" text-anchor="middle" font-size="15" fill="currentColor">t</text><text x="351.66666666666663" y="114" text-anchor="middle" font-size="15" fill="currentColor">c</text><text x="388.3333333333333" y="114" text-anchor="middle" font-size="15" fill="currentColor">o</text><text x="424.99999999999994" y="114" text-anchor="middle" font-size="15" fill="currentColor">d</text><text x="461.66666666666663" y="114" text-anchor="middle" font-size="15" fill="currentColor">e</text><text x="260" y="190" text-anchor="middle" font-size="14" fill="currentColor">s[2]=v, count=1 → trả về 2</text></g>
+</svg>
+<step-note data-step="1">Đếm toàn bộ chuỗi trước: chưa thể quyết định khi mới gặp ký tự lần đầu.</step-note>
+<step-note data-step="2">Lượt hai dùng thứ tự chuỗi gốc; l không duy nhất.</step-note>
+<step-note data-step="3">o cũng có hai lần, tiếp tục sang phải.</step-note>
+<step-note data-step="4">v là ký tự đầu tiên có count=1. Hai lượt đều tuyến tính, tổng O(n).</step-note>
+</step-flow>
 
 ```python
 from collections import Counter

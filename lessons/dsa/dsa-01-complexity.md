@@ -786,6 +786,32 @@ Số thao tác xấp xỉ theo `n` (bậc tăng từ nhanh đến chậm):
 - **Cách ngây thơ:** hai vòng lồng thử mọi cặp → `O(n^2)` time, `O(1)` space.
 - **Cách tối ưu:** duyệt một lượt, với mỗi `x` kiểm tra xem `target - x` đã gặp chưa bằng `hash map` → `O(n)` time, `O(n)` space. Đây chính là space-time tradeoff: tốn thêm bộ nhớ cho map để bỏ một tầng vòng lặp.
 
+Chạy khung code dưới với <code>nums=[2,7,11,15], target=9</code>.
+
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 300" role="img" aria-labelledby="dsg01-sum-t dsg01-sum-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsg01-sum-t">Two Sum: [2,7,11,15], target=9</title>
+<desc id="dsg01-sum-d">Two Sum: [2,7,11,15], target=9</desc>
+<defs><marker id="dsg01-sum-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<text x="260.0" y="24" text-anchor="middle" font-size="16" fill="currentColor">Two Sum: [2,7,11,15], target=9</text>
+<rect x="136.0" y="85" width="59" height="45" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="167.0" y="72" text-anchor="middle" font-size="13" fill="currentColor">0</text>
+<rect x="198.0" y="85" width="59" height="45" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="229.0" y="72" text-anchor="middle" font-size="13" fill="currentColor">1</text>
+<rect x="260.0" y="85" width="59" height="45" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="291.0" y="72" text-anchor="middle" font-size="13" fill="currentColor">2</text>
+<rect x="322.0" y="85" width="59" height="45" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="353.0" y="72" text-anchor="middle" font-size="13" fill="currentColor">3</text>
+<text x="260" y="150" text-anchor="middle" font-size="13" fill="currentColor">Vàng: vị trí / đoạn đang xét</text>
+<g data-step="1" data-until="1"><rect x="136.0" y="85" width="59" height="45" rx="5" fill="#f59e0b" fill-opacity=".16" stroke="#f59e0b" stroke-width="3"/><text x="167.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">2</text><text x="229.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">7</text><text x="291.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">11</text><text x="353.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">15</text><text x="260" y="190" text-anchor="middle" font-size="14" fill="currentColor">need = 9 − 2 = 7</text><text x="260" y="218" text-anchor="middle" font-size="14" fill="currentColor">seen = {} · chưa có phần bù</text></g>
+<g data-step="2" data-until="2"><rect x="136.0" y="85" width="59" height="45" rx="5" fill="#f59e0b" fill-opacity=".16" stroke="#f59e0b" stroke-width="3"/><text x="167.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">2</text><text x="229.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">7</text><text x="291.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">11</text><text x="353.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">15</text><text x="260" y="190" text-anchor="middle" font-size="14" fill="currentColor">Chưa có phần bù → lưu 2 tại chỉ số 0</text><text x="260" y="218" text-anchor="middle" font-size="14" fill="currentColor">seen = {2:0}</text></g>
+<g data-step="3"><rect x="198.0" y="85" width="59" height="45" rx="5" fill="#f59e0b" fill-opacity=".16" stroke="#f59e0b" stroke-width="3"/><text x="167.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">2</text><text x="229.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">7</text><text x="291.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">11</text><text x="353.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">15</text><text x="260" y="190" text-anchor="middle" font-size="14" fill="currentColor">need = 9 − 7 = 2</text><text x="260" y="218" text-anchor="middle" font-size="14" fill="currentColor">seen[2] = 0 → trả về (0,1)</text></g>
+</svg>
+<step-note data-step="1">Tại index 0, tra phần bù 7 trước khi lưu 2 để tránh dùng chính mình hai lần.</step-note>
+<step-note data-step="2">Chưa có cặp nên lưu value → index; tra/lưu hash map trung bình O(1).</step-note>
+<step-note data-step="3">Tại index 1 tìm thấy 2 đã lưu. Chỉ đi một lượt O(n), đổi lại map tốn O(n) bộ nhớ.</step-note>
+</step-flow>
+
 ```python
 def two_sum(nums, target):       # O(n) time, O(n) space
     seen = {}                    # value -> index

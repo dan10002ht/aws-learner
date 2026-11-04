@@ -338,6 +338,32 @@ int findKthLargest(vector<int>& nums, int k) {
 
 **Ý tưởng / vì sao.** Hai bước: (1) **đếm tần suất** bằng hash map — O(n); (2) lấy ra k khoá có count cao nhất. Bước 2 lại chính là bài Top-K: giữ **min-heap size k theo count**. Phần tử nào có count lớn hơn gốc thì thay gốc. Cuối cùng heap chứa đúng k phần tử frequent nhất.
 
+
+
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 300" role="img" aria-labelledby="dsg08-freq-t dsg08-freq-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsg08-freq-t">Min-heap theo (count,num), k=2</title>
+<desc id="dsg08-freq-d">Min-heap theo (count,num), k=2</desc>
+<defs><marker id="dsg08-freq-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<text x="260.0" y="24" text-anchor="middle" font-size="16" fill="currentColor">Min-heap theo (count,num), k=2</text>
+<rect x="167.0" y="85" width="59" height="45" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="198.0" y="72" text-anchor="middle" font-size="13" fill="currentColor">0</text>
+<rect x="229.0" y="85" width="59" height="45" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="260.0" y="72" text-anchor="middle" font-size="13" fill="currentColor">1</text>
+<rect x="291.0" y="85" width="59" height="45" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="322.0" y="72" text-anchor="middle" font-size="13" fill="currentColor">2</text>
+<text x="260" y="150" text-anchor="middle" font-size="13" fill="currentColor">Vàng: vị trí / đoạn đang xét</text>
+<g data-step="1" data-until="1"><rect x="167.0" y="85" width="59" height="45" rx="5" fill="#f59e0b" fill-opacity=".16" stroke="#f59e0b" stroke-width="3"/><text x="198.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">(3,1)</text><text x="260.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">—</text><text x="322.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">—</text><text x="260" y="190" text-anchor="middle" font-size="14" fill="currentColor">Thêm (3,1) → heap=[(3,1)]</text></g>
+<g data-step="2" data-until="2"><rect x="167.0" y="85" width="59" height="45" rx="5" fill="#f59e0b" fill-opacity=".16" stroke="#f59e0b" stroke-width="3"/><rect x="229.0" y="85" width="59" height="45" rx="5" fill="#f59e0b" fill-opacity=".16" stroke="#f59e0b" stroke-width="3"/><text x="198.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">(2,2)</text><text x="260.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">(3,1)</text><text x="322.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">—</text><text x="260" y="190" text-anchor="middle" font-size="14" fill="currentColor">Thêm (2,2): 2 &lt; 3 → nổi lên</text></g>
+<g data-step="3" data-until="3"><rect x="167.0" y="85" width="59" height="45" rx="5" fill="#f59e0b" fill-opacity=".16" stroke="#f59e0b" stroke-width="3"/><rect x="229.0" y="85" width="59" height="45" rx="5" fill="#f59e0b" fill-opacity=".16" stroke="#f59e0b" stroke-width="3"/><rect x="291.0" y="85" width="59" height="45" rx="5" fill="#f59e0b" fill-opacity=".16" stroke="#f59e0b" stroke-width="3"/><text x="198.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">(1,3)</text><text x="260.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">(3,1)</text><text x="322.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">(2,2)</text><text x="260" y="190" text-anchor="middle" font-size="14" fill="currentColor">Thêm (1,3): 1 &lt; 2 → nổi lên</text><text x="260" y="218" text-anchor="middle" font-size="14" fill="currentColor">Có 3 phần tử &gt; k: lấy min ra</text></g>
+<g data-step="4"><rect x="167.0" y="85" width="59" height="45" rx="5" fill="#f59e0b" fill-opacity=".16" stroke="#f59e0b" stroke-width="3"/><rect x="229.0" y="85" width="59" height="45" rx="5" fill="#f59e0b" fill-opacity=".16" stroke="#f59e0b" stroke-width="3"/><text x="198.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">(2,2)</text><text x="260.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">(3,1)</text><text x="322.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">—</text><text x="260" y="190" text-anchor="middle" font-size="14" fill="currentColor">Lấy (1,3) ra → heap=[(2,2),(3,1)]</text><text x="260" y="218" text-anchor="middle" font-size="14" fill="currentColor">Trả về các khoá [2,1]; thứ tự không bắt buộc</text></g>
+</svg>
+<step-note data-step="1">Đếm trước: 1 có count 3, 2 có count 2, 3 có count 1. Đưa tuple (3,1) vào heap.</step-note>
+<step-note data-step="2">Heap ưu tiên count nhỏ hơn, vì ta muốn loại key ít xuất hiện nhất.</step-note>
+<step-note data-step="3">Đúng như code: push trước rồi mới kiểm len>k; heap tạm có k+1 tuple.</step-note>
+<step-note data-step="4">Loại key 3 vì count thấp nhất. Hai key còn lại là 1 và 2, không cần sort kết quả.</step-note>
+</step-flow>
+
 ```python
 import heapq
 from collections import Counter
@@ -629,6 +655,38 @@ public:
 > Ghi nhớ: Câu trả lời "ăn điểm" khi phỏng vấn hỏi Top-K: "Heap cho **O(n log k)** và xử lý được **streaming**; nếu có sẵn cả mảng và muốn nhanh hơn, **quickselect** cho **O(n) trung bình** nhưng xấu nhất O(n²) và không stream được." Nói được trade-off này là khác biệt giữa "biết code" và "hiểu vấn đề".
 
 Khung quickselect tham khảo (Kth largest, O(n) trung bình):
+
+
+
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 300" role="img" aria-labelledby="dsg08-select-t dsg08-select-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsg08-select-t">Quickselect: [3,2,1,5,6,4], k=2</title>
+<desc id="dsg08-select-d">Quickselect: [3,2,1,5,6,4], k=2</desc>
+<defs><marker id="dsg08-select-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<text x="260.0" y="24" text-anchor="middle" font-size="16" fill="currentColor">Quickselect: [3,2,1,5,6,4], k=2</text>
+<rect x="74.0" y="85" width="59" height="45" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="105.0" y="72" text-anchor="middle" font-size="13" fill="currentColor">0</text>
+<rect x="136.0" y="85" width="59" height="45" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="167.0" y="72" text-anchor="middle" font-size="13" fill="currentColor">1</text>
+<rect x="198.0" y="85" width="59" height="45" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="229.0" y="72" text-anchor="middle" font-size="13" fill="currentColor">2</text>
+<rect x="260.0" y="85" width="59" height="45" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="291.0" y="72" text-anchor="middle" font-size="13" fill="currentColor">3</text>
+<rect x="322.0" y="85" width="59" height="45" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="353.0" y="72" text-anchor="middle" font-size="13" fill="currentColor">4</text>
+<rect x="384.0" y="85" width="59" height="45" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="415.0" y="72" text-anchor="middle" font-size="13" fill="currentColor">5</text>
+<text x="260" y="150" text-anchor="middle" font-size="13" fill="currentColor">Vàng: vị trí / đoạn đang xét</text>
+<g data-step="1" data-until="1"><rect x="384.0" y="85" width="59" height="45" rx="5" fill="#f59e0b" fill-opacity=".16" stroke="#f59e0b" stroke-width="3"/><text x="105.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">3</text><text x="167.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">2</text><text x="229.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">1</text><text x="291.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">5</text><text x="353.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">6</text><text x="415.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">4</text><text x="260" y="190" text-anchor="middle" font-size="14" fill="currentColor">target=n−k=4; pivot=4 ở cuối mảng</text><text x="260" y="218" text-anchor="middle" font-size="14" fill="currentColor">i=0; j quét các chỉ số 0..4</text></g>
+<g data-step="2" data-until="2"><rect x="74.0" y="85" width="59" height="45" rx="5" fill="#f59e0b" fill-opacity=".16" stroke="#f59e0b" stroke-width="3"/><rect x="136.0" y="85" width="59" height="45" rx="5" fill="#f59e0b" fill-opacity=".16" stroke="#f59e0b" stroke-width="3"/><rect x="198.0" y="85" width="59" height="45" rx="5" fill="#f59e0b" fill-opacity=".16" stroke="#f59e0b" stroke-width="3"/><text x="105.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">3</text><text x="167.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">2</text><text x="229.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">1</text><text x="291.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">5</text><text x="353.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">6</text><text x="415.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">4</text><text x="260" y="190" text-anchor="middle" font-size="14" fill="currentColor">3,2,1 &lt; 4 → i=3</text><text x="260" y="218" text-anchor="middle" font-size="14" fill="currentColor">5,6 ≥ 4 → không đổi chỗ</text></g>
+<g data-step="3" data-until="3"><rect x="260.0" y="85" width="59" height="45" rx="5" fill="#f59e0b" fill-opacity=".16" stroke="#f59e0b" stroke-width="3"/><text x="105.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">3</text><text x="167.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">2</text><text x="229.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">1</text><text x="291.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">4</text><text x="353.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">6</text><text x="415.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">5</text><text x="260" y="190" text-anchor="middle" font-size="14" fill="currentColor">Đổi chỗ pivot với a[i] → p=3</text><text x="260" y="218" text-anchor="middle" font-size="14" fill="currentColor">p &lt; target → lo=4; loại các chỉ số 0..3</text></g>
+<g data-step="4"><rect x="322.0" y="85" width="59" height="45" rx="5" fill="#f59e0b" fill-opacity=".16" stroke="#f59e0b" stroke-width="3"/><text x="105.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">3</text><text x="167.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">2</text><text x="229.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">1</text><text x="291.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">4</text><text x="353.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">5</text><text x="415.0" y="114" text-anchor="middle" font-size="15" fill="currentColor">6</text><text x="260" y="190" text-anchor="middle" font-size="14" fill="currentColor">Khoảng [4,5], pivot=5 → p=4</text><text x="260" y="218" text-anchor="middle" font-size="14" fill="currentColor">p == target → trả về a[4]=5</text></g>
+</svg>
+<step-note data-step="1">Một lần chọn ngẫu nhiên có thể chọn chính phần tử cuối 4; chỉ theo dõi nhánh chứa index mục tiêu 4.</step-note>
+<step-note data-step="2">Lomuto giữ vùng nhỏ hơn pivot ở bên trái i, vùng đang xét ở bên phải.</step-note>
+<step-note data-step="3">Pivot 4 vào đúng index 3. Khác quicksort, quickselect chỉ tiếp tục bên phải.</step-note>
+<step-note data-step="4">Lần chọn tiếp theo lấy pivot 5, partition đặt nó tại index 4. Kết quả lớn thứ hai là 5; O(n) kỳ vọng, O(n²) xấu nhất.</step-note>
+</step-flow>
 
 ```python
 import random

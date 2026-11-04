@@ -1317,3 +1317,74 @@ Hướng giải: KHÔNG chỉ so node với hai con trực tiếp (sai khi cháu
 Hướng giải kinh điển cho đệ quy cây: `depth(node) = 0` nếu node rỗng, ngược lại `1 + max(depth(left), depth(right))`. Đây là khung sườn (xử lý Left/Right rồi kết hợp tại Node — đúng kiểu postorder) tái dùng được cho hàng loạt bài: đếm node, tổng đường đi, kiểm tra cây cân bằng, đường kính cây (diameter).
 
 > Ghi nhớ: phần lớn bài tree trong phỏng vấn là một biến thể của "DFS đệ quy, xử lý hai cây con rồi kết hợp tại node". Nắm chắc khung postorder `return f(left, right, node)` là gỡ được đa số.
+
+Ví dụ phản chứng: gốc 8, con trái 3 (con 1 và 6), con phải 10 có con trái 7.
+
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 330" role="img" aria-labelledby="dsg05-bounds-t dsg05-bounds-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsg05-bounds-t">Validate BST: ràng buộc từ tổ tiên</title>
+<desc id="dsg05-bounds-d">Validate BST: ràng buộc từ tổ tiên</desc>
+<defs><marker id="dsg05-bounds-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<text x="260.0" y="24" text-anchor="middle" font-size="16" fill="currentColor">Validate BST: ràng buộc từ tổ tiên</text>
+<path d="M260 86 L120 124" fill="none" stroke="currentColor" marker-end="url(#dsg05-bounds-a)"/>
+<path d="M260 86 L400 124" fill="none" stroke="currentColor" marker-end="url(#dsg05-bounds-a)"/>
+<path d="M120 166 L55 214" fill="none" stroke="currentColor" marker-end="url(#dsg05-bounds-a)"/>
+<path d="M120 166 L180 214" fill="none" stroke="currentColor" marker-end="url(#dsg05-bounds-a)"/>
+<path d="M400 166 L335 214" fill="none" stroke="currentColor" marker-end="url(#dsg05-bounds-a)"/>
+<rect x="238" y="44" width="44" height="42" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="260" y="70" text-anchor="middle" font-size="16" fill="currentColor">8</text>
+<rect x="98" y="124" width="44" height="42" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="120" y="150" text-anchor="middle" font-size="16" fill="currentColor">3</text>
+<rect x="378" y="124" width="44" height="42" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="400" y="150" text-anchor="middle" font-size="16" fill="currentColor">10</text>
+<rect x="33" y="214" width="44" height="42" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="55" y="240" text-anchor="middle" font-size="16" fill="currentColor">1</text>
+<rect x="158" y="214" width="44" height="42" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="180" y="240" text-anchor="middle" font-size="16" fill="currentColor">6</text>
+<rect x="313" y="214" width="44" height="42" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="335" y="240" text-anchor="middle" font-size="16" fill="currentColor">7</text>
+<g data-step="1" data-until="1"><text x="260" y="300" text-anchor="middle" font-size="14" fill="currentColor">Gốc 8: (−∞,+∞)</text><circle cx="260" cy="65" r="27" fill="none" stroke="#f59e0b" stroke-width="3"/></g>
+<g data-step="2" data-until="2"><text x="260" y="300" text-anchor="middle" font-size="14" fill="currentColor">Con phải 10: (8,+∞)</text><circle cx="400" cy="145" r="27" fill="none" stroke="#f59e0b" stroke-width="3"/></g>
+<g data-step="3"><text x="260" y="300" text-anchor="middle" font-size="14" fill="currentColor">Con trái của 10: (8,10); 7 không hợp lệ</text><circle cx="335" cy="235" r="27" fill="none" stroke="#f59e0b" stroke-width="3"/></g>
+</svg>
+<step-note data-step="1">Gốc chưa có giới hạn; sang cây con phải sẽ đặt low=8.</step-note>
+<step-note data-step="2">Node 10 hợp lệ; sang trái của nó giữ low=8 và siết high=10.</step-note>
+<step-note data-step="3">Node 7 nhỏ hơn cha 10 nhưng vi phạm low=8 từ gốc. Phải truyền cả khoảng, không chỉ so với cha.</step-note>
+</step-flow>
+
+Cây <code>[8,3,10,1,6,14]</code> dùng ở playground: tính từ lá lên gốc.
+
+<step-flow>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 340" role="img" aria-labelledby="dsg05-depth-t dsg05-depth-d" style="width:100%;max-width:520px;height:auto;display:block;margin:1.25rem auto" font-family="ui-sans-serif, system-ui, sans-serif">
+<title id="dsg05-depth-t">Maximum Depth: nhận kết quả từ hai con</title>
+<desc id="dsg05-depth-d">Maximum Depth: nhận kết quả từ hai con</desc>
+<defs><marker id="dsg05-depth-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="currentColor"/></marker></defs>
+<text x="260.0" y="24" text-anchor="middle" font-size="16" fill="currentColor">Maximum Depth: nhận kết quả từ hai con</text>
+<path d="M260 85 L120 125" fill="none" stroke="currentColor" marker-end="url(#dsg05-depth-a)"/>
+<path d="M260 85 L400 125" fill="none" stroke="currentColor" marker-end="url(#dsg05-depth-a)"/>
+<path d="M120 165 L55 205" fill="none" stroke="currentColor" marker-end="url(#dsg05-depth-a)"/>
+<path d="M120 165 L180 205" fill="none" stroke="currentColor" marker-end="url(#dsg05-depth-a)"/>
+<path d="M400 165 L455 205" fill="none" stroke="currentColor" marker-end="url(#dsg05-depth-a)"/>
+<rect x="238" y="45" width="44" height="40" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="260" y="70" text-anchor="middle" font-size="16" fill="currentColor">8</text>
+<rect x="98" y="125" width="44" height="40" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="120" y="150" text-anchor="middle" font-size="16" fill="currentColor">3</text>
+<rect x="378" y="125" width="44" height="40" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="400" y="150" text-anchor="middle" font-size="16" fill="currentColor">10</text>
+<rect x="33" y="205" width="44" height="40" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="55" y="230" text-anchor="middle" font-size="16" fill="currentColor">1</text>
+<rect x="158" y="205" width="44" height="40" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="180" y="230" text-anchor="middle" font-size="16" fill="currentColor">6</text>
+<rect x="433" y="205" width="44" height="40" rx="5" fill="#3b82f6" fill-opacity=".14" stroke="#3b82f6"/>
+<text x="455" y="230" text-anchor="middle" font-size="16" fill="currentColor">14</text>
+<g data-step="1"><text x="55" y="268" text-anchor="middle" font-size="13" fill="currentColor">depth=1</text><text x="180" y="268" text-anchor="middle" font-size="13" fill="currentColor">depth=1</text><text x="455" y="268" text-anchor="middle" font-size="13" fill="currentColor">depth=1</text></g>
+<g data-step="1" data-until="1"><text x="260" y="307" text-anchor="middle" font-size="14" fill="currentColor">Lá: 1 + max(0,0) = 1</text></g>
+<g data-step="2"><text x="120" y="188" text-anchor="middle" font-size="13" fill="currentColor">depth=2</text><text x="400" y="188" text-anchor="middle" font-size="13" fill="currentColor">depth=2</text></g>
+<g data-step="2" data-until="2"><text x="260" y="307" text-anchor="middle" font-size="14" fill="currentColor">Cha: 1 + max(độ sâu hai con) = 2</text></g>
+<g data-step="3"><text x="260" y="108" text-anchor="middle" font-size="13" fill="currentColor">depth=3</text></g>
+<g data-step="3"><text x="260" y="307" text-anchor="middle" font-size="14" fill="currentColor">Gốc: 1 + max(2,2) = 3</text></g>
+</svg>
+<step-note data-step="1">Cây rỗng trả 0; mỗi lá nhận hai số 0 nên trả 1.</step-note>
+<step-note data-step="2">Node 3 trả 1+max(1,1)=2; node 10 có con trái rỗng nên trả 1+max(0,1)=2.</step-note>
+<step-note data-step="3">Gốc kết hợp sau khi hai con đã trả về: depth=3 node. Height tính bằng cạnh của cây này là 2.</step-note>
+</step-flow>
