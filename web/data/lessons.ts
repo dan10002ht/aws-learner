@@ -1450,7 +1450,7 @@ const netLessons: Lesson[] = [
     description: "dig +trace, recursive vs iterative, cache, TTL, negative cache; một lần phân giải hỏi bao nhiêu server.", file: "networking/net-20-dns-phan-giai.md" },
   { slug: "net-21-dns-van-hanh", courseId: "NETWORKING", title: "DNS khi vận hành", shortTitle: "DNS vận hành", chapter: "net-ch5", order: 21, available: true,
     description: "TTL khi đổi IP, CNAME ở apex, split-horizon, DNSSEC chặn được gì, sự cố DNS điển hình.", file: "networking/net-21-dns-van-hanh.md" },
-  { slug: "net-22-http-123", courseId: "NETWORKING", title: "HTTP/1.1, 2, 3: head-of-line ở tầng nào", shortTitle: "HTTP/1-2-3", chapter: "net-ch6", order: 22, available: false,
+  { slug: "net-22-http-123", courseId: "NETWORKING", title: "HTTP/1.1, 2, 3: head-of-line ở tầng nào", shortTitle: "HTTP/1-2-3", chapter: "net-ch6", order: 22, available: true,
     description: "Đo cùng một trang qua 3 phiên bản trên mạng mất gói; multiplexing và HOL blocking.", file: "networking/net-22-http-123.md" },
   { slug: "net-23-tls-van-hanh", courseId: "NETWORKING", title: "TLS khi vận hành: SNI, ALPN, resumption, mTLS", shortTitle: "TLS vận hành", chapter: "net-ch6", order: 23, available: true,
     description: "Handshake tốn bao nhiêu RTT, LB định tuyến theo SNI, session resumption, mTLS.", file: "networking/net-23-tls-van-hanh.md" },
