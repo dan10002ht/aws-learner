@@ -1446,7 +1446,7 @@ const netLessons: Lesson[] = [
     description: "FIN/RST, TIME_WAIT và 2MSL, ephemeral port, keepalive và half-open connection.", file: "networking/net-18-dong-ket-noi.md" },
   { slug: "net-19-udp-quic", courseId: "NETWORKING", title: "UDP và QUIC", shortTitle: "UDP & QUIC", chapter: "net-ch4", order: 19, available: true,
     description: "Vì sao QUIC chạy trên UDP, handshake 1-RTT/0-RTT, connection migration, HOL blocking.", file: "networking/net-19-udp-quic.md" },
-  { slug: "net-20-dns-phan-giai", courseId: "NETWORKING", title: "DNS: phân giải từ root, từng bước", shortTitle: "Phân giải DNS", chapter: "net-ch5", order: 20, available: false,
+  { slug: "net-20-dns-phan-giai", courseId: "NETWORKING", title: "DNS: phân giải từ root, từng bước", shortTitle: "Phân giải DNS", chapter: "net-ch5", order: 20, available: true,
     description: "dig +trace, recursive vs iterative, cache, TTL, negative cache; một lần phân giải hỏi bao nhiêu server.", file: "networking/net-20-dns-phan-giai.md" },
   { slug: "net-21-dns-van-hanh", courseId: "NETWORKING", title: "DNS khi vận hành", shortTitle: "DNS vận hành", chapter: "net-ch5", order: 21, available: true,
     description: "TTL khi đổi IP, CNAME ở apex, split-horizon, DNSSEC chặn được gì, sự cố DNS điển hình.", file: "networking/net-21-dns-van-hanh.md" },
