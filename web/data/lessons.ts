@@ -1464,7 +1464,7 @@ const netLessons: Lesson[] = [
     description: "veth/bridge/iptables tới CNI, kube-proxy iptables/IPVS, overlay VXLAN.", file: "networking/net-27-mang-container-k8s.md" },
   { slug: "net-28-mang-cloud", courseId: "NETWORKING", title: "Mạng cloud dưới nắp", shortTitle: "Mạng cloud", chapter: "net-ch7", order: 28, available: true,
     description: "VPC là overlay, security group stateful, vì sao VPC không có ARP/broadcast thật.", file: "networking/net-28-mang-cloud.md" },
-  { slug: "net-29-debug-khoanh-vung", courseId: "NETWORKING", title: "Bộ đồ nghề và quy trình khoanh vùng", shortTitle: "Debug mạng", chapter: "net-ch8", order: 29, available: false,
+  { slug: "net-29-debug-khoanh-vung", courseId: "NETWORKING", title: "Bộ đồ nghề và quy trình khoanh vùng", shortTitle: "Debug mạng", chapter: "net-ch8", order: 29, available: true,
     description: "tcpdump + BPF filter, ss, dig, curl -w, mtr: đi từ triệu chứng tới tầng hỏng.", file: "networking/net-29-debug-khoanh-vung.md" },
   { slug: "net-30-capstone-su-co", courseId: "NETWORKING", title: "Capstone: dựng lại 6 sự cố mạng", shortTitle: "Capstone", chapter: "net-ch8", order: 30, available: false,
     description: "MTU blackhole, conntrack đầy, DNS TTL, SYN backlog, định tuyến bất đối xứng, BGP leak trong lab.", file: "networking/net-30-capstone-su-co.md" },
