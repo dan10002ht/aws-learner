@@ -1434,7 +1434,7 @@ const netLessons: Lesson[] = [
     description: "Ai trả tiền cho ai, IXP là gì, vì sao gói tin trong nước có lúc đi vòng ra nước ngoài.", file: "networking/net-12-transit-peering-ixp.md" },
   { slug: "net-13-anycast", courseId: "NETWORKING", title: "Anycast: một IP ở trăm nơi", shortTitle: "Anycast", chapter: "net-ch3", order: 13, available: false,
     description: "Cùng một prefix quảng bá từ nhiều nơi; 1.1.1.1, DNS root, CDN; anycast và TCP.", file: "networking/net-13-anycast.md" },
-  { slug: "net-14-bgp-hijack-leak-rpki", courseId: "NETWORKING", title: "Khi BGP sai: hijack, leak và RPKI", shortTitle: "Hijack & RPKI", chapter: "net-ch3", order: 14, available: false,
+  { slug: "net-14-bgp-hijack-leak-rpki", courseId: "NETWORKING", title: "Khi BGP sai: hijack, leak và RPKI", shortTitle: "Hijack & RPKI", chapter: "net-ch3", order: 14, available: true,
     description: "YouTube 2008, Facebook 2021, route leak; ROA, ROV và RPKI chặn được tới đâu.", file: "networking/net-14-bgp-hijack-leak-rpki.md" },
   { slug: "net-15-bgp-trong-cloud", courseId: "NETWORKING", title: "BGP trong cloud", shortTitle: "BGP & cloud", chapter: "net-ch3", order: 15, available: false,
     description: "ASN phía Amazon, BGP qua VPN/Direct Connect, ECMP, thứ tự ưu tiên route trong VPC.", file: "networking/net-15-bgp-trong-cloud.md" },
