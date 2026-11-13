@@ -1452,7 +1452,7 @@ const netLessons: Lesson[] = [
     description: "TTL khi đổi IP, CNAME ở apex, split-horizon, DNSSEC chặn được gì, sự cố DNS điển hình.", file: "networking/net-21-dns-van-hanh.md" },
   { slug: "net-22-http-123", courseId: "NETWORKING", title: "HTTP/1.1, 2, 3: head-of-line ở tầng nào", shortTitle: "HTTP/1-2-3", chapter: "net-ch6", order: 22, available: false,
     description: "Đo cùng một trang qua 3 phiên bản trên mạng mất gói; multiplexing và HOL blocking.", file: "networking/net-22-http-123.md" },
-  { slug: "net-23-tls-van-hanh", courseId: "NETWORKING", title: "TLS khi vận hành: SNI, ALPN, resumption, mTLS", shortTitle: "TLS vận hành", chapter: "net-ch6", order: 23, available: false,
+  { slug: "net-23-tls-van-hanh", courseId: "NETWORKING", title: "TLS khi vận hành: SNI, ALPN, resumption, mTLS", shortTitle: "TLS vận hành", chapter: "net-ch6", order: 23, available: true,
     description: "Handshake tốn bao nhiêu RTT, LB định tuyến theo SNI, session resumption, mTLS.", file: "networking/net-23-tls-van-hanh.md" },
   { slug: "net-24-load-balancer", courseId: "NETWORKING", title: "Load balancer L4 và L7 từ bên trong", shortTitle: "Load balancer", chapter: "net-ch7", order: 24, available: false,
     description: "NAT vs DSR, consistent hashing, health check, connection draining; deploy làm rớt request ở đâu.", file: "networking/net-24-load-balancer.md" },
