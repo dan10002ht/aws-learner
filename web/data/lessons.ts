@@ -1438,7 +1438,7 @@ const netLessons: Lesson[] = [
     description: "YouTube 2008, Facebook 2021, route leak; ROA, ROV và RPKI chặn được tới đâu.", file: "networking/net-14-bgp-hijack-leak-rpki.md" },
   { slug: "net-15-bgp-trong-cloud", courseId: "NETWORKING", title: "BGP trong cloud", shortTitle: "BGP & cloud", chapter: "net-ch3", order: 15, available: false,
     description: "ASN phía Amazon, BGP qua VPN/Direct Connect, ECMP, thứ tự ưu tiên route trong VPC.", file: "networking/net-15-bgp-trong-cloud.md" },
-  { slug: "net-16-tcp-ben-trong", courseId: "NETWORKING", title: "TCP từ bên trong: sequence, ACK, retransmission", shortTitle: "TCP bên trong", chapter: "net-ch4", order: 16, available: false,
+  { slug: "net-16-tcp-ben-trong", courseId: "NETWORKING", title: "TCP từ bên trong: sequence, ACK, retransmission", shortTitle: "TCP bên trong", chapter: "net-ch4", order: 16, available: true,
     description: "Sequence/ACK, RTO, fast retransmit, SACK; mất 1% gói thì throughput giảm bao nhiêu (tc netem).", file: "networking/net-16-tcp-ben-trong.md" },
   { slug: "net-17-flow-congestion-control", courseId: "NETWORKING", title: "Flow control và congestion control", shortTitle: "Congestion control", chapter: "net-ch4", order: 17, available: true,
     description: "rwnd, cwnd, BDP, slow start, CUBIC và BBR; vì sao tải file từ xa không dùng hết băng thông.", file: "networking/net-17-flow-congestion-control.md" },
