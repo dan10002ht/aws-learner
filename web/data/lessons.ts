@@ -1424,7 +1424,7 @@ const netLessons: Lesson[] = [
     description: "SNAT/DNAT, bảng conntrack, NAT gateway hết port, conntrack đầy thì triệu chứng là gì.", file: "networking/net-07-nat-conntrack.md" },
   { slug: "net-08-icmp-traceroute", courseId: "NETWORKING", title: "ICMP và traceroute đọc cho đúng", shortTitle: "Traceroute", chapter: "net-ch2", order: 8, available: true,
     description: "TTL hết hạn, * * *, độ trễ tăng vọt giữa đường và vì sao nó không phải chỗ hỏng.", file: "networking/net-08-icmp-traceroute.md" },
-  { slug: "net-09-ipv6-thuc-te", courseId: "NETWORKING", title: "IPv6 khi chạy thật", shortTitle: "IPv6", chapter: "net-ch2", order: 9, available: false,
+  { slug: "net-09-ipv6-thuc-te", courseId: "NETWORKING", title: "IPv6 khi chạy thật", shortTitle: "IPv6", chapter: "net-ch2", order: 9, available: true,
     description: "SLAAC, NDP, dual-stack, Happy Eyeballs; vì sao app chậm khi IPv6 hỏng một nửa.", file: "networking/net-09-ipv6-thuc-te.md" },
   { slug: "net-10-as-asn", courseId: "NETWORKING", title: "AS và ASN: ai sở hữu mạng nào", shortTitle: "AS & ASN", chapter: "net-ch3", order: 10, available: false,
     description: "Autonomous system, ASN 16/32 bit, IANA -> RIR -> LIR, tra IP thuộc AS nào bằng whois và RIPEstat.", file: "networking/net-10-as-asn.md" },
