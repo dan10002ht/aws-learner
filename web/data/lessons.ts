@@ -1462,7 +1462,7 @@ const netLessons: Lesson[] = [
     description: "Cache key, origin shield, anycast vs DNS-based routing, cache hit ratio đo thế nào.", file: "networking/net-26-cdn.md" },
   { slug: "net-27-mang-container-k8s", courseId: "NETWORKING", title: "Mạng container và Kubernetes", shortTitle: "Mạng container", chapter: "net-ch7", order: 27, available: true,
     description: "veth/bridge/iptables tới CNI, kube-proxy iptables/IPVS, overlay VXLAN.", file: "networking/net-27-mang-container-k8s.md" },
-  { slug: "net-28-mang-cloud", courseId: "NETWORKING", title: "Mạng cloud dưới nắp", shortTitle: "Mạng cloud", chapter: "net-ch7", order: 28, available: false,
+  { slug: "net-28-mang-cloud", courseId: "NETWORKING", title: "Mạng cloud dưới nắp", shortTitle: "Mạng cloud", chapter: "net-ch7", order: 28, available: true,
     description: "VPC là overlay, security group stateful, vì sao VPC không có ARP/broadcast thật.", file: "networking/net-28-mang-cloud.md" },
   { slug: "net-29-debug-khoanh-vung", courseId: "NETWORKING", title: "Bộ đồ nghề và quy trình khoanh vùng", shortTitle: "Debug mạng", chapter: "net-ch8", order: 29, available: false,
     description: "tcpdump + BPF filter, ss, dig, curl -w, mtr: đi từ triệu chứng tới tầng hỏng.", file: "networking/net-29-debug-khoanh-vung.md" },
