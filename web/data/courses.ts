@@ -503,6 +503,21 @@ export const courses: Course[] = [
     accentColor: "#0ea5e9",
     order: 22, status: "available", kind: "knowledge", category: "systems",
   },
+  {
+    id: "NETWORKING",
+    code: "NETWORKING",
+    title: "Networking — gói tin đi từ máy bạn tới đầu kia Internet",
+    shortTitle: "Networking",
+    level: "Nền tảng",
+    description:
+      "Mạng như nó chạy thật: frame Ethernet và ARP, định tuyến, NAT và conntrack, MTU; Internet ghép từ các AS bằng BGP — ASN, transit, peering, IXP, anycast, hijack và RPKI; TCP từ bên trong và congestion control; QUIC; DNS từ root; HTTP/1-2-3 và TLS khi vận hành; load balancer, proxy, CDN, mạng container và cloud; rồi quy trình debug. Mọi con số đo trên lab Docker + FRRouting hoặc trích RFC.",
+    hint: "Dành cho dev backend đã biết IP, port, DNS, HTTP ở mức dùng. Lab chạy bằng Docker (namespace, tc netem, FRRouting).",
+    durationHours: 45,
+    passingScore: 0, examMinutes: 0, examQuestions: 0,
+    prerequisites: ["ENGINEER"],
+    accentColor: "#4f46e5",
+    order: 23, status: "available", kind: "knowledge", category: "systems",
+  },
 ];
 
 export function getCourse(id: CourseId | string): Course | undefined {
